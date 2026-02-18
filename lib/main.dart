@@ -5,17 +5,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 
 import 'common/enums.dart';
 import 'data/game_data_loader.dart';
+import 'data/models/wave_data.dart';
+import 'ui/dialogs/hero_unlock_dialog.dart';
 import 'game/defense_game.dart';
+import 'game/components/towers/base_tower.dart';
 import 'state/game_state.dart';
 import 'ui/menus/main_menu.dart';
+import 'ui/menus/stage_select_screen.dart';
+import 'ui/menus/hero_manage_screen.dart';
 import 'ui/hud/game_hud.dart';
 import 'ui/hud/tower_select_panel.dart';
+import 'ui/hud/hero_skill_panel.dart';
+import 'ui/menus/hero_deploy_screen.dart';
 import 'ui/dialogs/game_result_dialog.dart';
+import 'ui/dialogs/tower_upgrade_dialog.dart';
+import 'ui/hud/game_tooltip.dart';
+import 'state/user_state.dart';
+import 'state/hero_party_provider.dart';
+import 'ui/hud/wave_announce_banner.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,87 +76,722 @@ class GameScreen extends ConsumerStatefulWidget {
 
 class _GameScreenState extends ConsumerState<GameScreen> {
   late DefenseGame _game;
-  bool _showMainMenu = true;
+  String _currentScreen = 'mainMenu'; // mainMenu, stageSelect, heroManage, heroDeploy, gameplay
+  LevelData? _currentLevel;
   TowerType? _selectedTower;
+  final _gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<DefenseGame>>();
+
+  // 툴팁 상태
+  GameTooltipData? _tooltipData;
+  Offset _mousePosition = Offset.zero;
 
   @override
   void initState() {
     super.initState();
     _game = DefenseGame();
+    _setupGameCallbacks();
+    // 세이브 데이터 로드
+    Future.microtask(() {
+      ref.read(userStateProvider.notifier).loadFromSave();
+    });
   }
 
-  void _startGame() {
+  void _setupGameCallbacks() {
+    // 타워 클릭 → 판매/업그레이드 다이얼로그
+    _game.onTowerTappedCallback = (tower) {
+      _showTowerDialog(tower);
+    };
+    // 타워 설치 후 선택 해제
+    _game.onTowerPlacedCallback = () {
+      setState(() {
+        _selectedTower = null;
+      });
+    };
+    // 호버 툴팁
+    _game.onComponentHover = (info) {
+      setState(() {
+        _tooltipData = _buildTooltipFromInfo(info);
+      });
+    };
+    _game.onComponentHoverExit = () {
+      setState(() {
+        _tooltipData = null;
+      });
+    };
+  }
+
+  /// 호버 정보 → 툴팁 데이터 변환
+  GameTooltipData _buildTooltipFromInfo(Map<String, dynamic> info) {
+    final type = info['type'] as String;
+    if (type == 'tower') {
+      return GameTooltipData(
+        title: info['name'] as String? ?? '타워',
+        subtitle: 'Lv.${info['level']}',
+        description: info['description'] as String?,
+        color: _getTowerColor(info['towerType'] as TowerType),
+        icon: _getTowerIcon(info['towerType'] as TowerType),
+        stats: [
+          TooltipStat('공격력', '${(info['damage'] as double).toStringAsFixed(0)}'),
+          TooltipStat('사거리', '${(info['range'] as double).toStringAsFixed(0)}'),
+          TooltipStat('공격속도', '${(info['fireRate'] as double).toStringAsFixed(2)}/s'),
+          if (info['specialAbility'] != null)
+            TooltipStat('특수', info['specialAbility'] as String, highlight: true),
+        ],
+      );
+    } else if (type == 'hero') {
+      // 영웅 툴팁
+      final isDead = info['isDead'] as bool? ?? false;
+      final colorInt = info['color'] as int? ?? 0xFFFFAA00;
+      return GameTooltipData(
+        title: '${info['name']}',
+        subtitle: '${info['title']} · Lv.${info['level']}',
+        description: '🎯 ${info['skillName']}\n${info['skillDesc']}\n⏱ 쿨타임: ${info['skillCooldown']}초',
+        color: Color(colorInt),
+        icon: info['emoji'] as String? ?? '⚔️',
+        stats: [
+          TooltipStat('HP', '${info['hp']} / ${info['maxHp']}',
+            highlight: isDead),
+          TooltipStat('공격력', info['attack'] as String? ?? '-'),
+          TooltipStat('사거리', info['range'] as String? ?? '-'),
+          TooltipStat('속성', info['damageType'] as String? ?? '-'),
+          if (isDead)
+            TooltipStat('상태', '💀 부활 대기', highlight: true),
+        ],
+      );
+    } else {
+      // 적
+      return GameTooltipData(
+        title: info['name'] as String? ?? '적',
+        subtitle: 'HP: ${info['hp']}',
+        description: info['description'] as String?,
+        color: (info['isBerserk'] as bool? ?? false)
+            ? const Color(0xFFFF4500)
+            : const Color(0xFFCC3333),
+        icon: '👻',
+        stats: [
+          TooltipStat('속도', info['speed'] as String? ?? ''),
+          TooltipStat('보상', '✨${info['reward']}'),
+          if ((info['abilities'] as String? ?? '').isNotEmpty)
+            TooltipStat('능력', info['abilities'] as String, highlight: true),
+        ],
+      );
+    }
+  }
+
+  Color _getTowerColor(TowerType type) {
+    switch (type) {
+      case TowerType.archer:   return const Color(0xFF228B22);
+      case TowerType.barracks: return const Color(0xFF4169E1);
+      case TowerType.shaman:   return const Color(0xFF9400D3);
+      case TowerType.artillery:return const Color(0xFFB22222);
+      case TowerType.sotdae:   return const Color(0xFFFFD700);
+    }
+  }
+
+  String _getTowerIcon(TowerType type) {
+    switch (type) {
+      case TowerType.archer:   return '🏹';
+      case TowerType.barracks: return '🤼';
+      case TowerType.shaman:   return '🔮';
+      case TowerType.artillery:return '💥';
+      case TowerType.sotdae:   return '🪶';
+    }
+  }
+
+  void _startLevel(LevelData level) {
     setState(() {
-      _showMainMenu = false;
+      _currentScreen = 'gameplay';
+      _currentLevel = level;
     });
 
-    // 챕터 1, 레벨 1 시작
     Future.microtask(() {
-      _game.startLevel(GameDataLoader.chapter1Level1);
+      _game.startLevel(level);
     });
   }
 
   void _returnToMenu() {
     setState(() {
-      _showMainMenu = true;
+      _currentScreen = 'stageSelect';
       _selectedTower = null;
     });
-    // 게임 리셋
     _game = DefenseGame();
+    _setupGameCallbacks();
     ref.read(gameStateProvider.notifier).setPhase(GamePhase.mainMenu);
   }
 
   void _restartLevel() {
+    if (_currentLevel == null) return;
     _game.overlays.remove('GameOverOverlay');
     _game.overlays.remove('VictoryOverlay');
     _game = DefenseGame();
-    setState(() {});
-    Future.microtask(() {
-      _game.startLevel(GameDataLoader.chapter1Level1);
+    _setupGameCallbacks();
+    setState(() {
+      _selectedTower = null;
     });
+    Future.microtask(() {
+      _game.startLevel(_currentLevel!);
+    });
+  }
+
+  void _goToNextStage() {
+    if (_currentLevel == null) return;
+    final levels = GameDataLoader.allLevels;
+    final currentIndex = levels.indexWhere(
+      (l) => l.levelNumber == _currentLevel!.levelNumber,
+    );
+    if (currentIndex >= 0 && currentIndex < levels.length - 1) {
+      final nextLevel = levels[currentIndex + 1];
+      _game.overlays.remove('VictoryOverlay');
+      _game = DefenseGame();
+      _setupGameCallbacks();
+      setState(() {
+        _selectedTower = null;
+      });
+      _startLevel(nextLevel);
+    } else {
+      // 마지막 스테이지 → 메뉴 복귀
+      _returnToMenu();
+    }
+  }
+
+  /// 레벨 번호로 챕터 번호 계산
+  int _getChapterForLevel(int levelNumber) {
+    if (levelNumber <= 20) return 1;
+    if (levelNumber <= 40) return 2;
+    return 3;
+  }
+
+  /// 승리 시 진행 상황 저장
+  void _saveProgress() {
+    if (_currentLevel == null) return;
+    final gameState = ref.read(gameStateProvider);
+    if (gameState.phase == GamePhase.victory) {
+      final chapter = _getChapterForLevel(_currentLevel!.levelNumber);
+      ref.read(userStateProvider.notifier).completeLevel(
+        chapter,
+        _currentLevel!.levelNumber,
+        gameState.starRating,
+      );
+      print('[SAVE] Ch.$chapter 스테이지 ${_currentLevel!.levelNumber} 클리어! 별: ${gameState.starRating}');
+
+      // 영웅 해금 체크
+      final userState = ref.read(userStateProvider);
+      final newlyUnlocked = <HeroId>[];
+      for (final entry in heroUnlockStage.entries) {
+        if (entry.value > 0 &&
+            entry.value <= _currentLevel!.levelNumber &&
+            !userState.unlockedHeroes.contains(entry.key)) {
+          ref.read(userStateProvider.notifier).unlockHero(entry.key);
+          newlyUnlocked.add(entry.key);
+          print('[UNLOCK] 영웅 해금: ${entry.key.name} (Stage ${entry.value} 조건 충족)');
+        }
+      }
+
+      // 해금 축하 팝업 표시 (승리 화면 위에 순차 표시)
+      if (newlyUnlocked.isNotEmpty && mounted) {
+        Future.delayed(const Duration(milliseconds: 1500), () async {
+          for (final heroId in newlyUnlocked) {
+            if (!mounted) break;
+            await showHeroUnlockDialog(context, heroId);
+          }
+        });
+      }
+    }
+  }
+
+  void _onTowerSelected(TowerType type) {
+    setState(() {
+      // 토글: 같은 타워를 다시 누르면 해제
+      if (_selectedTower == type) {
+        _selectedTower = null;
+        _game.selectedTowerType = null;
+      } else {
+        _selectedTower = type;
+        _game.selectedTowerType = type;
+      }
+    });
+  }
+
+  /// 배치된 타워 클릭 시 → 판매/업그레이드 다이얼로그
+  void _showTowerDialog(BaseTower tower) {
+    // 타워 선택 중이면 무시 (배치 모드)
+    if (_selectedTower != null) return;
+
+    final displayLevel = tower.upgradeLevel + 1; // 0-based → 1-based
+
+    showDialog<void>(
+      context: context,
+      barrierColor: const Color(0x44000000),
+      builder: (ctx) => Center(
+        child: SizedBox(
+          width: 260,
+          // Consumer로 감싸서 신명 변동 시 실시간 갱신
+          child: Consumer(
+            builder: (_, consumerRef, __) {
+              final state = consumerRef.watch(gameStateProvider);
+              return TowerUpgradeDialog(
+                towerType: tower.data.type,
+                currentLevel: displayLevel,
+                sellRefund: tower.sellRefund,
+                currentSinmyeong: state.sinmyeong,
+                onAction: (action) {
+                  Navigator.of(ctx).pop();
+                  _handleTowerAction(tower, action);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 타워 액션 처리 (판매/업그레이드/분기)
+  void _handleTowerAction(BaseTower tower, TowerActionResult action) {
+    final stateNotifier = ref.read(gameStateProvider.notifier);
+
+    switch (action) {
+      case TowerSellResult():
+        // 환불 금액 추가
+        stateNotifier.addSinmyeong(tower.sellRefund);
+        // 슬롯 해제
+        final slotIndex = _game.gameMap.findSlotAt(tower.position);
+        if (slotIndex != null) {
+          _game.gameMap.freeSlot(slotIndex);
+        }
+        // 타워 제거
+        tower.removeFromParent();
+        break;
+
+      case TowerUpgradeResult(level: final newLevel):
+        final upgradeCost = tower.data.upgrades[newLevel - 1].cost;
+        if (stateNotifier.spendSinmyeong(upgradeCost)) {
+          tower.upgrade();
+        }
+        break;
+
+      case TowerMaxUpgradeResult():
+        // 레벨 3까지 순차 업그레이드 (비용 순차 차감)
+        while (tower.upgradeLevel < 3 && tower.upgradeLevel < tower.data.upgrades.length) {
+          final cost = tower.data.upgrades[tower.upgradeLevel].cost;
+          if (!stateNotifier.spendSinmyeong(cost)) break;
+          tower.upgrade();
+        }
+        break;
+
+      case TowerBranchResult(branch: final branch):
+        final branchCost = tower.data.upgrades.length > 3
+            ? tower.data.upgrades[3].cost
+            : 300;
+        if (stateNotifier.spendSinmyeong(branchCost)) {
+          tower.selectBranch(branch);
+          tower.upgrade();
+        }
+        break;
+    }
+  }
+
+  /// 일시정지 메뉴 버튼 빌더
+  Widget _buildPauseMenuButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: ElevatedButton.icon(
+        onPressed: onTap,
+        icon: Icon(icon, color: Colors.white, size: 22),
+        label: Text(label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            )),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color.withValues(alpha: 0.8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 0,
+        ),
+      ),
+    );
+  }
+
+  /// 영웅 스킬 패널 빌더 (실시간 상태 반영)
+  Widget _buildHeroSkillPanel() {
+    return Positioned(
+      right: 16,
+      bottom: 16,
+      child: StatefulBuilder(
+        builder: (context, localSetState) {
+          // 250ms마다 영웅 상태 갱신
+          Future.delayed(const Duration(milliseconds: 250), () {
+            if (mounted && _currentScreen == 'gameplay') {
+              localSetState(() {});
+            }
+          });
+
+          final heroes = _game.activeHeroes;
+          if (heroes.isEmpty) return const SizedBox.shrink();
+
+          final heroInfos = <HeroSkillInfo>[];
+          for (int i = 0; i < heroes.length; i++) {
+            final hero = heroes[i];
+            final heroEmoji = _getHeroEmoji(hero.data.id);
+
+            heroInfos.add(HeroSkillInfo(
+              name: hero.data.name,
+              emoji: heroEmoji,
+              skillName: hero.data.skill.name,
+              hpRatio: hero.maxHp > 0 ? (hero.hp / hero.maxHp).clamp(0, 1) : 0,
+              cooldownRatio: hero.skillCooldownRatio,
+              isDead: hero.isDead,
+              reviveProgress: hero.reviveProgress,
+              isUltimate: hero.skillReady,
+              onSkillTap: () {
+                _game.useHeroSkill(i);
+              },
+            ));
+          }
+
+          return HeroSkillPanel(heroes: heroInfos);
+        },
+      ),
+    );
+  }
+
+  /// 영웅 ID별 이모지
+  String _getHeroEmoji(HeroId id) {
+    switch (id) {
+      case HeroId.kkaebi:
+        return '👹'; // 도깨비
+      case HeroId.miho:
+        return '🦊'; // 여우
+      case HeroId.gangrim:
+        return '💀'; // 저승차사
+      case HeroId.sua:
+        return '🌊'; // 물의 정령
+      case HeroId.bari:
+        return '🌸'; // 바리공주
+    }
+  }
+
+
+  /// 확인 다이얼로그 (재시작/나가기 등 비가역 액션)
+  void _showConfirmDialog({
+    required String title,
+    required String message,
+    required VoidCallback onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Color(0xFF8B5CF6), width: 1),
+        ),
+        title: Text(title,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        content: Text(message,
+            style: const TextStyle(color: Colors.white70, fontSize: 14)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('취소', style: TextStyle(color: Colors.white60)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              onConfirm();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFEF4444),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text('확인', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_showMainMenu) {
-      return MainMenu(onStartGame: _startGame);
+    // 메인 메뉴
+    if (_currentScreen == 'mainMenu') {
+      return MainMenu(
+        onStageSelect: () {
+          setState(() {
+            _currentScreen = 'stageSelect';
+          });
+        },
+        onHeroManage: () {
+          setState(() {
+            _currentScreen = 'heroManage';
+          });
+        },
+      );
     }
 
+    // 영웅 관리
+    if (_currentScreen == 'heroManage') {
+      return HeroManageScreen(
+        onBack: () {
+          setState(() {
+            _currentScreen = 'mainMenu';
+          });
+        },
+      );
+    }
+
+    // 스테이지 선택
+    if (_currentScreen == 'stageSelect') {
+      return StageSelectScreen(
+        onBack: () {
+          setState(() {
+            _currentScreen = 'mainMenu';
+          });
+        },
+        onLevelSelected: (level) {
+          setState(() {
+            _currentLevel = level;
+            _currentScreen = 'heroDeploy';
+          });
+        },
+      );
+    }
+
+    // 출전 준비 화면
+    if (_currentScreen == 'heroDeploy' && _currentLevel != null) {
+      return HeroDeployScreen(
+        level: _currentLevel!,
+        onBack: () {
+          setState(() {
+            _currentScreen = 'stageSelect';
+          });
+        },
+        onStartBattle: _startLevel,
+      );
+    }
+
+
     return Scaffold(
-      body: Stack(
-        children: [
-          // ── Flame 게임 위젯 ──
-          RiverpodAwareGameWidget<DefenseGame>(
-            game: _game,
-            overlayBuilderMap: {
-              'GameOverOverlay': (context, game) => DefeatOverlay(
-                onRetry: _restartLevel,
-                onMenu: _returnToMenu,
+      body: MouseRegion(
+        onHover: (event) {
+          _mousePosition = event.position;
+        },
+        child: Stack(
+          children: [
+            // ── Flame 게임 위젯 (드래그 타겟) ──
+            Positioned.fill(
+              child: DragTarget<TowerType>(
+                onAcceptWithDetails: (details) {
+                  // 드롭 위치를 게임 엔진에 전달
+                  _game.handleDragDrop(details.offset, details.data);
+                  // 드래그 후 선택 상태 초기화 (UI 업데이트)
+                  setState(() {
+                    _selectedTower = null;
+                  });
+                },
+                builder: (context, candidateData, rejectedData) {
+                  return RiverpodAwareGameWidget<DefenseGame>(
+                    key: _gameWidgetKey,
+                    game: _game,
+                    overlayBuilderMap: {
+                      'GameOverOverlay': (context, game) => DefeatOverlay(
+                            onRetry: _restartLevel,
+                            onMenu: _returnToMenu,
+                          ),
+                      'VictoryOverlay': (context, game) => VictoryOverlay(
+                            onMenu: () {
+                              _saveProgress();
+                              _returnToMenu();
+                            },
+                            onReplay: () {
+                              _saveProgress();
+                              _restartLevel();
+                            },
+                            onNextStage: () {
+                              _saveProgress();
+                              _goToNextStage();
+                            },
+                          ),
+                    },
+                  );
+                },
               ),
-              'VictoryOverlay': (context, game) => VictoryOverlay(
-                onContinue: _returnToMenu,
-                onReplay: _restartLevel,
+            ),
+
+            // ── HUD 오버레이 ──
+            GameHud(
+              onPause: () {
+                _game.togglePause();
+                setState(() {}); // UI 갱신
+              },
+              onSpeedToggle: () {
+                _game.cycleGameSpeed();
+                ref.read(gameStateProvider.notifier).setGameSpeed(_game.gameSpeed);
+              },
+            ),
+
+            // ── 웨이브 안내 & 쿨다운 ──
+            Consumer(
+              builder: (_, consumerRef, __) {
+                final state = consumerRef.watch(gameStateProvider);
+                final wm = _game.waveManager;
+                return StatefulBuilder(
+                  builder: (context, localSetState) {
+                    // 300ms 주기로 쿨다운 갱신
+                    Future.delayed(const Duration(milliseconds: 300), () {
+                      if (mounted && _currentScreen == 'gameplay') {
+                        localSetState(() {});
+                      }
+                    });
+
+                    // 쿨다운 카운트다운 표시
+                    if (wm.isInCooldown && wm.cooldownRemaining > 0) {
+                      return Positioned.fill(
+                        child: IgnorePointer(
+                          child: WaveCooldownIndicator(
+                            secondsRemaining: wm.cooldownRemaining,
+                            nextWaveNumber: state.currentWave,
+                          ),
+                        ),
+                      );
+                    }
+
+                    // 웨이브 시작 배너 (웨이브 활성 시 잠시 표시)
+                    if (wm.isWaveActive && state.currentWave > 0) {
+                      final isBoss = state.currentWave == state.totalWaves;
+                      return Positioned.fill(
+                        child: IgnorePointer(
+                          child: WaveAnnounceBanner(
+                            key: ValueKey('wave_${state.currentWave}'),
+                            waveNumber: state.currentWave,
+                            totalWaves: state.totalWaves,
+                            narrative: wm.currentNarrative,
+                            isBossWave: isBoss,
+                          ),
+                        ),
+                      );
+                    }
+
+                    return const SizedBox.shrink();
+                  },
+                );
+              },
+            ),
+
+            // 일시정지 메뉴 오버레이
+            if (_game.isPaused)
+              Positioned.fill(
+                child: Container(
+                  color: const Color(0xCC000000),
+                  child: Center(
+                    child: Container(
+                      width: 280,
+                      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1A1A2E),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: const Color(0xFF8B5CF6), width: 1.5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                            blurRadius: 20,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.pause_circle_outline,
+                              color: Color(0xFF8B5CF6), size: 48),
+                          const SizedBox(height: 12),
+                          const Text('일시정지',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2,
+                              )),
+                          const SizedBox(height: 28),
+                          // 계속하기 버튼
+                          _buildPauseMenuButton(
+                            icon: Icons.play_arrow_rounded,
+                            label: '계속하기',
+                            color: const Color(0xFF10B981),
+                            onTap: () {
+                              _game.togglePause();
+                              setState(() {});
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          // 재시작 버튼
+                          _buildPauseMenuButton(
+                            icon: Icons.refresh_rounded,
+                            label: '처음부터',
+                            color: const Color(0xFFF59E0B),
+                            onTap: () {
+                              _showConfirmDialog(
+                                title: '재시작',
+                                message: '처음부터 다시 시작하시겠습니까?',
+                                onConfirm: () {
+                                  _game.togglePause();
+                                  _restartLevel();
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          // 메뉴로 나가기 버튼
+                          _buildPauseMenuButton(
+                            icon: Icons.home_rounded,
+                            label: '메뉴로 나가기',
+                            color: const Color(0xFFEF4444),
+                            onTap: () {
+                              _showConfirmDialog(
+                                title: '나가기',
+                                message: '메뉴로 돌아가시겠습니까?\n현재 진행 상황은 사라집니다.',
+                                onConfirm: () {
+                                  _game.togglePause();
+                                  _returnToMenu();
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            },
-          ),
 
-          // ── HUD 오버레이 ──
-          GameHud(
-            onPause: () {
-              // TODO: 일시정지 구현
-            },
-          ),
+            // ── 타워 선택 패널 ──
+            TowerSelectPanel(
+              selectedTower: _selectedTower,
+              onTowerSelected: _onTowerSelected,
+            ),
 
-          // ── 타워 선택 패널 ──
-          TowerSelectPanel(
-            selectedTower: _selectedTower,
-            onTowerSelected: (type) {
-              setState(() {
-                _selectedTower = _selectedTower == type ? null : type;
-              });
-            },
-          ),
-        ],
+            // ── 영웅 스킬 패널 (우측 하단) ──
+            _buildHeroSkillPanel(),
+
+            // ── 호버 툴팁 ──
+            if (_tooltipData != null)
+              GameTooltip(
+                data: _tooltipData!,
+                position: _mousePosition,
+              ),
+          ],
+        ),
       ),
     );
   }

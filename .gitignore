@@ -32,7 +32,6 @@
 /build/
 
 # Web related
-lib/generated_plugin_registrant.dart
 
 # Symbolication related
 app.*.symbols
@@ -45,7 +44,16 @@ app.*.map.json
 /android/key.properties
 /ios/.generated/
 
-# Pub dependencies
 .pub/
 .pub-cache/
 packages/
+
+# JARVIS Agent (세션별 메모리)
+.agent/memory/
+
+# 환경 변수
+.env
+.env.*
+
+# IDE
+.vscode/settings.json
