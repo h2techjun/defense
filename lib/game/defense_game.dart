@@ -49,6 +49,16 @@ class DefenseGame extends FlameGame
   double _gameSpeed = 1.0;
   double _debugLogAccum = 0; // 디버그 로깅 누적기
   double _elapsedAccum = 0; // 경과 시간 누적기 (1초 주기)
+  double _achieveFlushAccum = 0; // 업적 배치 플러시 누적기 (3초 주기)
+  // ── 이벤트 브릿지 캐시 (매번 ref.read 호출 방지) ──
+  GameEventBridge? _eventBridgeCache;
+  GameEventBridge get _eventBridge {
+    final cached = _eventBridgeCache;
+    if (cached != null) return cached;
+    final bridge = ref.read(gameEventBridgeProvider);
+    _eventBridgeCache = bridge;
+    return bridge;
+  }
 
   // ── 배치 상태 업데이트 큐 (addPostFrameCallback 과부하 방지) ──
   // 모든 Riverpod 상태 변경은 이 큐를 통해 일괄 처리됨
@@ -295,8 +305,8 @@ class DefenseGame extends FlameGame
     activeHeroes[index].useSkill();
     SoundManager.instance.playSfx(SfxType.heroSkill);
 
-    // 스킬 사용 업적 (배치 처리)
-    ref.read(gameEventBridgeProvider).onSkillUsed();
+    // 스킬 사용 업적 (배치 처리 — 캐시된 브릿지 사용)
+    _eventBridge.onSkillUsed();
   }
 
   // ── 맵 오브젝트 관련 메서드 ──
@@ -441,8 +451,8 @@ class DefenseGame extends FlameGame
     // 배치된 타워 종류 기록
     _placedTowerTypes.add(selectedTowerType!);
 
-    // 타워 건설 업적 (배치 처리)
-    ref.read(gameEventBridgeProvider).onTowerBuilt();
+    // 타워 건설 업적 (배치 처리 — 캐시된 브릿지 사용)
+    _eventBridge.onTowerBuilt();
 
     // 설치 SFX
     SoundManager.instance.playSfx(SfxType.uiPlace);
@@ -503,8 +513,8 @@ class DefenseGame extends FlameGame
     _pendingWailing += GameConstants.wailingPerEnemy;
     _pendingStateFlush = true;
 
-    // 업적 이벤트 (배치 처리)
-    ref.read(gameEventBridgeProvider).onEnemyKilled(isBoss: isBoss);
+    // 업적 이벤트 (배치 처리 — 캐시된 브릿지 사용)
+    _eventBridge.onEnemyKilled(isBoss: isBoss);
 
     // 영웅 경험치 분배 (보스: 5XP, 일반: 1XP — 50스테이지 기준 보수적)
     final xpAmount = isBoss ? 5 : 1;
@@ -723,6 +733,17 @@ class DefenseGame extends FlameGame
       _elapsedAccum = 0;
     }
 
+    // ── 업적 배치 플러시 (3초 주기 — 성능 보호) ──
+    _achieveFlushAccum += scaledDt;
+    if (_achieveFlushAccum >= 3.0) {
+      _achieveFlushAccum = 0;
+      try {
+        _eventBridge.flushBatch();
+      } catch (e) {
+        debugPrint('[ACHIEVE-FLUSH-ERROR] $e');
+      }
+    }
+
     // ── 배치 상태 업데이트: 모든 이벤트를 모아 단 1회 state 갱신 ──
     // Riverpod 위젯 rebuild를 최소화 (프레임당 최대 1회)
     if (_pendingStateFlush) {
@@ -756,8 +777,6 @@ class DefenseGame extends FlameGame
           final state = ref.read(gameStateProvider);
           if (state.gatewayHp <= 0) gameOver();
         }
-        // 이벤트 브릿지 배치 플러시 (업적/패스 XP)
-        ref.read(gameEventBridgeProvider).flushBatch();
       } catch (e, st) {
         debugPrint('🚨 [BATCH-UPDATE-ERROR] $e');
         debugPrint('$st');

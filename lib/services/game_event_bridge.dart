@@ -59,29 +59,29 @@ class GameEventBridge {
     if (_batchKills <= 0 && _batchBossKills <= 0 
         && _batchSkillUses <= 0 && _batchTowerBuilds <= 0) return;
 
-    final achieveNotifier = _ref.read(achievementProvider.notifier);
+    // 배치 업데이트 맵 구성 (1회 Map 복사 + 1회 persist)
+    final updates = <String, int>{};
 
-    // 적 처치 업적 (누적)
     if (_batchKills > 0) {
-      achieveNotifier.incrementProgress('kill_100', amount: _batchKills);
-      achieveNotifier.incrementProgress('kill_1000', amount: _batchKills);
-      achieveNotifier.incrementProgress('kill_10000', amount: _batchKills);
+      updates['kill_100'] = _batchKills;
+      updates['kill_1000'] = _batchKills;
+      updates['kill_10000'] = _batchKills;
     }
 
-    // 보스 처치 업적
     if (_batchBossKills > 0) {
-      achieveNotifier.incrementProgress('boss_kill_10', amount: _batchBossKills);
+      updates['boss_kill_10'] = _batchBossKills;
     }
 
-    // 스킬 사용 업적
     if (_batchSkillUses > 0) {
-      achieveNotifier.incrementProgress('skill_100', amount: _batchSkillUses);
+      updates['skill_100'] = _batchSkillUses;
     }
 
-    // 타워 건설 업적
     if (_batchTowerBuilds > 0) {
-      achieveNotifier.incrementProgress('build_50', amount: _batchTowerBuilds);
+      updates['build_50'] = _batchTowerBuilds;
     }
+
+    // 단일 배치 호출 (Map 복사 1회 + state.copyWith 1회 + persist 1회)
+    _ref.read(achievementProvider.notifier).batchIncrementProgress(updates);
 
     // 배치 초기화
     _batchKills = 0;

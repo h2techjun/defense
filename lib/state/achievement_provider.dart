@@ -139,6 +139,30 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
     _persist();
   }
 
+  /// 여러 업적을 한 번에 증가 (Map 복사 1회, persist 1회 — 성능 최적화)
+  void batchIncrementProgress(Map<String, int> updates) {
+    if (updates.isEmpty) return;
+
+    final newProgress = Map<String, int>.from(state.progress);
+    final newCompleted = Set<String>.from(state.completed);
+
+    for (final entry in updates.entries) {
+      final current = newProgress[entry.key] ?? 0;
+      final newValue = current + entry.value;
+      newProgress[entry.key] = newValue;
+
+      try {
+        final achievement = allAchievements.firstWhere((a) => a.id == entry.key);
+        if (newValue >= achievement.targetValue) {
+          newCompleted.add(entry.key);
+        }
+      } catch (_) {}
+    }
+
+    state = state.copyWith(progress: newProgress, completed: newCompleted);
+    _persist();
+  }
+
   /// 업적 진행도 직접 설정 (최고 기록형 업적 — 예: 무한의 탑 최고층)
   void setProgress(String achievementId, int value) {
     final current = state.progress[achievementId] ?? 0;
