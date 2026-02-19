@@ -27,6 +27,14 @@ class DayNightSystem extends Component {
     }
   }
 
+  /// 맵 오브젝트(당산나무)에 의한 강제 전환
+  void forceCycle(DayCycle cycle) {
+    _currentCycle = cycle;
+    _timer = 0;
+    // 수동 제어는 해제 — 자동 사이클이 이후 정상 진행
+    _manualControl = false;
+  }
+
   /// 영혼형 적의 회피 보너스 계산
   double getEvasionBonus(ArmorType armorType) {
     if (isNight && armorType == ArmorType.spiritual) {

@@ -1,4 +1,4 @@
-// 해원의 문 (Gateway of Regrets)
+// Gateway of Regrets: Soul Defense (해원문)
 // 한국 설화 기반 타워 디펜스 RPG
 // Flutter + Flame Engine
 
@@ -13,10 +13,17 @@ import 'data/models/wave_data.dart';
 import 'ui/dialogs/hero_unlock_dialog.dart';
 import 'game/defense_game.dart';
 import 'game/components/towers/base_tower.dart';
+import 'audio/sound_manager.dart';
 import 'state/game_state.dart';
 import 'ui/menus/main_menu.dart';
 import 'ui/menus/stage_select_screen.dart';
 import 'ui/menus/hero_manage_screen.dart';
+import 'ui/menus/tower_manage_screen.dart';
+import 'ui/menus/skin_shop_screen.dart';
+import 'ui/menus/endless_tower_screen.dart';
+import 'ui/menus/season_pass_screen.dart';
+import 'ui/menus/achievement_screen.dart';
+import 'state/endless_tower_provider.dart';
 import 'ui/hud/game_hud.dart';
 import 'ui/hud/tower_select_panel.dart';
 import 'ui/hud/hero_skill_panel.dart';
@@ -28,7 +35,7 @@ import 'state/user_state.dart';
 import 'state/hero_party_provider.dart';
 import 'ui/hud/wave_announce_banner.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 가로 모드 고정
@@ -40,21 +47,24 @@ void main() {
   // 상태바 숨기기
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
+  // JSON 데이터 로드 (실패 시 하드코딩 폴백 자동 전환)
+  await GameDataLoader.initFromJson();
+
   runApp(
     const ProviderScope(
-      child: HaewonDefenseApp(),
+      child: GatewayOfRegretsApp(),
     ),
   );
 }
 
 /// 앱 루트
-class HaewonDefenseApp extends StatelessWidget {
-  const HaewonDefenseApp({super.key});
+class GatewayOfRegretsApp extends StatelessWidget {
+  const GatewayOfRegretsApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '해원의 문',
+      title: 'Gateway of Regrets',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
@@ -84,6 +94,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   // 툴팁 상태
   GameTooltipData? _tooltipData;
   Offset _mousePosition = Offset.zero;
+
+  // 타워 업그레이드 팝업 상태
+  BaseTower? _tappedTower;
+  Offset _tappedTowerScreenPos = Offset.zero;
+  double _tappedTowerHeight = 0;
 
   @override
   void initState() {
@@ -142,9 +157,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       // 영웅 툴팁
       final isDead = info['isDead'] as bool? ?? false;
       final colorInt = info['color'] as int? ?? 0xFFFFAA00;
+      final heroLevel = info['level'] as int? ?? 1;
+      final heroMaxLevel = info['maxLevel'] as int? ?? 10;
+      final heroXp = info['xp'] as int? ?? 0;
+      final heroXpNext = info['xpForNextLevel'] as int? ?? 0;
+      final xpText = heroLevel >= heroMaxLevel
+          ? 'MAX'
+          : '$heroXp / $heroXpNext';
       return GameTooltipData(
         title: '${info['name']}',
-        subtitle: '${info['title']} · Lv.${info['level']}',
+        subtitle: '${info['title']} · Lv.$heroLevel',
         description: '🎯 ${info['skillName']}\n${info['skillDesc']}\n⏱ 쿨타임: ${info['skillCooldown']}초',
         color: Color(colorInt),
         icon: info['emoji'] as String? ?? '⚔️',
@@ -154,6 +176,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           TooltipStat('공격력', info['attack'] as String? ?? '-'),
           TooltipStat('사거리', info['range'] as String? ?? '-'),
           TooltipStat('속성', info['damageType'] as String? ?? '-'),
+          TooltipStat('경험치', xpText, highlight: heroLevel >= heroMaxLevel),
           if (isDead)
             TooltipStat('상태', '💀 부활 대기', highlight: true),
         ],
@@ -205,6 +228,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     });
 
     Future.microtask(() {
+      SoundManager.instance.stopBgm();
       _game.startLevel(level);
     });
   }
@@ -217,6 +241,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     _game = DefenseGame();
     _setupGameCallbacks();
     ref.read(gameStateProvider.notifier).setPhase(GamePhase.mainMenu);
+    SoundManager.instance.stopBgm();
+    SoundManager.instance.playBgm(BgmType.menu);
   }
 
   void _restartLevel() {
@@ -235,7 +261,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   void _goToNextStage() {
     if (_currentLevel == null) return;
-    final levels = GameDataLoader.allLevels;
+    final levels = GameDataLoader.getAllLevels();
     final currentIndex = levels.indexWhere(
       (l) => l.levelNumber == _currentLevel!.levelNumber,
     );
@@ -258,7 +284,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   int _getChapterForLevel(int levelNumber) {
     if (levelNumber <= 20) return 1;
     if (levelNumber <= 40) return 2;
-    return 3;
+    if (levelNumber <= 60) return 3;
+    if (levelNumber <= 80) return 4;
+    return 5;
   }
 
   /// 승리 시 진행 상황 저장
@@ -317,33 +345,47 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     // 타워 선택 중이면 무시 (배치 모드)
     if (_selectedTower != null) return;
 
-    final displayLevel = tower.upgradeLevel + 1; // 0-based → 1-based
+    // 타워의 게임 좌표 → 화면 좌표 변환
+    final gameWidgetBox = _gameWidgetKey.currentContext?.findRenderObject() as RenderBox?;
+    if (gameWidgetBox == null) return;
 
-    showDialog<void>(
-      context: context,
-      barrierColor: const Color(0x44000000),
-      builder: (ctx) => Center(
-        child: SizedBox(
-          width: 260,
-          // Consumer로 감싸서 신명 변동 시 실시간 갱신
-          child: Consumer(
-            builder: (_, consumerRef, __) {
-              final state = consumerRef.watch(gameStateProvider);
-              return TowerUpgradeDialog(
-                towerType: tower.data.type,
-                currentLevel: displayLevel,
-                sellRefund: tower.sellRefund,
-                currentSinmyeong: state.sinmyeong,
-                onAction: (action) {
-                  Navigator.of(ctx).pop();
-                  _handleTowerAction(tower, action);
-                },
-              );
-            },
-          ),
-        ),
-      ),
-    );
+    final gameWidgetSize = gameWidgetBox.size;
+    final gameSize = _game.size;
+
+    // 게임 좌표를 화면 비율로 변환
+    final scaleX = gameWidgetSize.width / gameSize.x;
+    final scaleY = gameWidgetSize.height / gameSize.y;
+    final scale = scaleX < scaleY ? scaleX : scaleY;
+
+    // 게임이 화면 중앙에 위치할 때의 오프셋
+    final offsetX = (gameWidgetSize.width - gameSize.x * scale) / 2;
+    final offsetY = (gameWidgetSize.height - gameSize.y * scale) / 2;
+
+    // 타워 중심 화면 좌표
+    final centerX = tower.position.x * scale + offsetX;
+    final centerY = tower.position.y * scale + offsetY;
+    final towerHeight = tower.size.y * scale;
+
+    // GameWidget의 글로벌 위치 추가
+    final globalPos = gameWidgetBox.localToGlobal(Offset.zero);
+
+    setState(() {
+      _tappedTower = tower;
+      _tappedTowerScreenPos = Offset(
+        centerX + globalPos.dx,
+        centerY + globalPos.dy,
+      );
+      _tappedTowerHeight = towerHeight;
+    });
+  }
+
+  void _dismissTowerPopup() {
+    if (_tappedTower != null) {
+      _game.clearTowerHighlight();
+      setState(() {
+        _tappedTower = null;
+      });
+    }
   }
 
   /// 타워 액션 처리 (판매/업그레이드/분기)
@@ -367,6 +409,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         final upgradeCost = tower.data.upgrades[newLevel - 1].cost;
         if (stateNotifier.spendSinmyeong(upgradeCost)) {
           tower.upgrade();
+          SoundManager.instance.playSfx(SfxType.uiUpgrade);
         }
         break;
 
@@ -385,7 +428,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             : 300;
         if (stateNotifier.spendSinmyeong(branchCost)) {
           tower.selectBranch(branch);
-          tower.upgrade();
+          // selectBranch 내부에서 upgradeLevel = 4 설정 완료
         }
         break;
     }
@@ -526,6 +569,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Widget build(BuildContext context) {
     // 메인 메뉴
     if (_currentScreen == 'mainMenu') {
+      // 메뉴 BGM 재생
+      SoundManager.instance.init().then((_) {
+        SoundManager.instance.playBgm(BgmType.menu);
+      });
       return MainMenu(
         onStageSelect: () {
           setState(() {
@@ -535,6 +582,89 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         onHeroManage: () {
           setState(() {
             _currentScreen = 'heroManage';
+          });
+        },
+        onTowerManage: () {
+          setState(() {
+            _currentScreen = 'towerManage';
+          });
+        },
+        onSkinShop: () {
+          setState(() {
+            _currentScreen = 'skinShop';
+          });
+        },
+        onEndlessTower: () {
+          setState(() {
+            _currentScreen = 'endlessTower';
+          });
+        },
+        onSeasonPass: () {
+          setState(() {
+            _currentScreen = 'seasonPass';
+          });
+        },
+        onAchievement: () {
+          setState(() {
+            _currentScreen = 'achievement';
+          });
+        },
+      );
+    }
+
+    // 타워 관리
+    if (_currentScreen == 'towerManage') {
+      return TowerManageScreen(
+        onBack: () {
+          setState(() {
+            _currentScreen = 'mainMenu';
+          });
+        },
+      );
+    }
+
+    // 스킨 상점
+    if (_currentScreen == 'skinShop') {
+      return SkinShopScreen(
+        onBack: () {
+          setState(() {
+            _currentScreen = 'mainMenu';
+          });
+        },
+      );
+    }
+
+    // 무한의 탑
+    if (_currentScreen == 'endlessTower') {
+      return EndlessTowerScreen(
+        onBack: () {
+          setState(() {
+            _currentScreen = 'mainMenu';
+          });
+        },
+        onStartLevel: (level, mode) {
+          _startLevel(level);
+        },
+      );
+    }
+
+    // 시즌 패스
+    if (_currentScreen == 'seasonPass') {
+      return SeasonPassScreen(
+        onBack: () {
+          setState(() {
+            _currentScreen = 'mainMenu';
+          });
+        },
+      );
+    }
+
+    // 업적 & 랭킹
+    if (_currentScreen == 'achievement') {
+      return AchievementScreen(
+        onBack: () {
+          setState(() {
+            _currentScreen = 'mainMenu';
           });
         },
       );
@@ -632,6 +762,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             // ── HUD 오버레이 ──
             GameHud(
               onPause: () {
+                _dismissTowerPopup();
                 _game.togglePause();
                 setState(() {}); // UI 갱신
               },
@@ -640,6 +771,68 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 ref.read(gameStateProvider.notifier).setGameSpeed(_game.gameSpeed);
               },
             ),
+
+            // ── 타워 업그레이드 인라인 팝업 ──
+            if (_tappedTower != null)
+              Positioned.fill(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: _dismissTowerPopup,
+                  child: Stack(
+                    children: [
+                      Builder(
+                        builder: (context) {
+                          final screenSize = MediaQuery.of(context).size;
+                          const popupWidth = 240.0;
+                          const popupHeight = 200.0; // 예상 높이
+                          const gap = 8.0;
+
+                          // 좌우 위치: 타워 중심 기준
+                          final left = (_tappedTowerScreenPos.dx - popupWidth / 2)
+                              .clamp(8.0, screenSize.width - popupWidth - 8);
+
+                          // 상하 위치: 화면 하단 55% 이하면 위에 표시
+                          final bool showAbove = _tappedTowerScreenPos.dy > screenSize.height * 0.55;
+                          final top = showAbove
+                              ? (_tappedTowerScreenPos.dy - _tappedTowerHeight / 2 - popupHeight - gap)
+                                  .clamp(8.0, screenSize.height - popupHeight - 8)
+                              : (_tappedTowerScreenPos.dy + _tappedTowerHeight / 2 + gap)
+                                  .clamp(8.0, screenSize.height - popupHeight - 8);
+
+                          return Positioned(
+                            left: left,
+                            top: top,
+                            child: GestureDetector(
+                              onTap: () {}, // 팝업 내부 클릭 시 닫기 방지
+                              child: SizedBox(
+                                width: popupWidth,
+                                child: Consumer(
+                                  builder: (_, consumerRef, __) {
+                                    final state = consumerRef.watch(gameStateProvider);
+                                    final tower = _tappedTower!;
+                                    final displayLevel = tower.upgradeLevel + 1;
+                                    return TowerUpgradeDialog(
+                                      towerType: tower.data.type,
+                                      currentLevel: displayLevel,
+                                      sellRefund: tower.sellRefund,
+                                      currentSinmyeong: state.sinmyeong,
+                                      selectedBranch: tower.selectedBranch,
+                                      onAction: (action) {
+                                        _dismissTowerPopup();
+                                        _handleTowerAction(tower, action);
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
             // ── 웨이브 안내 & 쿨다운 ──
             Consumer(

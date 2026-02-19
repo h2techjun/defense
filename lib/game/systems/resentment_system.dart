@@ -2,7 +2,6 @@
 // 한(Wailing) 게이지 관리, 100% 시 타워 디버프
 
 import 'package:flame/components.dart';
-import '../../common/constants.dart';
 import '../defense_game.dart';
 
 /// 원한(한) 게이지 시스템
@@ -22,14 +21,12 @@ class ResentmentSystem extends Component with HasGameReference<DefenseGame> {
     if (_accumulator >= 2.0) {
       _accumulator = 0;
 
-      final enemyCount = game.world.children
-          .whereType<dynamic>()
-          .where((c) => c.runtimeType.toString() == 'BaseEnemy')
-          .length;
+      final enemyCount = game.cachedAliveEnemies.length;
 
       if (enemyCount > 0) {
         final wailingIncrease = enemyCount * 0.5;
-        game.ref.read(gameStateProvider.notifier).addWailing(wailingIncrease);
+        // 배치 큐에 누적 (addPostFrameCallback 과부하 방지)
+        game.addPendingWailing(wailingIncrease);
       }
     }
   }

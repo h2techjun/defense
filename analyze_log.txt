@@ -1,0 +1,246 @@
+﻿Analyzing 01_defense...                                         
+
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\enemy_data.dart:12:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\enemy_data.dart:20:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\enemy_data.dart:69:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\enemy_data.dart:93:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\hero_data.dart:16:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\hero_data.dart:28:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\hero_data.dart:69:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\hero_data.dart:79:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\hero_data.dart:116:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\hero_data.dart:132:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\tower_data.dart:15:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\tower_data.dart:26:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\tower_data.dart:78:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\tower_data.dart:105:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\tower_data.dart:179:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\tower_data.dart:194:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\wave_data.dart:12:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\wave_data.dart:20:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\wave_data.dart:45:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\wave_data.dart:53:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\wave_data.dart:84:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\data\models\wave_data.dart:96:11 - sort_constructors_first
+warning - The value of the local variable 'hpScale' isn't used - lib\data\wave_builder.dart:34:13 - unused_local_variable
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\actors\base_enemy.dart:104:3 - sort_constructors_first
+   info - Method invocation or property access on a 'dynamic' target - lib\game\components\actors\base_enemy.dart:167:7 - avoid_dynamic_calls
+  error - Undefined name 'gameStateProvider' - lib\game\components\actors\base_enemy.dart:167:21 - undefined_identifier
+warning - The declaration '_buildEnemyVisual' isn't referenced - lib\game\components\actors\base_enemy.dart:172:8 - unused_element
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\actors\base_enemy.dart:219:48 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\actors\base_enemy.dart:219:59 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\actors\base_enemy.dart:219:72 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\actors\base_enemy.dart:257:62 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\actors\base_enemy.dart:257:89 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\actors\base_enemy.dart:257:118 - deprecated_member_use
+warning - The declaration '_moveFlyingStraight' isn't referenced - lib\game\components\actors\base_enemy.dart:463:8 - unused_element
+   info - Method invocation or property access on a 'dynamic' target - lib\game\components\actors\base_enemy.dart:609:7 - avoid_dynamic_calls
+  error - Undefined name 'gameStateProvider' - lib\game\components\actors\base_enemy.dart:609:21 - undefined_identifier
+   info - Method invocation or property access on a 'dynamic' target - lib\game\components\actors\base_enemy.dart:645:7 - avoid_dynamic_calls
+  error - Undefined name 'gameStateProvider' - lib\game\components\actors\base_enemy.dart:645:21 - undefined_identifier
+warning - The value of the field '_dotDamageType' isn't used - lib\game\components\actors\base_enemy.dart:721:14 - unused_field
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/painting.dart' - lib\game\components\actors\base_hero.dart:4:8 - unnecessary_import
+warning - Unused import: '../../../common/constants.dart' - lib\game\components\actors\base_hero.dart:11:8 - unused_import
+warning - Unused import: '../towers/base_tower.dart' - lib\game\components\actors\base_hero.dart:15:8 - unused_import
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\actors\base_hero.dart:85:3 - sort_constructors_first
+   info - Use 'const' for final variables initialized to a constant value - lib\game\components\actors\base_hero.dart:612:5 - prefer_const_declarations
+   info - 'value' is deprecated and shouldn't be used. Use component accessors like .r or .g - lib\game\components\actors\base_hero.dart:671:39 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\effects\particle_effect.dart:19:3 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\effects\particle_effect.dart:48:3 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\effects\particle_effect.dart:53:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\effects\particle_effect.dart:79:11 - sort_constructors_first
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\effects\particle_effect.dart:108:39 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\effects\particle_effect.dart:108:50 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\effects\particle_effect.dart:108:63 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\effects\particle_effect.dart:122:41 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\effects\particle_effect.dart:122:52 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\effects\particle_effect.dart:122:65 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\effects\particle_effect.dart:129:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\effects\particle_effect.dart:183:11 - sort_constructors_first
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\effects\particle_effect.dart:208:40 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\effects\particle_effect.dart:208:51 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\effects\particle_effect.dart:208:64 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\effects\particle_effect.dart:215:11 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\effects\particle_effect.dart:239:11 - sort_constructors_first
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\effects\particle_effect.dart:267:40 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\effects\particle_effect.dart:267:51 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\effects\particle_effect.dart:267:64 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\effects\particle_effect.dart:277:40 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\effects\particle_effect.dart:277:51 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\effects\particle_effect.dart:277:64 - deprecated_member_use
+   info - 'alpha' is deprecated and shouldn't be used. Use .a - lib\game\components\effects\particle_effect.dart:322:52 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\effects\particle_effect.dart:326:58 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\effects\particle_effect.dart:326:71 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\effects\particle_effect.dart:326:86 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\effects\particle_effect.dart:333:23 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\effects\particle_effect.dart:333:36 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\effects\particle_effect.dart:333:51 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\effects\particle_effect.dart:368:55 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\effects\particle_effect.dart:368:68 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\effects\particle_effect.dart:368:83 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\items\spirit_component.dart:32:3 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\renderers\enemy_renderer.dart:20:3 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\renderers\tower_renderer.dart:15:3 - sort_constructors_first
+   info - Use 'const' with the constructor to improve performance - lib\game\components\renderers\tower_renderer.dart:228:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\game\components\renderers\tower_renderer.dart:316:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\game\components\renderers\tower_renderer.dart:341:25 - prefer_const_constructors
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\renderers\tower_renderer.dart:437:56 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\renderers\tower_renderer.dart:437:67 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\renderers\tower_renderer.dart:437:80 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\towers\barracks_soldier.dart:54:3 - sort_constructors_first
+warning - Unused import: 'package:flutter/scheduler.dart' - lib\game\components\towers\base_tower.dart:8:8 - unused_import
+warning - The value of the field '_random' isn't used - lib\game\components\towers\base_tower.dart:28:28 - unused_field
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\towers\base_tower.dart:115:3 - sort_constructors_first
+warning - The declaration '_buildTowerVisual' isn't referenced - lib\game\components\towers\base_tower.dart:173:8 - unused_element
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\towers\base_tower.dart:193:62 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\towers\base_tower.dart:193:89 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\towers\base_tower.dart:193:118 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\game\components\towers\base_tower.dart:241:35 - prefer_const_constructors
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\towers\base_tower.dart:249:48 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\towers\base_tower.dart:249:59 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\towers\base_tower.dart:249:72 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\towers\base_tower.dart:267:62 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\towers\base_tower.dart:267:89 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\towers\base_tower.dart:267:118 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\game\components\towers\base_tower.dart:284:35 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\game\components\towers\base_tower.dart:300:35 - prefer_const_constructors
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\towers\base_tower.dart:314:63 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\towers\base_tower.dart:314:74 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\towers\base_tower.dart:314:87 - deprecated_member_use
+   info - Use 'const' for final variables initialized to a constant value - lib\game\components\towers\base_tower.dart:320:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\game\components\towers\base_tower.dart:362:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\game\components\towers\base_tower.dart:363:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\game\components\towers\base_tower.dart:377:5 - prefer_const_declarations
+   info - Statements in an if should be enclosed in a block - lib\game\components\towers\base_tower.dart:572:10 - curly_braces_in_flow_control_structures
+   info - Use 'const' for final variables initialized to a constant value - lib\game\components\towers\base_tower.dart:712:5 - prefer_const_declarations
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\towers\base_tower.dart:886:44 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\towers\base_tower.dart:886:55 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\towers\base_tower.dart:886:68 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\towers\base_tower.dart:1140:3 - sort_constructors_first
+warning - The value of the field '_trailTimer' isn't used - lib\game\components\towers\projectile.dart:23:10 - unused_field
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\towers\projectile.dart:25:3 - sort_constructors_first
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\towers\projectile.dart:78:57 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\towers\projectile.dart:78:72 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\towers\projectile.dart:78:89 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\towers\projectile.dart:94:49 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\towers\projectile.dart:94:60 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\towers\projectile.dart:94:73 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\towers\projectile.dart:103:57 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\towers\projectile.dart:103:72 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\towers\projectile.dart:103:89 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use .r - lib\game\components\towers\projectile.dart:111:50 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use .g - lib\game\components\towers\projectile.dart:111:65 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use .b - lib\game\components\towers\projectile.dart:111:82 - deprecated_member_use
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/painting.dart' - lib\game\components\towers\rally_flag_component.dart:4:8 - unnecessary_import
+   info - Constructor declarations should be before non-constructor declarations - lib\game\components\towers\rally_flag_component.dart:36:3 - sort_constructors_first
+warning - Duplicate import - lib\game\defense_game.dart:22:8 - duplicate_import
+   info - Angle brackets will be interpreted as HTML - lib\game\defense_game.dart:83:23 - unintended_html_in_doc_comment
+warning - Unused import: 'package:flutter/scheduler.dart' - lib\game\systems\wave_manager.dart:5:8 - unused_import
+   info - Constructor declarations should be before non-constructor declarations - lib\game\systems\wave_manager.dart:33:3 - sort_constructors_first
+warning - Don't invoke 'print' in production code - lib\game\systems\wave_manager.dart:63:5 - avoid_print
+warning - Don't invoke 'print' in production code - lib\game\systems\wave_manager.dart:66:7 - avoid_print
+warning - Don't invoke 'print' in production code - lib\game\systems\wave_manager.dart:117:7 - avoid_print
+warning - Don't invoke 'print' in production code - lib\game\systems\wave_manager.dart:118:7 - avoid_print
+warning - Don't invoke 'print' in production code - lib\game\systems\wave_manager.dart:168:9 - avoid_print
+warning - Don't invoke 'print' in production code - lib\game\systems\wave_manager.dart:175:7 - avoid_print
+warning - Don't invoke 'print' in production code - lib\game\systems\wave_manager.dart:208:5 - avoid_print
+warning - Don't invoke 'print' in production code - lib\game\systems\wave_manager.dart:213:9 - avoid_print
+warning - Don't invoke 'print' in production code - lib\game\systems\wave_manager.dart:219:9 - avoid_print
+   info - Constructor declarations should be before non-constructor declarations - lib\game\systems\wave_manager.dart:244:3 - sort_constructors_first
+   info - Use 'const' for final variables initialized to a constant value - lib\game\world\game_map.dart:69:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\game\world\game_map.dart:70:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\game\world\game_map.dart:71:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\game\world\game_map.dart:175:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\game\world\game_map.dart:176:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\game\world\game_map.dart:177:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\game\world\game_map.dart:321:5 - prefer_const_declarations
+   info - Unnecessary braces in a string interpolation - lib\game\world\game_map.dart:343:31 - unnecessary_brace_in_string_interps
+   info - Use 'const' with the constructor to improve performance - lib\game\world\game_map.dart:464:27 - prefer_const_constructors
+   info - Constructor declarations should be before non-constructor declarations - lib\game\world\game_map.dart:487:3 - sort_constructors_first
+warning - Unused import: 'package:flutter/material.dart' - lib\l10n\app_strings.dart:4:8 - unused_import
+   info - Constructor declarations should be before non-constructor declarations - lib\l10n\app_strings.dart:32:9 - sort_constructors_first
+warning - Unused import: 'state/hero_party_provider.dart' - lib\main.dart:28:8 - unused_import
+   info - Unnecessary use of string interpolation - lib\main.dart:137:30 - unnecessary_string_interpolations
+   info - Unnecessary use of string interpolation - lib\main.dart:138:30 - unnecessary_string_interpolations
+   info - Use 'const' with the constructor to improve performance - lib\main.dart:161:13 - prefer_const_constructors
+warning - Don't invoke 'print' in production code - lib\main.dart:278:7 - avoid_print
+warning - Don't invoke 'print' in production code - lib\main.dart:289:11 - avoid_print
+   info - Constructor declarations should be before non-constructor declarations - lib\services\save_manager.dart:13:3 - sort_constructors_first
+warning - Don't invoke 'print' in production code - lib\services\save_manager.dart:81:7 - avoid_print
+warning - Don't invoke 'print' in production code - lib\services\save_manager.dart:113:7 - avoid_print
+   info - Constructor declarations should be before non-constructor declarations - lib\state\game_state.dart:28:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\state\hero_party_provider.dart:12:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\state\hero_party_provider.dart:27:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\state\user_state.dart:18:9 - sort_constructors_first
+warning - Don't invoke 'print' in production code - lib\state\user_state.dart:65:7 - avoid_print
+warning - Don't invoke 'print' in production code - lib\state\user_state.dart:68:7 - avoid_print
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\game_result_dialog.dart:15:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\game_result_dialog.dart:133:9 - sort_constructors_first
+   info - Use 'const' with the constructor to improve performance - lib\ui\dialogs\game_result_dialog.dart:210:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\ui\dialogs\game_result_dialog.dart:211:34 - prefer_const_constructors
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\game_result_dialog.dart:259:9 - sort_constructors_first
+   info - Use 'const' with the constructor to improve performance - lib\ui\dialogs\game_result_dialog.dart:318:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\ui\dialogs\game_result_dialog.dart:320:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\ui\dialogs\game_result_dialog.dart:336:26 - prefer_const_constructors
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\game_result_dialog.dart:361:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\game_result_dialog.dart:384:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\hero_unlock_dialog.dart:209:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\tower_upgrade_dialog.dart:15:3 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\tower_upgrade_dialog.dart:27:3 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\tower_upgrade_dialog.dart:39:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\tower_upgrade_dialog.dart:289:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\tower_upgrade_dialog.dart:326:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\dialogs\tower_upgrade_dialog.dart:404:9 - sort_constructors_first
+   info - Unnecessary braces in a string interpolation - lib\ui\dialogs\tower_upgrade_dialog.dart:442:42 - unnecessary_brace_in_string_interps
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\game_hud.dart:17:9 - sort_constructors_first
+   info - Use 'const' with the constructor to improve performance - lib\ui\hud\game_hud.dart:113:19 - prefer_const_constructors
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\game_hud.dart:252:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\game_hud.dart:301:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\game_hud.dart:388:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\game_hud.dart:465:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\game_hud.dart:506:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\game_tooltip.dart:15:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\game_tooltip.dart:31:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\game_tooltip.dart:39:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\hero_skill_panel.dart:19:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\hero_skill_panel.dart:37:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\hero_skill_panel.dart:51:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\tower_select_panel.dart:17:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\tower_select_panel.dart:123:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\ui\hud\tower_select_panel.dart:245:37 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\ui\hud\tower_select_panel.dart:278:35 - prefer_const_constructors
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\wave_announce_banner.dart:14:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\hud\wave_announce_banner.dart:190:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\menus\hero_deploy_screen.dart:29:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\menus\hero_deploy_screen.dart:344:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\menus\hero_deploy_screen.dart:492:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\menus\hero_manage_screen.dart:15:9 - sort_constructors_first
+   info - Use 'const' with the constructor to improve performance - lib\ui\menus\hero_manage_screen.dart:538:18 - prefer_const_constructors
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\menus\main_menu.dart:12:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\menus\main_menu.dart:197:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\menus\main_menu.dart:313:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\menus\stage_select_screen.dart:20:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\menus\stage_select_screen.dart:58:9 - sort_constructors_first
+   info - Use 'const' with the constructor to improve performance - lib\ui\menus\stage_select_screen.dart:214:33 - prefer_const_constructors
+   info - Constructor declarations should be before non-constructor declarations - lib\ui\menus\stage_select_screen.dart:302:9 - sort_constructors_first
+
+C:\flutter\bin\flutter
+.bat : 223 issues foun
+d. (ran in 2.1s)
+위치 줄:1 문자:1
++ C:\flutter\bin\flutt
+er.bat analyze 2>&1 | 
+Out-File -FilePath "E:
+\01_d ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (223 issues   
+  found. (ran in 2    
+.1s):String) [],     R
+emoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 

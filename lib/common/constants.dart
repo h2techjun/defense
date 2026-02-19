@@ -31,10 +31,13 @@ class GameConstants {
   /// 원혼(Spirit) 생성 확률 (0~1)
   static const double spiritSpawnChance = 0.6;
 
-  /// 원혼 수집 가능 시간 (초)
-  static const double spiritCollectTimeout = 5.0;
+  /// 원혼 부유 시간 (초) — 스폰 후 떠오르는 시간
+  static const double spiritFloatDuration = 0.5;
 
-  /// 원혼 수집 시 신명 획득량
+  /// 원혼 자동 수거 이동 시간 (초)
+  static const double spiritMoveToCollectDuration = 0.6;
+
+  /// 원혼 수거 시 신명 획득량
   static const int spiritSinmyeongReward = 15;
 
   /// 광폭화 공격력 배율
@@ -67,6 +70,8 @@ class GameConstants {
   static const int archerTowerCost = 70;
   static const int barracksTowerCost = 90;
   static const int shamanTowerCost = 100;
+  static const int artilleryTowerCost = 125;
+  static const int sotdaeTowerCost = 80;
 
   // ── 타워 업그레이드 비용 배율 ──
   static const double upgradeCostMultiplier = 1.5;
@@ -93,15 +98,55 @@ class GameConstants {
 
   // ── 웨이브 ──
   /// 웨이브 간 대기 시간 (초)
-  static const double waveCooldown = 10.0;
+  static const double waveCooldown = 5.0;
 
   /// 적 스폰 간격 (초)
   static const double defaultSpawnInterval = 1.2;
+
+  // ── 솟대 (Sotdae) — 수호결계 타워 ──
+  /// 솟대 수호결계 범위
+  static const double sotdaeWardRange = 150.0;
+
+  /// 솟대 수호결계 갱신 간격 (초)
+  static const double sotdaeWardInterval = 1.0;
+
+  /// 솟대 디버프 내성 (레벨별: 50%, 70%, 90%)
+  static const List<double> sotdaeDebuffResist = [0.5, 0.7, 0.9];
+
+  /// 솟대 한(恨) 증가량 감소율
+  static const double sotdaeWailingReduction = 0.3;
+
+  /// 솟대 아군 버프 범위
+  static const double sotdaeBuffRange = 120.0;
+
+  /// 솟대 아군 공격속도 버프 배율
+  static const double sotdaeAttackSpeedBuff = 1.15;
+
+  // ── 화포 (Artillery) ──
+  /// 화포 스플래시 범위
+  static const double artillerySplashRadius = 80.0;
+
+  /// 화포 스플래시 데미지 비율 (중심 대비)
+  static const double artillerySplashDamageRatio = 0.5;
+
+  // ── 타워 판매 ──
+  /// 타워 판매 시 환불 비율
+  static const double towerSellRefundRatio = 0.75;
 }
 
 /// 데미지 계산 유틸리티
 class DamageCalculator {
   DamageCalculator._();
+
+  /// 해당 타워 타입이 비행 적을 공격할 수 있는지 판정
+  static bool canTarget({
+    required TowerType towerType,
+    required bool isFlying,
+  }) {
+    // 병영(근접)은 비행 유닛 공격 불가
+    if (isFlying && towerType == TowerType.barracks) return false;
+    return true;
+  }
 
   /// 속성 상성에 따른 최종 데미지 계산
   static double calculate({
@@ -109,7 +154,12 @@ class DamageCalculator {
     required DamageType damageType,
     required ArmorType armorType,
     bool isNight = false,
+    bool isFlying = false,
+    bool hasPiercing = false,
   }) {
+    // 관통: 상성 무시, 순수 데미지
+    if (hasPiercing) return baseDamage;
+
     double multiplier = 1.0;
 
     switch (damageType) {
@@ -122,6 +172,8 @@ class DamageCalculator {
         if (armorType == ArmorType.physical) {
           multiplier = GameConstants.magicalVsPhysicalMultiplier;
         }
+        // 마법 데미지는 비행 유닛에게 +20% 보너스
+        if (isFlying) multiplier *= 1.2;
         break;
       case DamageType.purification:
         if (armorType == ArmorType.spiritual) {
@@ -133,6 +185,11 @@ class DamageCalculator {
     // 요괴형은 기본 데미지 감소
     if (armorType == ArmorType.yokai) {
       multiplier *= GameConstants.yokaiDamageReduction;
+    }
+
+    // 밤 시간 적 방어 보너스 (물리 -10%)
+    if (isNight && damageType == DamageType.physical) {
+      multiplier *= 0.9;
     }
 
     return baseDamage * multiplier;

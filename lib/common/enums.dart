@@ -62,6 +62,12 @@ enum TowerType {
 
   /// 마법 타워 (서당 → 부적집 → 만신전/저승사자 출장소)
   shaman,
+
+  /// 화포 타워 (돌팔매 → 투석기 → 화차/비격진천뢰)
+  artillery,
+
+  /// 솟대 타워 (원혼 자동정화 + 아군 버프)
+  sotdae,
 }
 
 /// 타워 업그레이드 Tier 4 분기
@@ -86,6 +92,20 @@ enum TowerBranch {
 
   /// 저승사자 출장소: 즉사기
   grimReaperOffice,
+
+  // 화포 분기
+  /// 화차: 화염 범위 공격 (DoT)
+  fireDragon,
+
+  /// 비격진천뢰: 단일 초고데미지 폭발
+  heavenlyThunder,
+
+  // 솟대 분기
+  /// 수호신단: 디버프 면역 + 한 억제 50%
+  phoenixTotem,
+
+  /// 지신제단: 적 공격력 감소 + 감속 오라
+  earthSpiritAltar,
 }
 
 /// 영웅 ID
@@ -149,6 +169,12 @@ enum Chapter {
 
   /// 챕터 3: 얼굴 없는 숲
   facelessForest,
+
+  /// 챕터 4: 왕궁의 그림자
+  shadowPalace,
+
+  /// 챕터 5: 저승의 문턱
+  thresholdOfDeath,
 }
 
 /// 적 종류 ID
@@ -176,6 +202,22 @@ enum EnemyId {
   maliciousBird,
   faceStealerGhost,
   bossGreatEggGhost,
+
+  // 챕터 4
+  courtAssassin,
+  corruptOfficial,
+  royalGuardGhost,
+  curseScribe,
+  puppetDancer,
+  bossTyrantKing,
+
+  // 챕터 5
+  underworldMessenger,
+  wailingBanshee,
+  boneGolem,
+  soulChainGhost,
+  infernoSpirit,
+  bossGatekeeper,
 }
 
 /// 스킬 타겟 타입
@@ -191,4 +233,37 @@ enum SkillTargetType {
 
   /// 전체
   global,
+}
+
+/// 인터랙티브 맵 오브젝트 타입 (GDD 7.2)
+enum MapObjectType {
+  /// 성황당: 범위 내 적 이속 -30% (50 신명)
+  shrine,
+
+  /// 오래된 우물: 정화 시 물귀신 미등장 (30 신명)
+  oldWell,
+
+  /// 횃불: 안개 해제, 은신 감지 (20 신명)
+  torch,
+
+  /// 솟대 (맵 고정): 범위 내 원혼 자동 정화 (40 신명)
+  mapSotdae,
+
+  /// 봉분: 정화 시 아군 유령 소환 20초 (60 신명)
+  tomb,
+
+  /// 당산나무: 밤→낮 강제 전환 1회용 (무료)
+  sacredTree,
+}
+
+/// 게임 모드
+enum GameMode {
+  /// 캠페인 (스토리 모드)
+  campaign,
+
+  /// 무한의 탑 (엔드게임 모드)
+  endlessTower,
+
+  /// 일일 도전
+  dailyChallenge,
 }

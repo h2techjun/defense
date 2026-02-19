@@ -1,0 +1,236 @@
+[
+  {
+    "id": "kkaebi",
+    "name": "깨비",
+    "title": "씨름왕 도깨비",
+    "backstory": "낡은 빗자루에 깃든 도깨비 영혼. 씨름으로 악귀를 제압한다.",
+    "baseHp": 500,
+    "baseAttack": 60,
+    "baseSpeed": 60,
+    "baseRange": 40,
+    "damageType": "physical",
+    "skill": {
+      "name": "뒤집기 (Suplex)",
+      "description": "적을 들어 뒤로 넘겨버립니다 (넉백).",
+      "cooldown": 12,
+      "damage": 80,
+      "range": 50,
+      "targetType": "single",
+      "damageType": "physical"
+    },
+    "evolutions": [
+      {
+        "tier": "base",
+        "visualName": "장난꾸러기 깨비",
+        "description": "낡은 짚신을 신고 몽당 빗자루를 든 모습."
+      },
+      {
+        "tier": "intermediate",
+        "visualName": "씨름꾼 깨비",
+        "description": "덩치가 커지고 근육질, 샅바를 맴.",
+        "hpMultiplier": 1.5,
+        "attackMultiplier": 1.3
+      },
+      {
+        "tier": "ultimate",
+        "visualName": "대왕 도깨비",
+        "description": "호랑이 가죽을 두르고 도깨비 감투를 쓴 모습. 은신 기습.",
+        "hpMultiplier": 2.5,
+        "attackMultiplier": 2.0,
+        "rangeMultiplier": 1.3
+      }
+    ],
+    "barks": {
+      "deploy": "씨름판 열었다! 붙어볼 테면 붙어봐!",
+      "skill": "어라? 이거 무겁나? 안 무거운데!",
+      "idle": "심심하다... 누가 씨름 한판 안 할래?",
+      "boss": "어이 형씨, 뿔 관리가 엉망이네?"
+    }
+  },
+  {
+    "id": "miho",
+    "name": "미호",
+    "title": "천년의 유혹 구미호",
+    "backstory": "인간이 되고 싶어 하는 구미호. 여우불로 악귀를 태운다.",
+    "baseHp": 250,
+    "baseAttack": 120,
+    "baseSpeed": 70,
+    "baseRange": 150,
+    "damageType": "magical",
+    "skill": {
+      "name": "여우구슬 (FoxFire)",
+      "description": "에너지를 모아 발사. 적의 정기를 흡수해 마나 회복.",
+      "cooldown": 15,
+      "damage": 120,
+      "range": 180,
+      "duration": 3,
+      "targetType": "area",
+      "damageType": "magical"
+    },
+    "evolutions": [
+      {
+        "tier": "base",
+        "visualName": "여우 소녀",
+        "description": "꼬리가 1개인 귀여운 여우 소녀."
+      },
+      {
+        "tier": "intermediate",
+        "visualName": "요염한 여인",
+        "description": "꼬리가 5개, 푸른 여우불을 던진다.",
+        "attackMultiplier": 1.6,
+        "rangeMultiplier": 1.2
+      },
+      {
+        "tier": "ultimate",
+        "visualName": "구미호",
+        "description": "9개의 꼬리. 적 체력 % 단위 감소.",
+        "attackMultiplier": 2.5,
+        "rangeMultiplier": 1.5
+      }
+    ],
+    "barks": {
+      "deploy": "내 불꽃은 따뜻해. 적들에겐 좀 뜨겁겠지만!",
+      "skill": "여우비가 내린다~♪",
+      "idle": "인간이 되면 제일 먼저 떡볶이를 먹을 거야."
+    }
+  },
+  {
+    "id": "gangrim",
+    "name": "강림",
+    "title": "저승차사",
+    "backstory": "검은 갓과 도포를 입은 관료적인 죽음의 인도자.",
+    "baseHp": 200,
+    "baseAttack": 150,
+    "baseSpeed": 50,
+    "baseRange": 250,
+    "damageType": "purification",
+    "skill": {
+      "name": "호명 (Calling Name)",
+      "description": "적의 이름을 불러 체력 30% 이하 적 즉사.",
+      "cooldown": 20,
+      "damage": 9999,
+      "range": 300,
+      "targetType": "single",
+      "damageType": "purification"
+    },
+    "evolutions": [
+      {
+        "tier": "base",
+        "visualName": "신입 차사",
+        "description": "허름한 두루마기. 명부가 찢어져 있음."
+      },
+      {
+        "tier": "intermediate",
+        "visualName": "정식 차사",
+        "description": "검은 갓과 두루마기. 사거리 대폭 증가.",
+        "attackMultiplier": 1.4,
+        "rangeMultiplier": 1.5
+      },
+      {
+        "tier": "ultimate",
+        "visualName": "염라대왕의 대리인",
+        "description": "검은 오라. 적 영혼을 자원으로 환원.",
+        "attackMultiplier": 2.2,
+        "rangeMultiplier": 1.8
+      }
+    ],
+    "barks": {
+      "deploy": "명부에 이름이 적혀 있으니... 피할 수 없다.",
+      "skill": "이름 석 자, 다시 한번 부르겠다.",
+      "boss": "호적에서 이름 좀 지우겠다."
+    }
+  },
+  {
+    "id": "sua",
+    "name": "수아",
+    "title": "물귀신",
+    "backstory": "물속으로 사람을 끌어당기는 비극적 영혼.",
+    "baseHp": 300,
+    "baseAttack": 35,
+    "baseSpeed": 65,
+    "baseRange": 120,
+    "damageType": "magical",
+    "skill": {
+      "name": "발목 잡기 (Water Grasp)",
+      "description": "바닥에서 젖은 손들이 올라와 적 이동속도 90% 감소.",
+      "cooldown": 18,
+      "damage": 20,
+      "range": 150,
+      "duration": 4,
+      "targetType": "area",
+      "damageType": "magical"
+    },
+    "evolutions": [
+      {
+        "tier": "base",
+        "visualName": "물에 젖은 처녀",
+        "description": "소복을 입은 처녀. 머리카락으로 적을 건드림."
+      },
+      {
+        "tier": "intermediate",
+        "visualName": "늪의 주인",
+        "description": "주변을 늪지대로 만들어 광역 슬로우.",
+        "rangeMultiplier": 1.5
+      },
+      {
+        "tier": "ultimate",
+        "visualName": "심해의 원한",
+        "description": "거대한 물기둥으로 적을 시작 지점으로 송환.",
+        "attackMultiplier": 1.5,
+        "rangeMultiplier": 2.0
+      }
+    ],
+    "barks": {
+      "deploy": "...같이 물속에 들어가지 않을래?",
+      "skill": "발이 차갑지? 후훗...",
+      "idle": "혼자는 외로워... 친구 좀 만들어야지."
+    }
+  },
+  {
+    "id": "bari",
+    "name": "바리",
+    "title": "무당 바리데기",
+    "backstory": "버려진 공주. 씻김굿으로 죽은 자를 위로한다.",
+    "baseHp": 280,
+    "baseAttack": 15,
+    "baseSpeed": 55,
+    "baseRange": 130,
+    "damageType": "purification",
+    "skill": {
+      "name": "작두 타기 (Ritual)",
+      "description": "춤을 추며 주변 아군 공격속도 2배.",
+      "cooldown": 25,
+      "damage": 0,
+      "range": 200,
+      "duration": 5,
+      "targetType": "area",
+      "damageType": "purification"
+    },
+    "evolutions": [
+      {
+        "tier": "base",
+        "visualName": "꼬마 무녀",
+        "description": "방울과 부채를 든 꼬마."
+      },
+      {
+        "tier": "intermediate",
+        "visualName": "만신",
+        "description": "오방색 옷. 타워 체력 회복.",
+        "hpMultiplier": 1.4,
+        "rangeMultiplier": 1.3
+      },
+      {
+        "tier": "ultimate",
+        "visualName": "강신",
+        "description": "신이 내려 아군 전체 무적 3초.",
+        "hpMultiplier": 2.0,
+        "rangeMultiplier": 1.8
+      }
+    ],
+    "barks": {
+      "deploy": "씻김굿을 시작하겠습니다.",
+      "skill": "에이~ 얼쑤~ 좋다!",
+      "idle": "꽃이 피면 모든 한이 풀리겠지요."
+    }
+  }
+]
