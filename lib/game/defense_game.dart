@@ -101,6 +101,9 @@ class DefenseGame extends FlameGame
   /// 타워 캐시 (whereType<BaseTower> 매 프레임 순회 방지)
   List<BaseTower> cachedTowers = const [];
 
+  // 유물 신명 보너스 캐시 (0.2초 주기 갱신 — 매 kill마다 계산 방지)
+  double _cachedRelicSinmyeongBonus = 0;
+
   /// ── 활성 영웅 리스트 ──
   List<BaseHero> activeHeroes = [];
 
@@ -498,15 +501,8 @@ class DefenseGame extends FlameGame
         ? 1.0 + (waveIndex / totalWaves) * 0.5
         : 1.0;
 
-    // 엽전검 유물: 신명 +30% 보너스 (장착한 영웅 중 살아있는 영웅 기준)
-    double relicSinmyeongBonus = 0;
-    for (final hero in activeHeroes) {
-      if (!hero.isDead) {
-        final bonus = ref.read(relicProvider.notifier)
-            .getEffectBonus(hero.data.id, RelicEffectType.sinmyeongBonus);
-        if (bonus > relicSinmyeongBonus) relicSinmyeongBonus = bonus;
-      }
-    }
+    // 엽전검 유물: 신명 +30% 보너스 (캐시된 값 사용 — 0.2초 주기 갱신)
+    final relicSinmyeongBonus = _cachedRelicSinmyeongBonus;
 
     _pendingSinmyeong += (sinmyeongReward * waveBonus * (1 + relicSinmyeongBonus)).round();
     _pendingKills++;
@@ -716,6 +712,17 @@ class DefenseGame extends FlameGame
       cachedEnemies = world.children.whereType<BaseEnemy>().toList();
       cachedAliveEnemies = cachedEnemies.where((e) => !e.isDead && e.isMounted).toList();
       cachedTowers = world.children.whereType<BaseTower>().toList();
+
+      // 유물 신명 보너스 캐시 갱신 (ref.read 호출 최소화)
+      double relicBonus = 0;
+      for (final hero in activeHeroes) {
+        if (!hero.isDead) {
+          final bonus = ref.read(relicProvider.notifier)
+              .getEffectBonus(hero.data.id, RelicEffectType.sinmyeongBonus);
+          if (bonus > relicBonus) relicBonus = bonus;
+        }
+      }
+      _cachedRelicSinmyeongBonus = relicBonus;
     }
 
     // ── 한 감소 누적 (0.5초 주기) ──
