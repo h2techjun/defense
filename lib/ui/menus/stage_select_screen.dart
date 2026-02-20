@@ -263,7 +263,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                       maxCrossAxisExtent: 120,
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
-                      childAspectRatio: 1.05,
+                      childAspectRatio: 0.88,
                     ),
                     itemCount: levels.length,
                     itemBuilder: (context, index) {
@@ -430,27 +430,29 @@ class _StageCard extends StatelessWidget {
             const SizedBox(height: 2),
 
             // 스테이지 이름
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text(
-                level.name,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: Responsive.fontSize(context, 12),
-                  color: Color(0xFFAA99BB),
-                  height: 1.2,
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  level.name,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 11),
+                    color: Color(0xFFAA99BB),
+                    height: 1.1,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
 
             // 웨이브 수
             Text(
               '🌊 ${level.waves.length}',
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 color: Color(0xFF8877AA),
               ),
             ),
