@@ -1,9 +1,9 @@
-# DOCTRINE: 20가지 핵심 철칙
+# DOCTRINE: 21가지 핵심 철칙
 
-> **자비스급 자율 AI 에이전트의 헌법 v3.0**
+> **자비스급 자율 AI 에이전트의 헌법 v4.0**
 >
-> 30계명에서 실전 검증을 거쳐 20계명으로 정제되었습니다.
-> 추상적 원칙이 아닌, 위반 시 즉시 실행할 **행동(Action)**을 포함합니다.
+> 멀티 스택(TypeScript, Dart, Python) 환경에서 동작하는 범용 규칙입니다.
+> 언어별 구체 규칙은 각 프로젝트의 `.agent/rules/CODING_STANDARDS.md`에 정의합니다.
 
 ---
 
@@ -59,7 +59,7 @@
 
 ---
 
-## B. 코딩 표준 (Coding) — 5개
+## B. 코딩 표준 (Coding) — 6개
 
 ### Rule 6: Anti-Lazy 정책 ✍️
 
@@ -71,110 +71,118 @@
 
 > **Action**: `// ...` 또는 `// rest` 패턴 감지 시 자동으로 전체 코드 작성.
 
-### Rule 7: Strict Typing 🔒
+### Rule 7: 엄격한 타입 시스템 🔒
 
-**"`any` 타입 금지. 모든 입출력 타입을 명시"**
+**"암시적 동적 타입 금지. 모든 입출력 타입을 명시"**
 
-- TypeScript에서 `any` 사용 금지
-- 모든 함수 시그니처에 타입 명시
-- 제네릭 적극 활용
+| 언어 | 금지 | 대안 |
+|------|------|------|
+| TypeScript | `any` | 구체 타입 또는 제네릭 |
+| Dart | `dynamic` (무분별 사용) | 명시적 타입 또는 제네릭 |
+| Python | 타입 힌트 미작성 | `typing` 모듈 활용 |
 
-> **Action**: `: any` 발견 시 구체적 타입 또는 제네릭으로 즉시 교체.
+> **Action**: 동적 타입 발견 시 구체적 타입으로 즉시 교체 제안.
 
 ### Rule 8: Early Return & Guard Clause 🛡️
 
 **"중첩 `if`를 제거하고 Guard Clause를 사용"**
 
-```typescript
-// ❌ Bad
-if (data) {
-  if (data.isValid) {
-    // 깊은 중첩...
-  }
-}
-
-// ✅ Good
-if (!data) return;
-if (!data.isValid) return;
-// 주요 로직
+```
+// 공통 원칙: 3단계 이상 중첩 금지
+// TS: if (!data) return;
+// Dart: if (data == null) return;
+// Python: if not data: return
 ```
 
 > **Action**: 3단계 이상 중첩 발견 시 리팩토링 제안.
 
 ### Rule 9: 명확한 네이밍 📛
 
-**"`data` 대신 `userProfileList`처럼 구체적인 이름 사용"**
+**"모호한 이름 금지. 변수명만으로 의도를 전달"**
 
-- 변수명으로 타입과 목적을 알 수 있어야 함
-- 불린값은 `is`, `has`, `should` 접두사 사용
+| 언어 | ❌ Bad | ✅ Good |
+|------|--------|---------|
+| 공통 | `data`, `temp`, `result` | `userProfileList`, `spawnTimer`, `translatedText` |
+| 공통 (불린) | `flag`, `check` | `isActive`, `hasPermission`, `shouldRespawn` |
 
 > **Action**: 모호한 변수명 발견 시 구체적 대안 제시.
 
 ### Rule 10: 모듈화 (SRP) 📦
 
-**"200줄 초과 시 분리를 제안"**
+**"파일당 하나의 책임. 과도한 크기는 분리"**
 
-- 파일당 하나의 책임
-- 200줄 넘으면 리팩토링 고려
-- 응집도 높고 결합도 낮게
+| 언어 | 기준 |
+|------|------|
+| TypeScript | 200줄 초과 시 분리 제안 |
+| Dart | 300줄 초과 시 분리 제안 (Flame 컴포넌트 특성 고려) |
+| Python | 200줄 초과 시 분리 제안 |
 
-> **Action**: 200줄 초과 파일 감지 시 분리 방안과 함께 경고.
+> **Action**: 기준 초과 파일 감지 시 분리 방안과 함께 경고.
+
+### Rule 11: 프레임워크 베스트 프랙티스 🏗️
+
+**"현재 프로젝트의 기술 스택 규칙을 따른다"**
+
+- 프로젝트 `.agent/rules/TECH_STACK.md`의 규칙을 최우선
+- 프로젝트 `.agent/rules/CODING_STANDARDS.md`의 컨벤션 준수
+- **감지 순서**: `pubspec.yaml` → Flutter/Dart, `package.json` → Node/TS, `pyproject.toml` → Python
+
+> **Action**: 프로젝트 기술 스택과 다른 라이브러리/패턴 사용 시 경고.
 
 ---
 
 ## C. 아키텍처 (Architecture) — 4개
 
-### Rule 11: 프레임워크 규칙 🏗️
+### Rule 12: 프로젝트 상태 관리 준수 📊
 
-**"Next.js App Router + 서버 컴포넌트 기본"**
+**"프로젝트에서 정의한 상태 관리 전략을 따른다"**
 
-- App Router 우선 사용
-- 서버 컴포넌트를 기본으로
-- "use client"는 최소한으로
+| 프로젝트 유형 | 기본 전략 |
+|--------------|-----------|
+| Next.js 웹앱 | Zustand + TanStack Query + Context |
+| Flutter 앱/게임 | Riverpod + StateNotifier + copyWith |
+| Python 백엔드 | Pydantic 모델 |
 
-> **Action**: Pages Router 사용 시도 감지 시 App Router로 전환 제안.
+> **Action**: 프로젝트 표준과 다른 상태 관리 시도 시 대체 제안.
 
-### Rule 12: 상태 관리 전략 📊
+### Rule 13: 보안 필수 🔐
 
-**"전역-Zustand, 서버-TanStack Query, 정적-Context API"**
+**"입력 검증, 시크릿 격리, 접근 제어는 필수"**
 
-- 전역 상태: Zustand
-- 서버 데이터: TanStack Query (React Query)
-- 정적 컨텍스트: Context API
+- 사용자 입력: Zod(TS) / Pydantic(Python) / assert(Dart) 검증
+- 비밀정보: 환경 변수로 격리, 하드코딩 커밋 금지
+- DB 접근: RLS(Supabase) 또는 권한 체크 필수
 
-> **Action**: Redux/MobX 사용 시도 시 Zustand로 대체 제안.
-
-### Rule 13: DB 보안 필수 🔐
-
-**"Supabase 사용 시 RLS 정책 준수 필수"**
-
-- Row Level Security 항상 활성화
-- 서버 측에서 추가 검증
-- 하드코딩된 비밀정보 커밋 금지
-
-> **Action**: RLS 미설정 테이블 발견 시 즉시 정책 추가 제안. 시크릿 감지 시 즉시 차단.
+> **Action**: 시크릿 감지 시 즉시 차단. RLS 미설정 테이블 발견 시 즉시 정책 추가 제안.
 
 ### Rule 14: 에러 핸들링 필수 ⚠️
 
-**"모든 비동기는 try-catch 및 사용자 UI 피드백(Toast) 필수"**
+**"모든 비동기/예외 지점에 에러 처리 및 사용자 피드백 필수"**
 
-```typescript
-try {
-  await apiCall();
-  toast.success("성공!");
-} catch (error) {
-  console.error(error);
-  toast.error("실패했습니다");
-}
+```
+// 공통 원칙:
+// 1. 비동기 호출은 반드시 에러 처리 래핑
+// 2. 사용자 향 피드백 (toast, snackbar, 로그)
+// 3. 에러 로깅 (프로덕션용)
 ```
 
-> **Action**: try-catch 없는 `await` 발견 시 자동으로 에러 핸들링 래핑.
+> **Action**: try-catch 없는 비동기 호출 발견 시 자동으로 에러 핸들링 래핑.
+
+### Rule 15: 연쇄 해결 (Proactive Linked Resolution) 🔗
+
+**"하나의 변경이 다른 레이어에 미치는 영향을 동시에 점검"**
+
+- 분석 범위: [DB → API → State → UI] 전체 계층 동시 점검
+- 방어적 설계: Fallback 로직 구축
+- 규칙 자산화: 패턴이 범용적이면 즉시 규칙 반영
+
+> **Action**: 모델/스키마 변경 시 관련 레이어 (API, 상태, UI) 동시 점검 보고.
 
 ---
 
 ## D. 품질 (Quality) — 3개
 
-### Rule 15: 자가 수정 (Self-Correction) 🔧
+### Rule 16: 자가 수정 (Self-Correction) 🔧
 
 **"에러 발생 시 스스로 로그 분석 후 최대 3회 자동 수정 시도"**
 
@@ -184,34 +192,35 @@ try {
 
 > **Action**: 에러 → 분석 → 수정 → 재검증. 3회 실패 시 원인 분석서와 함께 보고.
 
-### Rule 16: 절대 경로 사용 📂
+### Rule 17: 일관된 임포트 규칙 📂
 
-**"상대 경로(`../../`) 대신 절대 경로(`@/`) 사용"**
+**"프로젝트 표준에 따른 임포트 스타일 사용"**
 
-```typescript
-// ❌ Bad
-import { utils } from '../../../lib/utils';
+| 언어 | 규칙 |
+|------|------|
+| TypeScript | `@/` 절대경로 (`../../` 금지) |
+| Dart | `package:프로젝트명/` 패키지 경로 |
+| Python | 절대 import (상대 import 최소화) |
 
-// ✅ Good
-import { utils } from '@/lib/utils';
-```
+> **Action**: 깊은 상대경로 패턴 발견 시 표준 경로로 교체 제안.
 
-> **Action**: `../../../` 패턴 발견 시 `@/` 경로로 자동 교체 제안.
+### Rule 18: 죽은 코드 제거 🧹
 
-### Rule 17: 죽은 코드 제거 🧹
+**"주석 처리된 죽은 코드는 삭제. 디버그 출력 커밋 금지"**
 
-**"주석 처리된 죽은 코드는 삭제. console.log 커밋 금지"**
+| 언어 | 금지 항목 |
+|------|-----------|
+| TypeScript | `console.log`, 주석 코드 블록 |
+| Dart | `print()`, `debugPrint()` (릴리즈용) |
+| Python | `print()` (로깅 미사용) |
 
-- Git 히스토리가 있으니 과감히 삭제
-- 사용하지 않는 import 제거
-
-> **Action**: 10줄 이상 주석 블록 또는 console.log 발견 시 제거 제안.
+> **Action**: 10줄 이상 주석 블록 또는 디버그 출력 발견 시 제거 제안.
 
 ---
 
 ## E. 자가 진화 (Evolution) — 3개
 
-### Rule 18: 3-Strike 자동화 ♻️
+### Rule 19: 3-Strike 자동화 ♻️
 
 **"반복 실수는 `ANTI_PATTERNS.md`에 기록하여 차단"**
 
@@ -220,7 +229,7 @@ import { utils } from '@/lib/utils';
 
 > **Action**: 3회 반복 감지 → ANTI_PATTERNS.md에 기록 → EVOLUTION_LOG.md 업데이트.
 
-### Rule 19: 지식 축적 📚
+### Rule 20: 지식 축적 📚
 
 **"비즈니스 로직은 `DOMAIN_KNOWLEDGE.md`에, 결정은 `DECISION_LOG.md`에 축적"**
 
@@ -229,22 +238,25 @@ import { utils } from '@/lib/utils';
 
 > **Action**: "기억해줘", "이 프로젝트에서는" 트리거 시 자동 저장.
 
-### Rule 20: Feedback Loop 🔄
+### Rule 21: 플랫폼별 성능 규칙 ⚡
 
-**"사용자 피드백은 즉시 규칙에 반영하여 진화"**
+**"각 플랫폼의 성능 병목을 이해하고 사전 방지"**
 
-- 피드백 → 규칙 제안 → 사용자 승인 → 자동 업데이트
-- `EVOLUTION_LOG.md`에 모든 진화 기록
+| 플랫폼 | 핵심 성능 규칙 |
+|--------|---------------|
+| Next.js/Web | LCP/CLS 최적화, 번들 크기, 서버 컴포넌트 우선 |
+| Flutter/Game | 매 프레임 할당 최소화, 컴포넌트 수 제한, 래스터 캐시 |
+| Python Worker | 비동기 I/O, Connection Pooling, Batch 처리 |
 
-> **Action**: 사용자 수정사항 발견 → 패턴 추출 → 규칙 제안.
+> **Action**: 성능 위험 패턴 감지 시 즉시 경고 + 대안 제시.
 
 ---
 
 ## 📊 적용 우선순위
 
-**Priority 1 (필수)**: Rule 1, 3, 4, 6, 7, 13, 15
-**Priority 2 (강력 권장)**: Rule 2, 5, 8, 10, 14, 18, 20
-**Priority 3 (권장)**: Rule 9, 11, 12, 16, 17, 19
+**Priority 1 (필수)**: Rule 1, 3, 4, 6, 7, 13, 16
+**Priority 2 (강력 권장)**: Rule 2, 5, 8, 10, 14, 15, 19, 21
+**Priority 3 (권장)**: Rule 9, 11, 12, 17, 18, 20
 
 ---
 
@@ -252,3 +264,4 @@ import { utils } from '@/lib/utils';
 
 - **2026-02-08**: 초기 DOCTRINE 작성 (30계명)
 - **2026-02-13**: v3.0 정제 (30계명 → 20계명, 실전 행동 지침 추가)
+- **2026-02-20**: v4.0 멀티 스택 대응 (20→21계명, TS 전용 → 범용, 성능 규칙 추가)

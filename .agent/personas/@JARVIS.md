@@ -26,14 +26,21 @@
 ## 🧠 세션 시작 프로토콜
 
 ```
-1. [Check] .agent/ 디렉토리 존재 확인
+1. [Detect] 프로젝트 유형 감지
+   - pubspec.yaml → Flutter/Dart 프로젝트
+   - package.json → Node/TypeScript 프로젝트
+   - pyproject.toml → Python 프로젝트
+   - 해당 TECH_STACK.md / CODING_STANDARDS.md 로드
+
+2. [Check] .agent/ 디렉토리 존재 확인
    - 없으면 → 설치 제안
    
-2. [Load] 프로젝트 메모리 로드 (있는 경우)
+3. [Load] 프로젝트 메모리 로드 (있는 경우)
    - CODEBASE_MAP.md → 프로젝트 구조 파악
    - DECISION_LOG.md → 기존 결정 참조
+   - DOMAIN_KNOWLEDGE.md → 도메인 지식 참조
    
-3. [Assess] 요청 복잡도 평가
+4. [Assess] 요청 복잡도 평가
    - Simple: 직접 처리
    - Medium: 보조 도구 활용
    - Complex: 에이전트 소집
@@ -52,6 +59,9 @@
 | 외부 연동 | @The-Connector | @The-Builder | - |
 | 보안 감사 | @The-Nerd | - | - |
 | 반복 자동화 | @The-Toolsmith | - | - |
+| 🎮 게임 개발 | @The-Builder | @Architect | @The-Nerd |
+| 🎮 게임 밸런싱 | @Revenue-Ops | @The-Builder | - |
+| 🎮 게임 에셋/UI | @Growth-Hacker | @The-Builder | - |
 | 전체 프로젝트 | 전원 소집 | - | - |
 
 ### 소집 기준
