@@ -30,6 +30,7 @@ import '../state/relic_provider.dart';
 import '../data/models/relic_data.dart';
 import 'components/ui/bark_bubble.dart';
 import '../services/game_event_bridge.dart';
+import '../state/endless_tower_provider.dart';
 
 /// 메인 게임 클래스
 class DefenseGame extends FlameGame
@@ -42,6 +43,7 @@ class DefenseGame extends FlameGame
   GameMap gameMap = GameMap();
 
   LevelData? currentLevel;
+  GameMode _currentGameMode = GameMode.campaign;
   bool isGameRunning = false;
   double _wailingDecayAccum = 0;
   double _enemyCacheAccum = 0;
@@ -211,14 +213,15 @@ class DefenseGame extends FlameGame
   LevelData? _pendingLevel;
 
   /// 레벨 시작
-  void startLevel(LevelData level) {
+  void startLevel(LevelData level, {GameMode mode = GameMode.campaign}) {
     if (!isLoaded) {
       if (kDebugMode) debugPrint('Game not loaded yet, storing pending level: ${level.name}');
       _pendingLevel = level;
       return;
     }
-    if (kDebugMode) debugPrint('startLevel: ${level.name} — path: ${level.path.length} points');
+    if (kDebugMode) debugPrint('startLevel: ${level.name} (mode: $mode) — path: ${level.path.length} points');
     currentLevel = level;
+    _currentGameMode = mode;
     isGameRunning = true;
 
     // Riverpod 상태 초기화 — 직접 호출 (addPostFrameCallback 제거)
@@ -541,6 +544,9 @@ class DefenseGame extends FlameGame
     ref.read(gameStateProvider.notifier).setPhase(GamePhase.defeat);
     overlays.add('GameOverOverlay');
 
+    // 패배해도 킬 카운트 등 배치 이벤트 flush
+    _eventBridge.flushBatch();
+
     // 패배해도 영웅 레벨 저장
     _saveHeroLevels();
   }
@@ -569,18 +575,43 @@ class DefenseGame extends FlameGame
           .gainTowerXp(_placedTowerTypes, towerXp);
     }
 
-    // 시즌패스 XP + 스토리/피해0 업적 (이벤트 브릿지)
+    // 게임 모드별 이벤트 브릿지 호출
     final gameState = ref.read(gameStateProvider);
-    ref.read(gameEventBridgeProvider).onStageClear(
-      chapter: chapterIdx,
-      stageNum: stageNum,
-      gatewayHp: gameState.gatewayHp,
-      maxGatewayHp: gameState.maxGatewayHp,
-    );
+
+    switch (_currentGameMode) {
+      case GameMode.campaign:
+        // 시즌패스 XP + 스토리/피해0 업적
+        _eventBridge.onStageClear(
+          chapter: chapterIdx,
+          stageNum: stageNum,
+          gatewayHp: gameState.gatewayHp,
+          maxGatewayHp: gameState.maxGatewayHp,
+        );
+        break;
+
+      case GameMode.endlessTower:
+        // 무한의 탑 — 층 클리어 기록
+        final floor = ref.read(endlessTowerProvider).currentFloor;
+        final heroId = activeHeroes.isNotEmpty ? activeHeroes.first.data.id : null;
+        _eventBridge.onEndlessTowerFloorClear(floor, heroId: heroId);
+        // 탑 진행 상태 업데이트 (층별 보너스 젬)
+        final gemsEarned = floor * 5 + 10; // 층 기반 보너스
+        ref.read(endlessTowerProvider.notifier).clearFloor(floor, gemsEarned);
+        break;
+
+      case GameMode.dailyChallenge:
+        // 일일 도전 — 생존 웨이브 기록
+        final wavesSurvived = gameState.currentWave;
+        final heroId = activeHeroes.isNotEmpty ? activeHeroes.first.data.id : null;
+        _eventBridge.onDailyChallengeComplete(wavesSurvived, heroId: heroId);
+        // 도전 완료 처리
+        ref.read(dailyChallengeProvider.notifier).completeChallenge(wavesSurvived);
+        break;
+    }
 
     // 영웅 레벨 업적 (최고 레벨 기준)
     for (final hero in activeHeroes) {
-      ref.read(gameEventBridgeProvider).onHeroLevelUp(
+      _eventBridge.onHeroLevelUp(
         hero.level,
         activeHeroes.length,
       );

@@ -221,7 +221,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
   }
 
-  void _startLevel(LevelData level) {
+  void _startLevel(LevelData level, {GameMode mode = GameMode.campaign}) {
     setState(() {
       _currentScreen = 'gameplay';
       _currentLevel = level;
@@ -229,7 +229,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
     Future.microtask(() {
       SoundManager.instance.stopBgm();
-      _game.startLevel(level);
+      _game.startLevel(level, mode: mode);
     });
   }
 
@@ -643,7 +643,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           });
         },
         onStartLevel: (level, mode) {
-          _startLevel(level);
+          _startLevel(level, mode: mode);
         },
       );
     }
