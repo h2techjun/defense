@@ -68,6 +68,11 @@ class BaseHero extends PositionComponent
   late TextComponent _levelText;
   late CircleComponent _rangeIndicator;
 
+  // 스프라이트 이미지
+  SpriteComponent? _spriteComponent;
+  bool _heroSpriteLoaded = false;
+  EvolutionTier _lastTier = EvolutionTier.base;
+
   // 상태 접근자
   bool get isDead => _isDead;
   double get hp => _hp;
@@ -151,6 +156,12 @@ class BaseHero extends PositionComponent
       // 시각 업데이트 (티어 전환 시 색상 변경)
       _body.paint.color = _getTierColor(currentTier);
 
+      // 티어 전환 시 스프라이트 이미지 갱신
+      if (currentTier != _lastTier) {
+        _lastTier = currentTier;
+        _loadHeroSprite();
+      }
+
       if (kDebugMode) debugPrint('🎉 ${data.id.name} 레벨업! Lv.$level');
     }
 
@@ -203,6 +214,7 @@ class BaseHero extends PositionComponent
 
     // 영웅 색상 (ID별)
     final color = _getHeroColor(data.id);
+    _lastTier = currentTier;
 
     // 그림자 효과
     add(RectangleComponent(
@@ -227,16 +239,21 @@ class BaseHero extends PositionComponent
         ..strokeWidth = 2,
     ));
 
-    // 영웅 이모지 (바디 위에 크게 표시)
-    final emoji = _getHeroEmoji(data.id);
-    add(TextComponent(
-      text: emoji,
-      position: Vector2(size.x / 2, size.y / 2 - 2),
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-        style: const TextStyle(fontSize: 22),
-      ),
-    ));
+    // 스프라이트 이미지 로드 (성공 시 이모지 대체)
+    await _loadHeroSprite();
+
+    // 이모지 폴백 (스프라이트 로드 실패 시에만 표시)
+    if (!_heroSpriteLoaded) {
+      final emoji = _getHeroEmoji(data.id);
+      add(TextComponent(
+        text: emoji,
+        position: Vector2(size.x / 2, size.y / 2 - 2),
+        anchor: Anchor.center,
+        textRenderer: TextPaint(
+          style: const TextStyle(fontSize: 22),
+        ),
+      ));
+    }
 
     // 영웅 이름 라벨 (아래에 표시)
     add(TextComponent(
@@ -326,6 +343,64 @@ class BaseHero extends PositionComponent
     add(_dragGlow);
 
     add(RectangleHitbox());
+  }
+
+  /// 영웅 스프라이트 이미지 로드 (티어별 다른 이미지)
+  Future<void> _loadHeroSprite() async {
+    try {
+      // HeroId → 파일명 매핑
+      final heroName = _getHeroFileName(data.id);
+      final tierNum = _getTierNumber(currentTier);
+      final imagePath = 'heroes/hero_${heroName}_$tierNum.png';
+
+      final image = await game.images.load(imagePath);
+      final sprite = Sprite(image);
+
+      // 기존 스프라이트 제거
+      if (_spriteComponent != null) {
+        _spriteComponent!.removeFromParent();
+      }
+
+      // 새 스프라이트 추가 (_body 위에 오버레이)
+      _spriteComponent = SpriteComponent(
+        sprite: sprite,
+        size: size,
+        position: Vector2.zero(),
+        priority: 1,
+      );
+      add(_spriteComponent!);
+      _heroSpriteLoaded = true;
+    } catch (e) {
+      _heroSpriteLoaded = false;
+    }
+  }
+
+  /// HeroId → 파일명 부분 매핑
+  String _getHeroFileName(HeroId id) {
+    switch (id) {
+      case HeroId.kkaebi:
+        return 'kkaebi';
+      case HeroId.miho:
+        return 'miho';
+      case HeroId.gangrim:
+        return 'gangrim';
+      case HeroId.sua:
+        return 'sua';
+      case HeroId.bari:
+        return 'bari';
+    }
+  }
+
+  /// EvolutionTier → 숫자 매핑
+  int _getTierNumber(EvolutionTier tier) {
+    switch (tier) {
+      case EvolutionTier.base:
+        return 1;
+      case EvolutionTier.intermediate:
+        return 2;
+      case EvolutionTier.ultimate:
+        return 3;
+    }
   }
 
   /// 영웅 ID별 이모지
@@ -757,6 +832,10 @@ class BaseHero extends PositionComponent
     // 반투명 처리
     _body.paint.color = _getHeroColor(data.id).withAlpha(80);
     _hpBar.paint.color = const Color(0xFF666666);
+    // 스프라이트 반투명
+    if (_spriteComponent != null) {
+      _spriteComponent!.paint = Paint()..color = const Color(0x50FFFFFF);
+    }
     SoundManager.instance.playSfx(SfxType.heroDeath);
   }
 
@@ -766,6 +845,10 @@ class BaseHero extends PositionComponent
     _hp = _maxHp;
     _body.paint.color = _getHeroColor(data.id);
     _hpBar.paint.color = const Color(0xFF44FF44);
+    // 스프라이트 원복
+    if (_spriteComponent != null) {
+      _spriteComponent!.paint = Paint()..color = const Color(0xFFFFFFFF);
+    }
     SoundManager.instance.playSfx(SfxType.heroRevive);
   }
 

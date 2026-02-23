@@ -107,7 +107,7 @@ class BaseTower extends PositionComponent
     return rate;
   }
 
-  late PositionComponent _body;
+  late TowerRenderer _body;
   late CircleComponent _rangeIndicator;
   late CircleComponent _rangeFill;
   double _recoilTimer = 0; // 공격 반동 애니메이션
@@ -139,10 +139,11 @@ class BaseTower extends PositionComponent
 
     final color = _getColorForType(data.type);
 
-    // 타워 본체 — Canvas 기반 고품질 렌더링
+    // 타워 본체 — 스프라이트 이미지 기반 렌더링 (폴백: Canvas)
     _body = TowerRenderer(
       type: data.type,
       upgradeLevel: upgradeLevel,
+      branch: selectedBranch,
       size: size.clone(),
     );
     _body.anchor = Anchor.center;
@@ -903,6 +904,9 @@ class BaseTower extends PositionComponent
     // 업그레이드 비주얼 — 글로우 링 추가
     final color = _getColorForType(data.type);
     _addUpgradeGlow(color);
+
+    // 스프라이트 이미지 갱신
+    _body.updateVisual(newLevel: upgradeLevel);
     return true;
   }
 
@@ -910,6 +914,9 @@ class BaseTower extends PositionComponent
   void selectBranch(TowerBranch branch) {
     selectedBranch = branch;
     upgradeLevel = 4; // Tier 4
+
+    // 스프라이트 이미지를 분기 이미지로 갱신
+    _body.updateVisual(newLevel: upgradeLevel, newBranch: branch);
 
     // 분기 비주얼 업데이트 — 분기 고유 색상 글로우
     final color = _getColorForBranch(branch);

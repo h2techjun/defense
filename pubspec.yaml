@@ -30,3 +30,8 @@ flutter:
     - assets/audio/sfx/
     - assets/audio/bgm/
     - assets/images/fx/
+    - assets/images/towers/
+    - assets/images/enemies/
+    - assets/images/heroes/
+    - assets/images/projectiles/
+    - assets/images/objects/

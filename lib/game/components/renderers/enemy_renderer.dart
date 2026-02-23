@@ -1,399 +1,370 @@
 // 해원의 문 — 적 커스텀 렌더러
-// Canvas API 기반 고품질 적 그래픽 (귀신/요괴 테마)
+// 스프라이트 이미지 기반 고품질 렌더링 (Canvas 폴백 포함)
 
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show LinearGradient, RadialGradient, Alignment;
 import '../../../common/enums.dart';
+import '../../../data/models/enemy_data.dart';
+import '../../defense_game.dart';
 
-/// 적 타입별 고품질 커스텀 렌더링
-class EnemyRenderer extends PositionComponent {
-  final EnemyId enemyId;
-  final ArmorType armorType;
-  final bool isBoss;
-  final bool isFlying;
-  
-  // 색상 변경용 (버서크 등)
-  Color? overrideColor;
-  
+/// 적 타입별 스프라이트 이미지 기반 렌더링
+class EnemyRenderer extends PositionComponent
+    with HasGameReference<DefenseGame> {
+  final EnemyData data;
+
+  // 스프라이트 관련
+  Sprite? _sprite;
+  bool _spriteLoaded = false;
+
+  // 피격 플래시 효과
+  double _hitFlash = 0;
+  static const double _flashDuration = 0.08;
+
   EnemyRenderer({
-    required this.enemyId,
-    required this.armorType,
-    this.isBoss = false,
-    this.isFlying = false,
-    this.overrideColor,
+    required this.data,
     required Vector2 size,
   }) : super(size: size);
 
   @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    await _loadSprite();
+  }
+
+  /// 스프라이트 이미지 로드
+  Future<void> _loadSprite() async {
+    try {
+      final imagePath = _getImagePath();
+      final image = await game.images.load(imagePath);
+      _sprite = Sprite(image);
+      _spriteLoaded = true;
+    } catch (e) {
+      // 이미지 로드 실패 → Canvas 폴백 사용
+      _spriteLoaded = false;
+    }
+  }
+
+  /// EnemyId → 이미지 파일 경로 매핑
+  String _getImagePath() {
+    switch (data.id) {
+      // 보스
+      case EnemyId.bossOgreLord:
+        return 'enemies/boss_ogre_lord.png';
+      case EnemyId.bossMountainLord:
+        return 'enemies/boss_mountain_lord.png';
+      case EnemyId.bossGreatEggGhost:
+        return 'enemies/boss_great_egg.png';
+      // 챕터 1 일반 적
+      case EnemyId.hungryGhost:
+        return 'enemies/enemy_hungry_ghost.png';
+      case EnemyId.strawShoeSpirit:
+        return 'enemies/enemy_straw_shoe.png';
+      case EnemyId.burdenedLaborer:
+        return 'enemies/enemy_burdened.png';
+      case EnemyId.maidenGhost:
+        return 'enemies/enemy_maiden.png';
+      case EnemyId.eggGhost:
+        return 'enemies/enemy_egg_ghost.png';
+      // 챕터 2
+      case EnemyId.tigerSlave:
+        return 'enemies/enemy_tiger_slave.png';
+      case EnemyId.fireDog:
+        return 'enemies/enemy_fire_dog.png';
+      case EnemyId.shadowGolem:
+        return 'enemies/enemy_shadow_golem.png';
+      case EnemyId.oldFoxWoman:
+        return 'enemies/enemy_old_fox.png';
+      case EnemyId.failedDragon:
+        return 'enemies/enemy_failed_dragon.png';
+      // 챕터 3
+      case EnemyId.changGwiEvolved:
+        return 'enemies/enemy_evolved_tiger.png';
+      case EnemyId.saetani:
+        return 'enemies/enemy_saetani.png';
+      case EnemyId.shadowChild:
+        return 'enemies/enemy_shadow_child.png';
+      case EnemyId.maliciousBird:
+        return 'enemies/enemy_malicious_bird.png';
+      case EnemyId.faceStealerGhost:
+        return 'enemies/enemy_face_stealer.png';
+      // 챕터 4, 5 (이미지 미지원 → 폴백)
+      default:
+        return 'enemies/enemy_hungry_ghost.png'; // 기본 이미지 폴백
+    }
+  }
+
+  /// 피격 플래시 효과 트리거
+  void flash() {
+    _hitFlash = _flashDuration;
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (_hitFlash > 0) {
+      _hitFlash = (_hitFlash - dt).clamp(0.0, _flashDuration);
+    }
+  }
+
+  @override
   void render(Canvas canvas) {
     super.render(canvas);
-    
+
+    if (_spriteLoaded && _sprite != null) {
+      // 스프라이트 이미지 렌더링
+
+      // 보스는 살짝 더 크게
+      final renderSize = data.isBoss
+          ? Vector2(size.x * 1.3, size.y * 1.3)
+          : size;
+      final offset = data.isBoss
+          ? Vector2(-size.x * 0.15, -size.y * 0.15)
+          : Vector2.zero();
+
+      if (_hitFlash > 0) {
+        // 피격 시 백색 플래시
+        canvas.save();
+        canvas.translate(offset.x, offset.y);
+        _sprite!.render(canvas, size: renderSize);
+        canvas.drawRect(
+          Rect.fromLTWH(offset.x, offset.y, renderSize.x, renderSize.y),
+          Paint()..color = const Color(0x88FFFFFF),
+        );
+        canvas.restore();
+      } else {
+        canvas.save();
+        canvas.translate(offset.x, offset.y);
+        _sprite!.render(canvas, size: renderSize);
+        canvas.restore();
+      }
+
+      // 비행 유닛 날개 오버레이
+      if (data.isFlying) {
+        _renderWings(canvas, size.x, Offset(size.x / 2, size.y / 2));
+      }
+    } else {
+      // Canvas 폴백 렌더링
+      _renderFallback(canvas);
+    }
+  }
+
+  /// Canvas 기반 폴백 렌더링 (이미지 로드 실패 시)
+  void _renderFallback(Canvas canvas) {
     final s = size.x;
     final center = Offset(s / 2, s / 2);
-    final color = overrideColor ?? _getBaseColor();
-    
-    // 보스 외곽 글로우
-    if (isBoss) {
-      canvas.drawCircle(center, s * 0.48, Paint()..color = const Color(0x33FF0000));
-      canvas.drawCircle(center, s * 0.45, Paint()..color = const Color(0x22FF4444));
-    }
-    
-    // 비행 마크
-    if (isFlying) {
-      _renderWings(canvas, s, center);
-    }
-    
-    switch (enemyId) {
+    final baseColor = _getBaseColor();
+
+    switch (data.id) {
       case EnemyId.hungryGhost:
-        _renderHungryGhost(canvas, s, center, color);
+        _renderHungryGhost(canvas, s, center, baseColor);
         break;
       case EnemyId.strawShoeSpirit:
-        _renderStrawShoe(canvas, s, center, color);
+        _renderStrawShoe(canvas, s, center, baseColor);
         break;
       case EnemyId.maidenGhost:
-        _renderMaiden(canvas, s, center, color);
+        _renderMaiden(canvas, s, center, baseColor);
         break;
       case EnemyId.eggGhost:
-        _renderEggGhost(canvas, s, center, color);
+        _renderEggGhost(canvas, s, center, baseColor);
         break;
       case EnemyId.burdenedLaborer:
-        _renderBurdened(canvas, s, center, color);
+        _renderBurdened(canvas, s, center, baseColor);
         break;
       case EnemyId.bossOgreLord:
-        _renderOgreLord(canvas, s, center, color);
+      case EnemyId.bossMountainLord:
+      case EnemyId.bossGreatEggGhost:
+      case EnemyId.bossTyrantKing:
+      case EnemyId.bossGatekeeper:
+        _renderBoss(canvas, s, center, baseColor);
         break;
       default:
-        // 챕터 2/3 적 — 기본 렌더링
-        _renderDefaultEnemy(canvas, s, center, color);
+        _renderDefaultEnemy(canvas, s, center, baseColor);
         break;
     }
-  }
-  
-  /// 허기귀신 — 배고픈 둥근 귀신, 입 벌린 모습
-  void _renderHungryGhost(Canvas canvas, double s, Offset center, Color color) {
-    // 유령 몸통 (물결 그라데이션)
-    final bodyPaint = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(-0.2, -0.3),
-        radius: 0.9,
-        colors: [color.withAlpha(220), color, color.withAlpha(150)],
-      ).createShader(Rect.fromCircle(center: center, radius: s * 0.38));
-    canvas.drawCircle(center, s * 0.38, bodyPaint);
-    
-    // 몸체 아래 물결 (유령 꼬리)
-    final tailPath = Path()
-      ..moveTo(s * 0.12, s * 0.5)
-      ..quadraticBezierTo(s * 0.2, s * 0.85, s * 0.3, s * 0.7)
-      ..quadraticBezierTo(s * 0.4, s * 0.55, s * 0.5, s * 0.75)
-      ..quadraticBezierTo(s * 0.6, s * 0.9, s * 0.7, s * 0.7)
-      ..quadraticBezierTo(s * 0.8, s * 0.55, s * 0.88, s * 0.5);
-    canvas.drawPath(tailPath, Paint()
-      ..color = color.withAlpha(180)
-      ..style = PaintingStyle.fill);
-    
-    // 눈 (빨간 빛)
-    canvas.drawCircle(Offset(s * 0.37, s * 0.35), 3, Paint()..color = const Color(0xFFFF1744));
-    canvas.drawCircle(Offset(s * 0.63, s * 0.35), 3, Paint()..color = const Color(0xFFFF1744));
-    // 눈 하이라이트
-    canvas.drawCircle(Offset(s * 0.36, s * 0.33), 1, Paint()..color = const Color(0xFFFFFFFF));
-    canvas.drawCircle(Offset(s * 0.62, s * 0.33), 1, Paint()..color = const Color(0xFFFFFFFF));
-    
-    // 입 (벌린 입 — 타원형)
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(s * 0.5, s * 0.55), width: s * 0.2, height: s * 0.15),
-      Paint()..color = const Color(0xDD000000),
-    );
-  }
-  
-  /// 짚신귀 — 빠른 삼각형 귀신
-  void _renderStrawShoe(Canvas canvas, double s, Offset center, Color color) {
-    // 빠른 이동 잔상
-    canvas.drawCircle(
-      center + Offset(-s * 0.1, 0),
-      s * 0.2,
-      Paint()..color = color.withAlpha(40),
-    );
-    
-    // 날카로운 삼각 몸체
-    final bodyPath = Path()
-      ..moveTo(s * 0.5, s * 0.05)
-      ..lineTo(s * 0.1, s * 0.85)
-      ..quadraticBezierTo(s * 0.5, s * 0.7, s * 0.9, s * 0.85)
-      ..close();
-    
-    final bodyPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [color, color.withAlpha(180)],
-      ).createShader(Rect.fromLTWH(0, 0, s, s));
-    canvas.drawPath(bodyPath, bodyPaint);
-    
-    // 테두리
-    canvas.drawPath(bodyPath, Paint()
-      ..color = color.withAlpha(255)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5);
-    
-    // 눈 (노란 발광)
-    canvas.drawCircle(Offset(s * 0.4, s * 0.4), 2.5, Paint()..color = const Color(0xFFFFEB3B));
-    canvas.drawCircle(Offset(s * 0.6, s * 0.4), 2.5, Paint()..color = const Color(0xFFFFEB3B));
-    
-    // 속도 줄무늬
-    final speedPaint = Paint()
-      ..color = const Color(0x44FFFFFF)
-      ..strokeWidth = 1
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(Offset(s * 0.2, s * 0.3), Offset(s * 0.05, s * 0.25), speedPaint);
-    canvas.drawLine(Offset(s * 0.2, s * 0.5), Offset(s * 0.03, s * 0.48), speedPaint);
-  }
-  
-  /// 손각시 — 처녀귀신, 한복 치마 느낌 + 오라
-  void _renderMaiden(Canvas canvas, double s, Offset center, Color color) {
-    // 저주 오라
-    canvas.drawCircle(
-      center,
-      s * 0.42,
-      Paint()
-        ..color = const Color(0x226A0DAD)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
-    );
-    
-    // 치마 (삼각 + 곡선)
-    final dressPath = Path()
-      ..moveTo(s * 0.5, s * 0.15)          // 머리
-      ..lineTo(s * 0.15, s * 0.9)          // 좌하
-      ..quadraticBezierTo(s * 0.5, s * 0.8, s * 0.85, s * 0.9)  // 곡선 치마 밑단
-      ..close();
-    
-    final dressPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [color, color.withAlpha(160), color.withAlpha(100)],
-      ).createShader(Rect.fromLTWH(0, 0, s, s));
-    canvas.drawPath(dressPath, dressPaint);
-    canvas.drawPath(dressPath, Paint()
-      ..color = color.withAlpha(200)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1);
-    
-    // 머리카락 (양쪽으로 흘러내림)
-    final hairPaint = Paint()
-      ..color = const Color(0xCC111111)
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(Offset(s * 0.42, s * 0.2), Offset(s * 0.25, s * 0.55), hairPaint);
-    canvas.drawLine(Offset(s * 0.58, s * 0.2), Offset(s * 0.75, s * 0.55), hairPaint);
-    
-    // 얼굴 (창백한 원)
-    canvas.drawCircle(Offset(s * 0.5, s * 0.22), s * 0.1, Paint()..color = const Color(0xFFE0E0E0));
-    
-    // 눈 (하나 — 원귀 스타일)
-    canvas.drawCircle(Offset(s * 0.5, s * 0.22), 2, Paint()..color = const Color(0xFFFF0000));
-  }
-  
-  /// 달걀귀신 — 달걀형 민머리 귀신 (은신 가능)
-  void _renderEggGhost(Canvas canvas, double s, Offset center, Color color) {
-    // 타원형 몸체
-    final bodyRect = Rect.fromCenter(
-      center: center,
-      width: s * 0.55,
-      height: s * 0.75,
-    );
-    final bodyPaint = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(-0.15, -0.3),
-        radius: 0.85,
-        colors: [color.withAlpha(200), color, color.withAlpha(180)],
-      ).createShader(bodyRect);
-    canvas.drawOval(bodyRect, bodyPaint);
-    
-    // 테두리
-    canvas.drawOval(bodyRect, Paint()
-      ..color = color.withAlpha(100)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1);
-    
-    // 매끄러운 표면 하이라이트
-    canvas.drawOval(
-      Rect.fromCenter(center: center + Offset(-s * 0.06, -s * 0.1), width: s * 0.2, height: s * 0.25),
-      Paint()..color = const Color(0x22FFFFFF),
-    );
-    
-    // 두 눈 (무표정)
-    canvas.drawCircle(Offset(s * 0.4, s * 0.4), 2.5, Paint()..color = const Color(0xCC000000));
-    canvas.drawCircle(Offset(s * 0.6, s * 0.4), 2.5, Paint()..color = const Color(0xCC000000));
-  }
-  
-  /// 짐꾼귀 — 무거운 짐을 진 귀신
-  void _renderBurdened(Canvas canvas, double s, Offset center, Color color) {
-    // 짐 (등에 진 상자)
-    final loadRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: center + Offset(0, -s * 0.12), width: s * 0.6, height: s * 0.35),
-      const Radius.circular(3),
-    );
-    canvas.drawRRect(loadRect, Paint()..color = const Color(0xFF795548));
-    canvas.drawRRect(loadRect, Paint()
-      ..color = const Color(0xFF4E342E)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5);
-    // 짐 밧줄
-    canvas.drawLine(
-      Offset(s * 0.25, s * 0.25),
-      Offset(s * 0.75, s * 0.25),
-      Paint()..color = const Color(0xAAD7CCC8)..strokeWidth = 1.5,
-    );
-    
-    // 몸체 (사각형 + 그라데이션)
-    final bodyRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: center + Offset(0, s * 0.15), width: s * 0.5, height: s * 0.45),
-      const Radius.circular(4),
-    );
-    final bodyPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [color, color.withAlpha(180)],
-      ).createShader(Rect.fromLTWH(0, 0, s, s));
-    canvas.drawRRect(bodyRect, bodyPaint);
-    
-    // 눈 (피곤한 모습)
-    canvas.drawLine(
-      Offset(s * 0.37, s * 0.45),
-      Offset(s * 0.43, s * 0.45),
-      Paint()..color = const Color(0xCC000000)..strokeWidth = 2,
-    );
-    canvas.drawLine(
-      Offset(s * 0.57, s * 0.45),
-      Offset(s * 0.63, s * 0.45),
-      Paint()..color = const Color(0xCC000000)..strokeWidth = 2,
-    );
-    
-    // 다리 (두꺼운 선)
-    canvas.drawLine(
-      Offset(s * 0.38, s * 0.6),
-      Offset(s * 0.35, s * 0.85),
-      Paint()..color = color..strokeWidth = 3,
-    );
-    canvas.drawLine(
-      Offset(s * 0.62, s * 0.6),
-      Offset(s * 0.65, s * 0.85),
-      Paint()..color = color..strokeWidth = 3,
-    );
-  }
-  
-  /// 두억시니 (보스) — 거대한 도깨비
-  void _renderOgreLord(Canvas canvas, double s, Offset center, Color color) {
-    // 불꽃 오라
-    for (int i = 0; i < 8; i++) {
-      final angle = (i / 8) * math.pi * 2;
-      final flameX = center.dx + math.cos(angle) * s * 0.42;
-      final flameY = center.dy + math.sin(angle) * s * 0.42;
-      canvas.drawCircle(
-        Offset(flameX, flameY),
-        3,
-        Paint()..color = const Color(0x66FF6600),
+
+    if (data.isFlying) {
+      _renderWings(canvas, s, center);
+    }
+
+    // 피격 플래시
+    if (_hitFlash > 0) {
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, s, s),
+        Paint()..color = const Color(0x66FFFFFF),
       );
     }
-    
-    // 거대한 몸통
-    final bodyPaint = Paint()
+  }
+
+  // ── 폴백 렌더링 메서드들 ──
+
+  void _renderHungryGhost(Canvas canvas, double s, Offset center, Color color) {
+    // 둥근 몸체
+    canvas.drawCircle(center, s * 0.36, Paint()
       ..shader = RadialGradient(
-        center: const Alignment(-0.1, -0.2),
-        radius: 0.8,
-        colors: [color, color.withAlpha(200), const Color(0xFF1A0000)],
-      ).createShader(Rect.fromCircle(center: center, radius: s * 0.38));
-    canvas.drawCircle(center, s * 0.38, bodyPaint);
-    
-    // 테두리
-    canvas.drawCircle(center, s * 0.38, Paint()
-      ..color = const Color(0xAAFF0000)
+        center: const Alignment(-0.3, -0.3),
+        radius: 0.9,
+        colors: [Color.fromARGB(255, (color.red * 1.2).clamp(0, 255).toInt(), (color.green * 1.2).clamp(0, 255).toInt(), color.blue), color],
+      ).createShader(Rect.fromCircle(center: center, radius: s * 0.36)));
+    // 눈
+    canvas.drawCircle(center + Offset(-s * 0.12, -s * 0.08), s * 0.06,
+      Paint()..color = const Color(0xCCFF0000));
+    canvas.drawCircle(center + Offset(s * 0.12, -s * 0.08), s * 0.06,
+      Paint()..color = const Color(0xCCFF0000));
+    // 입
+    canvas.drawOval(
+      Rect.fromCenter(center: center + Offset(0, s * 0.15), width: s * 0.2, height: s * 0.12),
+      Paint()..color = const Color(0xCC000000));
+  }
+
+  void _renderStrawShoe(Canvas canvas, double s, Offset center, Color color) {
+    // 타원형
+    canvas.drawOval(
+      Rect.fromCenter(center: center, width: s * 0.6, height: s * 0.45),
+      Paint()..color = color);
+    // 짚 질감
+    for (int i = 0; i < 5; i++) {
+      canvas.drawLine(
+        Offset(s * (0.25 + i * 0.1), s * 0.35),
+        Offset(s * (0.25 + i * 0.1), s * 0.65),
+        Paint()..color = const Color(0x44000000)..strokeWidth = 1);
+    }
+  }
+
+  void _renderMaiden(Canvas canvas, double s, Offset center, Color color) {
+    // 머리
+    canvas.drawCircle(center + Offset(0, -s * 0.15), s * 0.2,
+      Paint()..color = const Color(0xFFFFE0B2));
+    // 검은 머리카락
+    final hairPath = Path()
+      ..moveTo(s * 0.2, s * 0.2)
+      ..quadraticBezierTo(s * 0.5, -s * 0.05, s * 0.8, s * 0.2)
+      ..lineTo(s * 0.85, s * 0.7)
+      ..lineTo(s * 0.15, s * 0.7)
+      ..close();
+    canvas.drawPath(hairPath, Paint()..color = const Color(0xFF1A1A2E));
+    // 몸체
+    canvas.drawRect(
+      Rect.fromCenter(center: center + Offset(0, s * 0.2), width: s * 0.35, height: s * 0.4),
+      Paint()..color = const Color(0xFFEEEEEE));
+  }
+
+  void _renderEggGhost(Canvas canvas, double s, Offset center, Color color) {
+    // 달걀형
+    final eggPath = Path()
+      ..moveTo(s * 0.5, s * 0.05)
+      ..quadraticBezierTo(s * 0.95, s * 0.3, s * 0.8, s * 0.7)
+      ..quadraticBezierTo(s * 0.65, s * 0.95, s * 0.5, s * 0.92)
+      ..quadraticBezierTo(s * 0.35, s * 0.95, s * 0.2, s * 0.7)
+      ..quadraticBezierTo(s * 0.05, s * 0.3, s * 0.5, s * 0.05)
+      ..close();
+    canvas.drawPath(eggPath, Paint()..color = color);
+  }
+
+  void _renderBurdened(Canvas canvas, double s, Offset center, Color color) {
+    // 구부정한 몸
+    canvas.drawOval(
+      Rect.fromCenter(center: center + Offset(0, s * 0.05), width: s * 0.5, height: s * 0.55),
+      Paint()..color = color);
+    // 짐
+    canvas.drawRect(
+      Rect.fromCenter(center: center + Offset(0, -s * 0.2), width: s * 0.45, height: s * 0.25),
+      Paint()..color = const Color(0xFF795548));
+  }
+
+  void _renderBoss(Canvas canvas, double s, Offset center, Color color) {
+    // 크고 위협적인 형태
+    canvas.drawCircle(center, s * 0.42, Paint()
+      ..shader = RadialGradient(
+        colors: [color, Color.fromARGB(255, (color.red * 0.5).toInt(), (color.green * 0.5).toInt(), (color.blue * 0.5).toInt())],
+      ).createShader(Rect.fromCircle(center: center, radius: s * 0.42)));
+    // 보스 왕관
+    canvas.drawCircle(center + Offset(0, -s * 0.35), s * 0.08,
+      Paint()..color = const Color(0xFFFFD700));
+    // 빛나는 외곽
+    canvas.drawCircle(center, s * 0.44, Paint()
+      ..color = const Color(0x33FF0000)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2);
-    
-    // 뿔 (좌)
-    final hornLPath = Path()
-      ..moveTo(s * 0.3, s * 0.2)
-      ..lineTo(s * 0.2, s * 0.0)
-      ..lineTo(s * 0.35, s * 0.15)
-      ..close();
-    canvas.drawPath(hornLPath, Paint()..color = const Color(0xFFFFAB00));
-    
-    // 뿔 (우)
-    final hornRPath = Path()
-      ..moveTo(s * 0.7, s * 0.2)
-      ..lineTo(s * 0.8, s * 0.0)
-      ..lineTo(s * 0.65, s * 0.15)
-      ..close();
-    canvas.drawPath(hornRPath, Paint()..color = const Color(0xFFFFAB00));
-    
-    // 무서운 눈 (빨간 발광)
-    canvas.drawCircle(Offset(s * 0.38, s * 0.4), 4, Paint()..color = const Color(0xFFFF0000));
-    canvas.drawCircle(Offset(s * 0.62, s * 0.4), 4, Paint()..color = const Color(0xFFFF0000));
-    canvas.drawCircle(Offset(s * 0.37, s * 0.38), 1.5, Paint()..color = const Color(0xFFFFFFFF));
-    canvas.drawCircle(Offset(s * 0.61, s * 0.38), 1.5, Paint()..color = const Color(0xFFFFFFFF));
-    
-    // 입 (이빨 있는)
-    canvas.drawLine(
-      Offset(s * 0.35, s * 0.58),
-      Offset(s * 0.65, s * 0.58),
-      Paint()..color = const Color(0xDD000000)..strokeWidth = 3,
-    );
-    // 이빨
-    canvas.drawLine(Offset(s * 0.42, s * 0.56), Offset(s * 0.42, s * 0.63), 
-      Paint()..color = const Color(0xFFFFFFFF)..strokeWidth = 2);
-    canvas.drawLine(Offset(s * 0.58, s * 0.56), Offset(s * 0.58, s * 0.63),
-      Paint()..color = const Color(0xFFFFFFFF)..strokeWidth = 2);
   }
-  
-  /// 기본 적 렌더링 (챕터 2/3용)
+
   void _renderDefaultEnemy(Canvas canvas, double s, Offset center, Color color) {
-    final bodyPaint = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(-0.2, -0.3),
-        radius: 0.9,
-        colors: [color.withAlpha(220), color],
-      ).createShader(Rect.fromCircle(center: center, radius: s * 0.35));
-    canvas.drawCircle(center, s * 0.35, bodyPaint);
-    
-    // 눈
-    canvas.drawCircle(Offset(s * 0.4, s * 0.42), 2.5, Paint()..color = const Color(0xFFFF1744));
-    canvas.drawCircle(Offset(s * 0.6, s * 0.42), 2.5, Paint()..color = const Color(0xFFFF1744));
+    canvas.drawCircle(center, s * 0.35, Paint()..color = color);
+    // 간단한 눈
+    canvas.drawCircle(center + Offset(-s * 0.1, -s * 0.05), s * 0.04,
+      Paint()..color = const Color(0xFFFFFFFF));
+    canvas.drawCircle(center + Offset(s * 0.1, -s * 0.05), s * 0.04,
+      Paint()..color = const Color(0xFFFFFFFF));
   }
-  
-  /// 비행 날개
+
+  /// 비행 유닛 날개 오버레이
   void _renderWings(Canvas canvas, double s, Offset center) {
-    final wingPaint = Paint()
-      ..color = const Color(0x44FFFFFF)
-      ..style = PaintingStyle.fill;
-    
+    final t = DateTime.now().millisecondsSinceEpoch / 200.0;
+    final flap = math.sin(t) * 0.15;
     // 왼쪽 날개
     final leftWing = Path()
-      ..moveTo(s * 0.3, s * 0.5)
-      ..quadraticBezierTo(s * 0.0, s * 0.2, s * 0.15, s * 0.5)
+      ..moveTo(center.dx - s * 0.15, center.dy)
+      ..quadraticBezierTo(center.dx - s * 0.45, center.dy - s * (0.3 + flap),
+          center.dx - s * 0.35, center.dy + s * 0.1)
       ..close();
-    canvas.drawPath(leftWing, wingPaint);
-    
     // 오른쪽 날개
     final rightWing = Path()
-      ..moveTo(s * 0.7, s * 0.5)
-      ..quadraticBezierTo(s * 1.0, s * 0.2, s * 0.85, s * 0.5)
+      ..moveTo(center.dx + s * 0.15, center.dy)
+      ..quadraticBezierTo(center.dx + s * 0.45, center.dy - s * (0.3 + flap),
+          center.dx + s * 0.35, center.dy + s * 0.1)
       ..close();
+    final wingPaint = Paint()..color = const Color(0x55AAAAFF);
+    canvas.drawPath(leftWing, wingPaint);
     canvas.drawPath(rightWing, wingPaint);
   }
-  
+
+  /// 적 타입별 기본 색상
   Color _getBaseColor() {
-    switch (armorType) {
-      case ArmorType.physical:
-        return const Color(0xFF8B4513);
-      case ArmorType.spiritual:
-        return const Color(0xFF6A0DAD);
-      case ArmorType.yokai:
-        return const Color(0xFFDC143C);
+    switch (data.id) {
+      case EnemyId.hungryGhost:
+        return const Color(0xFF8BC34A);
+      case EnemyId.strawShoeSpirit:
+        return const Color(0xFFD7CCC8);
+      case EnemyId.maidenGhost:
+        return const Color(0xFFEEEEEE);
+      case EnemyId.eggGhost:
+        return const Color(0xFFF5F5DC);
+      case EnemyId.burdenedLaborer:
+        return const Color(0xFF8D6E63);
+      case EnemyId.tigerSlave:
+        return const Color(0xFFFF8F00);
+      case EnemyId.fireDog:
+        return const Color(0xFFD32F2F);
+      case EnemyId.shadowGolem:
+        return const Color(0xFF616161);
+      case EnemyId.oldFoxWoman:
+        return const Color(0xFFFFB74D);
+      case EnemyId.failedDragon:
+        return const Color(0xFF1565C0);
+      case EnemyId.changGwiEvolved:
+        return const Color(0xFF4E342E);
+      case EnemyId.saetani:
+        return const Color(0xFF880E4F);
+      case EnemyId.shadowChild:
+        return const Color(0xFF37474F);
+      case EnemyId.maliciousBird:
+        return const Color(0xFF6A1B9A);
+      case EnemyId.faceStealerGhost:
+        return const Color(0xFFBDBDBD);
+      // 보스
+      case EnemyId.bossOgreLord:
+        return const Color(0xFFD32F2F);
+      case EnemyId.bossMountainLord:
+        return const Color(0xFF2E7D32);
+      case EnemyId.bossGreatEggGhost:
+        return const Color(0xFF4A148C);
+      case EnemyId.bossTyrantKing:
+        return const Color(0xFFB71C1C);
+      case EnemyId.bossGatekeeper:
+        return const Color(0xFF1A237E);
+      default:
+        return const Color(0xFF9E9E9E);
     }
   }
 }

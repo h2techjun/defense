@@ -131,10 +131,7 @@ class BaseEnemy extends PositionComponent
     final bodyColor = _getColorForArmor(data.armorType);
     _bodyPaint = Paint()..color = bodyColor;
     _body = EnemyRenderer(
-      enemyId: data.id,
-      armorType: data.armorType,
-      isBoss: data.isBoss,
-      isFlying: data.isFlying,
+      data: data,
       size: size.clone(),
     );
     add(_body);
