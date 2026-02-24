@@ -108,6 +108,43 @@ class Responsive {
       fontWeight: fontWeight,
     );
   }
+
+  /// 가로 모드 여부
+  static bool isLandscape(BuildContext context) {
+    return MediaQuery.of(context).size.width > MediaQuery.of(context).size.height;
+  }
+
+  /// 화면 비율 기반 너비 (fraction: 0~1)
+  static double adaptiveWidth(BuildContext context, double fraction) {
+    return MediaQuery.of(context).size.width * fraction;
+  }
+
+  /// 화면 비율 기반 높이
+  static double adaptiveHeight(BuildContext context, double fraction) {
+    return MediaQuery.of(context).size.height * fraction;
+  }
+
+  /// 디바이스별 다른 값 반환
+  static T value<T>(BuildContext context, {
+    required T phone,
+    required T tablet,
+    required T desktop,
+  }) {
+    switch (deviceType(context)) {
+      case DeviceType.phone:
+        return phone;
+      case DeviceType.tablet:
+        return tablet;
+      case DeviceType.desktop:
+        return desktop;
+    }
+  }
+
+  /// 화면 너비
+  static double screenWidth(BuildContext context) => MediaQuery.of(context).size.width;
+
+  /// 화면 높이
+  static double screenHeight(BuildContext context) => MediaQuery.of(context).size.height;
 }
 
 /// 반응형 래퍼 위젯 — 최대 너비 제한 + 가운데 정렬

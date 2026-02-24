@@ -494,7 +494,7 @@ class DefenseGame extends FlameGame
   }
 
   /// 적 처치 시
-  void onEnemyKilled(int sinmyeongReward, {bool isBoss = false}) {
+  void onEnemyKilled(int sinmyeongReward, {bool isBoss = false, EnemyId? enemyId}) {
     SoundManager.instance.playSfx(SfxType.enemyDeath);
 
     // 웨이브 진행 보너스: 후반 웨이브에서 추가 보상
@@ -513,7 +513,7 @@ class DefenseGame extends FlameGame
     _pendingStateFlush = true;
 
     // 업적 이벤트 (배치 처리 — 캐시된 브릿지 사용)
-    _eventBridge.onEnemyKilled(isBoss: isBoss);
+    _eventBridge.onEnemyKilled(isBoss: isBoss, enemyId: enemyId);
 
     // 영웅 경험치 분배 (보스: 5XP, 일반: 1XP — 50스테이지 기준 보수적)
     final xpAmount = isBoss ? 5 : 1;
@@ -616,6 +616,11 @@ class DefenseGame extends FlameGame
         activeHeroes.length,
       );
     }
+
+    // ── 영웅 사용 → 도감 카운트 증가 ──
+    _eventBridge.onHeroUsed(
+      activeHeroes.map((h) => h.data.id).toList(),
+    );
 
     // 영웅 레벨 영구 저장
     _saveHeroLevels();

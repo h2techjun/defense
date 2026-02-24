@@ -1,11 +1,13 @@
 // 해원의 문 - 시즌 패스 UI 화면
 // 무료/프리미엄 트랙, VIP 정보, 상점
 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/responsive.dart';
 import '../../data/models/season_pass_data.dart';
 import '../../state/season_pass_provider.dart';
+import '../theme/app_colors.dart';
 
 class SeasonPassScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
@@ -38,7 +40,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
     final vipState = ref.watch(vipProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D1A),
+      backgroundColor: AppColors.scaffoldBg,
       body: SafeArea(
         child: Column(
           children: [
@@ -69,7 +71,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
       ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF2D1B69), Color(0xFF1A0A2E)],
+          colors: [AppColors.surfaceMid, AppColors.bgDeepPlum],
         ),
       ),
       child: Column(
@@ -112,7 +114,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                   ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFFFD700), Color(0xFFFF8C00)],
+                      colors: [AppColors.sinmyeongGold, Color(0xFFFF8C00)],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -248,7 +250,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
       child: Container(
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF2D1B69), Color(0xFF4A148C)],
+            colors: [AppColors.surfaceMid, Color(0xFF4A148C)],
           ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.amber.withValues(alpha: 0.5), width: 2),
@@ -368,7 +370,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
             padding: EdgeInsets.all(Responsive.spacing(context, 20)),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [tier.color.withValues(alpha: 0.3), const Color(0xFF1A0A2E)],
+                colors: [tier.color.withValues(alpha: 0.3), AppColors.bgDeepPlum],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: tier.color.withValues(alpha: 0.5)),
@@ -648,10 +650,14 @@ class _ShopPackageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: Responsive.spacing(context, 8)),
-      child: Container(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+          child: Container(
         padding: EdgeInsets.all(Responsive.spacing(context, 14)),
         decoration: BoxDecoration(
-          color: const Color(0xFF16213E),
+          color: const Color(0xCC16213E),
           borderRadius: BorderRadius.circular(12),
           border: package.isHighlight
               ? Border.all(color: Colors.amber.withValues(alpha: 0.5), width: 2)
@@ -725,6 +731,8 @@ class _ShopPackageCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
         ),
       ),
     );

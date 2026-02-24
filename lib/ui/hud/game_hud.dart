@@ -1,6 +1,8 @@
 // 해원의 문 - 게임 HUD (인게임 UI 오버레이)
 
+import '../theme/glass_panel.dart';
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../common/enums.dart';
@@ -47,9 +49,9 @@ class GameHud extends ConsumerWidget {
                     icon: '✨',
                     label: AppStrings.get(lang, 'gold'),
                     value: state.sinmyeong.toString(),
-                    color: const Color(0xFFFFD700),
+                    color: AppColors.sinmyeongGold,
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16 * s),
 
                   // 게이트웨이 HP
                   _ResourceBadge(
@@ -57,23 +59,23 @@ class GameHud extends ConsumerWidget {
                     label: AppStrings.get(lang, 'hud_gateway'),
                     value: '${state.gatewayHp}/${state.maxGatewayHp}',
                     color: state.gatewayHp > state.maxGatewayHp * 0.5
-                        ? const Color(0xFF44FF44)
-                        : const Color(0xFFFF4444),
+                        ? AppColors.mintGreen
+                        : AppColors.berserkRed,
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16 * s),
 
                   // 웨이브
                   _ResourceBadge(
                     icon: '🌊',
                     label: AppStrings.get(lang, 'wave'),
                     value: '${state.currentWave}/${state.totalWaves}',
-                    color: const Color(0xFF88CCFF),
+                    color: AppColors.skyBlue,
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16 * s),
 
                   // 낮/밤
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: EdgeInsets.symmetric(horizontal: 10 * s, vertical: 4 * s),
                     decoration: BoxDecoration(
                       color: state.dayCycle == DayCycle.day
                           ? const Color(0x44FFAA00)
@@ -90,9 +92,9 @@ class GameHud extends ConsumerWidget {
                       children: [
                         Text(
                           state.dayCycle == DayCycle.day ? '해' : '달',
-                          style: const TextStyle(fontSize: 14),
+                          style: TextStyle(fontSize: Responsive.fontSize(context, 14)),
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4 * s),
                         Text(
                           state.dayCycle == DayCycle.day
                               ? AppStrings.get(lang, 'hud_day')
@@ -101,7 +103,7 @@ class GameHud extends ConsumerWidget {
                             color: state.dayCycle == DayCycle.day
                                 ? const Color(0xFFFFDD66)
                                 : const Color(0xFFAAAAFF),
-                            fontSize: 14,
+                            fontSize: Responsive.fontSize(context, 14),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -113,35 +115,35 @@ class GameHud extends ConsumerWidget {
 
                   // 현재 시각
                   _CurrentTimeBadge(),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12 * s),
 
                   // 게임 경과 시간
                   _ElapsedTimeBadge(elapsedSeconds: state.elapsedSeconds),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12 * s),
 
                   // 처치 수
                   Text(
                     '💀 ${state.enemiesKilled}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white70,
-                      fontSize: 13,
+                      fontSize: Responsive.fontSize(context, 13),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8 * s),
 
                   // 배속 버튼
                   GestureDetector(
                     onTap: onSpeedToggle,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: EdgeInsets.symmetric(horizontal: 10 * s, vertical: 6 * s),
                       decoration: BoxDecoration(
                         color: state.gameSpeed > 1.0
-                            ? const Color(0x44FF8800)
+                            ? AppColors.peachCoral.withAlpha(60)
                             : const Color(0x44FFFFFF),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: state.gameSpeed > 1.0
-                              ? const Color(0xFFFF8800)
+                              ? AppColors.peachCoral
                               : const Color(0x66FFFFFF),
                         ),
                       ),
@@ -149,15 +151,15 @@ class GameHud extends ConsumerWidget {
                         '${state.gameSpeed.toInt()}×',
                         style: TextStyle(
                           color: state.gameSpeed > 1.0
-                              ? const Color(0xFFFF8800)
+                              ? AppColors.peachCoral
                               : Colors.white70,
-                          fontSize: 14,
+                          fontSize: Responsive.fontSize(context, 14),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 4 * s),
 
                   // SFX 토글
                   _SoundToggleBtn(
@@ -172,7 +174,7 @@ class GameHud extends ConsumerWidget {
                       (context as Element).markNeedsBuild();
                     },
                   ),
-                  const SizedBox(width: 2),
+                  SizedBox(width: 2 * s),
 
                   // BGM 토글
                   _SoundToggleBtn(
@@ -186,13 +188,13 @@ class GameHud extends ConsumerWidget {
                       (context as Element).markNeedsBuild();
                     },
                   ),
-                  const SizedBox(width: 2),
+                  SizedBox(width: 2 * s),
 
                   // 일시정지 버튼
                   IconButton(
                     onPressed: onPause,
-                    icon: const Icon(Icons.pause_circle_outline,
-                        color: Colors.white70, size: 28),
+                    icon: Icon(Icons.pause_circle_outline,
+                        color: Colors.white70, size: Responsive.iconSize(context, 28)),
                   ),
                 ],
               ),
@@ -274,13 +276,12 @@ class _ResourceBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = Responsive.scale(context);
 
-    return Container(
+    return GlassPanel(
+      borderRadius: 12 * s,
+      blurAmount: 8,
+      backgroundColor: Colors.black.withAlpha(60),
+      borderColor: color.withAlpha(80),
       padding: EdgeInsets.symmetric(horizontal: 10 * s, vertical: 4 * s),
-      decoration: BoxDecoration(
-        color: const Color(0x44000000),
-        borderRadius: BorderRadius.circular(12 * s),
-        border: Border.all(color: color.withAlpha(100)),
-      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -337,7 +338,7 @@ class _WailingGauge extends StatelessWidget {
       labelColor = const Color(0xFFFFAA44);
     } else {
       label = '😢 한(恨)';
-      labelColor = const Color(0xFFAA88CC);
+      labelColor = AppColors.cherryBlossom.withAlpha(200);
     }
 
     return Column(
@@ -349,26 +350,26 @@ class _WailingGauge extends StatelessWidget {
               label,
               style: TextStyle(
                 color: labelColor,
-                fontSize: 10,
+                fontSize: Responsive.fontSize(context, 10),
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: 4 * Responsive.scale(context)),
             Text(
               '${wailing.toInt()}%',
               style: TextStyle(
                 color: isMax ? const Color(0xFFFF4444) : Colors.white60,
-                fontSize: 10,
+                fontSize: Responsive.fontSize(context, 10),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 2),
+        SizedBox(height: 2 * Responsive.scale(context)),
         Container(
-          height: 6,
+          height: 6 * Responsive.scale(context),
           decoration: BoxDecoration(
             color: const Color(0x33FFFFFF),
-            borderRadius: BorderRadius.circular(3),
+            borderRadius: BorderRadius.circular(3 * Responsive.scale(context)),
           ),
           child: FractionallySizedBox(
             alignment: Alignment.centerLeft,
@@ -383,7 +384,7 @@ class _WailingGauge extends StatelessWidget {
                           ? [const Color(0xFFFF6600), const Color(0xFFFF8844)]
                           : isMid
                               ? [const Color(0xFFCC8800), const Color(0xFFFFAA44)]
-                              : [const Color(0xFF6633AA), const Color(0xFFAA44FF)],
+                              : [AppColors.cherryBlossom, AppColors.cherryBlossom.withAlpha(200)],
                 ),
               ),
             ),
@@ -414,19 +415,16 @@ class _SoundToggleBtn extends StatelessWidget {
       message: tooltip,
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: active ? const Color(0x44FFFFFF) : const Color(0x22FF4444),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: active ? const Color(0x66FFFFFF) : const Color(0x66FF4444),
-            ),
-          ),
+        child: GlassPanel(
+          borderRadius: 8 * Responsive.scale(context),
+          blurAmount: 6,
+          backgroundColor: active ? Colors.white.withAlpha(30) : AppColors.berserkRed.withAlpha(20),
+          borderColor: active ? Colors.white.withAlpha(50) : AppColors.berserkRed.withAlpha(60),
+          padding: EdgeInsets.all(6 * Responsive.scale(context)),
           child: Icon(
             icon,
-            color: active ? Colors.white70 : const Color(0xFFFF6666),
-            size: 20,
+            color: active ? Colors.white70 : AppColors.berserkRed.withAlpha(180),
+            size: Responsive.iconSize(context, 20),
           ),
         ),
       ),
@@ -448,23 +446,24 @@ class _CurrentTimeBadge extends StatelessWidget {
         final h12 = now.hour == 0 ? 12 : (now.hour > 12 ? now.hour - 12 : now.hour);
         final timeStr =
             '${h12.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')} ${isPm ? 'PM' : 'AM'}';
+        final sc = Responsive.scale(context);
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: EdgeInsets.symmetric(horizontal: 8 * sc, vertical: 4 * sc),
           decoration: BoxDecoration(
             color: const Color(0x44000000),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(10 * sc),
             border: Border.all(color: const Color(0x44FFFFFF)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('🕐', style: TextStyle(fontSize: 12)),
-              const SizedBox(width: 4),
+              Text('🕐', style: TextStyle(fontSize: Responsive.fontSize(context, 12))),
+              SizedBox(width: 4 * sc),
               Text(
                 timeStr,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white70,
-                  fontSize: 13,
+                  fontSize: Responsive.fontSize(context, 13),
                   fontWeight: FontWeight.bold,
                   fontFamily: 'monospace',
                 ),
@@ -488,23 +487,24 @@ class _ElapsedTimeBadge extends StatelessWidget {
     final min = (totalSec ~/ 60).toString().padLeft(2, '0');
     final sec = (totalSec % 60).toString().padLeft(2, '0');
 
+    final sc = Responsive.scale(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 8 * sc, vertical: 4 * sc),
       decoration: BoxDecoration(
         color: const Color(0x44000000),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0x4488CCFF)),
+        borderRadius: BorderRadius.circular(10 * sc),
+        border: Border.all(color: AppColors.skyBlue.withAlpha(68)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('⏱️', style: TextStyle(fontSize: 12)),
-          const SizedBox(width: 4),
+          Text('⏱️', style: TextStyle(fontSize: Responsive.fontSize(context, 12))),
+          SizedBox(width: 4 * sc),
           Text(
             '$min:$sec',
-            style: const TextStyle(
-              color: Color(0xFF88CCFF),
-              fontSize: 13,
+            style: TextStyle(
+              color: AppColors.skyBlue,
+              fontSize: Responsive.fontSize(context, 13),
               fontWeight: FontWeight.bold,
               fontFamily: 'monospace',
             ),
@@ -532,20 +532,21 @@ class _BossHealthBar extends StatelessWidget {
     final ratio = (hp / maxHp).clamp(0.0, 1.0);
     final isLowHp = ratio < 0.3;
 
+    final sc = Responsive.scale(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12 * sc, vertical: 6 * sc),
       decoration: BoxDecoration(
         color: const Color(0xCC1A0A2E),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(8 * sc),
         border: Border.all(
-          color: isLowHp ? const Color(0xFFFF4444) : const Color(0xFFFFD700),
+          color: isLowHp ? AppColors.berserkRed : AppColors.sinmyeongGold,
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: (isLowHp ? const Color(0xFFFF4444) : const Color(0xFFFFD700))
+            color: (isLowHp ? AppColors.berserkRed : AppColors.sinmyeongGold)
                 .withAlpha(60),
-            blurRadius: 8,
+            blurRadius: 8 * sc,
           ),
         ],
       ),
@@ -555,19 +556,19 @@ class _BossHealthBar extends StatelessWidget {
           // 보스 이름
           Text(
             '👹 $name',
-            style: const TextStyle(
-              color: Color(0xFFFFD700),
-              fontSize: 13,
+            style: TextStyle(
+              color: AppColors.sinmyeongGold,
+              fontSize: Responsive.fontSize(context, 13),
               fontWeight: FontWeight.bold,
-              shadows: [
+              shadows: const [
                 Shadow(color: Color(0xFF000000), blurRadius: 4),
               ],
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4 * sc),
           // 체력 바
           SizedBox(
-            height: 12,
+            height: 12 * sc,
             child: Stack(
               children: [
                 // 배경
@@ -595,12 +596,12 @@ class _BossHealthBar extends StatelessWidget {
                 Center(
                   child: Text(
                     '${hp.toInt()} / ${maxHp.toInt()}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 9,
+                      fontSize: Responsive.fontSize(context, 9),
                       fontWeight: FontWeight.bold,
                       fontFamily: 'monospace',
-                      shadows: [
+                      shadows: const [
                         Shadow(color: Color(0xFF000000), blurRadius: 3),
                       ],
                     ),
@@ -689,12 +690,13 @@ class _NextWavePreview extends StatelessWidget {
         ? const Color(0x66330000)
         : const Color(0x88000000);
 
+    final sc = Responsive.scale(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      constraints: const BoxConstraints(maxWidth: 160),
+      padding: EdgeInsets.symmetric(horizontal: 8 * sc, vertical: 6 * sc),
+      constraints: BoxConstraints(maxWidth: 160 * sc),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(8 * sc),
         border: Border.all(color: borderColor, width: isBoss ? 2 : 1),
       ),
       child: Column(
@@ -707,32 +709,32 @@ class _NextWavePreview extends StatelessWidget {
             children: [
               Text(
                 isBoss ? '⚠️' : '📋',
-                style: const TextStyle(fontSize: 10),
+                style: TextStyle(fontSize: Responsive.fontSize(context, 10)),
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: 4 * sc),
               Text(
                 '다음 웨이브 $nextWaveNum',
                 style: TextStyle(
                   color: isBoss ? const Color(0xFFFF6666) : Colors.white70,
-                  fontSize: 10,
+                  fontSize: Responsive.fontSize(context, 10),
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4 * sc),
           // 적 목록
           ...parsed.map((entry) {
             final name = _enemyNames[entry.key] ?? entry.key;
             final icon = _enemyIcons[entry.key] ?? '👾';
             final isBossEnemy = entry.key.toLowerCase().contains('boss');
             return Padding(
-              padding: const EdgeInsets.only(bottom: 2),
+              padding: EdgeInsets.only(bottom: 2 * sc),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(icon, style: const TextStyle(fontSize: 12)),
-                  const SizedBox(width: 4),
+                  Text(icon, style: TextStyle(fontSize: Responsive.fontSize(context, 12))),
+                  SizedBox(width: 4 * sc),
                   Flexible(
                     child: Text(
                       '$name ×${entry.value}',
@@ -740,7 +742,7 @@ class _NextWavePreview extends StatelessWidget {
                         color: isBossEnemy
                             ? const Color(0xFFFF8888)
                             : Colors.white60,
-                        fontSize: 10,
+                        fontSize: Responsive.fontSize(context, 10),
                         fontWeight: isBossEnemy
                             ? FontWeight.bold
                             : FontWeight.normal,

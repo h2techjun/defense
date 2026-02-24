@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 
 import '../../common/enums.dart';
 import '../../data/game_data_loader.dart';
+import '../theme/app_colors.dart';
+import '../theme/glass_panel.dart';
 
 /// 영웅 해금 축하 다이얼로그 표시
 Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
@@ -30,169 +32,166 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
       return Center(
         child: Material(
           color: Colors.transparent,
-          child: Container(
-            width: 320,
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.lerp(color, Colors.black, 0.7)!,
-                  const Color(0xFF1A1A2E),
-                  Color.lerp(color, Colors.black, 0.8)!,
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: color.withAlpha(150), width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withAlpha(100),
-                  blurRadius: 30,
-                  spreadRadius: 5,
-                ),
+          child: GlassPanel(
+            borderRadius: 20,
+            blurAmount: 12,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.lerp(color, Colors.black, 0.7)!,
+                AppColors.surfaceDark,
+                Color.lerp(color, Colors.black, 0.8)!,
               ],
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 타이틀
-                ShaderMask(
-                  shaderCallback: (bounds) => LinearGradient(
-                    colors: [color, Colors.white, color],
-                  ).createShader(bounds),
-                  child: const Text(
-                    '✨ 새 영웅 해금! ✨',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // 영웅 이모지 (크게)
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        color.withAlpha(60),
-                        color.withAlpha(20),
-                        Colors.transparent,
-                      ],
-                    ),
-                    border: Border.all(color: color.withAlpha(100), width: 2),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    emoji,
-                    style: const TextStyle(fontSize: 42),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // 영웅 이름
-                Text(
-                  heroData.name,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-                ),
-
-                // 영웅 칭호
-                Text(
-                  heroData.title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white.withAlpha(180),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // 스킬 정보
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: color.withAlpha(20),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: color.withAlpha(40)),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        '✨ ${heroData.skill.name}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        heroData.skill.description,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white.withAlpha(160),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                // 스탯
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _StatChip('❤️', '${heroData.baseHp.toInt()}'),
-                    const SizedBox(width: 12),
-                    _StatChip('⚔️', '${heroData.baseAttack.toInt()}'),
-                    const SizedBox(width: 12),
-                    _StatChip('🎯', '${heroData.baseRange.toInt()}'),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                // 확인 버튼
-                GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [color, Color.lerp(color, Colors.white, 0.3)!],
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: [
-                        BoxShadow(
-                          color: color.withAlpha(100),
-                          blurRadius: 12,
-                        ),
-                      ],
-                    ),
+            borderColor: color.withAlpha(150),
+            borderWidth: 2,
+            padding: const EdgeInsets.all(24),
+            boxShadow: [
+              BoxShadow(
+                color: color.withAlpha(100),
+                blurRadius: 30,
+                spreadRadius: 5,
+              ),
+            ],
+            child: SizedBox(
+              width: 320,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 타이틀
+                  ShaderMask(
+                    shaderCallback: (bounds) => LinearGradient(
+                      colors: [color, Colors.white, color],
+                    ).createShader(bounds),
                     child: const Text(
-                      '출전 준비! 🎩',
+                      '✨ 새 영웅 해금! ✨',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+
+                  // 영웅 이모지 (크게)
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          color.withAlpha(60),
+                          color.withAlpha(20),
+                          Colors.transparent,
+                        ],
+                      ),
+                      border: Border.all(color: color.withAlpha(100), width: 2),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      emoji,
+                      style: const TextStyle(fontSize: 40),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 영웅 이름
+                  Text(
+                    heroData.name,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+
+                  // 영웅 칭호
+                  Text(
+                    heroData.title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white.withAlpha(180),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // 스킬 정보
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: color.withAlpha(20),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: color.withAlpha(40)),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '✨ ${heroData.skill.name}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: color,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          heroData.skill.description,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withAlpha(160),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // 스탯
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _StatChip('❤️', '${heroData.baseHp.toInt()}'),
+                      const SizedBox(width: 12),
+                      _StatChip('⚔️', '${heroData.baseAttack.toInt()}'),
+                      const SizedBox(width: 12),
+                      _StatChip('🎯', '${heroData.baseRange.toInt()}'),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // 확인 버튼
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [color, Color.lerp(color, Colors.white, 0.3)!],
+                        ),
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: [
+                          BoxShadow(
+                            color: color.withAlpha(100),
+                            blurRadius: 12,
+                          ),
+                        ],
+                      ),
+                      child: const Text(
+                        '출전 준비! 🎩',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -231,15 +230,15 @@ class _StatChip extends StatelessWidget {
 Color _getHeroColor(HeroId id) {
   switch (id) {
     case HeroId.kkaebi:
-      return const Color(0xFF4CAF50);
+      return AppColors.mintGreen;
     case HeroId.miho:
-      return const Color(0xFFE91E63);
+      return AppColors.cherryBlossom;
     case HeroId.gangrim:
       return const Color(0xFF607D8B);
     case HeroId.sua:
-      return const Color(0xFF2196F3);
+      return AppColors.skyBlue;
     case HeroId.bari:
-      return const Color(0xFFFFEB3B);
+      return AppColors.sinmyeongGold;
   }
 }
 

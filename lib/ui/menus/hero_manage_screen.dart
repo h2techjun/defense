@@ -1,6 +1,7 @@
 // 해원의 문 - 영웅(수호자) 관리 화면
 // 영웅 선택, 정보 확인, 진화 단계별 능력 열람
 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/enums.dart';
@@ -10,6 +11,7 @@ import '../../data/models/hero_data.dart';
 import '../../l10n/app_strings.dart';
 import '../../services/save_manager.dart';
 import '../../game/components/actors/base_hero.dart';
+import '../theme/app_colors.dart';
 
 /// 영웅 관리 화면
 class HeroManageScreen extends ConsumerStatefulWidget {
@@ -68,9 +70,9 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF0D0221),
-              Color(0xFF1A0F29),
-              Color(0xFF2D1B4E),
+              AppColors.scaffoldBg,
+              AppColors.bgDeepPlum,
+              AppColors.surfaceMid,
             ],
           ),
         ),
@@ -117,7 +119,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
               ),
               child: Icon(
                 Icons.arrow_back,
-                color: Color(0xFFBB99DD),
+                color: AppColors.lavender,
                 size: 20 * Responsive.scale(context),
               ),
             ),
@@ -125,7 +127,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           SizedBox(width: 16 * Responsive.scale(context)),
           ShaderMask(
             shaderCallback: (bounds) => const LinearGradient(
-              colors: [Color(0xFFCC88FF), Color(0xFFFFAA44)],
+              colors: [AppColors.lavender, const Color(0xFFFFAA44)],
             ).createShader(bounds),
             child: Text(
               '👥 수호자',
@@ -189,7 +191,11 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           _selectedEvolutionIndex = 0;
         });
       },
-      child: AnimatedContainer(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+          child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         margin: EdgeInsets.only(bottom: 6 * Responsive.scale(context)),
         padding: EdgeInsets.all(10 * Responsive.scale(context)),
@@ -233,10 +239,18 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                     ? Border.all(color: Colors.white.withValues(alpha: 0.4), width: 1.5)
                     : null,
               ),
-              child: Center(
-                child: Text(
-                  _getHeroEmoji(hero.id),
-                  style: TextStyle(fontSize: Responsive.fontSize(context, 18)),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/heroes/hero_${_getHeroFileName(hero.id)}_1.png',
+                  width: 40 * Responsive.scale(context),
+                  height: 40 * Responsive.scale(context),
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Center(
+                    child: Text(
+                      _getHeroEmoji(hero.id),
+                      style: TextStyle(fontSize: Responsive.fontSize(context, 18)),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -266,6 +280,8 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           ],
         ),
       ),
+          ),
+        ),
     );
   }
 
@@ -344,10 +360,18 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                   ),
                 ],
               ),
-              child: Center(
-                child: Text(
-                  _getHeroEmoji(hero.id),
-                  style: TextStyle(fontSize: Responsive.fontSize(context, 32)),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/heroes/hero_${_getHeroFileName(hero.id)}_1.png',
+                  width: 72 * Responsive.scale(context),
+                  height: 72 * Responsive.scale(context),
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Center(
+                    child: Text(
+                      _getHeroEmoji(hero.id),
+                      style: TextStyle(fontSize: Responsive.fontSize(context, 32)),
+                    ),
+                  ),
                 ),
               ),
             );
@@ -445,7 +469,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: isMaxLevel
-                            ? [const Color(0xFFFF8C00), const Color(0xFFFFD700)]
+                            ? [const Color(0xFFFF8C00), AppColors.sinmyeongGold]
                             : [color.withValues(alpha: 0.6), color],
                       ),
                       borderRadius: BorderRadius.circular(3),
@@ -466,7 +490,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
               isMaxLevel ? 'MAX' : '$xp / $xpNeeded',
               style: TextStyle(
                 fontSize: Responsive.fontSize(context, 10),
-                color: isMaxLevel ? const Color(0xFFFFD700) : Colors.white70,
+                color: isMaxLevel ? AppColors.sinmyeongGold : Colors.white70,
                 fontWeight: isMaxLevel ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -739,7 +763,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                   gradient: RadialGradient(
                     colors: [color, color.withValues(alpha: 0.3)],
                   ),
-                  border: Border.all(color: const Color(0xFFFFD700), width: 2),
+                  border: Border.all(color: AppColors.sinmyeongGold, width: 2),
                 ),
                 child: Center(
                   child: Text('⚡', style: TextStyle(fontSize: Responsive.fontSize(context, 16))),
@@ -914,6 +938,16 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
       HeroId.gangrim => '💀',
       HeroId.sua => '🌊',
       HeroId.bari => '🪬',
+    };
+  }
+
+  String _getHeroFileName(HeroId id) {
+    return switch (id) {
+      HeroId.kkaebi => 'kkaebi',
+      HeroId.miho => 'miho',
+      HeroId.gangrim => 'gangrim',
+      HeroId.sua => 'sua',
+      HeroId.bari => 'bari',
     };
   }
 

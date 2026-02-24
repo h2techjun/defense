@@ -1,5 +1,5 @@
 // 해원의 문 - 게임 이벤트 ↔ Provider 브릿지
-// 게임 이벤트(kill, clear, build, skill)를 업적/시즌패스/VIP/랭킹에 연결
+// 게임 이벤트(kill, clear, build, skill)를 업적/시즌패스/VIP/랭킹/도감/일일미션에 연결
 // 성능: kill/skill 이벤트는 배치 처리, 나머지는 즉시 처리
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +9,9 @@ import '../state/achievement_provider.dart';
 import '../state/endless_tower_provider.dart';
 import '../state/skin_provider.dart';
 import '../state/relic_provider.dart';
+import '../state/lore_collection_provider.dart';
+import '../state/daily_quest_provider.dart';
+import '../data/models/daily_quest_data.dart';
 
 /// 게임 이벤트 → Provider 연결 브릿지
 /// DefenseGame에서 단일 진입점으로 호출
@@ -20,6 +23,7 @@ class GameEventBridge {
   int _batchBossKills = 0;
   int _batchSkillUses = 0;
   int _batchTowerBuilds = 0;
+  final Map<String, int> _batchEnemyKills = {}; // 적 ID별 킬 수 (도감용)
 
   GameEventBridge(this._ref);
 
@@ -28,9 +32,14 @@ class GameEventBridge {
   // ═══════════════════════════════════════════
 
   /// 적 처치 시 호출 (매 프레임 다수 발생 가능)
-  void onEnemyKilled({bool isBoss = false}) {
+  void onEnemyKilled({bool isBoss = false, EnemyId? enemyId}) {
     _batchKills++;
     if (isBoss) _batchBossKills++;
+    // 도감용 적 ID별 킬 카운트 누적
+    if (enemyId != null) {
+      _batchEnemyKills[enemyId.name] = 
+        (_batchEnemyKills[enemyId.name] ?? 0) + 1;
+    }
   }
 
   // ═══════════════════════════════════════════
@@ -83,11 +92,36 @@ class GameEventBridge {
     // 단일 배치 호출 (Map 복사 1회 + state.copyWith 1회 + persist 1회)
     _ref.read(achievementProvider.notifier).batchIncrementProgress(updates);
 
+    // ── 설화도감: 적 ID별 킬 카운트 일괄 기록 ──
+    if (_batchEnemyKills.isNotEmpty) {
+      final lorNotifier = _ref.read(loreCollectionProvider.notifier);
+      for (final entry in _batchEnemyKills.entries) {
+        for (int i = 0; i < entry.value; i++) {
+          lorNotifier.recordKill(entry.key);
+        }
+      }
+    }
+
+    // ── 일일 미션: 적 처치 / 스킬 / 타워 ──
+    final questNotifier = _ref.read(dailyQuestProvider.notifier);
+    // 보스 킬도 전체 킬에 합산
+    final totalKills = _batchKills;
+    if (totalKills > 0) {
+      questNotifier.updateProgress(QuestType.killEnemies, totalKills);
+    }
+    if (_batchSkillUses > 0) {
+      questNotifier.updateProgress(QuestType.useHeroSkill, _batchSkillUses);
+    }
+    if (_batchTowerBuilds > 0) {
+      questNotifier.updateProgress(QuestType.buildTowers, _batchTowerBuilds);
+    }
+
     // 배치 초기화
     _batchKills = 0;
     _batchBossKills = 0;
     _batchSkillUses = 0;
     _batchTowerBuilds = 0;
+    _batchEnemyKills.clear();
   }
 
   // ═══════════════════════════════════════════
@@ -113,6 +147,19 @@ class GameEventBridge {
     // 스토리 업적 (에피소드 클리어 — 최종 스테이지만)
     final epId = 'clear_ep${chapter + 1}';
     _ref.read(achievementProvider.notifier).setProgress(epId, 1);
+
+    // ── 일일 미션: 스테이지 클리어 ──
+    final questNotifier = _ref.read(dailyQuestProvider.notifier);
+    questNotifier.updateProgress(QuestType.clearAnyStage, 1);
+    if (gatewayHp >= maxGatewayHp) {
+      questNotifier.updateProgress(QuestType.clearStageStars3, 1);
+    }
+
+    // ── 세계관 도감: 해당 챕터 세계관 조우 기록 ──
+    final worldIds = ['world_market', 'world_forest', 'world_faceless', 'world_palace', 'world_death'];
+    if (chapter < worldIds.length) {
+      _ref.read(loreCollectionProvider.notifier).recordEncounter(worldIds[chapter]);
+    }
 
     // 남은 배치 이벤트도 플러시
     flushBatch();
@@ -195,6 +242,19 @@ class GameEventBridge {
   /// 결제 완료 시 호출 (VIP 등급 자동 갱신)
   void onPurchaseComplete(int amountKRW) {
     _ref.read(vipProvider.notifier).addPurchase(amountKRW);
+  }
+
+  // ═══════════════════════════════════════════
+  // 10. 영웅 사용 → 도감 연동
+  // ═══════════════════════════════════════════
+
+  /// 스테이지 완료 시 사용한 영웅들의 도감 카운트 증가
+  void onHeroUsed(List<HeroId> heroIds) {
+    final loreNotifier = _ref.read(loreCollectionProvider.notifier);
+    for (final id in heroIds) {
+      final loreId = 'hero_${id.name}';  // HeroId.kkaebi → 'hero_kkaebi'
+      loreNotifier.recordHeroUse(loreId);
+    }
   }
 }
 

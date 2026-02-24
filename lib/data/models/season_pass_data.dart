@@ -368,6 +368,9 @@ class ShopPackage {
   final int dailyLimit;            // 1일 최대 구매 횟수
   final int monthlyLimit;          // 월 최대 구매 횟수
   final bool isHighlight;          // 추천 표시
+  final Duration? expiresAfter;    // 첫 노출 후 만료 시간 (예: 72시간)
+  final int firstPurchaseMultiplier; // 첫 구매 보너스 배율 (1 = 없음, 3 = 3배)
+  final int discountPercent;       // 할인율 (0 = 없음)
 
   const ShopPackage({
     required this.id,
@@ -381,7 +384,22 @@ class ShopPackage {
     this.dailyLimit = 1,
     this.monthlyLimit = 30,
     this.isHighlight = false,
+    this.expiresAfter,
+    this.firstPurchaseMultiplier = 1,
+    this.discountPercent = 0,
   });
+
+  /// 할인 적용 가격
+  int get discountedPrice => discountPercent > 0
+      ? (priceKRW * (100 - discountPercent) / 100).round()
+      : priceKRW;
+
+  /// 첫 구매 시 실제 지급량 계산
+  Map<String, int> getEffectiveContents(bool isFirstPurchase) {
+    if (!isFirstPurchase || firstPurchaseMultiplier <= 1) return contents;
+    return contents.map((key, value) =>
+        MapEntry(key, key == 'premiumPass' ? value : value * firstPurchaseMultiplier));
+  }
 }
 
 /// 상점 패키지 목록 (모든 상품 ₩10,000 이하)
@@ -491,3 +509,65 @@ const List<ShopPackage> allShopPackages = [
     isHighlight: true,
   ),
 ];
+
+// ── 72시간 한정 특가 패키지 ──
+const List<ShopPackage> timeLimitedPackages = [
+  ShopPackage(
+    id: 'limited_72h_hero',
+    name: '⏰ 한정 영웅 패키지',
+    description: '72시간 한정! 소환권 2장 + 보석 200',
+    emoji: '🔥',
+    type: PackageType.starter,
+    priceKRW: 3900,
+    contents: {'gems': 200, 'summonTicket': 2, 'gold': 5000},
+    limitCount: 1,
+    isHighlight: true,
+    expiresAfter: Duration(hours: 72),
+    discountPercent: 35,
+  ),
+  ShopPackage(
+    id: 'limited_72h_tower',
+    name: '⏰ 한정 수호자 패키지',
+    description: '72시간 한정! 타워 강화 10개 + 골드 10K',
+    emoji: '🔥',
+    type: PackageType.starter,
+    priceKRW: 4900,
+    contents: {'towerUpgrade': 10, 'gold': 10000, 'gems': 50},
+    limitCount: 1,
+    isHighlight: true,
+    expiresAfter: Duration(hours: 72),
+    discountPercent: 40,
+  ),
+];
+
+// ── 첫 구매 3배 패키지 ──
+const List<ShopPackage> firstPurchaseBonusPackages = [
+  ShopPackage(
+    id: 'first_buy_gems_sm',
+    name: '첫 구매 보석 A',
+    description: '첫 구매 시 3배! 150 → 50 보석',
+    emoji: '🌟',
+    type: PackageType.gems,
+    priceKRW: 1000,
+    contents: {'gems': 50},
+    limitCount: 1,
+    firstPurchaseMultiplier: 3,
+    isHighlight: true,
+  ),
+  ShopPackage(
+    id: 'first_buy_gems_md',
+    name: '첫 구매 보석 B',
+    description: '첫 구매 시 3배! 330 → 110 보석',
+    emoji: '🌟',
+    type: PackageType.gems,
+    priceKRW: 2000,
+    contents: {'gems': 110},
+    limitCount: 1,
+    firstPurchaseMultiplier: 3,
+    isHighlight: true,
+  ),
+];
+
+/// 모든 상점 패키지 합산
+List<ShopPackage> get allAvailablePackages =>
+    [...allShopPackages, ...timeLimitedPackages, ...firstPurchaseBonusPackages];

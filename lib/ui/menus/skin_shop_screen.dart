@@ -1,6 +1,7 @@
 // 해원의 문 - 스킨 상점 화면
 // 영웅별 스킨 목록 표시, 구매/장착 기능
 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/enums.dart';
@@ -10,6 +11,7 @@ import '../../state/user_state.dart';
 import '../../services/ad_manager.dart';
 import '../../common/responsive.dart';
 import '../../services/game_event_bridge.dart';
+import '../theme/app_colors.dart';
 
 class SkinShopScreen extends ConsumerWidget {
   final VoidCallback onBack;
@@ -22,7 +24,7 @@ class SkinShopScreen extends ConsumerWidget {
     final userState = ref.watch(userStateProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: AppColors.surfaceDark,
       body: SafeArea(
         child: Column(
           children: [
@@ -38,8 +40,8 @@ class SkinShopScreen extends ConsumerWidget {
                     // 영웅 탭
                     TabBar(
                       isScrollable: true,
-                      indicatorColor: const Color(0xFFFFD700),
-                      labelColor: const Color(0xFFFFD700),
+                      indicatorColor: AppColors.sinmyeongGold,
+                      labelColor: AppColors.sinmyeongGold,
                       unselectedLabelColor: Colors.grey,
                       tabs: HeroId.values.map((heroId) {
                         return Tab(text: _getHeroName(heroId));
@@ -80,40 +82,40 @@ class SkinShopScreen extends ConsumerWidget {
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: onBack,
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8 * s),
           Text(
             '🎨 스킨 상점',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 22 * s,
+              fontSize: Responsive.fontSize(context, 20),
               fontWeight: FontWeight.bold,
             ),
           ),
           const Spacer(),
           // 보석 표시
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: 10 * s, vertical: 5 * s),
             decoration: BoxDecoration(
               color: const Color(0xFF2A2A4A),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14 * s),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.diamond, color: Color(0xFF00BCD4), size: 18),
-                const SizedBox(width: 4),
-                Text('$gems', style: const TextStyle(color: Colors.white, fontSize: 16)),
+                Icon(Icons.diamond, color: AppColors.skyBlue, size: 16 * s),
+                SizedBox(width: 4 * s),
+                Text('$gems', style: TextStyle(color: Colors.white, fontSize: Responsive.fontSize(context, 14))),
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 6 * s),
           // 광고 시청 버튼
           _AdRewardButton(onGemsEarned: (amount) {
             ref.read(userStateProvider.notifier).addGems(amount);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('💎 +$amount 보석 획득!'),
-                backgroundColor: const Color(0xFF00BCD4),
+                backgroundColor: AppColors.skyBlue,
                 duration: const Duration(seconds: 2),
               ),
             );
@@ -188,7 +190,7 @@ class SkinShopScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A2E),
+        backgroundColor: AppColors.surfaceDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           '${skin.rarity.emoji} ${skin.name}',
@@ -199,8 +201,8 @@ class SkinShopScreen extends ConsumerWidget {
           children: [
             // 스킨 미리보기
             Container(
-              width: 80,
-              height: 80,
+              width: 70,
+              height: 70,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: skin.primaryColor,
@@ -212,7 +214,7 @@ class SkinShopScreen extends ConsumerWidget {
                     : null,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text(
               '등급: ${skin.rarity.displayName}',
               style: TextStyle(color: skin.rarity.color),
@@ -221,7 +223,7 @@ class SkinShopScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.diamond, color: Color(0xFF00BCD4), size: 20),
+                const Icon(Icons.diamond, color: AppColors.skyBlue, size: 20),
                 const SizedBox(width: 4),
                 Text(
                   '${skin.price}',
@@ -240,7 +242,7 @@ class SkinShopScreen extends ConsumerWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFD700),
+               backgroundColor: AppColors.sinmyeongGold,
               foregroundColor: Colors.black,
             ),
             onPressed: () {
@@ -303,14 +305,19 @@ class _SkinCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = Responsive.scale(context);
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12 * s),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+          child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF2A2A4A),
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.black.withAlpha(60),
+          borderRadius: BorderRadius.circular(12 * s),
           border: equipped
-              ? Border.all(color: const Color(0xFFFFD700), width: 2)
+              ? Border.all(color: AppColors.sinmyeongGold, width: 2)
               : (owned
                   ? Border.all(color: skin.rarity.color.withAlpha(128), width: 1)
                   : null),
@@ -320,26 +327,26 @@ class _SkinCard extends StatelessWidget {
           children: [
             // 등급 배지
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: EdgeInsets.symmetric(horizontal: 6 * s, vertical: 2 * s),
               decoration: BoxDecoration(
                 color: skin.rarity.color.withAlpha(51),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(6 * s),
               ),
               child: Text(
                 skin.rarity.displayName,
                 style: TextStyle(
                   color: skin.rarity.color,
-                  fontSize: 11,
+                  fontSize: Responsive.fontSize(context, 10),
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 10 * s),
 
             // 스킨 미리보기 (원형)
             Container(
-              width: 60,
-              height: 60,
+              width: 50 * s,
+              height: 50 * s,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: owned ? skin.primaryColor : skin.primaryColor.withAlpha(77),
@@ -351,42 +358,44 @@ class _SkinCard extends StatelessWidget {
                     : null,
               ),
               child: !owned
-                  ? const Icon(Icons.lock, color: Colors.white38, size: 24)
+                  ? Icon(Icons.lock, color: Colors.white38, size: 20 * s)
                   : null,
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 8 * s),
 
             // 스킨 이름
             Text(
               skin.name,
               style: TextStyle(
                 color: owned ? Colors.white : Colors.grey,
-                fontSize: 13,
+                fontSize: Responsive.fontSize(context, 11),
                 fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4 * s),
 
             // 상태 표시
             if (equipped)
-              const Text(
+              Text(
                 '장착 중',
-                style: TextStyle(color: Color(0xFFFFD700), fontSize: 11),
+                style: TextStyle(color: AppColors.sinmyeongGold, fontSize: Responsive.fontSize(context, 10)),
               )
             else if (!owned)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.diamond, color: Color(0xFF00BCD4), size: 14),
-                  const SizedBox(width: 2),
+                  Icon(Icons.diamond, color: AppColors.skyBlue, size: 12 * s),
+                  SizedBox(width: 2 * s),
                   Text(
                     '${skin.price}',
-                    style: const TextStyle(color: Color(0xFF00BCD4), fontSize: 12),
+                    style: TextStyle(color: AppColors.skyBlue, fontSize: Responsive.fontSize(context, 11)),
                   ),
                 ],
               ),
           ],
+        ),
+      ),
         ),
       ),
     );
@@ -411,13 +420,14 @@ class _AdRewardButtonState extends State<_AdRewardButton> {
     final adMgr = AdManager.instance;
     final canWatch = adMgr.canShowRewardedAd && !_loading;
     final remaining = adMgr.remainingDailyRewarded;
+    final s = Responsive.scale(context);
 
     return Tooltip(
       message: '광고 시청하고 30보석 획득 (${remaining}회 남음)',
       child: GestureDetector(
         onTap: canWatch ? _watchAd : null,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 5 * s),
           decoration: BoxDecoration(
             gradient: canWatch
                 ? const LinearGradient(
@@ -425,15 +435,15 @@ class _AdRewardButtonState extends State<_AdRewardButton> {
                   )
                 : null,
             color: canWatch ? null : const Color(0xFF444444),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14 * s),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (_loading)
-                const SizedBox(
-                  width: 14, height: 14,
-                  child: CircularProgressIndicator(
+                SizedBox(
+                  width: 12 * s, height: 12 * s,
+                  child: const CircularProgressIndicator(
                     strokeWidth: 2, color: Colors.white,
                   ),
                 )
@@ -441,22 +451,22 @@ class _AdRewardButtonState extends State<_AdRewardButton> {
                 Icon(
                   Icons.play_circle_fill,
                   color: canWatch ? Colors.white : Colors.grey,
-                  size: 16,
+                  size: 14 * s,
                 ),
-              const SizedBox(width: 4),
+              SizedBox(width: 3 * s),
               Text(
                 '+30',
                 style: TextStyle(
                   color: canWatch ? Colors.white : Colors.grey,
-                  fontSize: 13,
+                  fontSize: Responsive.fontSize(context, 11),
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(width: 2),
+              SizedBox(width: 2 * s),
               Icon(
                 Icons.diamond,
-                color: canWatch ? const Color(0xFF00BCD4) : Colors.grey,
-                size: 14,
+                color: canWatch ? AppColors.skyBlue : Colors.grey,
+                size: 12 * s,
               ),
             ],
           ),

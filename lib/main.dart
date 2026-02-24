@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 
 import 'common/enums.dart';
+import 'ui/theme/app_colors.dart';
 import 'data/game_data_loader.dart';
 import 'data/models/wave_data.dart';
 import 'ui/dialogs/hero_unlock_dialog.dart';
@@ -23,6 +24,9 @@ import 'ui/menus/skin_shop_screen.dart';
 import 'ui/menus/endless_tower_screen.dart';
 import 'ui/menus/season_pass_screen.dart';
 import 'ui/menus/achievement_screen.dart';
+import 'ui/menus/package_shop_screen.dart';
+import 'ui/menus/daily_quest_screen.dart';
+import 'ui/menus/lore_collection_screen.dart';
 import 'state/endless_tower_provider.dart';
 import 'ui/hud/game_hud.dart';
 import 'ui/hud/tower_select_panel.dart';
@@ -69,7 +73,8 @@ class GatewayOfRegretsApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark,
         fontFamily: 'NotoSansKR',
-        scaffoldBackgroundColor: const Color(0xFF0D0221),
+        scaffoldBackgroundColor: AppColors.scaffoldBg,
+        colorSchemeSeed: AppColors.cherryBlossom,
       ),
       home: const GameScreen(),
     );
@@ -203,11 +208,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   Color _getTowerColor(TowerType type) {
     switch (type) {
-      case TowerType.archer:   return const Color(0xFF228B22);
-      case TowerType.barracks: return const Color(0xFF4169E1);
-      case TowerType.shaman:   return const Color(0xFF9400D3);
-      case TowerType.artillery:return const Color(0xFFB22222);
-      case TowerType.sotdae:   return const Color(0xFFFFD700);
+      case TowerType.archer:   return AppColors.towerArcher;
+      case TowerType.barracks: return AppColors.towerBarracks;
+      case TowerType.shaman:   return AppColors.towerShaman;
+      case TowerType.artillery:return AppColors.towerArtillery;
+      case TowerType.sotdae:   return AppColors.towerSotdae;
     }
   }
 
@@ -486,9 +491,20 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             final hero = heroes[i];
             final heroEmoji = _getHeroEmoji(hero.data.id);
 
+            // HeroId → 파일명 매핑
+            String heroFileName;
+            switch (hero.data.id) {
+              case HeroId.kkaebi: heroFileName = 'kkaebi'; break;
+              case HeroId.miho: heroFileName = 'miho'; break;
+              case HeroId.gangrim: heroFileName = 'gangrim'; break;
+              case HeroId.sua: heroFileName = 'sua'; break;
+              case HeroId.bari: heroFileName = 'bari'; break;
+            }
+
             heroInfos.add(HeroSkillInfo(
               name: hero.data.name,
               emoji: heroEmoji,
+              heroId: heroFileName,
               skillName: hero.data.skill.name,
               hpRatio: hero.maxHp > 0 ? (hero.hp / hero.maxHp).clamp(0, 1) : 0,
               cooldownRatio: hero.skillCooldownRatio,
@@ -533,10 +549,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A2E),
+        backgroundColor: AppColors.surfaceDark,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xFF8B5CF6), width: 1),
+          borderRadius: BorderRadius.circular(AppDesign.buttonRadius),
+          side: const BorderSide(color: AppColors.borderAccent, width: 1),
         ),
         title: Text(title,
             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -553,7 +569,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               onConfirm();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEF4444),
+              backgroundColor: AppColors.berserkRed,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -594,6 +610,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             _currentScreen = 'skinShop';
           });
         },
+        onPackageShop: () {
+          setState(() {
+            _currentScreen = 'packageShop';
+          });
+        },
         onEndlessTower: () {
           setState(() {
             _currentScreen = 'endlessTower';
@@ -607,6 +628,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         onAchievement: () {
           setState(() {
             _currentScreen = 'achievement';
+          });
+        },
+        onDailyQuest: () {
+          setState(() {
+            _currentScreen = 'dailyQuest';
+          });
+        },
+        onLoreCollection: () {
+          setState(() {
+            _currentScreen = 'loreCollection';
           });
         },
       );
@@ -662,6 +693,39 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     // 업적 & 랭킹
     if (_currentScreen == 'achievement') {
       return AchievementScreen(
+        onBack: () {
+          setState(() {
+            _currentScreen = 'mainMenu';
+          });
+        },
+      );
+    }
+
+    // 패키지 상점
+    if (_currentScreen == 'packageShop') {
+      return PackageShopScreen(
+        onBack: () {
+          setState(() {
+            _currentScreen = 'mainMenu';
+          });
+        },
+      );
+    }
+
+    // 일일 미션
+    if (_currentScreen == 'dailyQuest') {
+      return DailyQuestScreen(
+        onBack: () {
+          setState(() {
+            _currentScreen = 'mainMenu';
+          });
+        },
+      );
+    }
+
+    // 설화도감
+    if (_currentScreen == 'loreCollection') {
+      return LoreCollectionScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';

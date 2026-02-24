@@ -2,6 +2,8 @@
 // 마우스를 올리면 타워/적/영웅 정보를 표시합니다.
 
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
+import '../theme/glass_panel.dart';
 
 /// 툴팁 데이터 모델
 class GameTooltipData {
@@ -16,7 +18,7 @@ class GameTooltipData {
     required this.title,
     this.subtitle,
     this.description,
-    this.color = const Color(0xFF888888),
+    this.color = AppColors.textSecondary,
     this.icon,
     this.stats = const [],
   });
@@ -71,28 +73,26 @@ class GameTooltip extends StatelessWidget {
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 150),
           opacity: 1.0,
-          child: Container(
-            width: tooltipWidth,
+          child: GlassPanel(
+            borderRadius: 10,
+            blurAmount: 12,
+            backgroundColor: AppColors.surfaceDark.withAlpha(200),
+            borderColor: data.color.withAlpha(120),
+            borderWidth: 1.2,
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xF01A1A2E),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: data.color.withAlpha(150),
-                width: 1.2,
+            boxShadow: [
+              BoxShadow(
+                color: data.color.withAlpha(30),
+                blurRadius: 12,
+                spreadRadius: 2,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: data.color.withAlpha(30),
-                  blurRadius: 12,
-                  spreadRadius: 2,
-                ),
-                const BoxShadow(
-                  color: Color(0x66000000),
-                  blurRadius: 8,
-                ),
-              ],
-            ),
+              const BoxShadow(
+                color: Color(0x66000000),
+                blurRadius: 8,
+              ),
+            ],
+            child: SizedBox(
+              width: tooltipWidth,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -122,14 +122,14 @@ class GameTooltip extends StatelessWidget {
                   Text(
                     data.subtitle!,
                     style: const TextStyle(
-                      color: Color(0xFF888888),
+                      color: AppColors.textSecondary,
                       fontSize: 10,
                     ),
                   ),
                 ],
                 // 스탯
                 if (data.stats.isNotEmpty) ...[
-                  const Divider(color: Color(0x33FFFFFF), height: 10),
+                  const Divider(color: AppColors.borderDefault, height: 10),
                   ...data.stats.map((s) => Padding(
                     padding: const EdgeInsets.symmetric(vertical: 1),
                     child: Row(
@@ -138,15 +138,15 @@ class GameTooltip extends StatelessWidget {
                         Text(s.label,
                           style: TextStyle(
                             color: s.highlight 
-                              ? const Color(0xFFFFD700)
-                              : const Color(0xFF999999),
+                              ? AppColors.sinmyeongGold
+                              : AppColors.textDisabled,
                             fontSize: 10,
                           ),
                         ),
                         Text(s.value,
                           style: TextStyle(
                             color: s.highlight 
-                              ? const Color(0xFFFFD700) 
+                              ? AppColors.sinmyeongGold 
                               : Colors.white,
                             fontSize: 10,
                             fontWeight: s.highlight 
@@ -160,11 +160,11 @@ class GameTooltip extends StatelessWidget {
                 ],
                 // 설명
                 if (data.description != null) ...[
-                  const Divider(color: Color(0x33FFFFFF), height: 10),
+                  const Divider(color: AppColors.borderDefault, height: 10),
                   Text(
                     data.description!,
                     style: const TextStyle(
-                      color: Color(0xFFBBBBBB),
+                      color: AppColors.textSecondary,
                       fontSize: 10,
                       height: 1.3,
                     ),
@@ -173,6 +173,7 @@ class GameTooltip extends StatelessWidget {
               ],
             ),
           ),
+            ),
         ),
       ),
     );

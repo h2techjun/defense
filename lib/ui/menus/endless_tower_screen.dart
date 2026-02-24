@@ -1,6 +1,7 @@
 // 해원의 문 - 무한의 탑 + 일일 도전 UI 화면
 // 탑 진행도, 층 미리보기, 일일 도전 탭
 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/enums.dart';
@@ -11,6 +12,7 @@ import '../../data/models/wave_data.dart';
 import '../../data/wave_builder.dart';
 import '../../data/json_data_loader.dart';
 import '../../state/endless_tower_provider.dart';
+import '../theme/app_colors.dart';
 
 class EndlessTowerScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
@@ -123,7 +125,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A2E),
+        backgroundColor: AppColors.surfaceDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           '🏕️ ${floorData.floor}층 — 휴식',
@@ -164,7 +166,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
     final challengeState = ref.watch(dailyChallengeProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D1A),
+      backgroundColor: AppColors.scaffoldBg,
       body: SafeArea(
         child: Column(
           children: [
@@ -193,7 +195,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF1A0A2E), Color(0xFF16213E)],
+          colors: [AppColors.bgDeepPlum, Color(0xFF16213E)],
         ),
       ),
       child: Row(
@@ -362,7 +364,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
             padding: EdgeInsets.all(Responsive.spacing(context, 20)),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF2D1B69), Color(0xFF1A0A2E)],
+                colors: [AppColors.surfaceMid, AppColors.bgDeepPlum],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -580,7 +582,11 @@ class _TowerFloorCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          child: Container(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+              child: Container(
             padding: EdgeInsets.all(Responsive.spacing(context, 12)),
             decoration: BoxDecoration(
               color: bgColor,
@@ -673,6 +679,8 @@ class _TowerFloorCard extends StatelessWidget {
               ],
             ),
           ),
+            ),
+          ),
         ),
       ),
     );
@@ -693,7 +701,7 @@ class _RestRewardButton extends StatelessWidget {
         onTap: onSelect,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(Responsive.spacing(context, 12)),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
@@ -701,31 +709,31 @@ class _RestRewardButton extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Text(reward.emoji, style: const TextStyle(fontSize: 24)),
-              const SizedBox(width: 12),
+              Text(reward.emoji, style: TextStyle(fontSize: Responsive.fontSize(context, 22))),
+              SizedBox(width: Responsive.spacing(context, 10)),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       reward.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: Responsive.fontSize(context, 13),
                       ),
                     ),
                     Text(
                       reward.description,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white54,
-                        fontSize: 12,
+                        fontSize: Responsive.fontSize(context, 11),
                       ),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Colors.white38),
+              Icon(Icons.chevron_right, color: Colors.white38, size: Responsive.iconSize(context, 20)),
             ],
           ),
         ),

@@ -3,8 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../l10n/app_strings.dart';
 import '../../state/game_state.dart';
+import '../../l10n/app_strings.dart';
+import '../theme/app_colors.dart';
+import '../theme/glass_panel.dart';
 
 /// 승리 오버레이
 class VictoryOverlay extends ConsumerWidget {
@@ -27,97 +29,99 @@ class VictoryOverlay extends ConsumerWidget {
     return Container(
       color: const Color(0xBB000000),
       child: Center(
-        child: Container(
-          width: 360,
-          padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF1A0F29), Color(0xFF2D1B4E)],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFFFD700), width: 2),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x44FFD700),
-                blurRadius: 30,
-                spreadRadius: 5,
-              ),
-            ],
+        child: GlassPanel(
+          borderRadius: 20,
+          blurAmount: 12,
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.bgDeepPlum, AppColors.surfaceMid],
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('🌸', style: TextStyle(fontSize: 48)),
-              const SizedBox(height: 12),
-              ShaderMask(
-                shaderCallback: (bounds) => const LinearGradient(
-                  colors: [Color(0xFFFFD700), Color(0xFFFFAA44)],
-                ).createShader(bounds),
-                child: Text(
-                  AppStrings.get(lang, 'victory_title'),
+          borderColor: AppColors.sinmyeongGold,
+          borderWidth: 2,
+          padding: const EdgeInsets.all(32),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.sinmyeongGold.withAlpha(68),
+              blurRadius: 30,
+              spreadRadius: 5,
+            ),
+          ],
+          child: SizedBox(
+            width: 360,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('🌸', style: TextStyle(fontSize: 48)),
+                const SizedBox(height: 12),
+                ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    colors: [AppColors.sinmyeongGold, AppColors.peachCoral],
+                  ).createShader(bounds),
+                  child: Text(
+                    AppStrings.get(lang, 'victory_title'),
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  AppStrings.get(lang, 'victory_quote'),
                   style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontSize: 12,
+                    color: AppColors.lavender,
+                    fontStyle: FontStyle.italic,
                   ),
                 ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                AppStrings.get(lang, 'victory_quote'),
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF8866AA),
-                  fontStyle: FontStyle.italic,
+
+                // ── 별 평가 ──
+                const SizedBox(height: 16),
+                _StarRating(stars: state.starRating),
+                const SizedBox(height: 16),
+
+                // ── 통계 ──
+                _StatRow(AppStrings.get(lang, 'stat_kills'), '${state.enemiesKilled}'),
+                _StatRow(AppStrings.get(lang, 'stat_hp'), '${state.gatewayHp}/${state.maxGatewayHp}'),
+                _StatRow(AppStrings.get(lang, 'stat_score'), '${state.score}'),
+                const SizedBox(height: 24),
+
+                // ── 3버튼 ──
+                Row(
+                  children: [
+                    // 나가기
+                    Expanded(
+                      child: _DialogButton(
+                        label: AppStrings.get(lang, 'return_menu'),
+                        icon: Icons.exit_to_app,
+                        onTap: onMenu,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // 다시 하기
+                    Expanded(
+                      child: _DialogButton(
+                        label: AppStrings.get(lang, 'replay'),
+                        icon: Icons.replay,
+                        onTap: onReplay,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // 다음 스테이지
+                    Expanded(
+                      child: _DialogButton(
+                        label: AppStrings.get(lang, 'next_stage'),
+                        icon: Icons.arrow_forward,
+                        onTap: onNextStage,
+                        isPrimary: true,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-
-              // ── 별 평가 ──
-              const SizedBox(height: 16),
-              _StarRating(stars: state.starRating),
-              const SizedBox(height: 16),
-
-              // ── 통계 ──
-              _StatRow(AppStrings.get(lang, 'stat_kills'), '${state.enemiesKilled}'),
-              _StatRow(AppStrings.get(lang, 'stat_hp'), '${state.gatewayHp}/${state.maxGatewayHp}'),
-              _StatRow(AppStrings.get(lang, 'stat_score'), '${state.score}'),
-              const SizedBox(height: 24),
-
-              // ── 3버튼 ──
-              Row(
-                children: [
-                  // 나가기
-                  Expanded(
-                    child: _DialogButton(
-                      label: AppStrings.get(lang, 'return_menu'),
-                      icon: Icons.exit_to_app,
-                      onTap: onMenu,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // 다시 하기
-                  Expanded(
-                    child: _DialogButton(
-                      label: AppStrings.get(lang, 'replay'),
-                      icon: Icons.replay,
-                      onTap: onReplay,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // 다음 스테이지
-                  Expanded(
-                    child: _DialogButton(
-                      label: AppStrings.get(lang, 'next_stage'),
-                      icon: Icons.arrow_forward,
-                      onTap: onNextStage,
-                      isPrimary: true,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -144,108 +148,105 @@ class DefeatOverlay extends ConsumerWidget {
     return Container(
       color: const Color(0xBB000000),
       child: Center(
-        child: Container(
-          width: 360,
-          padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF1A0F29), Color(0xFF2D0B1E)],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFFF4444), width: 2),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x44FF0000),
-                blurRadius: 30,
-                spreadRadius: 5,
-              ),
-            ],
+        child: GlassPanel(
+          borderRadius: 20,
+          blurAmount: 12,
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.bgDeepPlum, Color(0xFF2D0B1E)],
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('💀', style: TextStyle(fontSize: 48)),
-              const SizedBox(height: 12),
-              ShaderMask(
-                shaderCallback: (bounds) => const LinearGradient(
-                  colors: [Color(0xFFFF4444), Color(0xFFFF8800)],
-                ).createShader(bounds),
-                child: Text(
-                  AppStrings.get(lang, 'defeat_title'),
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+          borderColor: AppColors.berserkRed,
+          borderWidth: 2,
+          padding: const EdgeInsets.all(32),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.berserkRed.withAlpha(68),
+              blurRadius: 30,
+              spreadRadius: 5,
+            ),
+          ],
+          child: SizedBox(
+            width: 360,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('💀', style: TextStyle(fontSize: 48)),
+                const SizedBox(height: 12),
+                ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    colors: [AppColors.berserkRed, AppColors.peachCoral],
+                  ).createShader(bounds),
+                  child: Text(
+                    AppStrings.get(lang, 'defeat_title'),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                AppStrings.get(lang, 'defeat_quote'),
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF886666),
-                  fontStyle: FontStyle.italic,
+                const SizedBox(height: 6),
+                Text(
+                  AppStrings.get(lang, 'defeat_quote'),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF886666),
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // ── 팁 ──
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0x22FFAA00),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0x44FFAA00)),
-                ),
-                child: Row(
-                  children: [
-                    const Text('💡', style: TextStyle(fontSize: 16)),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        AppStrings.get(lang, 'defeat_tip'),
-                        style: TextStyle(
-                          color: Color(0xFFFFCC66),
-                          fontSize: 11,
+                // ── 팁 ──
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.sinmyeongGold.withAlpha(34),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.sinmyeongGold.withAlpha(68)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Text('💡', style: TextStyle(fontSize: 16)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          AppStrings.get(lang, 'defeat_tip'),
+                          style: TextStyle(
+                            color: AppColors.sinmyeongGold,
+                            fontSize: 11,
+                          ),
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // ── 2버튼 ──
+                Row(
+                  children: [
+                    Expanded(
+                      child: _DialogButton(
+                        label: AppStrings.get(lang, 'return_menu'),
+                        icon: Icons.exit_to_app,
+                        onTap: onMenu,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: _DialogButton(
+                        label: AppStrings.get(lang, 'retry'),
+                        icon: Icons.replay,
+                        onTap: onRetry,
+                        isPrimary: true,
                       ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 16),
-
-              // ── 통계 ──
-              _StatRow(AppStrings.get(lang, 'stat_kills'), '${state.enemiesKilled}'),
-              _StatRow(AppStrings.get(lang, 'stat_wave'), '${state.currentWave}/${state.totalWaves}'),
-              const SizedBox(height: 24),
-
-              // ── 2버튼 ──
-              Row(
-                children: [
-                  Expanded(
-                    child: _DialogButton(
-                      label: AppStrings.get(lang, 'return_menu'),
-                      icon: Icons.exit_to_app,
-                      onTap: onMenu,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: _DialogButton(
-                      label: AppStrings.get(lang, 'retry'),
-                      icon: Icons.replay,
-                      onTap: onRetry,
-                      isPrimary: true,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -336,10 +337,10 @@ class _StarRatingState extends State<_StarRating>
                   child: Icon(
                     Icons.star_rounded,
                     size: 44,
-                    color: const Color(0xFFFFD700),
-                    shadows: const [
+                    color: AppColors.sinmyeongGold,
+                    shadows: [
                       Shadow(
-                        color: Color(0x88FFD700),
+                        color: AppColors.sinmyeongGold.withAlpha(136),
                         blurRadius: 12,
                       ),
                     ],
@@ -367,7 +368,7 @@ class _StatRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Color(0xFFAA99BB), fontSize: 13)),
+          Text(label, style: const TextStyle(color: AppColors.lavender, fontSize: 13)),
           Text(value, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
         ],
       ),
@@ -397,14 +398,14 @@ class _DialogButton extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: isPrimary
               ? const LinearGradient(
-                  colors: [Color(0xFF6633AA), Color(0xFF9944CC)],
+                  colors: [AppColors.lavender, Color(0xFF9944CC)],
                 )
               : null,
           color: isPrimary ? null : const Color(0x22FFFFFF),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isPrimary
-                ? const Color(0xFFAA66DD)
+                ? AppColors.lavender
                 : const Color(0x44FFFFFF),
           ),
         ),
@@ -423,7 +424,7 @@ class _DialogButton extends StatelessWidget {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: isPrimary ? Colors.white : const Color(0xFFBB99DD),
+                  color: isPrimary ? Colors.white : AppColors.lavender,
                   fontWeight: isPrimary ? FontWeight.bold : FontWeight.normal,
                   fontSize: 13,
                 ),

@@ -13,6 +13,8 @@ class UserState {
   final int highestLevel;
   final int totalStars;
   final int gems;           // 보석 화폐
+  final int gold;           // 골드(신명) 화폐
+  final int membershipPoints; // 멤버십 포인트 (마일리지)
   final bool isPremium;
   final Map<String, int> stageStars; // "chapter:level" -> stars
 
@@ -23,6 +25,8 @@ class UserState {
     this.highestLevel = 1,
     this.totalStars = 0,
     this.gems = 100,         // 초기 보석 100개
+    this.gold = 1000,        // 초기 골드 1000개
+    this.membershipPoints = 0, // 초기 멤버십 포인트
     this.isPremium = false,
     this.stageStars = const {},
   });
@@ -34,6 +38,8 @@ class UserState {
     int? highestLevel,
     int? totalStars,
     int? gems,
+    int? gold,
+    int? membershipPoints,
     bool? isPremium,
     Map<String, int>? stageStars,
   }) {
@@ -44,6 +50,8 @@ class UserState {
       highestLevel: highestLevel ?? this.highestLevel,
       totalStars: totalStars ?? this.totalStars,
       gems: gems ?? this.gems,
+      gold: gold ?? this.gold,
+      membershipPoints: membershipPoints ?? this.membershipPoints,
       isPremium: isPremium ?? this.isPremium,
       stageStars: stageStars ?? this.stageStars,
     );
@@ -54,6 +62,39 @@ class UserState {
 
   /// 특정 스테이지 클리어 여부
   bool isCleared(int chapter, int level) => stageStars.containsKey('$chapter:$level');
+
+  Map<String, dynamic> toJson() => {
+    'unlockedHeroes': unlockedHeroes.map((e) => e.name).toList(),
+    'heroLevels': heroLevels.map((key, value) => MapEntry(key.name, value)),
+    'highestChapter': highestChapter,
+    'highestLevel': highestLevel,
+    'totalStars': totalStars,
+    'gems': gems,
+    'gold': gold,
+    'membershipPoints': membershipPoints,
+    'isPremium': isPremium,
+  };
+
+  factory UserState.fromJson(Map<String, dynamic> json) {
+    return UserState(
+      unlockedHeroes: ((json['unlockedHeroes'] as List?) ?? [])
+          .map((e) => HeroId.values.firstWhere((h) => h.name == e))
+          .toSet(),
+      heroLevels: (json['heroLevels'] as Map<String, dynamic>?)?.map(
+        (key, value) => MapEntry(
+          HeroId.values.firstWhere((h) => h.name == key),
+          (value as num).toInt(),
+        ),
+      ) ?? {HeroId.kkaebi: 1},
+      highestChapter: (json['highestChapter'] as num?)?.toInt() ?? 1,
+      highestLevel: (json['highestLevel'] as num?)?.toInt() ?? 1,
+      totalStars: (json['totalStars'] as num?)?.toInt() ?? 0,
+      gems: (json['gems'] as num?)?.toInt() ?? 100,
+      gold: (json['gold'] as num?)?.toInt() ?? 1000,
+      membershipPoints: (json['membershipPoints'] as num?)?.toInt() ?? 0,
+      isPremium: json['isPremium'] as bool? ?? false,
+    );
+  }
 }
 
 /// 사용자 데이터 Notifier
@@ -125,6 +166,26 @@ class UserStateNotifier extends StateNotifier<UserState> {
     state = state.copyWith(gems: state.gems - amount);
     _autoSave();
     return true;
+  }
+
+  /// 골드 추가
+  void addGold(int amount) {
+    state = state.copyWith(gold: state.gold + amount);
+    _autoSave();
+  }
+
+  /// 골드 소비 — 부족 시 false 반환
+  bool spendGold(int amount) {
+    if (state.gold < amount) return false;
+    state = state.copyWith(gold: state.gold - amount);
+    _autoSave();
+    return true;
+  }
+
+  /// 멤버십 포인트 추가
+  void addMembershipPoints(int amount) {
+    state = state.copyWith(membershipPoints: state.membershipPoints + amount);
+    _autoSave();
   }
 }
 

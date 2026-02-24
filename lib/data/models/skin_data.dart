@@ -6,13 +6,13 @@ import '../../common/enums.dart';
 
 /// 스킨 등급 (7단계)
 enum SkinRarity {
-  common,    // 일반 (기본 스킨)
-  uncommon,  // 고급
-  rare,      // 희귀
-  epic,      // 영웅
-  legendary, // 전설
-  mythic,    // 신화
-  divine,    // 신성
+  common,    // 기본
+  uncommon,  // 수련
+  rare,      // 정제
+  epic,      // 명작
+  legendary, // 걸작
+  mythic,    // 전설
+  divine,    // 한정
 }
 
 /// 스킨 ID
@@ -58,7 +58,7 @@ class SkinData {
   final Color secondaryColor;  // 보조/테두리
   final Color glowColor;       // 오라 색상 (legendary+)
   final bool hasParticle;      // 파티클 효과 (mythic+)
-  final int price;             // 보석 가격 (0 = 기본)
+  final int price;             // 신명석 가격 (0 = 기본)
 
   const SkinData({
     required this.id,
@@ -77,13 +77,13 @@ class SkinData {
 extension SkinRarityExt on SkinRarity {
   String get displayName {
     switch (this) {
-      case SkinRarity.common:    return '일반';
-      case SkinRarity.uncommon:  return '고급';
-      case SkinRarity.rare:      return '희귀';
-      case SkinRarity.epic:      return '영웅';
-      case SkinRarity.legendary: return '전설';
-      case SkinRarity.mythic:    return '신화';
-      case SkinRarity.divine:    return '신성';
+      case SkinRarity.common:    return '기본';
+      case SkinRarity.uncommon:  return '수련';
+      case SkinRarity.rare:      return '정제';
+      case SkinRarity.epic:      return '명작';
+      case SkinRarity.legendary: return '걸작';
+      case SkinRarity.mythic:    return '전설';
+      case SkinRarity.divine:    return '한정';
     }
   }
 

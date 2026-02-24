@@ -351,7 +351,7 @@ class BaseHero extends PositionComponent
       // HeroId → 파일명 매핑
       final heroName = _getHeroFileName(data.id);
       final tierNum = _getTierNumber(currentTier);
-      final imagePath = 'heroes/hero_${heroName}_$tierNum.png';
+      final imagePath = 'heroes/hero_${heroName}_t$tierNum.png';
 
       final image = await game.images.load(imagePath);
       final sprite = Sprite(image);
@@ -370,6 +370,8 @@ class BaseHero extends PositionComponent
       );
       add(_spriteComponent!);
       _heroSpriteLoaded = true;
+      // 스프라이트 로드 성공 → 배경 색상 사각형 투명화
+      _body.paint.color = const Color(0x00000000);
     } catch (e) {
       _heroSpriteLoaded = false;
     }

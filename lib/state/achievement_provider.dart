@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/achievement_data.dart';
 import '../common/enums.dart';
 import '../services/save_manager.dart';
+import 'user_state.dart';
+import 'season_pass_provider.dart';
 
 // ═══════════════════════════════════════════
 // 업적 상태
@@ -115,7 +117,8 @@ class RankingState {
 // ═══════════════════════════════════════════
 
 class AchievementNotifier extends StateNotifier<AchievementState> {
-  AchievementNotifier() : super(const AchievementState());
+  final Ref _ref;
+  AchievementNotifier(this._ref) : super(const AchievementState());
 
   /// 업적 진행도 증가
   void incrementProgress(String achievementId, {int amount = 1}) {
@@ -192,6 +195,18 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
       claimed: {...state.claimed, achievementId},
     );
     _persist();
+
+    // ── 실제 보석 보상 지급 ──
+    try {
+      final achievement = allAchievements.firstWhere((a) => a.id == achievementId);
+      if (achievement.rewardGems > 0) {
+        _ref.read(userStateProvider.notifier).addGems(achievement.rewardGems);
+      }
+      if (achievement.rewardPassXp > 0) {
+        _ref.read(seasonPassProvider.notifier).addXp(achievement.rewardPassXp);
+      }
+    } catch (_) {}
+
     return true;
   }
 
@@ -276,7 +291,7 @@ class RankingNotifier extends StateNotifier<RankingState> {
 
 final achievementProvider =
     StateNotifierProvider<AchievementNotifier, AchievementState>(
-  (ref) => AchievementNotifier(),
+  (ref) => AchievementNotifier(ref),
 );
 
 final rankingProvider =

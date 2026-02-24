@@ -1,13 +1,16 @@
 // 해원의 문 - 영웅 스킬 패널 (인게임 UI)
 // 영웅 초상화, HP 바, 스킬 쿨다운, 부활 타이머 표시
 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../common/responsive.dart';
+import '../theme/app_colors.dart';
 
 /// 영웅 스킬 패널 데이터
 class HeroSkillInfo {
   final String name;
   final String emoji;
+  final String? heroId; // 영웅 식별자 (이미지 경로용)
   final String skillName;
   final double hpRatio; // 0~1
   final double cooldownRatio; // 0~1 (0=사용 가능)
@@ -20,6 +23,7 @@ class HeroSkillInfo {
   const HeroSkillInfo({
     required this.name,
     required this.emoji,
+    this.heroId,
     required this.skillName,
     required this.hpRatio,
     required this.cooldownRatio,
@@ -57,24 +61,28 @@ class _HeroSkillButton extends StatelessWidget {
 
     return GestureDetector(
       onTap: isReady ? info.onSkillTap : null,
-      child: Container(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+          child: Container(
         width: 80 * Responsive.scale(context),
         height: 86 * Responsive.scale(context),
         margin: EdgeInsets.only(bottom: 8 * Responsive.scale(context)),
         decoration: BoxDecoration(
           color: info.isDead
-              ? const Color(0x88333333)
+              ? Colors.black.withAlpha(100)
               : isReady
-                  ? const Color(0xCC1A1A2E)
-                  : const Color(0x88222233),
+                  ? AppColors.surfaceDark.withAlpha(160)
+                  : Colors.black.withAlpha(80),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: info.isDead
-                ? const Color(0xFF666666)
+                ? AppColors.textDisabled
                 : info.isUltimate
-                    ? const Color(0xFFFFD700) // 궁극기 금테
+                    ? AppColors.sinmyeongGold // 궁극기 금테
                     : isReady
-                        ? const Color(0xFF44AAFF)
+                        ? AppColors.skyBlue
                         : const Color(0xFF444466),
             width: info.isUltimate ? 2.5 : 1.5,
           ),
@@ -82,8 +90,8 @@ class _HeroSkillButton extends StatelessWidget {
               ? [
                   BoxShadow(
                     color: info.isUltimate
-                        ? const Color(0x44FFD700)
-                        : const Color(0x2244AAFF),
+                        ? AppColors.sinmyeongGold.withAlpha(68)
+                        : AppColors.skyBlue.withAlpha(34),
                     blurRadius: 8,
                   )
                 ]
@@ -130,14 +138,32 @@ class _HeroSkillButton extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    info.emoji,
-                    style: TextStyle(
-                      fontSize: Responsive.fontSize(context, 22),
-                      color: info.isDead ? Colors.white30 : null,
+                  if (info.heroId != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Image.asset(
+                        'assets/images/heroes/hero_${info.heroId}_1.png',
+                        width: 32 * Responsive.scale(context),
+                        height: 32 * Responsive.scale(context),
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => Text(
+                          info.emoji,
+                          style: TextStyle(
+                            fontSize: Responsive.fontSize(context, 22),
+                            color: info.isDead ? Colors.white30 : null,
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    Text(
+                      info.emoji,
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 22),
+                        color: info.isDead ? Colors.white30 : null,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 1),
+                  SizedBox(height: 1 * Responsive.scale(context)),
                   Text(
                     info.name,
                     style: TextStyle(
@@ -152,7 +178,7 @@ class _HeroSkillButton extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 4 * Responsive.scale(context), vertical: 1 * Responsive.scale(context)),
                     decoration: BoxDecoration(
                       color: isReady
-                          ? const Color(0x3344AAFF)
+                          ? AppColors.skyBlue.withAlpha(51)
                           : const Color(0x22FFFFFF),
                       borderRadius: BorderRadius.circular(4),
                     ),
@@ -160,7 +186,7 @@ class _HeroSkillButton extends StatelessWidget {
                       info.skillName,
                       style: TextStyle(
                         color: isReady
-                            ? const Color(0xFF88CCFF)
+                            ? AppColors.skyBlue
                             : Colors.white38,
                         fontSize: Responsive.fontSize(context, 7),
                         fontWeight: FontWeight.bold,
@@ -182,7 +208,7 @@ class _HeroSkillButton extends StatelessWidget {
                 child: Container(
                   height: 3 * Responsive.scale(context),
                   decoration: BoxDecoration(
-                    color: const Color(0x33FFFFFF),
+                    color: AppColors.borderDefault,
                     borderRadius: BorderRadius.circular(2),
                   ),
                   child: FractionallySizedBox(
@@ -192,10 +218,10 @@ class _HeroSkillButton extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(2),
                         color: info.hpRatio > 0.5
-                            ? const Color(0xFF44FF44)
+                            ? AppColors.mintGreen
                             : info.hpRatio > 0.25
-                                ? const Color(0xFFFFAA00)
-                                : const Color(0xFFFF4444),
+                                ? AppColors.sinmyeongGold
+                                : AppColors.berserkRed,
                       ),
                     ),
                   ),
@@ -205,7 +231,7 @@ class _HeroSkillButton extends StatelessWidget {
             // 사망 표시
             if (info.isDead)
               Positioned(
-                bottom: 2,
+                bottom: 2 * Responsive.scale(context),
                 left: 0,
                 right: 0,
                 child: Text(
@@ -221,11 +247,13 @@ class _HeroSkillButton extends StatelessWidget {
             // 궁극기 별
             if (info.isUltimate)
               Positioned(
-                top: 2,
-                right: 2,
+                top: 2 * Responsive.scale(context),
+                right: 2 * Responsive.scale(context),
                 child: Text('⭐', style: TextStyle(fontSize: Responsive.fontSize(context, 10))),
               ),
           ],
+        ),
+      ),
         ),
       ),
     );

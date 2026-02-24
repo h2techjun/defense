@@ -1,11 +1,13 @@
 // 해원의 문 - 무한의 탑 + 일일 도전 상태 관리
 // Riverpod 기반 진행 상황, 보상, 세이브 연동
+// 열쇠 시스템 + 보석 부활 + 최초 클리어 보너스
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/endless_tower_data.dart';
 import '../data/models/daily_challenge_data.dart';
 import '../common/enums.dart';
 import '../services/save_manager.dart';
+import 'user_state.dart';
 
 /// 무한의 탑 상태
 class EndlessTowerState {
@@ -15,6 +17,15 @@ class EndlessTowerState {
   final int totalFloorsCleared;  // 누적 클리어 층 수
   final List<RestRewardType> activeBuffs; // 현재 활성 버프 (휴식 보상)
   final int buffRemainingFloors; // 버프 남은 층 수
+  final int dailyKeys;           // 남은 일일 열쇠 (하루 3개)
+  final String lastKeyResetDate; // 열쇠 리셋 날짜
+  final Set<int> firstClearFloors; // 최초 클리어 보석 받은 층 (10, 20, 30...)
+
+  /// 열쇠 시스템 상수
+  static const int maxDailyKeys = 3;
+  static const int gemCostPerKey = 5;
+  static const int reviveCostGems = 10;
+  static const int firstClearGemsPerMilestone = 15;
 
   const EndlessTowerState({
     this.highestFloor = 0,
@@ -23,6 +34,9 @@ class EndlessTowerState {
     this.totalFloorsCleared = 0,
     this.activeBuffs = const [],
     this.buffRemainingFloors = 0,
+    this.dailyKeys = 3,
+    this.lastKeyResetDate = '',
+    this.firstClearFloors = const {},
   });
 
   EndlessTowerState copyWith({
@@ -32,6 +46,9 @@ class EndlessTowerState {
     int? totalFloorsCleared,
     List<RestRewardType>? activeBuffs,
     int? buffRemainingFloors,
+    int? dailyKeys,
+    String? lastKeyResetDate,
+    Set<int>? firstClearFloors,
   }) {
     return EndlessTowerState(
       highestFloor: highestFloor ?? this.highestFloor,
@@ -40,6 +57,9 @@ class EndlessTowerState {
       totalFloorsCleared: totalFloorsCleared ?? this.totalFloorsCleared,
       activeBuffs: activeBuffs ?? this.activeBuffs,
       buffRemainingFloors: buffRemainingFloors ?? this.buffRemainingFloors,
+      dailyKeys: dailyKeys ?? this.dailyKeys,
+      lastKeyResetDate: lastKeyResetDate ?? this.lastKeyResetDate,
+      firstClearFloors: firstClearFloors ?? this.firstClearFloors,
     );
   }
 
@@ -51,6 +71,9 @@ class EndlessTowerState {
     'totalFloorsCleared': totalFloorsCleared,
     'activeBuffs': activeBuffs.map((b) => b.name).toList(),
     'buffRemainingFloors': buffRemainingFloors,
+    'dailyKeys': dailyKeys,
+    'lastKeyResetDate': lastKeyResetDate,
+    'firstClearFloors': firstClearFloors.toList(),
   };
 
   /// JSON 역직렬화
@@ -67,6 +90,10 @@ class EndlessTowerState {
               ))
           .toList() ?? [],
       buffRemainingFloors: json['buffRemainingFloors'] as int? ?? 0,
+      dailyKeys: json['dailyKeys'] as int? ?? 3,
+      lastKeyResetDate: json['lastKeyResetDate'] as String? ?? '',
+      firstClearFloors: ((json['firstClearFloors'] as List?) ?? [])
+          .map((e) => (e as num).toInt()).toSet(),
     );
   }
 }
@@ -126,16 +153,55 @@ class DailyChallengeState {
 
 /// 무한의 탑 Notifier
 class EndlessTowerNotifier extends StateNotifier<EndlessTowerState> {
-  EndlessTowerNotifier() : super(const EndlessTowerState());
+  final Ref _ref;
+  EndlessTowerNotifier(this._ref) : super(const EndlessTowerState());
 
-  /// 새로운 도전 시작
-  void startRun() {
+  String _today() {
+    final now = DateTime.now();
+    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+  }
+
+  /// 열쇠 리셋 체크 (하루 3개)
+  void checkKeyReset() {
+    final today = _today();
+    if (state.lastKeyResetDate != today) {
+      state = state.copyWith(
+        dailyKeys: EndlessTowerState.maxDailyKeys,
+        lastKeyResetDate: today,
+      );
+      _persist();
+    }
+  }
+
+  /// 열쇠 소모하여 도전 시작
+  bool useKey() {
+    checkKeyReset();
+    if (state.dailyKeys <= 0) return false;
+    state = state.copyWith(dailyKeys: state.dailyKeys - 1);
+    _persist();
+    return true;
+  }
+
+  /// 보석으로 열쇠 구매 [💰 Monetize]
+  bool buyKey() {
+    final user = _ref.read(userStateProvider);
+    if (user.gems < EndlessTowerState.gemCostPerKey) return false;
+    _ref.read(userStateProvider.notifier).addGems(-EndlessTowerState.gemCostPerKey);
+    state = state.copyWith(dailyKeys: state.dailyKeys + 1);
+    _persist();
+    return true;
+  }
+
+  /// 새로운 도전 시작 (열쇠 소모)
+  bool startRun() {
+    if (!useKey()) return false;
     state = state.copyWith(
       currentFloor: 1,
       activeBuffs: [],
       buffRemainingFloors: 0,
     );
     _persist();
+    return true;
   }
 
   /// 층 클리어
@@ -145,13 +211,23 @@ class EndlessTowerNotifier extends StateNotifier<EndlessTowerState> {
         ? state.buffRemainingFloors - 1
         : 0;
 
+    // 최초 클리어 보너스 체크 (10층 단위)
+    int bonusGems = 0;
+    Set<int>? newFirstClears;
+    if (floor % 10 == 0 && !state.firstClearFloors.contains(floor)) {
+      bonusGems = EndlessTowerState.firstClearGemsPerMilestone;
+      newFirstClears = {...state.firstClearFloors, floor};
+      _ref.read(userStateProvider.notifier).addGems(bonusGems);
+    }
+
     state = state.copyWith(
       currentFloor: floor + 1,
       highestFloor: newHighest,
-      totalGemsEarned: state.totalGemsEarned + gemsEarned,
+      totalGemsEarned: state.totalGemsEarned + gemsEarned + bonusGems,
       totalFloorsCleared: state.totalFloorsCleared + 1,
       buffRemainingFloors: newBuffFloors,
       activeBuffs: newBuffFloors <= 0 ? [] : null,
+      firstClearFloors: newFirstClears,
     );
     _persist();
   }
@@ -168,6 +244,16 @@ class EndlessTowerNotifier extends StateNotifier<EndlessTowerState> {
     // 다음 층으로 진행
     state = state.copyWith(currentFloor: state.currentFloor + 1);
     _persist();
+  }
+
+  /// 보석으로 부활 (패배 시 이어하기) [💰 Monetize]
+  bool reviveWithGems() {
+    if (state.currentFloor <= 0) return false;
+    final user = _ref.read(userStateProvider);
+    if (user.gems < EndlessTowerState.reviveCostGems) return false;
+    _ref.read(userStateProvider.notifier).addGems(-EndlessTowerState.reviveCostGems);
+    // 현재 층에서 다시 시작 (진행 유지)
+    return true;
   }
 
   /// 패배 시 (진행 초기화, 기록 유지)
@@ -190,6 +276,7 @@ class EndlessTowerNotifier extends StateNotifier<EndlessTowerState> {
     final data = await SaveManager.instance.loadEndlessTower();
     if (data != null) {
       state = EndlessTowerState.fromJson(data);
+      checkKeyReset();
     }
   }
 }
@@ -245,7 +332,7 @@ class DailyChallengeNotifier extends StateNotifier<DailyChallengeState> {
 /// Providers
 final endlessTowerProvider =
     StateNotifierProvider<EndlessTowerNotifier, EndlessTowerState>(
-  (ref) => EndlessTowerNotifier(),
+  (ref) => EndlessTowerNotifier(ref),
 );
 
 final dailyChallengeProvider =

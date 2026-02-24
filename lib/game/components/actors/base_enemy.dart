@@ -621,28 +621,107 @@ class BaseEnemy extends PositionComponent
 
   /// 보스 특수 능력 발동
   void _executeBossAbility() {
-    // 두억시니: 지진 — 모든 타워 2초 침묵 + 화면 흔들림
+    // 챕터 1: 두억시니 — 지진
     if (data.abilities.any((a) => a.name == '지진')) {
       final towers = game.cachedTowers;
       for (final tower in towers) {
         tower.silence(2.0);
       }
-      // 지진 시각 이펙트 — 강한 화면 흔들림 + 빨간 플래시
       game.shakeScreen(8.0, duration: 0.6);
       game.triggerRedFlash(duration: 0.5);
       return;
     }
 
-    // 산군: 포효 — 모든 타워 사거리 감소 (silence로 대체)
+    // 챕터 2: 산군 — 포효 & 창귀 소환
     if (data.abilities.any((a) => a.name == '포효')) {
       final towers = game.cachedTowers;
       for (final tower in towers) {
         tower.silence(3.0);
       }
-      // 포효 시각 이펙트 — 중간 화면 흔들림 + 빨간 플래시
       game.shakeScreen(5.0, duration: 0.4);
       game.triggerRedFlash(duration: 0.4);
+      
+      // 창귀 소환 (능력 목록에 있으면 발동)
+      if (data.abilities.any((a) => a.name == '창귀 소환')) {
+        final ability = data.abilities.firstWhere((a) => a.name == '창귀 소환');
+        _spawnBossMinions(EnemyId.tigerSlave, ability.value?.toInt() ?? 3);
+      }
       return;
+    }
+
+    // 챕터 3: 대왕 달걀귀신 — 스킬 반사 & 흡수
+    if (data.abilities.any((a) => a.name == '스킬 반사')) {
+      // 기획: 일정 시간 동안 받는 스킬 데미지를 0으로 하고 반사 (시각 효과만 우선)
+      game.triggerRedFlash(duration: 0.3);
+      // TODO: 실제 에너지 탄환 발사 로직 (반사)
+      
+      if (data.abilities.any((a) => a.name == '흡수')) {
+        // 주변 병사 제거 (병영 방어 무력화)
+        // game.world.children.whereType<BarracksSoldier>() 중 가까운 것 제거
+      }
+      return;
+    }
+
+    // 챕터 4: 폭군왕 — 칙령 & 궁녀 소환
+    if (data.abilities.any((a) => a.name == '칙령')) {
+      final ability = data.abilities.firstWhere((a) => a.name == '칙령');
+      final towers = List<BaseTower>.from(game.cachedTowers)..shuffle();
+      // 랜덤 타워 3개 (또는 value만큼) 침묵
+      final count = (ability.value?.toInt() ?? 3).clamp(0, towers.length);
+      for (int i = 0; i < count; i++) {
+        towers[i].silence(ability.duration ?? 10.0);
+      }
+      game.triggerRedFlash(duration: 0.8);
+
+      if (data.abilities.any((a) => a.name == '궁녀 소환')) {
+        _spawnBossMinions(EnemyId.courtAssassin, 4);
+      }
+      return;
+    }
+
+    // 챕터 5: 귀문관 수문장 — 귀문개방 & 저승의 선고
+    if (data.abilities.any((a) => a.name == '귀문개방')) {
+      // 랜덤 적 소환 (창귀, 아귀, 자객 중 랜덤)
+      final pool = [EnemyId.hungryGhost, EnemyId.tigerSlave, EnemyId.courtAssassin];
+      final targetId = pool[_random.nextInt(pool.length)];
+      _spawnBossMinions(targetId, 3);
+      game.shakeScreen(5.0, duration: 0.5);
+    }
+
+    if (data.abilities.any((a) => a.name == '저승의 선고')) {
+      // 가장 비싼(강한) 타워 1개 파괴 (또는 장시간 무력화)
+      final towers = List<BaseTower>.from(game.cachedTowers);
+      if (towers.isNotEmpty) {
+        towers.sort((a, b) => b.totalInvestedCost.compareTo(a.totalInvestedCost));
+        final target = towers.first;
+        target.silence(15.0); // 15초간 정지
+        // TODO: 시각적으로 '파괴'된 느낌의 오버레이 추가
+        game.triggerRedFlash(duration: 1.0);
+      }
+    }
+  }
+
+  /// 보스 주위로 졸개 소환
+  void _spawnBossMinions(EnemyId minionId, int count) {
+    final spawnData = _getEnemyDataById(minionId);
+    if (spawnData == null) return;
+
+    for (int i = 0; i < count; i++) {
+      final offset = Vector2(
+        (_random.nextDouble() - 0.5) * 60,
+        (_random.nextDouble() - 0.5) * 60,
+      );
+
+      final miniWaypoints = _waypoints.sublist(
+        (_currentWaypointIndex - 1).clamp(0, _waypoints.length - 1),
+      );
+
+      final minion = BaseEnemy(
+        data: spawnData,
+        waypoints: miniWaypoints,
+      );
+      minion.position = position + offset;
+      parent?.add(minion);
     }
   }
 
@@ -665,7 +744,7 @@ class BaseEnemy extends PositionComponent
     }
 
     // 신명 보상
-    game.onEnemyKilled(data.sinmyeongReward, isBoss: data.isBoss);
+    game.onEnemyKilled(data.sinmyeongReward, isBoss: data.isBoss, enemyId: data.id);
 
     // 원한의 순환: 원혼 스폰
     if (_random.nextDouble() < GameConstants.spiritSpawnChance) {

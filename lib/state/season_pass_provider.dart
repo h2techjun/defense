@@ -2,8 +2,16 @@
 // Riverpod StateNotifier 기반
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../common/enums.dart';
 import '../data/models/season_pass_data.dart';
+import '../data/models/skin_data.dart';
+import '../data/models/relic_data.dart';
 import '../services/save_manager.dart';
+import 'user_state.dart';
+import 'summon_provider.dart';
+import 'skin_provider.dart';
+import 'relic_provider.dart';
+import 'hero_party_provider.dart';
 
 // ═══════════════════════════════════════════
 // 시즌 패스 상태
@@ -129,7 +137,8 @@ class VipState {
 // ═══════════════════════════════════════════
 
 class SeasonPassNotifier extends StateNotifier<SeasonPassState> {
-  SeasonPassNotifier() : super(const SeasonPassState());
+  final Ref _ref;
+  SeasonPassNotifier(this._ref) : super(const SeasonPassState());
 
   /// XP 획득 (스테이지 클리어, 업적 달성 등)
   void addXp(int amount) {
@@ -178,7 +187,68 @@ class SeasonPassNotifier extends StateNotifier<SeasonPassState> {
     }
 
     _persist();
+    
+    // ── 실제 보상 지급 ──
+    final seasonRewards = season1.rewards;
+    final reward = seasonRewards.firstWhere(
+      (r) => r.level == level && r.isPremium == isPremium,
+      orElse: () => const PassReward(level: 0, type: PassRewardType.gold, name: '', emoji: ''),
+    );
+
+    if (reward.level != 0) {
+      _grantReward(reward);
+    }
+
     return true;
+  }
+
+  void _grantReward(PassReward reward) {
+    final userNotifier = _ref.read(userStateProvider.notifier);
+    
+    switch (reward.type) {
+      case PassRewardType.gems:
+        userNotifier.addGems(reward.amount);
+        break;
+      case PassRewardType.gold:
+        userNotifier.addGold(reward.amount);
+        break;
+      case PassRewardType.heroXp:
+        // 현재 선택된 영웅 혹은 모든 보유 영웅 경험치 부여
+        final party = _ref.read(heroPartyProvider).party;
+        if (party.isNotEmpty) {
+          final heroId = party.first.heroId;
+          _ref.read(userStateProvider.notifier).levelUpHero(heroId);
+          _ref.read(heroPartyProvider.notifier).levelUpHero(heroId);
+        }
+        break;
+      case PassRewardType.skin:
+        if (reward.unlockId != null) {
+          try {
+            final skinId = SkinId.values.firstWhere((s) => s.name == reward.unlockId);
+            _ref.read(skinProvider.notifier).unlockSkin(skinId);
+          } catch (_) {
+            print('[SeasonPass] Unknown SkinId: ${reward.unlockId}');
+          }
+        }
+        break;
+      case PassRewardType.relic:
+        if (reward.unlockId != null) {
+          try {
+            final relicId = RelicId.values.firstWhere((r) => r.name == reward.unlockId);
+            _ref.read(relicProvider.notifier).unlockRelic(relicId);
+          } catch (_) {
+            print('[SeasonPass] Unknown RelicId: ${reward.unlockId}');
+          }
+        }
+        break;
+      case PassRewardType.summonTicket:
+        _ref.read(summonProvider.notifier).addTickets('summonTicket', reward.amount);
+        print('[SeasonPass] 소환권 보상 획득: ${reward.amount}');
+        break;
+      default:
+        print('[SeasonPass] 기타 보상 획득: ${reward.name}');
+        break;
+    }
   }
 
   /// 보상 수령 가능 여부
@@ -188,6 +258,30 @@ class SeasonPassNotifier extends StateNotifier<SeasonPassState> {
       return state.isPremiumPass && !state.claimedPremium.contains(level);
     }
     return !state.claimedFree.contains(level);
+  }
+
+  /// 보석으로 레벨 구매 [💰 Monetize]
+  /// 30 보석 = 1 레벨 (시즌 종료 직전 급하게 올리고 싶은 유저 타겟)
+  static const int gemsPerLevel = 30;
+
+  bool purchaseLevels(int count) {
+    if (count <= 0) return false;
+    final totalCost = gemsPerLevel * count;
+    final userState = _ref.read(userStateProvider);
+    if (userState.gems < totalCost) return false;
+
+    // 보석 차감
+    _ref.read(userStateProvider.notifier).addGems(-totalCost);
+
+    // 레벨 올리기
+    int newLevel = state.currentLevel;
+    for (int i = 0; i < count; i++) {
+      if (newLevel < 50) newLevel++;
+    }
+
+    state = state.copyWith(currentLevel: newLevel, currentXp: 0);
+    _persist();
+    return true;
   }
 
   void _persist() async {
@@ -207,7 +301,8 @@ class SeasonPassNotifier extends StateNotifier<SeasonPassState> {
 // ═══════════════════════════════════════════
 
 class VipNotifier extends StateNotifier<VipState> {
-  VipNotifier() : super(const VipState());
+  final Ref _ref;
+  VipNotifier(this._ref) : super(const VipState());
 
   /// 결제 기록 추가
   void addPurchase(int amountKRW) {
@@ -227,6 +322,10 @@ class VipNotifier extends StateNotifier<VipState> {
 
     state = state.copyWith(lastDailyReward: today);
     _persist();
+
+    // 실제 보석 지급
+    _ref.read(userStateProvider.notifier).addGems(bonus);
+    
     return bonus;
   }
 
@@ -255,10 +354,10 @@ class VipNotifier extends StateNotifier<VipState> {
 
 final seasonPassProvider =
     StateNotifierProvider<SeasonPassNotifier, SeasonPassState>(
-  (ref) => SeasonPassNotifier(),
+  (ref) => SeasonPassNotifier(ref),
 );
 
 final vipProvider =
     StateNotifierProvider<VipNotifier, VipState>(
-  (ref) => VipNotifier(),
+  (ref) => VipNotifier(ref),
 );

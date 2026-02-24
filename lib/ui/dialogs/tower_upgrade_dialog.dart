@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import '../../common/enums.dart';
 import '../../data/game_data_loader.dart';
 import '../../data/models/tower_data.dart';
+import '../theme/app_colors.dart';
+import '../theme/glass_panel.dart';
 
 /// 타워 업그레이드 결과 (콜백 데이터)
 sealed class TowerActionResult {}
@@ -65,23 +67,20 @@ class TowerUpgradeDialog extends StatelessWidget {
         && towerData.branchA != null;
     final showBranch = needsBranch || (currentLevel == 3 && !isMaxLevel);
 
-    return Container(
+    return GlassPanel(
+      borderRadius: 16,
+      blurAmount: 10,
+      backgroundColor: AppColors.surfaceDark.withAlpha(200),
+      borderColor: _getColorForType(towerType).withAlpha(180),
+      borderWidth: 1.5,
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xEE1A1A2E),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: _getColorForType(towerType).withAlpha(180),
-          width: 1.5,
+      boxShadow: [
+        BoxShadow(
+          color: _getColorForType(towerType).withAlpha(40),
+          blurRadius: 20,
+          spreadRadius: 4,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: _getColorForType(towerType).withAlpha(40),
-            blurRadius: 20,
-            spreadRadius: 4,
-          ),
-        ],
-      ),
+      ],
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -132,7 +131,7 @@ class TowerUpgradeDialog extends StatelessWidget {
               currentUpgrade.specialAbility != nextUpgrade!.specialAbility)
             _StatRow('🆕 특수', nextUpgrade.specialAbility!,
                 highlight: true),
-          const Divider(color: Color(0x33FFFFFF), height: 16),
+          const Divider(color: AppColors.borderDefault, height: 16),
 
           // ── 업그레이드 버튼 ──
           if (showBranch) ...[
@@ -144,7 +143,7 @@ class TowerUpgradeDialog extends StatelessWidget {
               label: '⬆ ${nextUpgrade.name} (Lv.${currentLevel + 1})',
               cost: nextUpgrade.cost,
               canAfford: currentSinmyeong >= nextUpgrade.cost,
-              color: const Color(0xFF4CAF50),
+              color: AppColors.mintGreen,
               onTap: () => onAction(TowerUpgradeResult(currentLevel + 1)),
             ),
             // MAX 업그레이드 버튼 (현재 레벨이 3 미만일 때만)
@@ -160,7 +159,7 @@ class TowerUpgradeDialog extends StatelessWidget {
                   label: '⚡ MAX (Lv.3)',
                   cost: totalCost,
                   canAfford: currentSinmyeong >= totalCost,
-                  color: const Color(0xFFFF9800),
+                  color: AppColors.peachCoral,
                   onTap: () => onAction(TowerMaxUpgradeResult()),
                 );
               }),
@@ -171,7 +170,7 @@ class TowerUpgradeDialog extends StatelessWidget {
               alignment: Alignment.center,
               child: const Text(
                 '최대 레벨',
-                style: TextStyle(color: Color(0xFF888888), fontSize: 12),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
             ),
           ],
@@ -182,7 +181,7 @@ class TowerUpgradeDialog extends StatelessWidget {
             label: '🪙 판매',
             cost: -sellRefund,
             canAfford: true,
-            color: const Color(0xFFFF6B6B),
+            color: AppColors.berserkRed,
             onTap: () => onAction(TowerSellResult()),
           ),
         ],
@@ -205,7 +204,7 @@ class TowerUpgradeDialog extends StatelessWidget {
           label: '🔱 $branchName',
           cost: cost,
           canAfford: currentSinmyeong >= cost,
-          color: const Color(0xFFFF9800),
+          color: AppColors.peachCoral,
           onTap: () => onAction(TowerBranchResult(branch)),
         ),
         if (description.isNotEmpty)
@@ -214,7 +213,7 @@ class TowerUpgradeDialog extends StatelessWidget {
             child: Text(
               description,
               style: const TextStyle(
-                color: Color(0xFFBBBBBB),
+                color: AppColors.textSecondary,
                 fontSize: 9,
                 fontStyle: FontStyle.italic,
               ),
@@ -252,15 +251,15 @@ class TowerUpgradeDialog extends StatelessWidget {
   Color _getColorForType(TowerType type) {
     switch (type) {
       case TowerType.archer:
-        return const Color(0xFF228B22);
+        return AppColors.towerArcher;
       case TowerType.barracks:
-        return const Color(0xFF4169E1);
+        return AppColors.towerBarracks;
       case TowerType.shaman:
-        return const Color(0xFF9400D3);
+        return AppColors.towerShaman;
       case TowerType.artillery:
-        return const Color(0xFFB22222);
+        return AppColors.towerArtillery;
       case TowerType.sotdae:
-        return const Color(0xFFFFD700);
+        return AppColors.towerSotdae;
     }
   }
 
@@ -298,14 +297,14 @@ class _StatRow extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: highlight ? const Color(0xFFFFD700) : const Color(0xFF999999),
+              color: highlight ? AppColors.sinmyeongGold : AppColors.textDisabled,
               fontSize: 11,
             ),
           ),
           Text(
             value,
             style: TextStyle(
-              color: highlight ? const Color(0xFFFFD700) : Colors.white,
+              color: highlight ? AppColors.sinmyeongGold : Colors.white,
               fontSize: 11,
               fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
             ),
@@ -345,7 +344,7 @@ class _CompareStatRow extends StatelessWidget {
             width: 42,
             child: Text(
               label,
-              style: const TextStyle(color: Color(0xFF999999), fontSize: 11),
+              style: const TextStyle(color: AppColors.textDisabled, fontSize: 11),
             ),
           ),
           // 현재값
@@ -368,8 +367,8 @@ class _CompareStatRow extends StatelessWidget {
               format(next!),
               style: TextStyle(
                 color: isPositive
-                    ? const Color(0xFF4ADE80)
-                    : const Color(0xFFFBBF24),
+                    ? AppColors.mintGreen
+                    : AppColors.sinmyeongGold,
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
               ),
@@ -381,8 +380,8 @@ class _CompareStatRow extends StatelessWidget {
                   : '(${diff.toStringAsFixed(diff == diff.roundToDouble() ? 0 : 2)})',
               style: TextStyle(
                 color: isPositive
-                    ? const Color(0xFF4ADE80).withValues(alpha: 0.7)
-                    : const Color(0xFFFBBF24).withValues(alpha: 0.7),
+                    ? AppColors.mintGreen.withValues(alpha: 0.7)
+                    : AppColors.sinmyeongGold.withValues(alpha: 0.7),
                 fontSize: 9,
               ),
             ),
@@ -421,7 +420,7 @@ class _ActionButton extends StatelessWidget {
           color: canAfford ? color.withAlpha(50) : const Color(0x22333333),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: canAfford ? color.withAlpha(150) : const Color(0x33FFFFFF),
+            color: canAfford ? color.withAlpha(150) : AppColors.borderDefault,
           ),
         ),
         child: Row(
@@ -431,7 +430,7 @@ class _ActionButton extends StatelessWidget {
               child: Text(
                 label,
                 style: TextStyle(
-                  color: canAfford ? Colors.white : const Color(0xFF666666),
+                  color: canAfford ? Colors.white : AppColors.textDisabled,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -442,10 +441,10 @@ class _ActionButton extends StatelessWidget {
               isRefund ? '+${-cost}✨' : '${cost}✨',
               style: TextStyle(
                 color: isRefund
-                    ? const Color(0xFF44FF44)
+                    ? AppColors.mintGreen
                     : canAfford
-                        ? const Color(0xFFFFD700)
-                        : const Color(0xFFFF6666),
+                        ? AppColors.sinmyeongGold
+                        : AppColors.berserkRed.withAlpha(170),
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),

@@ -485,5 +485,68 @@ class SaveManager {
       return null;
     }
   }
+
+  // ─── 일일 미션 ───
+
+  /// 일일 미션 상태 저장
+  Future<void> saveDailyQuest(Map<String, dynamic> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('daily_quest', jsonEncode(data));
+  }
+
+  /// 일일 미션 상태 로드
+  Future<Map<String, dynamic>?> loadDailyQuest() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString('daily_quest');
+      if (raw == null) return null;
+      return jsonDecode(raw) as Map<String, dynamic>;
+    } catch (e) {
+      print('[SAVE] 일일 미션 로드 오류: $e');
+      return null;
+    }
+  }
+
+  // ─── 설화도감 ───
+
+  /// 설화도감 상태 저장
+  Future<void> saveLoreCollection(Map<String, dynamic> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lore_collection', jsonEncode(data));
+  }
+
+  /// 설화도감 상태 로드
+  Future<Map<String, dynamic>?> loadLoreCollection() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString('lore_collection');
+      if (raw == null) return null;
+      return jsonDecode(raw) as Map<String, dynamic>;
+    } catch (e) {
+      print('[SAVE] 설화도감 로드 오류: $e');
+      return null;
+    }
+  }
+
+  // ─── 범용 커스텀 데이터 ───
+
+  /// 커스텀 키로 데이터 저장
+  Future<void> saveCustomData(String key, Map<String, dynamic> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('custom_$key', jsonEncode(data));
+  }
+
+  /// 커스텀 키로 데이터 로드
+  Future<Map<String, dynamic>?> loadCustomData(String key) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString('custom_$key');
+      if (raw == null) return null;
+      return jsonDecode(raw) as Map<String, dynamic>;
+    } catch (e) {
+      print('[SAVE] 커스텀 데이터 로드 오류 ($key): $e');
+      return null;
+    }
+  }
 }
 

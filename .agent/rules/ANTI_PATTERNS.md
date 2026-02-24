@@ -255,17 +255,93 @@ _cooldownTimer = GameConstants.waveCooldown;
 
 ---
 
+### AP-021: const 컨텍스트 내 런타임 메서드 호출
+
+**문제**: `const BoxDecoration(border: Border(...color: AppColors.xxx.withAlpha(50)))` 식으로 `const` 표현 안에서 `.withAlpha()` 등 런타임 메서드를 호출하여 `const_eval_method_invocation` 에러 발생
+**근본원인**: `const` 키워드가 상위에서 전체 트리를 const로 강제하면, 하위 자식 어디에서든 런타임 메서드 호출 불가
+**해결**:
+
+1. 상위 `const` 키워드 제거
+2. 또는 `withAlpha()` 대신 `Color(0xNN...)`으로 직접 ARGB 색상 지정
+
+**감지**: `const` 블록 내 `.withAlpha(`, `.withOpacity(`, `.withRed(`, `.withGreen(`, `.withBlue(` 패턴 발견 시 경고
+
+```dart
+// ❌ Bad: const 블록 내 withAlpha()
+decoration: const BoxDecoration(
+  border: Border(bottom: BorderSide(color: AppColors.pink.withAlpha(50))),
+)
+
+// ✅ Good: const 제거
+decoration: BoxDecoration(
+  border: Border(bottom: BorderSide(color: AppColors.pink.withAlpha(50))),
+)
+```
+
+**실제 사례**: 아트 디렉션 팔레트 적용 시 3건 발생 (2026-02-24)
+
+---
+
+### AP-022: PowerShell 터미널 출력 잘림
+
+**문제**: `flutter analyze` 등 긴 출력의 명령어가 PowerShell 파이프라인에서 잘려 에러 위치 파악 불가
+**근본원인**: PowerShell의 출력 버퍼/인코딩 문제, `2>&1` 리다이렉션 시 폭 제한
+**해결**: 결과를 UTF-8 파일로 저장 후 `view_file`로 확인
+
+```powershell
+# ❌ Bad: 출력이 잘림
+flutter analyze 2>&1 | findstr "error"
+
+# ✅ Good: 파일로 저장 후 읽기
+dart analyze lib/target_file.dart 2>&1 | Out-File -Encoding utf8 C:\Temp\result.txt
+```
+
+**감지**: 터미널 출력이 잘려 에러 위치를 시각적으로 확인 불가할 때 즉시 파일 저장 전략 전환
+**실제 사례**: 아트 디렉션 적용 시 analyze 출력 4회 잘림 (2026-02-24)
+
+---
+
+### AP-023: 반복 래핑 수작업 (Manual Wrapping Repetition)
+
+**문제**: 같은 위젯 래핑 패턴(예: `ClipRRect` + `BackdropFilter`)을 10개 이상 파일에 수작업으로 반복 적용
+**근본원인**: 공통 위젯/헬퍼 함수를 먼저 만들지 않고 개별 파일에 직접 적용 시작
+**해결**: 3개 이상 동일 래핑 패턴이 예상되면, 먼저 `GlassPanel` 같은 공통 위젯을 만들고 그것을 적용
+**감지**: 같은 `ClipRRect` + `BackdropFilter` 또는 유사 래핑 패턴이 3개 이상 파일에 등장 시
+
+```dart
+// ❌ Bad: 각 파일마다 수동 래핑 (17회 반복)
+ClipRRect(
+  borderRadius: BorderRadius.circular(12),
+  child: BackdropFilter(
+    filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+    child: Container(...),
+  ),
+)
+
+// ✅ Good: 공통 위젯 한 번 만들고 재사용
+class GlassPanel extends StatelessWidget {
+  final double blur;
+  final double radius;
+  final Widget child;
+  // ...
+}
+```
+
+**실제 사례**: 글래스모피즘 적용 시 17개 위젯에 동일 패턴 수작업 반복 (2026-02-24)
+
+---
+
 ## 📊 통계
 
 ### 자주 발생하는 실수 (Top 5)
 
 1. 무한 재시도 (AP-011): 빈도 높음
 2. 컨텍스트 미확인 (AP-012): 빈도 높음
-3. 동적 타입 남용 (AP-002): 중간
-4. 에러 핸들링 누락 (AP-006): 중간
+3. 반복 래핑 수작업 (AP-023): UI작업 시 빈도 높음 ⭐ NEW
+4. const 메서드 호출 (AP-021): Dart에서 빈도 높음
 5. 매 프레임 순회 (AP-016): 게임 프로젝트에서 높음
 
-**마지막 업데이트**: 2026-02-20 (v4.0)
+**마지막 업데이트**: 2026-02-24 (v4.2 — AP-023 추가)
 
 ---
 

@@ -1,5 +1,6 @@
 // 해원의 문 - 스테이지 선택 화면 (3챕터 탭 지원)
 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,6 +10,7 @@ import '../../data/game_data_loader.dart';
 import '../../data/models/wave_data.dart';
 import '../../l10n/app_strings.dart';
 import '../../state/user_state.dart';
+import '../theme/app_colors.dart';
 
 /// 챕터 메타데이터
 class _ChapterMeta {
@@ -32,7 +34,7 @@ const _chapters = <_ChapterMeta>[
     chapter: Chapter.marketOfHunger,
     title: '굶주린 시장',
     subtitle: 'Market of Hunger',
-    gradientColors: [Color(0xFFCC88FF), Color(0xFFFFAA44)],
+    gradientColors: [AppColors.lavender, Color(0xFFFFAA44)],
     chapterNumber: 1,
   ),
   _ChapterMeta(
@@ -97,7 +99,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF0D0221), Color(0xFF1A0F29), Color(0xFF2D1B4E)],
+            colors: [AppColors.scaffoldBg, AppColors.bgDeepPlum, AppColors.surfaceMid],
           ),
         ),
         child: SafeArea(
@@ -118,7 +120,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                           border: Border.all(color: const Color(0x44FFFFFF)),
                         ),
                         child: Icon(Icons.arrow_back,
-                            color: Color(0xFFBB99DD), size: 22 * Responsive.scale(context)),
+                            color: AppColors.lavender, size: 22 * Responsive.scale(context)),
                       ),
                     ),
                     SizedBox(width: 16 * Responsive.scale(context)),
@@ -141,9 +143,9 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                           ),
                           Text(
                             'Chapter ${meta.chapterNumber}: ${meta.subtitle}',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Color(0xFF8866AA),
+                            style: TextStyle(
+                              fontSize: Responsive.fontSize(context, 12),
+                              color: const Color(0xFF8866AA),
                               letterSpacing: 1,
                             ),
                           ),
@@ -161,14 +163,14 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text('⭐', style: TextStyle(fontSize: 16)),
+                          Text('⭐', style: TextStyle(fontSize: Responsive.fontSize(context, 14))),
                           SizedBox(width: 4 * Responsive.scale(context)),
                           Text(
                             '${userState.totalStars} / ${levels.length * 3}',
                             style: TextStyle(
                               fontSize: Responsive.fontSize(context, 14),
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFFFFD700),
+                              color: AppColors.sinmyeongGold,
                             ),
                           ),
                         ],
@@ -204,7 +206,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                             ? null
                             : () => setState(() => _selectedChapter = i),
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          margin: EdgeInsets.symmetric(horizontal: 4 * Responsive.scale(context)),
                           decoration: BoxDecoration(
                             color: isChapterLocked
                                 ? const Color(0x08FFFFFF)
@@ -226,7 +228,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if (isChapterLocked) ...[
-                                Icon(Icons.lock, size: 12, color: const Color(0x44FFFFFF)),
+                                Icon(Icons.lock, size: 12 * Responsive.scale(context), color: const Color(0x44FFFFFF)),
                                 const SizedBox(width: 4),
                               ],
                               Text(
@@ -250,19 +252,19 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              SizedBox(height: 8 * Responsive.scale(context)),
               const Divider(color: Color(0x22FFFFFF), height: 1),
-              const SizedBox(height: 8),
+              SizedBox(height: 8 * Responsive.scale(context)),
 
               // ── 스테이지 그리드 ──
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12 * Responsive.scale(context)),
                   child: GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 120,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 120 * Responsive.scale(context),
+                      crossAxisSpacing: 8 * Responsive.scale(context),
+                      mainAxisSpacing: 8 * Responsive.scale(context),
                       childAspectRatio: 0.88,
                     ),
                     itemCount: levels.length,
@@ -289,7 +291,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
 
               // ── 하단 인용구 ──
               Padding(
-                padding: EdgeInsets.all(12),
+                padding: EdgeInsets.all(12 * Responsive.scale(context)),
                 child: Text(
                   '"해원문을 지키는 자, 원한을 꽃으로 바꾸리라."',
                   style: TextStyle(
@@ -338,14 +340,14 @@ class _StageCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.lock, color: Color(0xFF443355), size: 20),
-            const SizedBox(height: 2),
+            Icon(Icons.lock, color: const Color(0xFF443355), size: Responsive.iconSize(context, 18)),
+            SizedBox(height: 2 * Responsive.scale(context)),
             Text(
               '${level.levelNumber}',
-              style: const TextStyle(
-                fontSize: 18,
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 16),
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF443355),
+                color: const Color(0xFF443355),
               ),
             ),
           ],
@@ -355,7 +357,11 @@ class _StageCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+          child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -406,10 +412,10 @@ class _StageCard extends StatelessWidget {
                     ? const Color(0xFFFF8844)
                     : isCleared
                         ? const Color(0xFFFFD700)
-                        : const Color(0xFFCC88FF),
+                        : AppColors.lavender,
               ),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: 2 * Responsive.scale(context)),
 
             // 별 표시 (채워진 별 / 빈 별)
             Row(
@@ -421,18 +427,18 @@ class _StageCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 14),
                     color: isFilled
-                        ? const Color(0xFFFFD700)
+                        ? AppColors.sinmyeongGold
                         : const Color(0xFF554466),
                   ),
                 );
               }),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: 2 * Responsive.scale(context)),
 
             // 스테이지 이름
             Flexible(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
+                padding: EdgeInsets.symmetric(horizontal: 4 * Responsive.scale(context)),
                 child: Text(
                   level.name,
                   textAlign: TextAlign.center,
@@ -446,14 +452,14 @@ class _StageCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: 2 * Responsive.scale(context)),
 
             // 웨이브 수
             Text(
               '🌊 ${level.waves.length}',
-              style: const TextStyle(
-                fontSize: 11,
-                color: Color(0xFF8877AA),
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 10),
+                color: const Color(0xFF8877AA),
               ),
             ),
 
@@ -470,6 +476,8 @@ class _StageCard extends StatelessWidget {
                     )),
               ),
           ],
+        ),
+      ),
         ),
       ),
     );

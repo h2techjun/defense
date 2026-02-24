@@ -1,5 +1,6 @@
 // 해원의 문 - 타워 선택 패널 (인게임 하단)
 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,6 +9,7 @@ import '../../common/responsive.dart';
 import '../../state/game_state.dart';
 import '../../state/tower_loadout_provider.dart';
 import '../../data/game_data_loader.dart';
+import '../theme/app_colors.dart';
 
 /// 타워 선택 콜백
 typedef TowerSelectCallback = void Function(TowerType type);
@@ -31,11 +33,11 @@ class TowerSelectPanel extends ConsumerWidget {
 
     // 타워 타입별 메타데이터
     const towerMeta = <TowerType, Map<String, dynamic>>{
-      TowerType.archer: {'icon': '🏹', 'color': Color(0xFF228B22), 'tooltip': '빠른 공격속도로 원거리 단일 적을 공격'},
-      TowerType.barracks: {'icon': '🤼', 'color': Color(0xFF4169E1), 'tooltip': '적을 발이 묶어 경로 진행을 차단'},
-      TowerType.shaman: {'icon': '🔮', 'color': Color(0xFF9400D3), 'tooltip': '마법 공격으로 방어 무시 + 감속'},
-      TowerType.artillery: {'icon': '💥', 'color': Color(0xFFB22222), 'tooltip': '느리지만 범위 폭발 데미지'},
-      TowerType.sotdae: {'icon': '🪶', 'color': Color(0xFFFFD700), 'tooltip': '주변 타워 공격력/공속 버프'},
+      TowerType.archer: {'icon': '🏹', 'image': 'tower_archer_t1', 'color': AppColors.towerArcher, 'tooltip': '빠른 공격속도로 원거리 단일 적을 공격'},
+      TowerType.barracks: {'icon': '🤼', 'image': 'tower_barracks_t1', 'color': AppColors.towerBarracks, 'tooltip': '적을 발이 묶어 경로 진행을 차단'},
+      TowerType.shaman: {'icon': '🔮', 'image': 'tower_shaman_t1', 'color': AppColors.towerShaman, 'tooltip': '마법 공격으로 방어 무시 + 감속'},
+      TowerType.artillery: {'icon': '💥', 'image': 'tower_artillery_t1', 'color': AppColors.towerArtillery, 'tooltip': '느리지만 범위 폭발 데미지'},
+      TowerType.sotdae: {'icon': '🪶', 'image': 'tower_sotdae_t1', 'color': AppColors.towerSotdae, 'tooltip': '주변 타워 공격력/공속 버프'},
     };
 
     return Positioned(
@@ -67,6 +69,7 @@ class TowerSelectPanel extends ConsumerWidget {
                   cost: data.baseCost,
                   color: meta['color'] as Color,
                   icon: meta['icon'] as String,
+                  imageName: meta['image'] as String,
                   tooltip: meta['tooltip'] as String,
                   canAfford: state.sinmyeong >= data.baseCost,
                   isSelected: selectedTower == type,
@@ -87,6 +90,7 @@ class _TowerButton extends StatefulWidget {
   final int cost;
   final Color color;
   final String icon;
+  final String imageName;
   final String? tooltip;
   final bool canAfford;
   final bool isSelected;
@@ -98,6 +102,7 @@ class _TowerButton extends StatefulWidget {
     required this.cost,
     required this.color,
     required this.icon,
+    required this.imageName,
     this.tooltip,
     required this.canAfford,
     required this.isSelected,
@@ -113,40 +118,52 @@ class _TowerButtonState extends State<_TowerButton> {
 
   @override
   Widget build(BuildContext context) {
-    final content = AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      width: 64 * Responsive.scale(context),
-      padding: EdgeInsets.all(4 * Responsive.scale(context)),
-      decoration: BoxDecoration(
-        color: widget.isSelected
-            ? widget.color.withAlpha(120)
-            : _isHovered
-                ? widget.color.withAlpha(60)
-                : const Color(0x44000000),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: widget.isSelected
-              ? widget.color
-              : widget.canAfford
-                  ? widget.color.withAlpha(120)
-                  : const Color(0x33FFFFFF),
-          width: widget.isSelected ? 2 : 1,
-        ),
-        boxShadow: widget.isSelected
-            ? [
-                BoxShadow(
-                  color: widget.color.withAlpha(80),
-                  blurRadius: 12,
-                  spreadRadius: 2,
-                ),
-              ]
-            : null,
-      ),
+    final content = ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: 64 * Responsive.scale(context),
+          padding: EdgeInsets.all(4 * Responsive.scale(context)),
+          decoration: BoxDecoration(
+            color: widget.isSelected
+                ? widget.color.withAlpha(100)
+                : _isHovered
+                    ? widget.color.withAlpha(40)
+                    : Colors.black.withAlpha(50),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: widget.isSelected
+                  ? widget.color
+                  : widget.canAfford
+                      ? widget.color.withAlpha(100)
+                      : AppColors.borderDefault,
+              width: widget.isSelected ? 2 : 1,
+            ),
+            boxShadow: widget.isSelected
+                ? [
+                    BoxShadow(
+                      color: widget.color.withAlpha(80),
+                      blurRadius: 12,
+                      spreadRadius: 2,
+                    ),
+                  ]
+                : null,
+          ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(widget.icon, style: TextStyle(fontSize: Responsive.fontSize(context, 20))),
-          const SizedBox(height: 2),
+          SizedBox(
+            width: 32 * Responsive.scale(context),
+            height: 32 * Responsive.scale(context),
+            child: Image.asset(
+              'assets/images/towers/${widget.imageName}.png',
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) => Text(widget.icon, style: TextStyle(fontSize: Responsive.fontSize(context, 20))),
+            ),
+          ),
+          SizedBox(height: 2 * Responsive.scale(context)),
           Text(
             widget.name,
             textAlign: TextAlign.center,
@@ -158,31 +175,31 @@ class _TowerButtonState extends State<_TowerButton> {
               height: 1.2,
             ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: 2 * Responsive.scale(context)),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 6 * Responsive.scale(context), vertical: 1 * Responsive.scale(context)),
             decoration: BoxDecoration(
               color: widget.canAfford
-                  ? const Color(0x44FFD700)
-                  : const Color(0x22FF0000),
+                  ? AppColors.sinmyeongGold.withAlpha(68)
+                  : AppColors.berserkRed.withAlpha(34),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               '✨${widget.cost}',
               style: TextStyle(
                 color: widget.canAfford
-                    ? const Color(0xFFFFD700)
-                    : const Color(0xFFFF6666),
+                    ? AppColors.sinmyeongGold
+                    : AppColors.berserkRed.withAlpha(170),
                 fontSize: Responsive.fontSize(context, 10),
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
           if (widget.isSelected) ...[
-            const SizedBox(height: 4),
+            SizedBox(height: 4 * Responsive.scale(context)),
             Container(
-              width: 20,
-              height: 3,
+              width: 20 * Responsive.scale(context),
+              height: 3 * Responsive.scale(context),
               decoration: BoxDecoration(
                 color: widget.color,
                 borderRadius: BorderRadius.circular(2),
@@ -190,6 +207,8 @@ class _TowerButtonState extends State<_TowerButton> {
             ),
           ],
         ],
+      ),
+      ),
       ),
     );
 
@@ -220,9 +239,12 @@ class _TowerButtonState extends State<_TowerButton> {
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 2),
               ),
-              child: Text(
-                widget.icon,
-                style: TextStyle(fontSize: Responsive.fontSize(context, 32), decoration: TextDecoration.none),
+              child: Image.asset(
+                'assets/images/towers/${widget.imageName}.png',
+                width: 48 * Responsive.scale(context),
+                height: 48 * Responsive.scale(context),
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => Text(widget.icon, style: TextStyle(fontSize: Responsive.fontSize(context, 32), decoration: TextDecoration.none)),
               ),
             ),
           ),
@@ -247,7 +269,7 @@ class _TowerButtonState extends State<_TowerButton> {
       message: '${widget.name.replaceAll('\n', ' ')} (✨${widget.cost})\n${widget.tooltip!}',
       textStyle: TextStyle(color: Colors.white, fontSize: Responsive.fontSize(context, 11)),
       decoration: BoxDecoration(
-        color: const Color(0xF01A1A2E),
+        color: AppColors.surfaceDark.withAlpha(240),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Color(0x44FFFFFF)),
       ),

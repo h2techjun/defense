@@ -1,11 +1,13 @@
 // 해원의 문 - 업적 + 랭킹 UI 화면
 // 업적 목록, 진행도, 랭킹 보드
 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/responsive.dart';
 import '../../data/models/achievement_data.dart';
 import '../../state/achievement_provider.dart';
+import '../theme/app_colors.dart';
 
 class AchievementScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
@@ -38,7 +40,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
     final rankState = ref.watch(rankingProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D1A),
+      backgroundColor: AppColors.scaffoldBg,
       body: SafeArea(
         child: Column(
           children: [
@@ -67,7 +69,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
       ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF1A0A2E), Color(0xFF16213E)],
+          colors: [AppColors.bgDeepPlum, Color(0xFF16213E)],
         ),
       ),
       child: Row(
@@ -231,7 +233,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
             padding: EdgeInsets.all(Responsive.spacing(context, 16)),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF2D1B69), Color(0xFF1A0A2E)],
+                colors: [AppColors.surfaceMid, AppColors.bgDeepPlum],
               ),
               borderRadius: BorderRadius.circular(16),
             ),
@@ -352,7 +354,11 @@ class _AchievementCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: Responsive.spacing(context, 6)),
-      child: Container(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+          child: Container(
         padding: EdgeInsets.all(Responsive.spacing(context, 10)),
         decoration: BoxDecoration(
           color: isCompleted
@@ -444,6 +450,8 @@ class _AchievementCard extends StatelessWidget {
               Icon(Icons.check_circle, color: Colors.green,
                   size: Responsive.iconSize(context, 18)),
           ],
+        ),
+      ),
         ),
       ),
     );

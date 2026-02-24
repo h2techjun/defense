@@ -3,6 +3,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 /// 웨이브 안내 배너 — HUD 위에 오버레이
 class WaveAnnounceBanner extends StatefulWidget {
@@ -89,21 +90,21 @@ class _WaveAnnounceBannerState extends State<WaveAnnounceBanner>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isBoss
-                  ? [const Color(0xDD8B0000), const Color(0xDDFF2200)]
-                  : [const Color(0xDD1A0A30), const Color(0xDD2D1B69)],
+                  ? [AppColors.berserkRed.withAlpha(221), const Color(0xDDFF2200)]
+                  : [AppColors.bgDeepPlum.withAlpha(221), AppColors.surfaceMid.withAlpha(221)],
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isBoss
-                  ? const Color(0xFFFF4444)
-                  : const Color(0xFF8B5CF6),
+                  ? AppColors.berserkRed
+                  : AppColors.lavender,
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
                 color: isBoss
-                    ? const Color(0x88FF0000)
-                    : const Color(0x888B5CF6),
+                    ? AppColors.berserkRed.withAlpha(136)
+                    : AppColors.lavender.withAlpha(136),
                 blurRadius: 30,
                 spreadRadius: 5,
               ),
@@ -126,16 +127,16 @@ class _WaveAnnounceBannerState extends State<WaveAnnounceBanner>
                         : '웨이브 ${widget.waveNumber}',
                     style: TextStyle(
                       color: isBoss
-                          ? const Color(0xFFFF6644)
-                          : const Color(0xFFE0D0FF),
+                          ? AppColors.peachCoral
+                          : AppColors.lavender,
                       fontSize: isBoss ? 28 : 24,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
                       shadows: [
                         Shadow(
                           color: isBoss
-                              ? const Color(0xFFFF0000)
-                              : const Color(0xFF8B5CF6),
+                              ? AppColors.berserkRed
+                              : AppColors.lavender,
                           blurRadius: 20,
                         ),
                       ],
@@ -166,8 +167,8 @@ class _WaveAnnounceBannerState extends State<WaveAnnounceBanner>
                   widget.narrative!,
                   style: TextStyle(
                     color: isBoss
-                        ? const Color(0xFFFFAAAA)
-                        : const Color(0xFFB8A0DD),
+                        ? AppColors.cherryBlossom
+                        : AppColors.lavender,
                     fontSize: 13,
                     fontStyle: FontStyle.italic,
                   ),
@@ -201,15 +202,15 @@ class WaveCooldownIndicator extends StatelessWidget {
         margin: const EdgeInsets.only(top: 100),
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
         decoration: BoxDecoration(
-          color: const Color(0xCC1A0A30),
+          color: AppColors.bgDeepPlum.withAlpha(204),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: const Color(0xFF6B4FB0),
+            color: AppColors.lavender.withAlpha(180),
             width: 1.5,
           ),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: Color(0x448B5CF6),
+              color: AppColors.lavender.withAlpha(68),
               blurRadius: 20,
             ),
           ],
@@ -220,7 +221,7 @@ class WaveCooldownIndicator extends StatelessWidget {
             Text(
               '다음 웨이브 $nextWaveNumber',
               style: const TextStyle(
-                color: Color(0xFFB8A0DD),
+                color: AppColors.lavender,
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
@@ -229,11 +230,11 @@ class WaveCooldownIndicator extends StatelessWidget {
             Text(
               '$seconds',
               style: const TextStyle(
-                color: Color(0xFFFFD700),
+                color: AppColors.sinmyeongGold,
                 fontSize: 36,
                 fontWeight: FontWeight.w900,
                 shadows: [
-                  Shadow(color: Color(0xFFFFD700), blurRadius: 20),
+                  Shadow(color: AppColors.sinmyeongGold, blurRadius: 20),
                 ],
               ),
             ),

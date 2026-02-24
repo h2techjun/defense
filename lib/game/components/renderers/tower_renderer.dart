@@ -12,7 +12,7 @@ import '../../defense_game.dart';
 class TowerRenderer extends PositionComponent
     with HasGameReference<DefenseGame> {
   final TowerType type;
-  final int upgradeLevel;
+  int upgradeLevel;
   TowerBranch? branch;
 
   // 스프라이트 관련
@@ -100,6 +100,9 @@ class TowerRenderer extends PositionComponent
 
   /// 업그레이드 또는 분기 변경 시 스프라이트 갱신
   void updateVisual({int? newLevel, TowerBranch? newBranch}) {
+    if (newLevel != null) {
+      upgradeLevel = newLevel;
+    }
     if (newBranch != null) {
       branch = newBranch;
     }
