@@ -3,6 +3,7 @@
 // Flutter + Flame Engine
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
@@ -52,10 +53,15 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 환경 변수 및 BaaS 클라이언트 동기화
-  try {
-    await dotenv.load(fileName: ".env");
-  } catch (e) {
-    debugPrint('⚠️ [main] .env 파일 로드 실패 (프로덕션 환경에서는 정상): $e');
+  // 웹 배포 환경에서는 .env 파일이 서빙되지 않으므로 스킵
+  if (!kIsWeb) {
+    try {
+      await dotenv.load(fileName: ".env");
+    } catch (e) {
+      debugPrint('⚠️ [main] .env 파일 로드 실패: $e');
+    }
+  } else {
+    debugPrint('🌐 [main] 웹 환경 — .env 로드 스킵');
   }
   final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
   final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
