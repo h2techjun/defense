@@ -14,6 +14,7 @@ import '../../state/season_pass_provider.dart';
 import '../../state/summon_provider.dart';
 import '../../common/responsive.dart';
 import '../theme/app_colors.dart';
+import '../dialogs/ad_simulator_dialog.dart';
 
 class PackageShopScreen extends ConsumerWidget {
   final VoidCallback onBack;
@@ -51,17 +52,34 @@ class PackageShopScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // ── 헤더 ──
-            _buildHeader(context, userState, vipState, summonState, s),
+      body: Stack(
+        children: [
+          // 배경 에셋 투과
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.15,
+              child: Image.asset(
+                'assets/images/objects/obj_shrine.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                // ── 헤더 ──
+                _buildHeader(context, userState, vipState, summonState, s),
 
             // ── 상품 목록 ──
             Expanded(
               child: ListView(
                 padding: EdgeInsets.all(16 * s),
                 children: [
+                  // ── 광고 보상 ──
+                  _buildAdRewardBanner(context, ref, s),
+                  SizedBox(height: 24 * s),
+
                   // ── 한정 특가 (72시간) ──
                   if (limitedActive.isNotEmpty) ...[
                     _buildSectionTitle(context, '🔥 한정 특가', s, accent: AppColors.berserkRed),
@@ -94,6 +112,8 @@ class PackageShopScreen extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+      ],
       ),
     );
   }
@@ -154,6 +174,78 @@ class PackageShopScreen extends ConsumerWidget {
             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAdRewardBanner(BuildContext context, WidgetRef ref, double s) {
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AdSimulatorDialog(
+            onRewardEarned: () {
+              ref.read(userStateProvider.notifier).addGems(10);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('광고 시청 완료! 보석 10개가 지급되었습니다.')),
+              );
+            },
+          ),
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.all(16 * s),
+        decoration: BoxDecoration(
+          color: AppColors.bgDeepPlum.withAlpha(230),
+          borderRadius: BorderRadius.circular(16 * s),
+          border: Border.all(color: AppColors.sinmyeongGold),
+          boxShadow: [
+            BoxShadow(color: AppColors.sinmyeongGold.withAlpha(40), blurRadius: 10 * s),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12 * s),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceDark,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.lavender),
+              ),
+              child: Icon(Icons.play_circle_fill, color: AppColors.sinmyeongGold, size: 32 * s),
+            ),
+            SizedBox(width: 16 * s),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '무료 보석 받기!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Responsive.fontSize(context, 16),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4 * s),
+                  Text(
+                    '광고 시청하고 보석 10개를 획득하세요',
+                    style: TextStyle(color: Colors.white70, fontSize: 13 * s),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12 * s, vertical: 8 * s),
+              decoration: BoxDecoration(
+                color: AppColors.sinmyeongGold,
+                borderRadius: BorderRadius.circular(8 * s),
+              ),
+              child: const Text('시청하기', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -311,6 +403,10 @@ class _PackageCardState extends ConsumerState<_PackageCard> {
     final hasDiscount = package.discountPercent > 0;
     final hasFirstBonus = package.firstPurchaseMultiplier > 1 && isFirst;
     final remaining = shopNotifier.getRemainingTime(package);
+    
+    // 맵 오브젝트 이미지를 활용한 패키지 카드 배경
+    final objImages = const ['obj_shrine.png', 'obj_sotdae.png', 'obj_sacred_tree.png', 'obj_old_well.png', 'obj_grave_mound.png', 'obj_torch.png'];
+    final bgImg = objImages[package.id.hashCode.abs() % objImages.length];
 
     return GestureDetector(
       onTap: (isSoldOut || isExpired) ? null : () => _showPurchaseConfirm(context, ref),
@@ -320,7 +416,12 @@ class _PackageCardState extends ConsumerState<_PackageCard> {
           filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
           child: Container(
         decoration: BoxDecoration(
-          color: AppColors.bgDeepPlum.withAlpha(200),
+          color: AppColors.bgDeepPlum.withAlpha(220),
+          image: DecorationImage(
+            image: AssetImage('assets/images/objects/$bgImg'),
+            fit: BoxFit.cover,
+            opacity: 0.25, // 은은하게 깔리도록 투명도 조절
+          ),
           borderRadius: BorderRadius.circular(16 * s),
           border: Border.all(
             color: _borderColor(package, hasFirstBonus, hasDiscount),
@@ -667,6 +768,9 @@ class _PackageCardState extends ConsumerState<_PackageCard> {
             ),
             onPressed: () {
               final success = ref.read(shopProvider.notifier).purchasePackage(package);
+              if (success && package.type == PackageType.monthly) {
+                ref.read(vipProvider.notifier).purchaseMonthlySubscription();
+              }
               Navigator.pop(ctx);
               if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(

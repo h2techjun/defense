@@ -31,6 +31,7 @@ enum SfxType {
   uiPlace,         // 타워 배치
   uiUpgrade,       // 업그레이드
   uiError,         // 오류/불가
+  storyTyping,     // 스토리 타이핑 효과음
   
   // 게임
   waveStart,       // 웨이브 시작
@@ -76,35 +77,37 @@ class SoundManager {
     BgmType.boss: 'bgm/검은 깃발.mp3',
   };
 
-  /// SFX 파일 매핑 — SfxType → mp3 파일명
+  /// SFX 파일 매핑 — SfxType → mp3/wav 파일명
   static const Map<SfxType, String> _sfxFileMap = {
-    // 전투
-    SfxType.towerShoot: 'sfx/Arrow.mp3',
-    SfxType.towerArtillery: 'sfx/cannon_fire.mp3',
-    SfxType.towerMagic: 'sfx/Magical.mp3',
-    SfxType.towerSotdae: 'sfx/sotdae_purify.mp3',
-    // 적
-    SfxType.enemyHit: 'sfx/enemy_hit.mp3',
-    SfxType.enemyDeath: 'sfx/enemy_death.mp3',
-    SfxType.enemyBoss: 'sfx/boss_appear.mp3',
-    // 영웅
-    SfxType.heroSkill: 'sfx/hero_skill.mp3',
-    SfxType.heroDeath: 'sfx/hero_death.mp3',
-    SfxType.heroRevive: 'sfx/hero_revive.mp3',
-    // UI
+    // 전투 (AI 생성형 .wav)
+    SfxType.towerShoot: 'sfx/Arrow.wav',
+    SfxType.towerArtillery: 'sfx/cannon_fire.wav',
+    SfxType.towerMagic: 'sfx/Magical.wav',
+    SfxType.towerSotdae: 'sfx/sotdae_purify.wav',
+    // 적 (AI 생성형 .wav)
+    SfxType.enemyHit: 'sfx/enemy_hit.wav',
+    SfxType.enemyDeath: 'sfx/enemy_death.wav',
+    SfxType.enemyBoss: 'sfx/boss_appear.wav',
+    // 영웅 (AI 생성형 .wav)
+    SfxType.heroSkill: 'sfx/hero_skill.wav',
+    SfxType.heroDeath: 'sfx/hero_death.wav',
+    SfxType.heroRevive: 'sfx/hero_revive.wav',
+    // UI (기존 에셋 .mp3)
     SfxType.uiClick: 'sfx/Uiclick.mp3',
     SfxType.uiPlace: 'sfx/ui_place.mp3',
     SfxType.uiUpgrade: 'sfx/ui_upgrade.mp3',
     SfxType.uiError: 'sfx/ui_error.mp3',
-    // 게임 이벤트 (waveStart는 파일 없음 → 합성 폴백)
+    SfxType.storyTyping: 'sfx/typewriter.mp3',
+    // 게임 이벤트
+    SfxType.waveStart: 'sfx/wave_start.wav',
     SfxType.victory: 'sfx/victory.mp3',
     SfxType.defeat: 'sfx/defeat.mp3',
     SfxType.gatewayHit: 'sfx/gateway_hit.mp3',
-    // 분기
-    SfxType.branchSelect: 'sfx/branch_select.mp3',
-    SfxType.branchThunder: 'sfx/branch_thunder.mp3',
-    SfxType.branchFire: 'sfx/branch_fire.mp3',
-    SfxType.branchGrapple: 'sfx/branch_grapple.mp3',
+    // 분기 (AI 생성형 .wav)
+    SfxType.branchSelect: 'sfx/branch_select.wav',
+    SfxType.branchThunder: 'sfx/branch_thunder.wav',
+    SfxType.branchFire: 'sfx/branch_fire.wav',
+    SfxType.branchGrapple: 'sfx/branch_grapple.wav',
   };
 
   /// SFX 쿨다운 — 동일 SFX 중복 재생 방지 (Web Audio 노드 폭주 방지)
@@ -121,6 +124,7 @@ class SoundManager {
     SfxType.branchThunder: 150,
     SfxType.branchFire: 120,
     SfxType.branchGrapple: 120,
+    SfxType.storyTyping: 40,    // 타자음은 40ms 쿨다운
   };
 
   bool get sfxEnabled => _sfxEnabled;
@@ -140,34 +144,34 @@ class SoundManager {
       try {
         await FlameAudio.audioCache.loadAll([
           // 전투
-          'sfx/Arrow.mp3',
-          'sfx/cannon_fire.mp3',
-          'sfx/Magical.mp3',
-          'sfx/sotdae_purify.mp3',
+          'sfx/Arrow.wav',
+          'sfx/cannon_fire.wav',
+          'sfx/Magical.wav',
+          'sfx/sotdae_purify.wav',
           // 적
-          'sfx/enemy_hit.mp3',
-          'sfx/enemy_death.mp3',
-          'sfx/boss_appear.mp3',
-          'sfx/ghost.mp3',
+          'sfx/enemy_hit.wav',
+          'sfx/enemy_death.wav',
+          'sfx/boss_appear.wav',
           // 영웅
-          'sfx/hero_skill.mp3',
-          'sfx/hero_death.mp3',
-          'sfx/hero_revive.mp3',
+          'sfx/hero_skill.wav',
+          'sfx/hero_death.wav',
+          'sfx/hero_revive.wav',
           // UI
           'sfx/Uiclick.mp3',
           'sfx/ui_place.mp3',
           'sfx/ui_upgrade.mp3',
           'sfx/ui_error.mp3',
-          'sfx/traditional.mp3',
+          'sfx/typewriter.mp3',
           // 게임 이벤트
           'sfx/victory.mp3',
           'sfx/defeat.mp3',
           'sfx/gateway_hit.mp3',
+          'sfx/wave_start.wav',
           // 분기
-          'sfx/branch_select.mp3',
-          'sfx/branch_thunder.mp3',
-          'sfx/branch_fire.mp3',
-          'sfx/branch_grapple.mp3',
+          'sfx/branch_select.wav',
+          'sfx/branch_thunder.wav',
+          'sfx/branch_fire.wav',
+          'sfx/branch_grapple.wav',
           // BGM
           'bgm/joseon_trap_uprising.mp3',
           'bgm/Joseon Trap Uprising-1.mp3',
@@ -332,9 +336,10 @@ class SoundManager {
 
       // UI SFX
       case SfxType.uiClick:
+      case SfxType.storyTyping: // Added SfxType.storyTyping here
         _synth!.playTone(
-          frequency: 1200, duration: 0.05, volume: _sfxVolume * 0.3,
-          waveType: 'square', attack: 0.005, decay: 0.045,
+          frequency: 800, duration: 0.05, volume: _sfxVolume * 0.3,
+          waveType: 'sine', attack: 0.01, decay: 0.04,
         );
         break;
 

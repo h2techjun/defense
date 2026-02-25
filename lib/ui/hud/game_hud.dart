@@ -253,10 +253,102 @@ class GameHud extends ConsumerWidget {
               ),
             ),
           ),
+          
+        // ── 곡소리(원혼) 위험 오버레이 ──
+        if (state.wailing >= 80)
+          Positioned.fill(
+            child: IgnorePointer(
+              child: _WailingWarningOverlay(wailing: state.wailing),
+            ),
+          ),
       ],
     );
   }
 }
+
+/// 곡소리(Wailing) 위험 상태일 때 화면 외곽이 불길하게 깜박이는 효과
+class _WailingWarningOverlay extends StatefulWidget {
+  final double wailing;
+  const _WailingWarningOverlay({required this.wailing});
+
+  @override
+  State<_WailingWarningOverlay> createState() => _WailingWarningOverlayState();
+}
+
+class _WailingWarningOverlayState extends State<_WailingWarningOverlay>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  bool _playedMaxSound = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(covariant _WailingWarningOverlay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // wailing이 100을 돌파하는 순간 1회 타격음 등 재생
+    if (widget.wailing >= 100 && oldWidget.wailing < 100 && !_playedMaxSound) {
+      _playedMaxSound = true;
+      // 으스스한 효과음 재생 필요 시 SoundManager 사용 (여기선 디폴트 괴물/공격음 사용해 위험 알림 기능)
+      SoundManager.instance.playSfx(SfxType.enemyBoss);
+    } else if (widget.wailing < 100) {
+      _playedMaxSound = false;
+    }
+    
+    // 게이지에 따라 깜박임 속도 변화 (100이면 매우 빠름)
+    if (widget.wailing >= 100) {
+      _controller.duration = const Duration(milliseconds: 400);
+      if (!_controller.isAnimating) _controller.repeat(reverse: true);
+    } else {
+      _controller.duration = const Duration(milliseconds: 1200);
+      if (!_controller.isAnimating) _controller.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        // 알파값 (Max 100%일 때는 더 강하게 빨갛게 빛남)
+        final maxAlpha = widget.wailing >= 100 ? 100 : 50;
+        final baseColor = widget.wailing >= 100 ? AppColors.berserkRed : const Color(0xFF660000);
+        final opacity = _controller.value * maxAlpha;
+
+        return Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: baseColor.withAlpha(opacity.toInt() + 10),
+              width: 4.0 * Responsive.scale(context),
+            ),
+            gradient: RadialGradient(
+              colors: [
+                Colors.transparent,
+                baseColor.withAlpha((opacity * 0.5).toInt()),
+              ],
+              radius: 1.5,
+              stops: const [0.8, 1.0],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 
 /// 자원 배지 위젯
 class _ResourceBadge extends StatelessWidget {

@@ -167,22 +167,37 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context, towerState),
-            _buildTabBar(context),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildTowerTab(context, towerState),
-                  _buildDailyTab(context, challengeState),
-                ],
+      body: Stack(
+        children: [
+          // 공통 탑 테마 배경 (은은하게 투과)
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.15,
+              child: Image.asset(
+                'assets/images/objects/obj_sotdae.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
               ),
             ),
-          ],
-        ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(context, towerState),
+                _buildTabBar(context),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildTowerTab(context, towerState),
+                      _buildDailyTab(context, challengeState),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -363,6 +378,11 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
           Container(
             padding: EdgeInsets.all(Responsive.spacing(context, 20)),
             decoration: BoxDecoration(
+              image: DecorationImage(
+                image: const AssetImage('assets/images/objects/obj_grave_mound.png'),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(const Color(0xFF16213E).withAlpha(200), BlendMode.darken),
+              ),
               gradient: const LinearGradient(
                 colors: [AppColors.surfaceMid, AppColors.bgDeepPlum],
                 begin: Alignment.topLeft,
@@ -370,9 +390,12 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.purple.withValues(alpha: 0.5),
+                color: Colors.purple.withValues(alpha: 0.6),
                 width: 2,
               ),
+              boxShadow: [
+                BoxShadow(color: Colors.purple.withAlpha(60), blurRadius: 15, spreadRadius: 2),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -589,9 +612,15 @@ class _TowerFloorCard extends StatelessWidget {
               child: Container(
             padding: EdgeInsets.all(Responsive.spacing(context, 12)),
             decoration: BoxDecoration(
-              color: bgColor,
+              color: isCurrent ? null : bgColor,
+              gradient: isCurrent
+                  ? LinearGradient(colors: [Colors.amber.withAlpha(40), Colors.black.withAlpha(150)])
+                  : null,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor, width: isCurrent ? 2 : 1),
+              boxShadow: isCurrent
+                  ? [BoxShadow(color: Colors.amber.withAlpha(60), blurRadius: 10, offset: const Offset(0, 2))]
+                  : null,
             ),
             child: Row(
               children: [

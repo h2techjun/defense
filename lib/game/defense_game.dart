@@ -198,8 +198,8 @@ class DefenseGame extends FlameGame
 
     if (kDebugMode) debugPrint('DefenseGame.onLoad complete');
 
-    // 사운드 초기화
-    SoundManager.instance.init();
+    // 사운드 초기화 (잠시 비활성화 - 디버깅용)
+    // SoundManager.instance.init();
 
     // onLoad 완료 전에 startLevel이 호출되었다면 지금 실행
     if (_pendingLevel != null) {

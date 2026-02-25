@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/effects.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../../../common/enums.dart';
@@ -21,6 +22,7 @@ import 'projectile.dart';
 import 'barracks_soldier.dart';
 import 'rally_flag_component.dart';
 import '../effects/particle_effect.dart';
+import '../effects/sprite_effect.dart';
 import '../../../audio/sound_manager.dart';
 
 /// 타워 기본 컴포넌트
@@ -647,6 +649,27 @@ class BaseTower extends PositionComponent
     }
 
     // ── 분기별 특수 발사 ──
+    
+    // 신궁 분기: 관통 사격
+    if (selectedBranch == TowerBranch.spiritHunter && bd != null) {
+      final targetPos = _currentTarget!.position.clone();
+      final fireDir = (targetPos - position).normalized();
+      
+      final projectile = Projectile(
+        target: _currentTarget!,
+        damage: currentDamage,
+        damageType: bd.overrideDamageType ?? DamageType.purification,
+        speed: 500, // 신궁은 좀 더 빠르게
+        startPosition: position.clone(),
+        hasPiercing: true,
+        direction: fireDir,
+        maxRange: currentRange * 1.2, // 사거리보다 조금 더 멀리 날아감
+      );
+      
+      SoundManager.instance.playSfx(SfxType.towerShoot);
+      game.world.add(projectile);
+      return;
+    }
 
     // 신기전 분기: 스플래시 로켓
     if (selectedBranch == TowerBranch.rocketBattery && bd != null) {
@@ -671,6 +694,11 @@ class BaseTower extends PositionComponent
               position: _currentTarget!.position,
               radius: bd.splashRadius,
             ));
+            game.world.add(SpriteEffect(
+              type: SpriteEffectType.fire,
+              position: _currentTarget!.position,
+              size: Vector2.all(bd.splashRadius * 2), // 폭발 범위에 맞춰 크기 조절
+            ));
           }
         },
       );
@@ -691,6 +719,11 @@ class BaseTower extends PositionComponent
           game.world.add(ParticleEffect.magic(
             position: target.position,
             color: const Color(0xFF4B0082),
+          ));
+          game.world.add(SpriteEffect(
+            type: SpriteEffectType.lightning,
+            position: target.position,
+            size: Vector2.all(60),
           ));
         }
         return;
@@ -797,6 +830,11 @@ class BaseTower extends PositionComponent
             position: _currentTarget!.position,
             radius: splashRadius,
           ));
+          game.world.add(SpriteEffect(
+            type: SpriteEffectType.fire,
+            position: _currentTarget!.position,
+            size: Vector2.all(splashRadius * 2),
+          ));
         }
       },
     );
@@ -862,7 +900,7 @@ class BaseTower extends PositionComponent
       wailingReduction = 0.5; // 50% 억제
     }
 
-    // 지신 제단 분기: 적 공격력 감소 오라
+    // 지신 제단 분기: 적 공격력 감소 오라 (여기서는 속도 감소 적용 중)
     if (bd != null && bd.slowAuraRatio > 0) {
       final enemies = game.cachedAliveEnemies;
       for (final enemy in enemies) {
@@ -876,6 +914,47 @@ class BaseTower extends PositionComponent
 
     // 한 억제 효과 적용 — 배치 큐로 전환
     game.setSotdaeReduction(wailingReduction);
+    
+    // 추가 기믹: 정화의 파동 (한 게이지를 %가 아닌 수치로 직접 감소)
+    final purificationAmount = (bd != null && bd.branch == TowerBranch.phoenixTotem) ? 5.0 : 3.0; // 봉황 솟대는 더 높은 정화력
+    game.addPendingWailing(-purificationAmount);
+    
+    // 정화 파동 시각 효과 트리거
+    _triggerPurificationPulse(wardRange);
+  }
+
+  /// 솟대 정화 파동 (시각 이펙트)
+  void _triggerPurificationPulse(double maxRange) {
+    final pulse = CircleComponent(
+      radius: 0,
+      position: size / 2,
+      anchor: Anchor.center,
+      paint: Paint()
+        ..color = const Color(0x66FFFFFF) // 반투명 흰색/푸른색
+        ..style = PaintingStyle.fill,
+    );
+    add(pulse);
+    
+    // 반경이 커지면서 서서히 사라지는 펄스 이펙트
+    pulse.add(
+      SizeEffect.to(
+        Vector2.all(maxRange * 2), // diameter
+        EffectController(duration: 0.8),
+      )
+    );
+    pulse.add(
+      OpacityEffect.to(
+        0.0,
+        EffectController(duration: 0.8),
+      )
+    );
+    
+    // 1초 뒤 컴포넌트 정리
+    Future.delayed(const Duration(seconds: 1), () {
+      if (pulse.isMounted) {
+        pulse.removeFromParent();
+      }
+    });
   }
 
   /// 솟대 버프: 범위 내 아군 타워 공격속도 증가
@@ -1141,7 +1220,12 @@ void _fireShaman() {
   if (hitEnemies.isNotEmpty && ParticleEffect.canCreate) {
     game.world.add(ParticleEffect.magic(
       position: position,
-      color: const Color(0xFF9944FF),
+      color: const Color(0xFFFFB74D),
+    ));
+    game.world.add(SpriteEffect(
+      type: SpriteEffectType.lightning,
+      position: position,
+      size: Vector2.all(80),
     ));
   }
 

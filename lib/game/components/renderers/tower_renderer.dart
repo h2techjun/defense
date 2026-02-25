@@ -51,9 +51,9 @@ class TowerRenderer extends PositionComponent
     if (branch != null) {
       return 'towers/${_getBranchImageName(branch!)}.png';
     }
-    // 기본 타워: 타입_t{레벨+1}
+    // 기본 타워: 타입_레벨
     final tier = (upgradeLevel + 1).clamp(1, 3);
-    return 'towers/tower_${_getTypeName(type)}_t$tier.png';
+    return 'towers/tower_${_getTypeName(type)}_$tier.png';
   }
 
   /// TowerType → 파일명 매핑

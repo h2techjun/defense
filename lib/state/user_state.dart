@@ -16,6 +16,7 @@ class UserState {
   final int gold;           // 골드(신명) 화폐
   final int membershipPoints; // 멤버십 포인트 (마일리지)
   final bool isPremium;
+  final bool hasCompletedTutorial;
   final Map<String, int> stageStars; // "chapter:level" -> stars
 
   const UserState({
@@ -28,6 +29,7 @@ class UserState {
     this.gold = 1000,        // 초기 골드 1000개
     this.membershipPoints = 0, // 초기 멤버십 포인트
     this.isPremium = false,
+    this.hasCompletedTutorial = false,
     this.stageStars = const {},
   });
 
@@ -41,6 +43,7 @@ class UserState {
     int? gold,
     int? membershipPoints,
     bool? isPremium,
+    bool? hasCompletedTutorial,
     Map<String, int>? stageStars,
   }) {
     return UserState(
@@ -53,6 +56,7 @@ class UserState {
       gold: gold ?? this.gold,
       membershipPoints: membershipPoints ?? this.membershipPoints,
       isPremium: isPremium ?? this.isPremium,
+      hasCompletedTutorial: hasCompletedTutorial ?? this.hasCompletedTutorial,
       stageStars: stageStars ?? this.stageStars,
     );
   }
@@ -73,6 +77,7 @@ class UserState {
     'gold': gold,
     'membershipPoints': membershipPoints,
     'isPremium': isPremium,
+    'hasCompletedTutorial': hasCompletedTutorial,
   };
 
   factory UserState.fromJson(Map<String, dynamic> json) {
@@ -93,6 +98,7 @@ class UserState {
       gold: (json['gold'] as num?)?.toInt() ?? 1000,
       membershipPoints: (json['membershipPoints'] as num?)?.toInt() ?? 0,
       isPremium: json['isPremium'] as bool? ?? false,
+      hasCompletedTutorial: json['hasCompletedTutorial'] as bool? ?? false,
     );
   }
 }
@@ -132,6 +138,11 @@ class UserStateNotifier extends StateNotifier<UserState> {
     state = state.copyWith(
       heroLevels: {...state.heroLevels, heroId: current + 1},
     );
+    _autoSave();
+  }
+
+  void completeTutorial() {
+    state = state.copyWith(hasCompletedTutorial: true);
     _autoSave();
   }
 

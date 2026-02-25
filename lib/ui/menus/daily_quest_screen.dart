@@ -2,62 +2,113 @@
 // 프리미엄 디자인: 출석 캘린더 + 미션 카드 + 올클리어 보물상자
 
 import 'dart:ui';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/responsive.dart';
 import '../../data/models/daily_quest_data.dart';
 import '../../state/daily_quest_provider.dart';
+import '../../audio/sound_manager.dart';
 import '../theme/app_colors.dart';
 
-class DailyQuestScreen extends ConsumerWidget {
+class DailyQuestScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
 
   const DailyQuestScreen({super.key, required this.onBack});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DailyQuestScreen> createState() => _DailyQuestScreenState();
+}
+
+class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
+  Timer? _timer;
+  late DateTime _now;
+
+  @override
+  void initState() {
+    super.initState();
+    _now = DateTime.now();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      setState(() {
+        _now = DateTime.now();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  String _getRemainingTime() {
+    final tomorrow = DateTime(_now.year, _now.month, _now.day + 1);
+    final diff = tomorrow.difference(_now);
+    final h = diff.inHours.toString().padLeft(2, '0');
+    final m = (diff.inMinutes % 60).toString().padLeft(2, '0');
+    final s = (diff.inSeconds % 60).toString().padLeft(2, '0');
+    return '$h:$m:$s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final questState = ref.watch(dailyQuestProvider);
     final s = Responsive.scale(context);
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context, questState, s),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(16 * s),
-                children: [
-                  // ── 연속 출석 캘린더 ──
-                  _buildStreakCalendar(context, ref, questState, s),
-                  SizedBox(height: 20 * s),
-
-                  // ── 일일 미션 카드 ──
-                  _buildSectionTitle('📋 오늘의 미션', s),
-                  SizedBox(height: 8 * s),
-                  ...questState.mainQuests.map(
-                    (q) => _buildQuestCard(context, ref, questState, q, false, s),
-                  ),
-
-                  SizedBox(height: 16 * s),
-
-                  // ── 보너스 미션 ──
-                  if (questState.bonusQuest != null) ...[
-                    _buildSectionTitle('⭐ 보너스 미션', s),
-                    SizedBox(height: 8 * s),
-                    _buildQuestCard(context, ref, questState, questState.bonusQuest!, true, s),
-                    SizedBox(height: 16 * s),
-                  ],
-
-                  // ── 올클리어 보너스 ──
-                  _buildAllClearBonus(context, ref, questState, s),
-                  SizedBox(height: 40 * s),
-                ],
+      body: Stack(
+        children: [
+          // 공통 배경 에셋 투과
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.1,
+              child: Image.asset(
+                'assets/images/objects/obj_shrine.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
               ),
             ),
-          ],
-        ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(context, questState, s),
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.all(16 * s),
+                    children: [
+                      // ── 연속 출석 캘린더 ──
+                      _buildStreakCalendar(context, ref, questState, s),
+                      SizedBox(height: 20 * s),
+
+                      // ── 일일 미션 카드 ──
+                      _buildSectionTitle('📋 오늘의 미션', s),
+                      SizedBox(height: 8 * s),
+                      ...questState.mainQuests.map(
+                        (q) => _buildQuestCard(context, ref, questState, q, false, s),
+                      ),
+
+                      SizedBox(height: 16 * s),
+
+                      // ── 보너스 미션 ──
+                      if (questState.bonusQuest != null) ...[
+                        _buildSectionTitle('⭐ 보너스 미션', s),
+                        SizedBox(height: 8 * s),
+                        _buildQuestCard(context, ref, questState, questState.bonusQuest!, true, s),
+                        SizedBox(height: 16 * s),
+                      ],
+
+                      // ── 올클리어 보너스 ──
+                      _buildAllClearBonus(context, ref, questState, s),
+                      SizedBox(height: 40 * s),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -78,7 +129,7 @@ class DailyQuestScreen extends ConsumerWidget {
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: onBack,
+            onPressed: widget.onBack,
           ),
           SizedBox(width: 8 * s),
           Expanded(
@@ -99,6 +150,22 @@ class DailyQuestScreen extends ConsumerWidget {
                     color: Colors.white60,
                     fontSize: Responsive.fontSize(context, 12),
                   ),
+                ),
+                SizedBox(height: 4 * s),
+                // 리셋 카운트다운 타이머
+                Row(
+                  children: [
+                    Icon(Icons.timer, color: Colors.amber, size: 14 * s),
+                    SizedBox(width: 4 * s),
+                    Text(
+                      '초기화까지 ${_getRemainingTime()}',
+                      style: TextStyle(
+                        color: _now.hour >= 23 ? Colors.redAccent : Colors.amber,
+                        fontSize: Responsive.fontSize(context, 11),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -135,13 +202,17 @@ class DailyQuestScreen extends ConsumerWidget {
     return Container(
       padding: EdgeInsets.all(16 * s),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.bgDeepPlum, AppColors.surfaceMid],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+        color: AppColors.bgDeepPlum.withAlpha(200),
+        image: DecorationImage(
+          image: const AssetImage('assets/images/objects/obj_old_well.png'),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(AppColors.bgDeepPlum.withAlpha(180), BlendMode.darken),
         ),
         borderRadius: BorderRadius.circular(16 * s),
-        border: Border.all(color: AppColors.lavender.withAlpha(100)),
+        border: Border.all(color: AppColors.lavender.withAlpha(80), width: 1.5),
+        boxShadow: [
+          BoxShadow(color: AppColors.bgDeepPlum.withAlpha(100), blurRadius: 10, offset: const Offset(0, 4)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,19 +335,19 @@ class DailyQuestScreen extends ConsumerWidget {
       padding: EdgeInsets.all(14 * s),
       decoration: BoxDecoration(
         color: isClaimed
-            ? Colors.green.withAlpha(15)
+            ? Colors.green.withAlpha(25)
             : isBonus
-                ? const Color(0xFF1F1040)
-                : const Color(0xFF16213E),
+                ? const Color(0xFF1F1040).withAlpha(180)
+                : const Color(0xFF16213E).withAlpha(180),
         borderRadius: BorderRadius.circular(14 * s),
         border: Border.all(
           color: isClaimed
-              ? Colors.green.withAlpha(80)
+              ? Colors.green.withAlpha(100)
               : isBonus
-                  ? Colors.amber.withAlpha(60)
+                  ? Colors.amber.withAlpha(80)
                   : isCompleted
-                      ? Colors.cyan.withAlpha(60)
-                      : Colors.white.withAlpha(8),
+                      ? Colors.cyan.withAlpha(80)
+                      : Colors.white.withAlpha(15),
           width: isBonus ? 1.5 : 1,
         ),
       ),
@@ -339,14 +410,44 @@ class DailyQuestScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              // 수령 버튼
+              // 수령 및 바로가기 프레임
               if (isClaimed)
-                Icon(Icons.check_circle, color: Colors.green, size: 28 * s)
+                // CLEAR 스탬프 연출
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 3.0, end: 1.0),
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutBack,
+                  builder: (context, scale, child) {
+                    return Transform.scale(
+                      scale: scale,
+                      child: Transform.rotate(
+                        angle: -0.2, // 살짝 삐딱하게 스탬프 연출
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 4 * s),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.green, width: 2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'CLEAR',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 16 * s,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                )
               else if (isCompleted)
                 ElevatedButton(
                   onPressed: () {
                     final success = ref.read(dailyQuestProvider.notifier).claimReward(quest.id);
                     if (success) {
+                      SoundManager.instance.playSfx(SfxType.uiUpgrade);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('${quest.type.emoji} 보상 획득!'),
@@ -358,10 +459,31 @@ class DailyQuestScreen extends ConsumerWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber,
                     foregroundColor: Colors.black,
-                    padding: EdgeInsets.symmetric(horizontal: 12 * s, vertical: 6 * s),
+                    padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 8 * s),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: Text('수령', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12 * s)),
+                  child: Text('수령', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * s)),
+                )
+              else if (quest.type.routePath != null)
+                // 바로가기 버튼 추가
+                OutlinedButton.icon(
+                  onPressed: () {
+                    widget.onBack();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('해당 메뉴 탭을 선택해주세요! 🚀'),
+                        backgroundColor: Colors.cyan.shade700,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.flight_takeoff, size: 14 * s, color: Colors.cyan),
+                  label: Text('이동', style: TextStyle(color: Colors.cyan, fontSize: 11 * s, fontWeight: FontWeight.bold)),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.cyan.withAlpha(100)),
+                    padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 4 * s),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
                 )
               else
                 Text(
@@ -430,10 +552,17 @@ class DailyQuestScreen extends ConsumerWidget {
       child: Container(
         padding: EdgeInsets.all(20 * s),
         decoration: BoxDecoration(
+          color: isReady ? null : const Color(0xFF16213E).withAlpha(200),
+          image: isReady && !isClaimed
+              ? DecorationImage(
+                  image: const AssetImage('assets/images/objects/obj_shrine.png'),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(const Color(0xFF4A148C).withAlpha(150), BlendMode.srcATop),
+                )
+              : null,
           gradient: isReady && !isClaimed
               ? const LinearGradient(colors: [Color(0xFF4A148C), Color(0xFF7B1FA2)])
               : null,
-          color: isReady ? null : const Color(0xFF16213E),
           borderRadius: BorderRadius.circular(16 * s),
           border: Border.all(
             color: isClaimed
@@ -444,7 +573,7 @@ class DailyQuestScreen extends ConsumerWidget {
             width: isReady ? 2 : 1,
           ),
           boxShadow: isReady && !isClaimed
-              ? [BoxShadow(color: Colors.purple.withAlpha(60), blurRadius: 12, spreadRadius: 2)]
+              ? [BoxShadow(color: Colors.purple.withAlpha(80), blurRadius: 15, spreadRadius: 3)]
               : null,
         ),
         child: Column(

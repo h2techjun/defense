@@ -14,6 +14,9 @@ enum QuestType {
   upgradeHero,          // "영웅 레벨업 X회"
   equipRelic,           // "유물 장착 변경"
   clearAnyStage,        // "아무 스테이지 1회 클리어"
+  watchAd,              // "광고 시청(수익화) X회" [M1 뉴!]
+  readLore,             // "도감에서 몬스터 정보 열람" [M2 뉴!]
+  killBoss,             // "보스 몬스터 X마리 처치" [M3 뉴!]
 }
 
 extension QuestTypeExt on QuestType {
@@ -28,6 +31,26 @@ extension QuestTypeExt on QuestType {
     QuestType.upgradeHero       => '📈',
     QuestType.equipRelic        => '🏺',
     QuestType.clearAnyStage     => '🎮',
+    QuestType.watchAd           => '📺',
+    QuestType.readLore          => '📖',
+    QuestType.killBoss          => '👹',
+  };
+
+  /// 미션 수행을 위한 바로가기 라우트 경로 힌트
+  String? get routePath => switch (this) {
+    QuestType.killEnemies       => '/stage_select',
+    QuestType.clearStageStars3  => '/stage_select',
+    QuestType.clearAnyStage     => '/stage_select',
+    QuestType.clearNoDamage     => '/stage_select',
+    QuestType.killBoss          => '/stage_select',
+    QuestType.buildTowers       => '/tower_manage',
+    QuestType.spendGold         => '/tower_manage', // 로비나 상점 등으로도 가능
+    QuestType.upgradeHero       => '/hero_manage',
+    QuestType.useHeroSkill      => '/hero_manage',
+    QuestType.equipRelic        => '/hero_manage',
+    QuestType.endlessTowerFloor => '/endless_tower',
+    QuestType.readLore          => '/lore_collection',
+    QuestType.watchAd           => null, // 상단 젬 버튼 등, 별도 UI 처리 고려
   };
 }
 
@@ -95,17 +118,21 @@ const List<DailyQuest> _questPool = [
   DailyQuest(id: 'q_skill_5',    type: QuestType.useHeroSkill,     description: '영웅 스킬 5회 사용',     targetValue: 5,   rewardPassXp: 20, rewardGold: 400),
   DailyQuest(id: 'q_gold_2000',  type: QuestType.spendGold,        description: '골드 2,000 사용',        targetValue: 2000, rewardPassXp: 15, rewardGold: 500),
   DailyQuest(id: 'q_hero_lv',    type: QuestType.upgradeHero,      description: '영웅 레벨업 1회',        targetValue: 1,   rewardPassXp: 20, rewardGold: 300),
+  DailyQuest(id: 'q_watch_ad',   type: QuestType.watchAd,          description: '무료 보석 광고 시청',    targetValue: 1,   rewardPassXp: 30, rewardGems: 1), // 신규 추가
 
   // ── 중간 난이도 ──
   DailyQuest(id: 'q_star3_1',    type: QuestType.clearStageStars3, description: '별 3개로 클리어 1회',    targetValue: 1,   rewardPassXp: 25, rewardGold: 500, rewardGems: 1),
   DailyQuest(id: 'q_star3_2',    type: QuestType.clearStageStars3, description: '별 3개로 클리어 2회',    targetValue: 2,   rewardPassXp: 30, rewardGold: 700, rewardGems: 2),
   DailyQuest(id: 'q_relic',      type: QuestType.equipRelic,       description: '유물 장착 변경',         targetValue: 1,   rewardPassXp: 15, rewardGold: 300),
   DailyQuest(id: 'q_tower_f3',   type: QuestType.endlessTowerFloor,description: '무한의 탑 3층 도달',     targetValue: 3,   rewardPassXp: 25, rewardGold: 500, rewardGems: 1),
+  DailyQuest(id: 'q_read_lore',  type: QuestType.readLore,         description: '도감에서 정보 읽기',     targetValue: 1,   rewardPassXp: 15, rewardGold: 200), // 신규 추가
+  DailyQuest(id: 'q_kill_boss1', type: QuestType.killBoss,         description: '보스 몬스터 1마리 처치',   targetValue: 1,   rewardPassXp: 30, rewardGold: 500, rewardGems: 1), // 신규 추가
 
   // ── 어려운 미션 (보너스 전용) ──
   DailyQuest(id: 'q_nodmg',      type: QuestType.clearNoDamage,    description: '피해 0으로 스테이지 클리어', targetValue: 1, rewardPassXp: 40, rewardGold: 1000, rewardGems: 3),
   DailyQuest(id: 'q_kill_100',   type: QuestType.killEnemies,      description: '적 100마리 처치',        targetValue: 100, rewardPassXp: 35, rewardGold: 800, rewardGems: 2),
   DailyQuest(id: 'q_tower_f5',   type: QuestType.endlessTowerFloor,description: '무한의 탑 5층 도달',     targetValue: 5,   rewardPassXp: 35, rewardGold: 800, rewardGems: 2),
+  DailyQuest(id: 'q_kill_boss3', type: QuestType.killBoss,         description: '보스 몬스터 3마리 처치',   targetValue: 3,   rewardPassXp: 45, rewardGold: 1200, rewardGems: 2), // 신규 추가
 ];
 
 /// 올클리어 보너스 보상
@@ -133,12 +160,12 @@ class DailyQuestGenerator {
   static List<DailyQuest> generateForDate(DateTime date) {
     final seed = _dateToSeed(date);
 
-    // 쉬운 미션 풀 (인덱스 0~9)
-    final easyPool = _questPool.sublist(0, 10);
-    // 중간 미션 풀 (인덱스 10~13)
-    final mediumPool = _questPool.sublist(10, 14);
-    // 어려운 미션 풀 (인덱스 14~16)
-    final hardPool = _questPool.sublist(14);
+    // 쉬운 미션 풀 (인덱스 0~10)
+    final easyPool = _questPool.sublist(0, 11);
+    // 중간 미션 풀 (인덱스 11~16)
+    final mediumPool = _questPool.sublist(11, 17);
+    // 어려운 미션 풀 (인덱스 17~20)
+    final hardPool = _questPool.sublist(17);
 
     final result = <DailyQuest>[];
     final usedTypes = <QuestType>{};

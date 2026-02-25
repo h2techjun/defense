@@ -63,6 +63,8 @@ class BaseHero extends PositionComponent
 
   // 시각
   late RectangleComponent _body;
+  RectangleComponent? _shadow;
+  RectangleComponent? _border;
   late RectangleComponent _hpBar;
   late RectangleComponent _xpBar;
   late TextComponent _levelText;
@@ -199,7 +201,7 @@ class BaseHero extends PositionComponent
     required Vector2 position,
     this.level = 1,
   }) : super(
-    size: Vector2.all(36),
+    size: Vector2.all(96),
     position: position,
     anchor: Anchor.center,
     priority: 5,
@@ -216,34 +218,40 @@ class BaseHero extends PositionComponent
     final color = _getHeroColor(data.id);
     _lastTier = currentTier;
 
-    // 그림자 효과
-    add(RectangleComponent(
-      size: Vector2(size.x + 2, size.y + 2),
-      position: Vector2(1, 2),
-      paint: Paint()..color = const Color(0x44000000),
-    ));
-
-    _body = RectangleComponent(
-      size: size,
-      paint: Paint()..color = color,
-    );
-    add(_body);
-
-    // 진화 테두리
-    add(RectangleComponent(
-      size: Vector2(size.x + 4, size.y + 4),
-      position: Vector2(-2, -2),
-      paint: Paint()
-        ..color = _getTierColor(currentTier)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
-    ));
-
-    // 스프라이트 이미지 로드 (성공 시 이모지 대체)
+    // 스프라이트 이미지 먼저 로드 시도
     await _loadHeroSprite();
 
-    // 이모지 폴백 (스프라이트 로드 실패 시에만 표시)
-    if (!_heroSpriteLoaded) {
+    if (_heroSpriteLoaded) {
+      // 스프라이트 성공 → 사각형 프레임 없이 스프라이트만 표시
+      // _body는 투명한 더미로 (다른 코드에서 참조할 수 있으므로)
+      _body = RectangleComponent(
+        size: size,
+        paint: Paint()..color = const Color(0x00000000),
+      );
+    } else {
+      // 스프라이트 실패 → 사각형 폴백
+      add(RectangleComponent(
+        size: Vector2(size.x + 2, size.y + 2),
+        position: Vector2(1, 2),
+        paint: Paint()..color = const Color(0x44000000),
+      ));
+
+      _body = RectangleComponent(
+        size: size,
+        paint: Paint()..color = color,
+      );
+      add(_body);
+
+      add(RectangleComponent(
+        size: Vector2(size.x + 4, size.y + 4),
+        position: Vector2(-2, -2),
+        paint: Paint()
+          ..color = _getTierColor(currentTier)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2,
+      ));
+
+      // 이모지 폴백
       final emoji = _getHeroEmoji(data.id);
       add(TextComponent(
         text: emoji,
@@ -351,7 +359,7 @@ class BaseHero extends PositionComponent
       // HeroId → 파일명 매핑
       final heroName = _getHeroFileName(data.id);
       final tierNum = _getTierNumber(currentTier);
-      final imagePath = 'heroes/hero_${heroName}_t$tierNum.png';
+      final imagePath = 'heroes/hero_${heroName}_$tierNum.png';
 
       final image = await game.images.load(imagePath);
       final sprite = Sprite(image);
@@ -361,7 +369,7 @@ class BaseHero extends PositionComponent
         _spriteComponent!.removeFromParent();
       }
 
-      // 새 스프라이트 추가 (_body 위에 오버레이)
+      // 새 스프라이트 추가
       _spriteComponent = SpriteComponent(
         sprite: sprite,
         size: size,
@@ -370,8 +378,6 @@ class BaseHero extends PositionComponent
       );
       add(_spriteComponent!);
       _heroSpriteLoaded = true;
-      // 스프라이트 로드 성공 → 배경 색상 사각형 투명화
-      _body.paint.color = const Color(0x00000000);
     } catch (e) {
       _heroSpriteLoaded = false;
     }
@@ -383,13 +389,13 @@ class BaseHero extends PositionComponent
       case HeroId.kkaebi:
         return 'kkaebi';
       case HeroId.miho:
-        return 'miho';
+        return 'guMiho';
       case HeroId.gangrim:
-        return 'gangrim';
+        return 'darkYeomra';
       case HeroId.sua:
-        return 'sua';
+        return 'tigerHunter';
       case HeroId.bari:
-        return 'bari';
+        return 'hongGildong';
     }
   }
 

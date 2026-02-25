@@ -8,6 +8,7 @@ import '../../common/enums.dart';
 import '../../common/responsive.dart';
 import '../../data/game_data_loader.dart';
 import '../../data/models/hero_data.dart';
+import '../../data/models/story_data.dart';
 import '../../l10n/app_strings.dart';
 import '../../services/save_manager.dart';
 import '../../game/components/actors/base_hero.dart';
@@ -64,21 +65,35 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppColors.scaffoldBg,
-              AppColors.bgDeepPlum,
-              AppColors.surfaceMid,
-            ],
+      body: Stack(
+        children: [
+          // 배경 에셋
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.2,
+              child: Image.asset(
+                'assets/images/bg/bg_hero_manage.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              ),
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.scaffoldBg,
+                  AppColors.bgDeepPlum,
+                  AppColors.surfaceMid,
+                ],
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                children: [
               _buildHeader(),
               Expanded(
                 child: Row(
@@ -98,6 +113,8 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
             ],
           ),
         ),
+      ),
+      ],
       ),
     );
   }
@@ -241,7 +258,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
               ),
               child: ClipOval(
                 child: Image.asset(
-                  'assets/images/heroes/hero_${_getHeroFileName(hero.id)}_1.png',
+                  'assets/images/heroes/hero_${_getHeroFileName(hero.id)}_${_getCurrentHeroTier(hero.id)}.png',
                   width: 40 * Responsive.scale(context),
                   height: 40 * Responsive.scale(context),
                   fit: BoxFit.contain,
@@ -362,7 +379,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
               ),
               child: ClipOval(
                 child: Image.asset(
-                  'assets/images/heroes/hero_${_getHeroFileName(hero.id)}_1.png',
+                  'assets/images/heroes/hero_${_getHeroFileName(hero.id)}_${_getSelectedTierNumber()}.png',
                   width: 72 * Responsive.scale(context),
                   height: 72 * Responsive.scale(context),
                   fit: BoxFit.contain,
@@ -818,38 +835,103 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
     );
   }
 
-  /// 배경 이야기
+  /// 배경 이야기 (버튼 클릭 시 상세 팝업 오픈)
   Widget _buildBackstorySection(HeroData hero, Color color) {
     return Container(
       padding: EdgeInsets.all(12 * Responsive.scale(context)),
       decoration: BoxDecoration(
-        color: const Color(0x08FFFFFF),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0x11FFFFFF)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            '📖 설화',
-            style: TextStyle(
-              fontSize: Responsive.fontSize(context, 13),
-              fontWeight: FontWeight.bold,
-              color: Colors.white70,
-            ),
+          Row(
+            children: [
+              const Text('📜', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '영웅 배경 스토리',
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 13),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    '${hero.name}의 숨겨진 과거를 확인하세요.',
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 10),
+                      color: Colors.white.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            hero.backstory,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.white.withValues(alpha: 0.6),
-              height: 1.5,
-              fontStyle: FontStyle.italic,
+          ElevatedButton(
+            onPressed: () => _showLoreDialog(hero, color),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: color.withValues(alpha: 0.3),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
+            child: const Text('읽어보기'),
           ),
         ],
       ),
+    );
+  }
+
+  /// 영웅 상세 스토리 모달 팝업
+  void _showLoreDialog(HeroData hero, Color color) {
+    // story_data.dart 에 정의된 상세 텍스트 로드 (없으면 기본 backstory 대체)
+    final loreText = StoryData.heroLoreData[hero.id.name] ?? hero.backstory;
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: AlertDialog(
+            backgroundColor: AppColors.surfaceDark.withOpacity(0.9),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(color: color.withValues(alpha: 0.5), width: 2),
+            ),
+            title: Row(
+              children: [
+                Text(_getHeroEmoji(hero.id), style: const TextStyle(fontSize: 24)),
+                const SizedBox(width: 8),
+                Text(
+                  '${hero.name}의 전설',
+                  style: TextStyle(color: color, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Text(
+                loreText,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                  height: 1.6,
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text('닫기', style: TextStyle(color: color)),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -944,11 +1026,24 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
   String _getHeroFileName(HeroId id) {
     return switch (id) {
       HeroId.kkaebi => 'kkaebi',
-      HeroId.miho => 'miho',
-      HeroId.gangrim => 'gangrim',
-      HeroId.sua => 'sua',
-      HeroId.bari => 'bari',
+      HeroId.miho => 'guMiho',
+      HeroId.gangrim => 'darkYeomra',
+      HeroId.sua => 'hongGildong',
+      HeroId.bari => 'tigerHunter',
     };
+  }
+
+  /// 현재 영웅의 해금된 최고 진화 단계 번호
+  int _getCurrentHeroTier(HeroId id) {
+    final level = _getHeroLevel(id);
+    if (level >= 20) return 3;
+    if (level >= 10) return 2;
+    return 1;
+  }
+
+  /// 현재 선택된 진화 탭의 티어 번호
+  int _getSelectedTierNumber() {
+    return _selectedEvolutionIndex + 1;
   }
 
   String _getRoleLabel(HeroId id) {

@@ -33,6 +33,10 @@ class MapObjectComponent extends PositionComponent with TapCallbacks, HasGameRef
   /// 인터랙션 쿨다운
   bool _canInteract = true;
 
+  /// 스프라이트 에셋
+  Sprite? _sprite;
+  bool _spriteLoaded = false;
+
   MapObjectComponent({
     required this.data,
     required Vector2 position,
@@ -41,6 +45,45 @@ class MapObjectComponent extends PositionComponent with TapCallbacks, HasGameRef
     size: Vector2.all(40), // 1타일 크기
     anchor: Anchor.center,
   );
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    await _loadSprite();
+  }
+
+  /// 오브젝트 타입별 스프라이트 로딩
+  Future<void> _loadSprite() async {
+    try {
+      final imagePath = _getSpritePath();
+      if (imagePath != null) {
+        final image = await gameRef.images.load(imagePath);
+        _sprite = Sprite(image);
+        _spriteLoaded = true;
+      }
+    } catch (e) {
+      // 이미지 로드 실패 → Canvas 폴백 사용
+      _spriteLoaded = false;
+    }
+  }
+
+  /// MapObjectType → 스프라이트 경로
+  String? _getSpritePath() {
+    switch (data.type) {
+      case MapObjectType.sacredTree:
+        return 'objects/obj_sacred_tree.png';
+      case MapObjectType.shrine:
+        return 'objects/obj_shrine.png';
+      case MapObjectType.torch:
+        return 'objects/obj_torch.png';
+      case MapObjectType.oldWell:
+        return 'objects/obj_old_well.png';
+      case MapObjectType.mapSotdae:
+        return 'objects/obj_sotdae.png';
+      case MapObjectType.tomb:
+        return 'objects/obj_grave_mound.png';
+    }
+  }
 
   @override
   void update(double dt) {
@@ -66,6 +109,13 @@ class MapObjectComponent extends PositionComponent with TapCallbacks, HasGameRef
   void render(Canvas canvas) {
     super.render(canvas);
 
+    // 스프라이트가 있으면 스프라이트 기반 렌더링
+    if (_spriteLoaded && _sprite != null) {
+      _renderSprite(canvas);
+      return;
+    }
+
+    // 스프라이트 없으면 기존 Canvas 폴백
     switch (state) {
       case MapObjectState.inactive:
         _renderInactive(canvas);
@@ -75,6 +125,68 @@ class MapObjectComponent extends PositionComponent with TapCallbacks, HasGameRef
         break;
       case MapObjectState.depleted:
         _renderDepleted(canvas);
+        break;
+    }
+  }
+
+  /// 스프라이트 기반 렌더링 (상태별 오버레이 차별화)
+  void _renderSprite(Canvas canvas) {
+    final center = size / 2;
+
+    switch (state) {
+      case MapObjectState.inactive:
+        // 글로우 링
+        final glowPaint = Paint()
+          ..color = _getTypeColor().withValues(alpha: _glowIntensity * 0.4)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2;
+        canvas.drawCircle(center.toOffset(), 22, glowPaint);
+        // 반투명 스프라이트
+        canvas.saveLayer(Rect.fromLTWH(0, 0, size.x, size.y),
+          Paint()..color = Color.fromARGB((180 + (_glowIntensity * 75).toInt()).clamp(0, 255), 255, 255, 255));
+        _sprite!.render(canvas, size: size);
+        canvas.restore();
+        // 비용 표시
+        if (data.cost > 0) {
+          final costPainter = TextPainter(
+            text: TextSpan(
+              text: '${data.cost}✦',
+              style: TextStyle(
+                color: Colors.amber.shade200,
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+                shadows: const [Shadow(color: Colors.black, blurRadius: 2)],
+              ),
+            ),
+            textDirection: TextDirection.ltr,
+          );
+          costPainter.layout();
+          costPainter.paint(canvas, Offset(center.x - costPainter.width / 2, center.y + 18));
+        }
+        break;
+
+      case MapObjectState.active:
+        // 효과 범위
+        if (data.effectRadius > 0) {
+          final radiusPx = data.effectRadius * 40;
+          canvas.drawCircle(center.toOffset(), radiusPx,
+            Paint()..color = _getTypeColor().withValues(alpha: 0.12)..style = PaintingStyle.fill);
+          canvas.drawCircle(center.toOffset(), radiusPx,
+            Paint()..color = _getTypeColor().withValues(alpha: 0.3)..style = PaintingStyle.stroke..strokeWidth = 1);
+        }
+        // 밝은 스프라이트
+        _sprite!.render(canvas, size: size);
+        // 활성 테두리
+        canvas.drawCircle(center.toOffset(), 20,
+          Paint()..color = _getTypeColor()..style = PaintingStyle.stroke..strokeWidth = 2);
+        break;
+
+      case MapObjectState.depleted:
+        // 흐릿한 스프라이트
+        canvas.saveLayer(Rect.fromLTWH(0, 0, size.x, size.y),
+          Paint()..color = const Color.fromARGB(80, 255, 255, 255));
+        _sprite!.render(canvas, size: size);
+        canvas.restore();
         break;
     }
   }

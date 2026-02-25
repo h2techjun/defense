@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../audio/sound_manager.dart';
+
 import '../../common/enums.dart';
 import '../../common/responsive.dart';
 import '../../state/game_state.dart';
@@ -73,7 +75,14 @@ class TowerSelectPanel extends ConsumerWidget {
                   tooltip: meta['tooltip'] as String,
                   canAfford: state.sinmyeong >= data.baseCost,
                   isSelected: selectedTower == type,
-                  onTap: () => onTowerSelected?.call(type),
+                  onTap: () {
+                    if (state.sinmyeong >= data.baseCost) {
+                      SoundManager.instance.playSfx(SfxType.uiClick);
+                      onTowerSelected?.call(type);
+                    } else {
+                      SoundManager.instance.playSfx(SfxType.uiError);
+                    }
+                  },
                 ),
               );
             }).toList(),
@@ -217,7 +226,10 @@ class _TowerButtonState extends State<_TowerButton> {
         MouseRegion(
           onEnter: (_) => setState(() => _isHovered = true),
           onExit: (_) => setState(() => _isHovered = false),
-          child: content,
+          child: GestureDetector(
+            onTap: widget.onTap,
+            child: content,
+          ),
         ),
       );
     }

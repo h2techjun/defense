@@ -15,6 +15,9 @@ dependencies:
   flame_audio: ^2.10.4
   collection: ^1.18.0
   shared_preferences: ^2.5.3
+  google_fonts: ^8.0.2
+  supabase_flutter: ^2.12.0
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -25,6 +28,8 @@ flutter:
   uses-material-design: true
 
   assets:
+    - .env
+    - assets/i18n/
     - assets/data/
     - assets/data/levels/
     - assets/audio/sfx/
@@ -35,3 +40,8 @@ flutter:
     - assets/images/heroes/
     - assets/images/projectiles/
     - assets/images/objects/
+    - assets/images/bg/
+    - assets/images/effects/
+    - assets/images/ui/
+    - assets/images/soldiers/
+
