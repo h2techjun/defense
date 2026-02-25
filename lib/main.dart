@@ -109,9 +109,6 @@ class GatewayOfRegretsApp extends StatelessWidget {
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.scaffoldBg,
         colorSchemeSeed: AppColors.cherryBlossom,
-        textTheme: GoogleFonts.notoSansKrTextTheme(
-          ThemeData(brightness: Brightness.dark).textTheme,
-        ),
       ),
       home: const GameScreen(),
     );
