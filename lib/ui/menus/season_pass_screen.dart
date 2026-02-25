@@ -41,23 +41,37 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context, passState),
-            _buildTabBar(context),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildPassTab(context, passState),
-                  _buildShopTab(context),
-                  _buildVipTab(context, vipState),
-                ],
+      body: Stack(
+        children: [
+          // 공통 프리미엄 테마 배경 (은은하게 투과)
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.15,
+              child: Image.asset(
+                'assets/images/objects/obj_sacred_tree.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
               ),
             ),
-          ],
-        ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(context, passState),
+                _buildTabBar(context),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildPassTab(context, passState),
+                      _buildShopTab(context),
+                      _buildVipTab(context, vipState),
+                    ],
+                  ),),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -175,7 +189,10 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
 
   Widget _buildTabBar(BuildContext context) {
     return Container(
-      color: const Color(0xFF16213E),
+      decoration: BoxDecoration(
+        color: const Color(0xFF16213E).withAlpha(220),
+        border: Border(bottom: BorderSide(color: Colors.white.withAlpha(20), width: 1)),
+      ),
       child: TabBar(
         controller: _tabController,
         indicatorColor: Colors.amber,
@@ -482,16 +499,27 @@ class _PassLevelRow extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: Responsive.spacing(context, 6)),
       child: Container(
-        padding: EdgeInsets.all(Responsive.spacing(context, 10)),
-        decoration: BoxDecoration(
-          color: isUnlocked
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black26,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isUnlocked ? Colors.white12 : Colors.white.withValues(alpha: 0.03),
-          ),
-        ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          child: Container(
+            padding: EdgeInsets.all(Responsive.spacing(context, 10)),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: isUnlocked
+                    ? [const Color(0xFF3B1E54).withAlpha(180), AppColors.bgDeepPlum.withAlpha(220)]
+                    : [Colors.black.withAlpha(150), Colors.black.withAlpha(200)],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isUnlocked ? Colors.amber.withAlpha(60) : Colors.white.withAlpha(10),
+                width: isUnlocked ? 1.5 : 1.0,
+              ),
+              boxShadow: isUnlocked
+                  ? [BoxShadow(color: Colors.amber.withAlpha(20), blurRadius: 8, spreadRadius: 1)]
+                  : null,
+            ),
         child: Row(
           children: [
             // 레벨 번호
@@ -554,18 +582,21 @@ class _PassLevelRow extends StatelessWidget {
                         final locked = !isPremiumPass;
                         return _RewardChip(
                           reward: r,
-                          isUnlocked: isUnlocked && !locked,
-                          isClaimed: claimed,
-                          isPremiumLocked: locked,
-                          onTap: isUnlocked && !locked && !claimed
-                              ? () => onClaim(r)
-                              : null,
-                        );
-                      }).toList(),
-                    ),
-            ),
-          ],
+                            isUnlocked: isUnlocked && !locked,
+                            isClaimed: claimed,
+                            isPremiumLocked: locked,
+                            onTap: isUnlocked && !locked && !claimed
+                                ? () => onClaim(r)
+                                : null,
+                          );
+                        }).toList(),
+                      ),
+              ),
+            ],
+          ),
         ),
+        ),
+      ),
       ),
     );
   }

@@ -52,8 +52,12 @@ class JsonDataLoader {
 
   /// 모든 JSON 데이터를 비동기로 로드합니다.
   static Future<void> loadAll() async {
-    if (_isLoaded) return;
+    if (_isLoaded) {
+      debugPrint('ℹ️ [JsonDataLoader] Already loaded.');
+      return;
+    }
 
+    debugPrint('🚀 [JsonDataLoader] Loading all data...');
     try {
       await Future.wait([
         _loadHeroes(),
@@ -79,6 +83,7 @@ class JsonDataLoader {
 
   /// 영웅 데이터 로드
   static Future<void> _loadHeroes() async {
+    debugPrint('⏳ [JsonDataLoader] Loading heroes.json...');
     final jsonStr = await rootBundle.loadString('assets/data/heroes.json');
     final List<dynamic> jsonList = json.decode(jsonStr) as List<dynamic>;
     final heroMap = <HeroId, HeroData>{};
@@ -91,6 +96,7 @@ class JsonDataLoader {
 
   /// 적 데이터 로드
   static Future<void> _loadEnemies() async {
+    debugPrint('⏳ [JsonDataLoader] Loading enemies.json...');
     final jsonStr = await rootBundle.loadString('assets/data/enemies.json');
     final List<dynamic> jsonList = json.decode(jsonStr) as List<dynamic>;
     final enemyMap = <EnemyId, EnemyData>{};
@@ -103,6 +109,7 @@ class JsonDataLoader {
 
   /// 타워 데이터 로드
   static Future<void> _loadTowers() async {
+    debugPrint('⏳ [JsonDataLoader] Loading towers.json...');
     final jsonStr = await rootBundle.loadString('assets/data/towers.json');
     final Map<String, dynamic> jsonData =
         json.decode(jsonStr) as Map<String, dynamic>;

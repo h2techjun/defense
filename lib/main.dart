@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'common/enums.dart';
 import 'ui/theme/app_colors.dart';
@@ -26,6 +27,7 @@ import 'ui/menus/season_pass_screen.dart';
 import 'ui/menus/achievement_screen.dart';
 import 'ui/menus/package_shop_screen.dart';
 import 'ui/menus/daily_quest_screen.dart';
+import 'state/daily_quest_provider.dart';
 import 'ui/menus/lore_collection_screen.dart';
 import 'state/endless_tower_provider.dart';
 import 'ui/hud/game_hud.dart';
@@ -38,9 +40,33 @@ import 'ui/hud/game_tooltip.dart';
 import 'state/user_state.dart';
 import 'state/hero_party_provider.dart';
 import 'ui/hud/wave_announce_banner.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'ui/dialogs/story_cutscene_dialog.dart';
+import 'ui/dialogs/tutorial_overlay.dart';
+import 'data/models/story_data.dart';
+import 'l10n/app_strings.dart';
 
 Future<void> main() async {
+  debugPrint('🚀 [main] Flutter app starting...');
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 환경 변수 및 BaaS 클라이언트 동기화
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint('⚠️ [main] .env 파일 로드 실패 (프로덕션 환경에서는 정상): $e');
+  }
+  final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
+  final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+  
+  // 더미 값이 아닐 때만 실제 DB 초기화
+  if (supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty && supabaseUrl != 'YOUR_SUPABASE_URL_HERE') {
+    await Supabase.initialize(
+      url: supabaseUrl,
+      anonKey: supabaseAnonKey,
+    );
+  }
 
   // 가로 모드 고정
   SystemChrome.setPreferredOrientations([
@@ -53,6 +79,9 @@ Future<void> main() async {
 
   // JSON 데이터 로드 (실패 시 하드코딩 폴백 자동 전환)
   await GameDataLoader.initFromJson();
+
+  // 사용자 언어 설정 복원 및 다국어 로드
+  await AppStrings.init(GameLanguage.ko);
 
   runApp(
     const ProviderScope(
@@ -72,9 +101,11 @@ class GatewayOfRegretsApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        fontFamily: 'NotoSansKR',
         scaffoldBackgroundColor: AppColors.scaffoldBg,
         colorSchemeSeed: AppColors.cherryBlossom,
+        textTheme: GoogleFonts.notoSansKrTextTheme(
+          ThemeData(brightness: Brightness.dark).textTheme,
+        ),
       ),
       home: const GameScreen(),
     );
@@ -94,6 +125,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   String _currentScreen = 'mainMenu'; // mainMenu, stageSelect, heroManage, heroDeploy, gameplay
   LevelData? _currentLevel;
   TowerType? _selectedTower;
+  bool _isSoundLoaded = false;
+  bool _showTutorial = false; // 튜토리얼 표시 여부
   final _gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<DefenseGame>>();
 
   // 툴팁 상태
@@ -108,11 +141,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint('🚀 [GameScreen] initState 시작');
     _game = DefenseGame();
     _setupGameCallbacks();
     // 세이브 데이터 로드
-    Future.microtask(() {
-      ref.read(userStateProvider.notifier).loadFromSave();
+    Future.microtask(() async {
+      debugPrint('🚀 [GameScreen] 세이브 데이터 로드 시작');
+      await ref.read(userStateProvider.notifier).loadFromSave();
+      await ref.read(dailyQuestProvider.notifier).loadFromSave();
+      debugPrint('🚀 [GameScreen] 세이브 데이터 로드 완료');
     });
   }
 
@@ -232,10 +269,54 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       _currentLevel = level;
     });
 
-    Future.microtask(() {
-      SoundManager.instance.stopBgm();
-      _game.startLevel(level, mode: mode);
-    });
+    void startGame() {
+      Future.microtask(() {
+        SoundManager.instance.stopBgm();
+        _game.startLevel(level, mode: mode);
+
+        // 튜토리얼 트리거 (캠페인 1스테이지 & 미완료 시)
+        final userState = ref.read(userStateProvider);
+        if (mode == GameMode.campaign && level.levelNumber == 1 && !userState.hasCompletedTutorial) {
+          setState(() {
+            _showTutorial = true;
+          });
+          _game.pauseEngine(); // 튜토리얼이 떠있는 동안 엔진 정지
+        }
+      });
+    }
+
+    // 캠페인 모드일 경우 레벨 조건에 따라 스토리 컷씬 재생 분기
+    if (mode == GameMode.campaign) {
+      List<StoryScene>? scenes;
+      if (level.levelNumber == 1) {
+        scenes = StoryData.introSequence;
+      } else if (level.levelNumber == 21) {
+        scenes = StoryData.ep1ToEp2;
+      } else if (level.levelNumber == 41) {
+        scenes = StoryData.ep2ToEp3;
+      } else if (level.levelNumber == 61) {
+        scenes = StoryData.ep3ToEp4;
+      } else if (level.levelNumber == 81) {
+        scenes = StoryData.ep4ToEp5;
+      }
+
+      if (scenes != null) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => StoryCutsceneDialog(
+            scenes: scenes!,
+            onFinish: () {
+              Navigator.of(ctx).pop();
+              startGame();
+            },
+          ),
+        );
+        return; // 다이얼로그 콜백에서 실제 게임을 시작하도록 대기
+      }
+    }
+
+    startGame();
   }
 
   void _returnToMenu() {
@@ -1042,10 +1123,41 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             _buildHeroSkillPanel(),
 
             // ── 호버 툴팁 ──
-            if (_tooltipData != null)
+            if (_tooltipData != null && !_showTutorial)
               GameTooltip(
                 data: _tooltipData!,
                 position: _mousePosition,
+              ),
+
+            // ── 튜토리얼 오버레이 ──
+            if (_showTutorial)
+              Positioned.fill(
+                child: TutorialOverlay(
+                  steps: const [
+                    TutorialStep(
+                      title: '환영합니다, 마스터!',
+                      content: '해원의 문에 오신 것을 환영합니다.\n먼저, 전장 우측 하단의 [타워 아이콘]을 클릭하거나 드래그하여 배치 영역에 놓아보세요.',
+                      tooltipOffset: Offset(100, 100),
+                    ),
+                    TutorialStep(
+                      title: '원혼의 접근',
+                      content: '밤이 되면 영혼형 몬스터가 출몰합니다.\n영혼형 몬스터는 [정화] 속성 타워(솟대 등) 혹은 [마법] 속성 타워에 약합니다.',
+                      tooltipOffset: Offset(100, 100),
+                    ),
+                    TutorialStep(
+                      title: '영웅의 힘',
+                      content: '배치된 영웅은 강력한 스킬을 보유하고 있습니다.\n쿨타임이 차면 우측 하단의 스킬 아이콘을 눌러 전황을 뒤집으세요!',
+                      tooltipOffset: Offset(100, 100),
+                    ),
+                  ],
+                  onFinish: () {
+                    setState(() {
+                      _showTutorial = false;
+                    });
+                    ref.read(userStateProvider.notifier).completeTutorial();
+                    _game.resumeEngine(); // 게임 재개
+                  },
+                ),
               ),
           ],
         ),

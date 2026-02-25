@@ -37,10 +37,24 @@ class TowerManageScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 헤더
+      body: Stack(
+        children: [
+          // 배경 에셋
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.2,
+              child: Image.asset(
+                'assets/images/bg/bg_tower_manage.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                // 헤더
             Padding(
               padding: EdgeInsets.all(12 * s),
               child: Row(
@@ -247,6 +261,8 @@ class TowerManageScreen extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+      ],
       ),
     );
   }

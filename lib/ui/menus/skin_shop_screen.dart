@@ -1,7 +1,7 @@
 // 해원의 문 - 스킨 상점 화면
 // 영웅별 스킨 목록 표시, 구매/장착 기능
 
-import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/enums.dart';
@@ -24,10 +24,23 @@ class SkinShopScreen extends ConsumerWidget {
     final userState = ref.watch(userStateProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.surfaceDark,
-      body: SafeArea(
-        child: Column(
-          children: [
+      backgroundColor: AppColors.scaffoldBg,
+      body: Stack(
+        children: [
+          // 배경 에셋 투과
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.15,
+              child: Image.asset(
+                'assets/images/objects/obj_sotdae.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
             // ── 헤더 ──
             _buildHeader(context, userState.gems, ref),
 
@@ -42,7 +55,8 @@ class SkinShopScreen extends ConsumerWidget {
                       isScrollable: true,
                       indicatorColor: AppColors.sinmyeongGold,
                       labelColor: AppColors.sinmyeongGold,
-                      unselectedLabelColor: Colors.grey,
+                      unselectedLabelColor: AppColors.lavender.withAlpha(150),
+                      labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: Responsive.fontSize(context, 16)),
                       tabs: HeroId.values.map((heroId) {
                         return Tab(text: _getHeroName(heroId));
                       }).toList(),
@@ -65,6 +79,8 @@ class SkinShopScreen extends ConsumerWidget {
           ],
         ),
       ),
+      ],
+      ),
     );
   }
 
@@ -73,8 +89,9 @@ class SkinShopScreen extends ConsumerWidget {
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFF333366))),
+      decoration: BoxDecoration(
+        color: AppColors.bgDeepPlum.withAlpha(150),
+        border: Border(bottom: BorderSide(color: AppColors.lavender.withAlpha(80), width: 1)),
       ),
       child: Row(
         children: [
@@ -139,7 +156,7 @@ class SkinShopScreen extends ConsumerWidget {
       padding: Responsive.paddingAll(context, 16),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: Responsive.gridColumns(context),
-        childAspectRatio: 0.75,
+        childAspectRatio: 0.6,
         crossAxisSpacing: 12 * Responsive.scale(context),
         mainAxisSpacing: 12 * Responsive.scale(context),
       ),
@@ -212,6 +229,18 @@ class SkinShopScreen extends ConsumerWidget {
                 boxShadow: skin.rarity.hasGlow
                     ? [BoxShadow(color: skin.glowColor, blurRadius: 12)]
                     : null,
+              ),
+              child: ClipOval(
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    skin.rarity == SkinRarity.common ? Colors.transparent : skin.primaryColor.withOpacity(0.4),
+                    BlendMode.srcATop,
+                  ),
+                  child: Image.asset(
+                    'assets/images/heroes/hero_${_getHeroFilePref(skin.heroId)}_${_getTierForRarity(skin.rarity)}.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -306,101 +335,280 @@ class _SkinCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = Responsive.scale(context);
+    // 등급별 글로우 강도
+    final double glowIntensity = switch (skin.rarity) {
+      SkinRarity.common => 0,
+      SkinRarity.uncommon => 4,
+      SkinRarity.rare => 8,
+      SkinRarity.epic => 14,
+      SkinRarity.legendary => 18,
+      SkinRarity.mythic => 22,
+      SkinRarity.divine => 28,
+    };
+    // 등급별 보더 두께
+    final double borderWidth = switch (skin.rarity) {
+      SkinRarity.common || SkinRarity.uncommon => 1,
+      SkinRarity.rare || SkinRarity.epic => 1.5,
+      SkinRarity.legendary || SkinRarity.mythic || SkinRarity.divine => 2.5,
+    };
     return GestureDetector(
       onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12 * s),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-          child: Container(
+      child: Container(
         decoration: BoxDecoration(
-          color: Colors.black.withAlpha(60),
-          borderRadius: BorderRadius.circular(12 * s),
-          border: equipped
-              ? Border.all(color: AppColors.sinmyeongGold, width: 2)
-              : (owned
-                  ? Border.all(color: skin.rarity.color.withAlpha(128), width: 1)
-                  : null),
+          borderRadius: BorderRadius.circular(14 * s),
+          border: Border.all(
+            color: equipped
+                ? AppColors.sinmyeongGold
+                : owned
+                    ? skin.rarity.color.withAlpha(180)
+                    : const Color(0x22FFFFFF),
+            width: equipped ? 2.5 : borderWidth,
+          ),
+          boxShadow: (skin.rarity.hasGlow && owned) || equipped
+              ? [
+                  BoxShadow(
+                    color: equipped
+                        ? AppColors.sinmyeongGold.withAlpha(80)
+                        : skin.glowColor.withAlpha(100),
+                    blurRadius: glowIntensity,
+                    spreadRadius: 1,
+                  ),
+                ]
+              : null,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // 등급 배지
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 6 * s, vertical: 2 * s),
-              decoration: BoxDecoration(
-                color: skin.rarity.color.withAlpha(51),
-                borderRadius: BorderRadius.circular(6 * s),
-              ),
-              child: Text(
-                skin.rarity.displayName,
-                style: TextStyle(
-                  color: skin.rarity.color,
-                  fontSize: Responsive.fontSize(context, 10),
-                  fontWeight: FontWeight.bold,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(13 * s),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // 배경 그라디언트
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: owned
+                        ? [
+                            skin.primaryColor.withAlpha(80),
+                            Colors.black.withAlpha(180),
+                            skin.secondaryColor.withAlpha(60),
+                          ]
+                        : [
+                            Colors.black.withAlpha(160),
+                            Colors.black.withAlpha(200),
+                          ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 10 * s),
 
-            // 스킨 미리보기 (원형)
-            Container(
-              width: 50 * s,
-              height: 50 * s,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: owned ? skin.primaryColor : skin.primaryColor.withAlpha(77),
-                border: skin.rarity.hasBorder
-                    ? Border.all(color: skin.secondaryColor, width: 2)
-                    : null,
-                boxShadow: skin.rarity.hasGlow && owned
-                    ? [BoxShadow(color: skin.glowColor, blurRadius: 8)]
-                    : null,
+              // 캐릭터 이미지 (풀블리드 — 카드 전체를 채움)
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 8 * s, left: 4 * s, right: 4 * s),
+                  child: owned
+                      ? ShaderMask(
+                          shaderCallback: (rect) {
+                            return LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.white,
+                                Colors.white,
+                                skin.primaryColor.withAlpha(160),
+                                Colors.transparent,
+                              ],
+                              stops: const [0.0, 0.5, 0.85, 1.0],
+                            ).createShader(rect);
+                          },
+                          blendMode: skin.rarity == SkinRarity.common
+                              ? BlendMode.dstIn
+                              : BlendMode.dstIn,
+                          child: ColorFiltered(
+                            colorFilter: skin.rarity == SkinRarity.common
+                                ? const ColorFilter.mode(Colors.transparent, BlendMode.dst)
+                                : ColorFilter.mode(
+                                    skin.primaryColor.withAlpha(40),
+                                    BlendMode.srcATop,
+                                  ),
+                            child: Image.asset(
+                              'assets/images/heroes/hero_${_getHeroFilePref(skin.heroId)}_${_getTierForRarity(skin.rarity)}.png',
+                              fit: BoxFit.cover,
+                              alignment: Alignment.topCenter,
+                            ),
+                          ),
+                        )
+                      : ColorFiltered(
+                          colorFilter: const ColorFilter.matrix([
+                            0.2, 0.2, 0.2, 0, 0,
+                            0.2, 0.2, 0.2, 0, 0,
+                            0.2, 0.2, 0.2, 0, 0,
+                            0, 0, 0, 0.35, 0,
+                          ]),
+                          child: Image.asset(
+                            'assets/images/heroes/hero_${_getHeroFilePref(skin.heroId)}_${_getTierForRarity(skin.rarity)}.png',
+                            fit: BoxFit.cover,
+                            alignment: Alignment.topCenter,
+                          ),
+                        ),
+                ),
               ),
-              child: !owned
-                  ? Icon(Icons.lock, color: Colors.white38, size: 20 * s)
-                  : null,
-            ),
-            SizedBox(height: 8 * s),
 
-            // 스킨 이름
-            Text(
-              skin.name,
-              style: TextStyle(
-                color: owned ? Colors.white : Colors.grey,
-                fontSize: Responsive.fontSize(context, 11),
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 4 * s),
-
-            // 상태 표시
-            if (equipped)
-              Text(
-                '장착 중',
-                style: TextStyle(color: AppColors.sinmyeongGold, fontSize: Responsive.fontSize(context, 10)),
-              )
-            else if (!owned)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.diamond, color: AppColors.skyBlue, size: 12 * s),
-                  SizedBox(width: 2 * s),
-                  Text(
-                    '${skin.price}',
-                    style: TextStyle(color: AppColors.skyBlue, fontSize: Responsive.fontSize(context, 11)),
+              // 상단: 등급 배지
+              Positioned(
+                top: 6 * s,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 2 * s),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          skin.rarity.color.withAlpha(120),
+                          skin.rarity.color.withAlpha(50),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8 * s),
+                      border: Border.all(
+                        color: skin.rarity.color.withAlpha(150),
+                        width: 0.5,
+                      ),
+                    ),
+                    child: Text(
+                      skin.rarity.displayName,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Responsive.fontSize(context, 9),
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(color: Colors.black.withAlpha(180), blurRadius: 4),
+                        ],
+                      ),
+                    ),
                   ),
-                ],
+                ),
               ),
-          ],
-        ),
-      ),
+
+              // 잠금 아이콘 (미소유 시)
+              if (!owned)
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.all(10 * s),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withAlpha(140),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white24, width: 1),
+                    ),
+                    child: Icon(Icons.lock_outline, color: Colors.white60, size: 20 * s),
+                  ),
+                ),
+
+              // 장착 중 마크
+              if (equipped)
+                Positioned(
+                  top: 6 * s,
+                  right: 6 * s,
+                  child: Container(
+                    padding: EdgeInsets.all(4 * s),
+                    decoration: BoxDecoration(
+                      color: AppColors.sinmyeongGold,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(color: AppColors.sinmyeongGold.withAlpha(120), blurRadius: 8),
+                      ],
+                    ),
+                    child: Icon(Icons.check, color: Colors.white, size: 10 * s),
+                  ),
+                ),
+
+              // 하단 오버레이 (이름 + 가격)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(8 * s, 12 * s, 8 * s, 8 * s),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withAlpha(200),
+                        Colors.black.withAlpha(230),
+                      ],
+                      stops: const [0.0, 0.5, 1.0],
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        skin.name,
+                        style: TextStyle(
+                          color: owned ? Colors.white : Colors.white60,
+                          fontSize: Responsive.fontSize(context, 11),
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(color: Colors.black, blurRadius: 6),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 3 * s),
+                      if (equipped)
+                        Text(
+                          '장착 중 ✨',
+                          style: TextStyle(
+                            color: AppColors.sinmyeongGold,
+                            fontSize: Responsive.fontSize(context, 9),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      else if (!owned)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.diamond, color: AppColors.skyBlue, size: 12 * s),
+                            SizedBox(width: 3 * s),
+                            Text(
+                              '${skin.price}',
+                              style: TextStyle(
+                                color: AppColors.skyBlue,
+                                fontSize: Responsive.fontSize(context, 11),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        Text(
+                          '보유 중',
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: Responsive.fontSize(context, 9),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+
+
+
+
+
 
 /// 광고 시청 보상 버튼
 class _AdRewardButton extends StatefulWidget {
@@ -487,5 +695,32 @@ class _AdRewardButtonState extends State<_AdRewardButton> {
         widget.onGemsEarned(reward.gems);
       }
     }
+  }
+}
+
+// ── 헬퍼 함수: 영웅/접두사 및 티어 맵핑 ──
+
+String _getHeroFilePref(HeroId id) {
+  switch (id) {
+    case HeroId.kkaebi:  return 'kkaebi';
+    case HeroId.miho:    return 'guMiho';
+    case HeroId.gangrim: return 'darkYeomra';
+    case HeroId.sua:     return 'hongGildong';
+    case HeroId.bari:    return 'tigerHunter';
+  }
+}
+
+int _getTierForRarity(SkinRarity rarity) {
+  switch (rarity) {
+    case SkinRarity.common:
+    case SkinRarity.uncommon:
+      return 1;
+    case SkinRarity.rare:
+    case SkinRarity.epic:
+      return 2;
+    case SkinRarity.legendary:
+    case SkinRarity.mythic:
+    case SkinRarity.divine:
+      return 3;
   }
 }

@@ -93,16 +93,25 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
     final lang = ref.watch(gameLanguageProvider);
     final chapterKey = 'chapter_${meta.chapterNumber}';
 
+
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.scaffoldBg, AppColors.bgDeepPlum, AppColors.surfaceMid],
+      backgroundColor: AppColors.scaffoldBg,
+      body: Stack(
+        children: [
+          // 월드맵 배경
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.25,
+              child: Image.asset(
+                'assets/images/bg/bg_stage_select.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              ),
+            ),
           ),
-        ),
-        child: SafeArea(
+          SafeArea(
           child: Column(
             children: [
               // ── 헤더 ──
@@ -304,6 +313,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
             ],
           ),
         ),
+        ],
       ),
     );
   }
@@ -331,26 +341,32 @@ class _StageCard extends StatelessWidget {
 
     // 잠금 상태 — 어둡게 + 탭 불가
     if (isLocked) {
-      return Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF0F0A1A),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0x22FFFFFF), width: 1),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.lock, color: const Color(0xFF443355), size: Responsive.iconSize(context, 18)),
-            SizedBox(height: 2 * Responsive.scale(context)),
-            Text(
-              '${level.levelNumber}',
-              style: TextStyle(
-                fontSize: Responsive.fontSize(context, 16),
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF443355),
-              ),
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF0F0A1A).withAlpha(180),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0x22FFFFFF), width: 1),
             ),
-          ],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.lock_outline, color: const Color(0xFF554466), size: Responsive.iconSize(context, 22)),
+                SizedBox(height: 2 * Responsive.scale(context)),
+                Text(
+                  '${level.levelNumber}',
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 16),
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF443355),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       );
     }
@@ -367,10 +383,10 @@ class _StageCard extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isBoss
-                ? [const Color(0xFF3D1155), const Color(0xFF551133)]
+                ? [const Color(0xFF3D1155).withAlpha(220), const Color(0xFF551133).withAlpha(220)]
                 : isCleared
-                    ? [const Color(0xFF112233), const Color(0xFF1A3344)]
-                    : [const Color(0xFF1A1133), const Color(0xFF221144)],
+                    ? [const Color(0xFF112233).withAlpha(200), const Color(0xFF1A3344).withAlpha(200)]
+                    : [const Color(0xFF1A1133).withAlpha(200), const Color(0xFF221144).withAlpha(200)],
           ),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(

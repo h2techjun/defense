@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../audio/sound_manager.dart';
 import '../../common/enums.dart';
 import '../../data/game_data_loader.dart';
 import '../../data/models/tower_data.dart';
@@ -412,7 +413,14 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isRefund = cost < 0;
     return GestureDetector(
-      onTap: canAfford ? onTap : null,
+      onTap: () {
+        if (canAfford) {
+          SoundManager.instance.playSfx(SfxType.uiClick);
+          onTap();
+        } else {
+          SoundManager.instance.playSfx(SfxType.uiError);
+        }
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

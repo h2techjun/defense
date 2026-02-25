@@ -39,14 +39,11 @@ class MainMenu extends ConsumerWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppColors.scaffoldBg,
-              AppColors.bgWarmDark,
-              Color(0xFF2D1B4E),
-            ],
+          color: AppColors.scaffoldBg,
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg/bg_main_menu.png'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
           ),
         ),
         child: SafeArea(
@@ -443,8 +440,9 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                               ),
                             );
                           }).toList(),
-                          onChanged: (lang) {
+                          onChanged: (lang) async {
                             if (lang != null) {
+                              await AppStrings.loadLanguage(lang);
                               widget.ref.read(gameLanguageProvider.notifier).state = lang;
                               setState(() {});
                             }
@@ -599,7 +597,10 @@ class _MenuButton extends StatelessWidget {
     final btnWidth = compact ? double.infinity : 260 * s;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        SoundManager.instance.playSfx(SfxType.uiClick);
+        onTap();
+      },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(compact ? 10 * s : 16 * s),
         child: BackdropFilter(
@@ -608,7 +609,7 @@ class _MenuButton extends StatelessWidget {
               : ImageFilter.blur(sigmaX: 8, sigmaY: 8),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: compact ? null : btnWidth,
+            width: btnWidth,
             padding: EdgeInsets.symmetric(
               vertical: (compact ? 10 : 14) * s,
               horizontal: compact ? 8 * s : 0,

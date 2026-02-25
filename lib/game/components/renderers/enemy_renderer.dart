@@ -49,14 +49,18 @@ class EnemyRenderer extends PositionComponent
   /// EnemyId → 이미지 파일 경로 매핑
   String _getImagePath() {
     switch (data.id) {
-      // 보스
+      // ── 보스 (개별 에셋) ──
       case EnemyId.bossOgreLord:
         return 'enemies/boss_ogre_lord.png';
       case EnemyId.bossMountainLord:
         return 'enemies/boss_mountain_lord.png';
       case EnemyId.bossGreatEggGhost:
         return 'enemies/boss_great_egg.png';
-      // 챕터 1 일반 적
+      case EnemyId.bossTyrantKing:
+        return 'enemies/boss_tyrant_king.png';
+      case EnemyId.bossGatekeeper:
+        return 'enemies/boss_gatekeeper.png';
+      // ── 챕터 1 일반 적 ──
       case EnemyId.hungryGhost:
         return 'enemies/enemy_hungry_ghost.png';
       case EnemyId.strawShoeSpirit:
@@ -67,7 +71,7 @@ class EnemyRenderer extends PositionComponent
         return 'enemies/enemy_maiden.png';
       case EnemyId.eggGhost:
         return 'enemies/enemy_egg_ghost.png';
-      // 챕터 2
+      // ── 챕터 2 ──
       case EnemyId.tigerSlave:
         return 'enemies/enemy_tiger_slave.png';
       case EnemyId.fireDog:
@@ -78,7 +82,7 @@ class EnemyRenderer extends PositionComponent
         return 'enemies/enemy_old_fox.png';
       case EnemyId.failedDragon:
         return 'enemies/enemy_failed_dragon.png';
-      // 챕터 3
+      // ── 챕터 3 ──
       case EnemyId.changGwiEvolved:
         return 'enemies/enemy_evolved_tiger.png';
       case EnemyId.saetani:

@@ -282,6 +282,11 @@ class DailyQuestNotifier extends StateNotifier<DailyQuestState> {
     } else {
       initialize();
     }
+    
+    // 강제 안전장치: 현재 미션 배열이 비어있다면 무조건 채운다.
+    if (state.quests.isEmpty) {
+      state = state.copyWith(quests: DailyQuestGenerator.today);
+    }
   }
 }
 

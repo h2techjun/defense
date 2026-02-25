@@ -74,24 +74,51 @@ class BarracksSoldier extends PositionComponent
     final shieldColor = isGrappler ? const Color(0xFFDD5555) : const Color(0xFF6699DD);
     final weaponColor = isGrappler ? const Color(0xFFFFAA44) : const Color(0xFFCCCCCC);
 
-    // 병사 시각 표현
-    add(RectangleComponent(
+    // 병사 시각 표현 (폴백용 사각형)
+    final bodyRect = RectangleComponent(
       size: Vector2(18, 20),
       position: Vector2(2, 1),
       paint: Paint()..color = bodyColor,
-    ));
+    );
+    add(bodyRect);
     // 방패 표시
-    add(RectangleComponent(
+    final shieldRect = RectangleComponent(
       size: Vector2(6, 10),
       position: Vector2(0, 6),
       paint: Paint()..color = shieldColor,
-    ));
+    );
+    add(shieldRect);
     // 칼 표시
-    add(RectangleComponent(
+    final weaponRect = RectangleComponent(
       size: Vector2(3, 12),
       position: Vector2(18, 3),
       paint: Paint()..color = weaponColor,
-    ));
+    );
+    add(weaponRect);
+
+    // 스프라이트 이미지 로드 시도
+    try {
+      final imagePath = isGrappler
+          ? 'soldiers/soldier_grappler.png'
+          : 'soldiers/soldier_normal.png';
+      final image = await game.images.load(imagePath);
+      final sprite = Sprite(image);
+
+      // 스프라이트 오버레이 추가
+      add(SpriteComponent(
+        sprite: sprite,
+        size: size,
+        position: Vector2.zero(),
+        priority: 1,
+      ));
+
+      // 폴백 사각형 투명화
+      bodyRect.paint.color = const Color(0x00000000);
+      shieldRect.paint.color = const Color(0x00000000);
+      weaponRect.paint.color = const Color(0x00000000);
+    } catch (e) {
+      // 스프라이트 로드 실패 시 기존 사각형 유지
+    }
 
     // 랠리 포인트에서 고르게 분산 배치 (겹침 방지)
     // 병사 인덱스 기반으로 원형 배치

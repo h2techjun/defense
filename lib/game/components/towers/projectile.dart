@@ -6,8 +6,10 @@ import 'package:flame/components.dart';
 
 import '../../../common/enums.dart';
 import '../../../audio/sound_manager.dart';
+import '../../defense_game.dart'; // [FIX] 누락된 import 추가
 import '../actors/base_enemy.dart';
 import '../effects/particle_effect.dart';
+import '../effects/sprite_effect.dart';
 
 /// 투사체 컴포넌트 - 타워에서 발사되어 적에게 데미지를 줍니다
 class Projectile extends PositionComponent {
@@ -19,8 +21,21 @@ class Projectile extends PositionComponent {
   /// 적중 시 호출되는 콜백 (화포탑 스플래시 등)
   final void Function()? onHit;
 
+  /// 관통 여부 (신궁 전용)
+  final bool hasPiercing;
+
+  /// 발사 방향 (관통 시 직선 이동용)
+  final Vector2? direction;
+
+  /// 최대 사거리 (관통 시 제거 조건)
+  final double? maxRange;
+
   bool _hitTarget = false;
   double _trailTimer = 0;
+  double _traveledDistance = 0;
+
+  /// 이미 타격한 적 목록 (관통 시 중복 타격 방지)
+  final Set<BaseEnemy> _hitEnemies = {};
 
   Projectile({
     required this.target,
@@ -29,6 +44,9 @@ class Projectile extends PositionComponent {
     required this.speed,
     required Vector2 startPosition,
     this.onHit,
+    this.hasPiercing = false,
+    this.direction,
+    this.maxRange,
   }) : super(
     size: Vector2(10, 10),
     position: startPosition,
@@ -135,44 +153,98 @@ class Projectile extends PositionComponent {
   void update(double dt) {
     super.update(dt);
 
-    if (_hitTarget || target.isDead) {
+    if (_hitTarget && !hasPiercing) {
+      removeFromParent();
+      return;
+    }
+
+    if (target.isDead && !hasPiercing) {
       removeFromParent();
       return;
     }
 
     _trailTimer += dt;
+    final moveStep = speed * dt;
+    _traveledDistance += moveStep;
 
-    // 목표 추적 이동
-    final direction = target.position - position;
-    final distance = direction.length;
-
-    if (distance < speed * dt) {
-      // 적중
-      _hitTarget = true;
-      target.takeDamage(damage, damageType);
-      onHit?.call(); // 스플래시 등 추가 효과
-
-      // 적중 파티클 이펙트 (동시 활성 제한)
-      if (ParticleEffect.canCreate) {
-        final hitColor = _getColorForDamage(damageType);
-        if (damageType == DamageType.magical) {
-          parent?.add(ParticleEffect.magic(position: position, color: hitColor));
-        } else if (damageType == DamageType.purification) {
-          parent?.add(ParticleEffect.heal(position: position, color: hitColor));
-        } else {
-          parent?.add(ParticleEffect.hit(position: position, color: hitColor));
-        }
-      }
-
-      // 적 사망 이펙트는 base_enemy._die()에서 통합 처리됨
-
-      // 피격 SFX
-      SoundManager.instance.playSfx(SfxType.enemyHit);
-
+    // 관통 투사체는 화면 밖이나 사거리 밖으로 나가면 제거
+    if (maxRange != null && _traveledDistance > maxRange!) {
       removeFromParent();
-    } else {
-      direction.normalize();
-      position += direction * speed * dt;
+      return;
     }
+
+    if (hasPiercing && direction != null) {
+      // 1) 관통: 직선 이동
+      position += direction! * moveStep;
+
+      // 이동 경로상 적 충돌 체크
+      _checkPiercingCollisions();
+
+      // 화면 밖 제거 체크 (간단히 수치로)
+      if (position.x < -100 || position.x > 2000 || position.y < -100 || position.y > 2000) {
+        removeFromParent();
+      }
+    } else {
+      // 2) 일반: 타겟 추적 이동
+      final toTarget = target.position - position;
+      final distance = toTarget.length;
+
+      if (distance < moveStep) {
+        // 적중
+        _applyHit(target);
+        removeFromParent();
+      } else {
+        toTarget.normalize();
+        position += toTarget * moveStep;
+      }
+    }
+  }
+
+  /// 관통 시 경로상의 모든 적 체크
+  void _checkPiercingCollisions() {
+    // game reference를 통해 현재 살아있는 적들 순회
+    final enemies = (parent as HasGameReference<DefenseGame>?)?.game.cachedAliveEnemies 
+                  ?? (target.parent as HasGameReference<DefenseGame>?)?.game.cachedAliveEnemies 
+                  ?? [];
+
+    for (final enemy in enemies) {
+      if (enemy.isDead || _hitEnemies.contains(enemy)) continue;
+
+      // 충돌 판정 (단순 거리 기반 or RectangleHitbox 활용)
+      // Projectile 사이즈가 10x10이므로 반지름 15~20 정도면 적당
+      final dist = position.distanceTo(enemy.position);
+      if (dist < 20) {
+        _applyHit(enemy);
+      }
+    }
+  }
+
+  /// 타격 적용 통합 메서드
+  void _applyHit(BaseEnemy hitEnemy) {
+    _hitEnemies.add(hitEnemy);
+    hitEnemy.takeDamage(damage, damageType);
+    
+    // 첫 타겟 적중 시에만 onHit 호출 (스플래시 등과 겹치지 않게 주의)
+    if (hitEnemy == target && !_hitTarget) {
+      _hitTarget = true;
+      onHit?.call();
+    }
+
+    // 적중 파티클 이펙트
+    if (ParticleEffect.canCreate) {
+      final hitColor = _getColorForDamage(damageType);
+      if (damageType == DamageType.magical) {
+        parent?.add(ParticleEffect.magic(position: position, color: hitColor));
+        parent?.add(SpriteEffect(type: SpriteEffectType.lightning, position: position));
+      } else if (damageType == DamageType.purification) {
+        parent?.add(ParticleEffect.heal(position: position, color: hitColor));
+      } else {
+        parent?.add(ParticleEffect.hit(position: position, color: hitColor));
+        parent?.add(SpriteEffect(type: SpriteEffectType.hit, position: position));
+      }
+    }
+
+    // 피격 SFX (너무 자주 들리면 시끄러우니 관통 시에는 확률적 혹은 볼륨 조절 필요할 수 있음)
+    SoundManager.instance.playSfx(SfxType.enemyHit);
   }
 }

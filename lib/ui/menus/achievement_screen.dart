@@ -41,22 +41,37 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context, achieveState),
-            _buildTabBar(context),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildAchievementsTab(context, achieveState),
-                  _buildRankingsTab(context, rankState),
-                ],
+      body: Stack(
+        children: [
+          // 공통 성소 테마 배경 (은은하게 투과)
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.15,
+              child: Image.asset(
+                'assets/images/objects/obj_sacred_tree.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
               ),
             ),
-          ],
-        ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(context, achieveState),
+                _buildTabBar(context),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildAchievementsTab(context, achieveState),
+                      _buildRankingsTab(context, rankState),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -232,10 +247,21 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
           Container(
             padding: EdgeInsets.all(Responsive.spacing(context, 16)),
             decoration: BoxDecoration(
+              image: DecorationImage(
+                image: const AssetImage('assets/images/objects/obj_old_well.png'),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(AppColors.bgDeepPlum.withAlpha(200), BlendMode.darken),
+              ),
               gradient: const LinearGradient(
                 colors: [AppColors.surfaceMid, AppColors.bgDeepPlum],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.amber.withAlpha(60), width: 1.5),
+              boxShadow: [
+                BoxShadow(color: Colors.amber.withAlpha(30), blurRadius: 15, spreadRadius: 2),
+              ],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -361,17 +387,23 @@ class _AchievementCard extends StatelessWidget {
           child: Container(
         padding: EdgeInsets.all(Responsive.spacing(context, 10)),
         decoration: BoxDecoration(
-          color: isCompleted
-              ? (isClaimed
-                  ? Colors.green.withValues(alpha: 0.05)
-                  : Colors.amber.withValues(alpha: 0.1))
-              : Colors.white.withValues(alpha: 0.03),
+          color: isCompleted ? null : Colors.white.withValues(alpha: 0.03),
+          gradient: isCompleted
+              ? LinearGradient(
+                  colors: isClaimed
+                      ? [Colors.green.withAlpha(20), Colors.black.withAlpha(150)]
+                      : [Colors.amber.withAlpha(40), Colors.black.withAlpha(150)],
+                )
+              : null,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: isCompleted && !isClaimed
                 ? Colors.amber.withValues(alpha: 0.5)
                 : Colors.white10,
           ),
+          boxShadow: isCompleted && !isClaimed
+              ? [BoxShadow(color: Colors.amber.withAlpha(60), blurRadius: 10, spreadRadius: 1)]
+              : null,
         ),
         child: Row(
           children: [

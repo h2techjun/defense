@@ -42,9 +42,22 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
-      body: SafeArea(
-        child: Column(
-          children: [
+      body: Stack(
+        children: [
+          // 배경 오브젝트 투과 효과
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.1,
+              child: Image.asset(
+                'assets/images/objects/obj_sotdae.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
             _buildHeader(context, loreState, s),
             _buildMilestones(context, ref, loreState, s),
             _buildTabBar(s),
@@ -61,6 +74,8 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
             ),
           ],
         ),
+      ),
+      ],
       ),
     );
   }
