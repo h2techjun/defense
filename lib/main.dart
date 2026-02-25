@@ -63,32 +63,48 @@ Future<void> main() async {
   } else {
     debugPrint('🌐 [main] 웹 환경 — .env 로드 스킵');
   }
-  final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
-  final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
-  
-  // 더미 값이 아닐 때만 실제 DB 초기화
-  if (supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty && supabaseUrl != 'YOUR_SUPABASE_URL_HERE') {
-    await Supabase.initialize(
-      url: supabaseUrl,
-      anonKey: supabaseAnonKey,
-    );
+
+  try {
+    final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
+    final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+    if (supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty && supabaseUrl != 'YOUR_SUPABASE_URL_HERE') {
+      await Supabase.initialize(
+        url: supabaseUrl,
+        anonKey: supabaseAnonKey,
+      );
+    }
+  } catch (e) {
+    debugPrint('⚠️ [main] Supabase 초기화 실패: $e');
   }
 
   // 가로 모드 고정
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.landscapeRight,
-  ]);
+  try {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  } catch (e) {
+    debugPrint('⚠️ [main] SystemChrome 설정 실패: $e');
+  }
 
-  // 상태바 숨기기
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-
-  // JSON 데이터 로드 (실패 시 하드코딩 폴백 자동 전환)
-  await GameDataLoader.initFromJson();
+  // JSON 데이터 로드 (실패 시 하드코딩 폴백)
+  try {
+    await GameDataLoader.initFromJson();
+    debugPrint('✅ [main] GameDataLoader 초기화 완료');
+  } catch (e) {
+    debugPrint('⚠️ [main] GameDataLoader 초기화 실패, 폴백 사용: $e');
+  }
 
   // 사용자 언어 설정 복원 및 다국어 로드
-  await AppStrings.init(GameLanguage.ko);
+  try {
+    await AppStrings.init(GameLanguage.ko);
+    debugPrint('✅ [main] AppStrings 초기화 완료');
+  } catch (e) {
+    debugPrint('⚠️ [main] AppStrings 초기화 실패: $e');
+  }
 
+  debugPrint('🎮 [main] runApp() 시작');
   runApp(
     const ProviderScope(
       child: GatewayOfRegretsApp(),
