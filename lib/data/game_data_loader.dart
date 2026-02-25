@@ -25,15 +25,11 @@ class GameDataLoader {
     try {
       await JsonDataLoader.loadAll();
       _initialized = true;
-      if (kDebugMode) {
-        print('[GameDataLoader] ✅ JSON 데이터 로드 완료');
-      }
+      debugPrint('[GameDataLoader] ✅ JSON 데이터 로드 완료');
     } catch (e) {
+      // JSON 로드 실패 시 하드코딩 폴백으로 자동 전환 (rethrow 하지 않음)
       _initialized = false;
-      if (kDebugMode) {
-        print('[GameDataLoader] ❌ JSON 로드 실패: $e');
-      }
-      rethrow; // 앱 시작 시 반드시 성공해야 함
+      debugPrint('[GameDataLoader] ⚠️ JSON 로드 실패, 폴백 사용: $e');
     }
   }
 
