@@ -37,14 +37,14 @@ class StoryData {
     StoryScene(
       speakerName: '깨비',
       text: '우와아! 저기 문 밖으로 재밌어 보이는 것들이 잔뜩 넘어오는데?!',
-      portraitAsset: 'avatars/hero_1.png', // 임시 초상화 에셋 (나중에 교체 가능)
+      portraitAsset: 'assets/images/portraits/portrait_kkaebi.png',
       side: SpeakerSide.right,
       nameColor: Colors.orangeAccent,
     ),
     StoryScene(
       speakerName: '강림',
       text: '경거망동하지 마라. 명부에 적히지 않은 악귀들이 이승을 탐내고 있다.\n...방어를 준비해라.',
-      portraitAsset: 'avatars/hero_3.png',
+      portraitAsset: 'assets/images/portraits/portrait_gangnim.png',
       side: SpeakerSide.left,
       nameColor: Colors.deepPurpleAccent,
     ),
@@ -60,7 +60,7 @@ class StoryData {
     StoryScene(
       speakerName: '미호',
       text: '할머니~ 저 산에서 나는 냄새는 짐승의 피 냄새인데요?\n조금 위험할지도 모르겠어요♡',
-      portraitAsset: 'avatars/hero_2.png',
+      portraitAsset: 'assets/images/portraits/portrait_miho.png',
       side: SpeakerSide.right,
       nameColor: Colors.pinkAccent,
     )
@@ -76,7 +76,7 @@ class StoryData {
     StoryScene(
       speakerName: '수아',
       text: '...안개 속에서 누군가 울고 있어요. 저와 같은... 깊고 깊은 슬픔이...',
-      portraitAsset: 'avatars/hero_4.png',
+      portraitAsset: 'assets/images/portraits/portrait_sua.png',
       side: SpeakerSide.right,
       nameColor: Colors.blueAccent,
     )
@@ -101,14 +101,14 @@ class StoryData {
     StoryScene(
       speakerName: '바리',
       text: '결국 열리고 말았군요... 이승과 저승, 모든 영혼들이 저들의 한을 풀어달라 울부짖고 있습니다.',
-      portraitAsset: 'avatars/hero_5.png',
+      portraitAsset: 'assets/images/portraits/portrait_bari.png',
       side: SpeakerSide.right,
       nameColor: Colors.tealAccent,
     ),
     StoryScene(
       speakerName: '강림',
       text: '내가 나설 차례인가. 심판의 종을 울릴 시간이다.',
-      portraitAsset: 'avatars/hero_3.png',
+      portraitAsset: 'assets/images/portraits/portrait_gangnim.png',
       side: SpeakerSide.left,
       nameColor: Colors.deepPurpleAccent,
     ),

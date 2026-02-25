@@ -30,10 +30,12 @@ class PackageShopScreen extends ConsumerWidget {
     final shopNotifier = ref.read(shopProvider.notifier);
     final s = Responsive.scale(context);
 
-    // 한정 패키지 firstSeen 자동 기록
-    for (final pkg in timeLimitedPackages) {
-      shopNotifier.markFirstSeen(pkg.id);
-    }
+    // 한정 패키지 firstSeen 자동 기록 방어 코드
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      for (final pkg in timeLimitedPackages) {
+        shopNotifier.markFirstSeen(pkg.id);
+      }
+    });
 
     // 패키지 분류
     final limitedActive = timeLimitedPackages
@@ -339,8 +341,8 @@ class PackageShopScreen extends ConsumerWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: Responsive.isLandscape(context) ? 3 : 2,
-        childAspectRatio: 0.75,
+        crossAxisCount: Responsive.isLandscape(context) ? 4 : 3,
+        childAspectRatio: 0.85,
         crossAxisSpacing: 12 * s,
         mainAxisSpacing: 12 * s,
       ),
@@ -403,10 +405,22 @@ class _PackageCardState extends ConsumerState<_PackageCard> {
     final hasDiscount = package.discountPercent > 0;
     final hasFirstBonus = package.firstPurchaseMultiplier > 1 && isFirst;
     final remaining = shopNotifier.getRemainingTime(package);
-    
-    // 맵 오브젝트 이미지를 활용한 패키지 카드 배경
-    final objImages = const ['obj_shrine.png', 'obj_sotdae.png', 'obj_sacred_tree.png', 'obj_old_well.png', 'obj_grave_mound.png', 'obj_torch.png'];
-    final bgImg = objImages[package.id.hashCode.abs() % objImages.length];
+    // 패키지 타입별 그라데이션 색상
+    List<Color> getGradientColors() {
+      switch (package.type) {
+        case PackageType.seasonPass:
+          return [const Color(0xFF4A148C), const Color(0xFF1A237E)];
+        case PackageType.starter:
+          return [const Color(0xFFC62828), const Color(0xFF4A148C)];
+        case PackageType.weekly:
+        case PackageType.monthly:
+          return [const Color(0xFF00695C), const Color(0xFF004D40)];
+        case PackageType.gems:
+          return [const Color(0xFF1565C0), const Color(0xFF0D47A1)];
+        default:
+          return [AppColors.bgDeepPlum, AppColors.bgDeepPlum.withAlpha(200)];
+      }
+    }
 
     return GestureDetector(
       onTap: (isSoldOut || isExpired) ? null : () => _showPurchaseConfirm(context, ref),
@@ -416,11 +430,10 @@ class _PackageCardState extends ConsumerState<_PackageCard> {
           filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
           child: Container(
         decoration: BoxDecoration(
-          color: AppColors.bgDeepPlum.withAlpha(220),
-          image: DecorationImage(
-            image: AssetImage('assets/images/objects/$bgImg'),
-            fit: BoxFit.cover,
-            opacity: 0.25, // 은은하게 깔리도록 투명도 조절
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: getGradientColors().map((c) => c.withOpacity(0.8)).toList(),
           ),
           borderRadius: BorderRadius.circular(16 * s),
           border: Border.all(
@@ -428,17 +441,19 @@ class _PackageCardState extends ConsumerState<_PackageCard> {
             width: (package.isHighlight || hasFirstBonus || hasDiscount) ? 2 : 1,
           ),
           boxShadow: (package.isHighlight || hasFirstBonus)
-              ? [BoxShadow(color: _borderColor(package, hasFirstBonus, hasDiscount).withAlpha(60), blurRadius: 10 * s)]
+              ? [BoxShadow(color: _borderColor(package, hasFirstBonus, hasDiscount).withOpacity(0.4), blurRadius: 10 * s)]
               : null,
         ),
         child: Stack(
           children: [
             // ── 메인 콘텐츠 ──
-            Padding(
-              padding: EdgeInsets.all(10 * s),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+            Center(
+              child: Padding(
+                padding: EdgeInsets.all(8 * s),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
                   // 이모지
                   Text(package.emoji, style: TextStyle(fontSize: 36 * s)),
                   SizedBox(height: 6 * s),
@@ -506,8 +521,9 @@ class _PackageCardState extends ConsumerState<_PackageCard> {
                 ],
               ),
             ),
+          ),
 
-            // ── 마일리지 적립 ──
+          // ── 마일리지 적립 ──
             Positioned(
               top: 6 * s,
               right: 6 * s,

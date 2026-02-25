@@ -62,7 +62,7 @@ class AppStrings {
     if (_cache.containsKey(lang)) return; // 이미 로드됨
 
     try {
-      final jsonString = await rootBundle.loadString('assets/i18n/\${lang.name}.json');
+      final jsonString = await rootBundle.loadString('assets/i18n/${lang.name}.json');
       final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
       
       final Map<String, String> strings = jsonMap.map(
@@ -70,9 +70,9 @@ class AppStrings {
       );
       
       _cache[lang] = strings;
-      debugPrint('🌐 [i18n] Loaded \${lang.name}.json');
+      debugPrint('🌐 [i18n] Loaded ${lang.name}.json');
     } catch (e) {
-      debugPrint('🚨 [i18n] Failed to load \${lang.name}.json: \$e');
+      debugPrint('🚨 [i18n] Failed to load ${lang.name}.json: $e');
       _cache[lang] = {};
     }
   }

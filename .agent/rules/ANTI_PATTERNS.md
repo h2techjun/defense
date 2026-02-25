@@ -331,6 +331,26 @@ class GlassPanel extends StatelessWidget {
 
 ---
 
+### AP-024: 가짜 AssetManifest.json 방치 (Flame 렌더링 빈 캔버스 오류)
+
+**문제**: 타워나 적군, 영웅 등 Flame 스프라이트 렌더러가 아무 에러 로그 없이 투명하게/빈 캔버스로 나오는 현상 발생
+**근본원인**: 웹 빌드/배포 시나리오용으로 임시 생성해버린 빈 `{}` 구조의 `build/web/assets/AssetManifest.json` 파일 등이 플러터 고유의 내부 에셋 매니페스트를 덮어써서 `game.images.load()` 호출을 무력화시킴
+**해결**: `build/web` (또는 프로젝트 최상단) 폴더 내의 임의 생성된 매니페스트 파일을 즉각 삭제하고 `flutter clean` 수행
+**감지**: 코드에 이상이 없는데 에셋 이미지만 일제히 화면에서 사라질 때 `AssetManifest` 충돌 최우선 의심
+**실제 사례**: 인게임 그래픽 투명화 렌더링 픽스 (2026-02-26)
+
+---
+
+### AP-025: Riverpod Build() 내부 상태 변이 (RSOD)
+
+**문제**: 상점 진입 혹은 화면 렌더링 직전 `Tried to modify a provider while the widget tree was building` 오류와 함께 레드 스크린 발생
+**근본원인**: Provider(Notifier) 내부의 데이터를 변경(mutate)하는 함수(예: `markFirstSeen()`)를 위젯의 `build()`나 `initState()` 라이프사이클 안에서 직접 동기적으로 호출
+**해결**: `WidgetsBinding.instance.addPostFrameCallback((_) { ref.read(provider.notifier).updateState(); });` 로 감싸서 프레임 렌더링이 완료된 직후에 상태가 업데이트되도록 지연
+**감지**: `build()` 메서드 내부에서 `ref.read().어떤함수()` 호출 패턴 발견 시 에러 경고
+**실제 사례**: 상점 한정 패키지 로딩 크래시 (2026-02-26)
+
+---
+
 ## 📊 통계
 
 ### 자주 발생하는 실수 (Top 5)
@@ -338,10 +358,10 @@ class GlassPanel extends StatelessWidget {
 1. 무한 재시도 (AP-011): 빈도 높음
 2. 컨텍스트 미확인 (AP-012): 빈도 높음
 3. 반복 래핑 수작업 (AP-023): UI작업 시 빈도 높음 ⭐ NEW
-4. const 메서드 호출 (AP-021): Dart에서 빈도 높음
-5. 매 프레임 순회 (AP-016): 게임 프로젝트에서 높음
+4. 가짜 AssetManifest.json 방치 (AP-024): 렌더링 에러 빈도 높음 ⭐ NEW
+5. Riverpod Build() 상태 변이 (AP-025): 라이프사이클 에러 빈도 높음 ⭐ NEW
 
-**마지막 업데이트**: 2026-02-24 (v4.2 — AP-023 추가)
+**마지막 업데이트**: 2026-02-26 (v4.3 — AP-024, AP-025 추가)
 
 ---
 

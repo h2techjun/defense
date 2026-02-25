@@ -274,7 +274,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   String _getTowerIcon(TowerType type) {
     switch (type) {
-      case TowerType.archer:   return '🏹';
+      case TowerType.archer:   return '🛖';
       case TowerType.barracks: return '🤼';
       case TowerType.shaman:   return '🔮';
       case TowerType.artillery:return '💥';

@@ -37,6 +37,7 @@ flutter:
     - assets/images/towers/
     - assets/images/enemies/
     - assets/images/heroes/
+    - assets/images/portraits/
     - assets/images/projectiles/
     - assets/images/objects/
     - assets/images/bg/
