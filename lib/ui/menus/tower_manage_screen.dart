@@ -12,6 +12,8 @@ import '../../data/models/tower_data.dart';
 import '../../state/tower_loadout_provider.dart';
 import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
+import '../theme/themed_scaffold.dart';
+import '../widgets/touch_button.dart';
 
 class TowerManageScreen extends ConsumerWidget {
   final VoidCallback onBack;
@@ -35,42 +37,27 @@ class TowerManageScreen extends ConsumerWidget {
     final allTypes = towers.keys.toList();
     final s = Responsive.scale(context);
 
-    return Scaffold(
+    return ThemedScaffold(
       backgroundColor: AppColors.scaffoldBg,
-      body: Stack(
+      backgroundAsset: 'assets/images/bg/bg_tower_manage.png',
+      body: Column(
         children: [
-          // 배경 에셋
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.2,
-              child: Image.asset(
-                'assets/images/bg/bg_tower_manage.png',
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Column(
-              children: [
-                // 헤더
-            Padding(
+          // 헤더
+          Padding(
               padding: EdgeInsets.all(12 * s),
               child: Row(
                 children: [
-                  GestureDetector(
+                  TouchButton(
                     onTap: onBack,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12 * s, vertical: 6 * s),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0x44FFFFFF)),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        AppStrings.get(lang, 'back'),
-                        style: TextStyle(color: Colors.white70, fontSize: Responsive.fontSize(context, 13)),
-                      ),
+                    borderRadius: BorderRadius.circular(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0x44FFFFFF)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 12 * s, vertical: 6 * s),
+                    child: Text(
+                      AppStrings.get(lang, 'back'),
+                      style: TextStyle(color: Colors.white70, fontSize: Responsive.fontSize(context, 13)),
                     ),
                   ),
                   SizedBox(width: 12 * s),
@@ -259,11 +246,7 @@ class TowerManageScreen extends ConsumerWidget {
                 },
               ),
             ),
-          ],
         ),
-      ),
-      ],
-      ),
     );
   }
 

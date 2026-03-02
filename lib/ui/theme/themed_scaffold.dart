@@ -47,9 +47,9 @@ class ThemedScaffold extends StatelessWidget {
                   onError: (_, __) {},
                 ),
               ),
-              child: body,
+              child: SafeArea(child: body),
             )
-          : body,
+          : SafeArea(child: body),
     );
   }
 }

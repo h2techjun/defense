@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../theme/app_colors.dart';
+import '../theme/themed_scaffold.dart';
+import '../widgets/touch_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../audio/sound_manager.dart';
 import '../../common/responsive.dart';
@@ -33,21 +35,12 @@ class MainMenu extends ConsumerWidget {
     final s = Responsive.scale(context);
     final isLand = Responsive.isLandscape(context);
 
-    return Scaffold(
+    return ThemedScaffold(
       // 웹 전용: 전체화면 토글 FAB
       floatingActionButton: kIsWeb ? _buildFullscreenFab(s) : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
-      body: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.scaffoldBg,
-          image: DecorationImage(
-            image: AssetImage('assets/images/bg/bg_main_menu.png'),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
-          ),
-        ),
-        child: SafeArea(
-          child: LayoutBuilder(
+      backgroundAsset: 'assets/images/bg/bg_main_menu.png',
+      body: LayoutBuilder(
             builder: (context, constraints) {
               if (isLand && constraints.maxWidth > 600) {
                 // ── 가로 모드: 좌(타이틀) + 우(버튼) ──
@@ -89,8 +82,6 @@ class MainMenu extends ConsumerWidget {
               }
             },
           ),
-        ),
-      ),
     );
   }
 
@@ -270,10 +261,10 @@ class MainMenu extends ConsumerWidget {
 
         return FloatingActionButton.small(
           heroTag: 'fullscreen_fab',
-          backgroundColor: Colors.white.withValues(alpha: 0.15),
+          backgroundColor: Colors.white.withAlpha(38),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+            side: BorderSide(color: Colors.white.withAlpha(76)),
           ),
           tooltip: fs.isFullscreen ? '전체화면 해제' : '전체화면',
           onPressed: () async {
@@ -282,7 +273,7 @@ class MainMenu extends ConsumerWidget {
           },
           child: Icon(
             fs.isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
-            color: Colors.white.withValues(alpha: 0.9),
+            color: Colors.white.withAlpha(229),
             size: 22 * s,
           ),
         );

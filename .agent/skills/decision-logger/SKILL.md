@@ -2,6 +2,7 @@
 name: Decision Logger
 description: 중요한 의사결정을 자동으로 DECISION_LOG.md에 기록
 version: 1.0.0
+scope: project-specific
 ---
 
 # 📝 Decision Logger Skill

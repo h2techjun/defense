@@ -11,6 +11,8 @@ import '../../data/models/wave_data.dart';
 import '../../l10n/app_strings.dart';
 import '../../state/user_state.dart';
 import '../theme/app_colors.dart';
+import '../theme/themed_scaffold.dart';
+import '../widgets/touch_button.dart';
 
 /// 챕터 메타데이터
 class _ChapterMeta {
@@ -95,43 +97,28 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
 
 
 
-    return Scaffold(
-      backgroundColor: AppColors.scaffoldBg,
-      body: Stack(
-        children: [
-          // 월드맵 배경
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.25,
-              child: Image.asset(
-                'assets/images/bg/bg_stage_select.png',
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-              ),
-            ),
-          ),
-          SafeArea(
-          child: Column(
+    return ThemedScaffold(
+    backgroundColor: AppColors.scaffoldBg,
+    backgroundAsset: 'assets/images/bg/bg_stage_select.png',
+    body: Column(
             children: [
               // ── 헤더 ──
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16 * Responsive.scale(context), vertical: 12 * Responsive.scale(context)),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: widget.onBack,
-                      child: Container(
-                        padding: EdgeInsets.all(8 * Responsive.scale(context)),
-                        decoration: BoxDecoration(
-                          color: const Color(0x22FFFFFF),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: const Color(0x44FFFFFF)),
-                        ),
-                        child: Icon(Icons.arrow_back,
-                            color: AppColors.lavender, size: 22 * Responsive.scale(context)),
-                      ),
+                    TouchButton(
+                    onTap: widget.onBack,
+                    borderRadius: BorderRadius.circular(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0x22FFFFFF),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0x44FFFFFF)),
                     ),
+                    padding: EdgeInsets.all(8 * Responsive.scale(context)),
+                    child: Icon(Icons.arrow_back,
+                        color: AppColors.lavender, size: 22 * Responsive.scale(context)),
+                  ),
                     SizedBox(width: 16 * Responsive.scale(context)),
                     Expanded(
                       child: Column(

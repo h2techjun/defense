@@ -2,6 +2,7 @@
 name: Cost Intelligence Dashboard
 description: API 사용량 및 비용을 추적하고 최적화 제안 생성
 version: 1.0.0
+scope: project-specific
 ---
 
 # 💰 Cost Intelligence Dashboard Skill

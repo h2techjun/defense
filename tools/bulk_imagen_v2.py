@@ -30,28 +30,27 @@ WAIT_SEC   = 15
 MAX_RETRY  = 3
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 크로마키 초록 배경 → 투명화 (외곽 flood fill)
+# 투명화 v11: 검정 배경 제거 (통일)
+#   모든 캐릭터/타워/적: 프롬프트에서 검은색 금지 → FX 투명화로 충분
+#   이펙트: 발광체 → FX 투명화
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 def make_transparent(img):
-    """투명화 v9: rembg AI 기반 배경 제거 (캐릭터용)"""
-    from rembg import remove
-    img = img.convert("RGBA")
-    result = remove(img)
-    return result
+    """투명화 v11: FX 방식 통일 (= make_transparent_fx)
+    프롬프트에서 검은색 사용을 금지하여 본체 내부에 어두운 픽셀이 없음 →
+    FX 투명화가 배경만 정확히 제거."""
+    return make_transparent_fx(img)
 
 def make_transparent_fx(img):
-    """투명화 v9-FX: 검정 배경 제거 (이펙트 전용)
-    이펙트는 발광체이므로 어두운 부분 = 배경. rembg 사용 안 함."""
+    """투명화 v11-FX: 검정 배경 제거
+    어두운 픽셀(밝기 < 40) = 배경 → 투명"""
     img = img.convert("RGBA")
     d = np.array(img)
     r, g, b = d[:,:,0].astype(int), d[:,:,1].astype(int), d[:,:,2].astype(int)
     brightness = (r + g + b) / 3
-    # 어두운 픽셀(밝기 < 40) = 검정 배경 → 투명
     dark = brightness < 40
     d[:,:,3][dark] = 0
-    # 약간 어두운 경계(40~80) → 반투명 (부드러운 전환)
     semi = (brightness >= 40) & (brightness < 80)
-    alpha_ratio = (brightness[semi] - 40) / 40  # 0~1
+    alpha_ratio = (brightness[semi] - 40) / 40
     d[:,:,3][semi] = (alpha_ratio * 255).astype(np.uint8)
     return Image.fromarray(d)
 
@@ -94,16 +93,17 @@ def gen_image(prompt, aspect):
             if attempt < MAX_RETRY - 1: time.sleep(10)
     return None
 
-# ━━ 스타일 ━━
-HERO  = "Adorable chibi 2D game character, big sparkling eyes, cel-shaded, thick clean outlines, vibrant colors, glossy highlights, no shadow, MapleStory/Cookie Run Kingdom style"
-TOWER = "Cute miniature chibi 2D tower, bold outlines, vibrant colors, no shadow, Cookie Run Kingdom style"
-ENEMY = "Cute adorable chibi 2D monster, big round eyes, thick outlines, colorful vibrant candy-like colors, not scary, no shadow"
+# ━━ 스타일 (v12: 게임풍 스타일 + NO black) ━━
+NO_BLACK = "Absolutely NO black color, NO dark shading, NO dark gray. Use only bright saturated vibrant colors. Even shadows should be colored (blue/purple shadows), never black or dark gray"
+HERO  = f"Cute stylized 3D-rendered mobile game character, Supercell/Clash Royale/Brawl Stars art style, bold thick outlines, solid cel-shaded colors, chunky proportions, plastic-toy-like glossy finish, vibrant saturated palette, simple clean shapes. {NO_BLACK}"
+TOWER = f"Cute stylized 3D-rendered mobile game tower building, Clash Royale/Cookie Run Kingdom style, bold outlines, solid bright colors, chunky proportions, plastic-toy-like glossy finish. {NO_BLACK}"
+ENEMY = f"Cute stylized 3D-rendered mobile game monster, Brawl Stars/Clash Royale style, bold thick outlines, solid vibrant candy-like colors, round chunky shapes, not scary, plastic-toy-like glossy finish. {NO_BLACK}"
 BG    = "Premium quality mobile game background art, highly detailed digital painting, vibrant rich colors, soft volumetric lighting, AFK Arena / Cookie Run Kingdom quality, polished professional"
 FX    = "Abstract stylized 2D game VFX effect, clean vector shapes, vibrant glowing neon, soft bloom, premium. ONLY the effect itself, absolutely NO character, NO person, NO creature, NO animal, NO figure. Pure abstract energy/particle effect"
-UI    = "Polished glossy 2D game UI icon, candy-like colors, thick outline, cute rounded"
-PORT  = "Stunning anime RPG portrait, beautiful big eyes, glossy highlights, Blue Archive quality"
+UI    = f"Polished glossy 3D-rendered mobile game UI icon, Supercell style, bold shapes, candy-like vibrant colors, thick outline, chunky rounded. {NO_BLACK}"
+PORT  = f"Stylized mobile game character portrait, Clash Royale/AFK Arena style, bold clean rendering, expressive face, vibrant colors, glossy highlights, game UI card art quality. {NO_BLACK}"
 
-BG_GREEN = "On clean solid white background, NO shadow, NO drop shadow, NO ground, character floating in pure white space"
+BG_GREEN = "On solid pure black (#000000) background, pitch black void, nothing else"  # v10: 모든 캐릭터/오브젝트도 검정 배경 통일
 BG_BLACK = "On solid pure black (#000000) background, pitch black void, nothing else"
 BG_NONE  = ""  # 배경 에셋은 투명화 안 함
 
@@ -164,8 +164,8 @@ def build_hero_jobs():
         base = HERO_BASE[hid]
         for tier_name, skin_desc in skin_list:
             jobs.append({
-                "p": f"heroes/{hid}_{tier_name}_sprites.png", "a": "1:1", "t": True,
-                "q": f"{HERO}. A single cute chibi {base}, {skin_desc}. Standing idle pose, facing slightly right, centered in frame. {BG_GREEN}."
+                "p": f"heroes/{hid}_{tier_name}_sprites.png", "a": "1:1", "t": True, "fx": True,
+                "q": f"{HERO}. A single cute chibi {base}, {skin_desc}. Standing idle pose, facing slightly right, centered in frame. Glowing vibrant colors. {BG_BLACK}."
             })
     return jobs
 
@@ -248,8 +248,8 @@ def build_enemy_jobs():
     for ch_enemies in [ch1, ch2, ch3, ch4, ch5]:
         for eid, desc in ch_enemies:
             size = "Large imposing" if "boss" in eid.lower() else "Small cute"
-            jobs.append({"p":f"enemies/{eid}.png","a":"1:1","t":True,
-                "q":f"{ENEMY}. {size} {desc}. Dynamic pose, facing left. {BG_GREEN}."})
+            jobs.append({"p":f"enemies/{eid}.png","a":"1:1","t":True,"fx":True,
+                "q":f"{ENEMY}. {size} {desc}. Dynamic pose, facing left. Glowing vibrant colors, cel-shaded. {BG_BLACK}."})
     return jobs
 
 def build_tower_jobs():
@@ -262,8 +262,8 @@ def build_tower_jobs():
     tiers = ["basic wooden, simple, small","reinforced stone and metal, glowing runes, medium","ultimate golden ornate, crystalline magical energy, large magnificent"]
     for tid, tdesc in towers:
         for t, tt in enumerate(tiers, 1):
-            jobs.append({"p":f"towers/tower_{tid}_{t}.png","a":"1:1","t":True,
-                "q":f"{TOWER}. {tdesc}, {tt}. 3/4 isometric angle. {BG_GREEN}."})
+            jobs.append({"p":f"towers/tower_{tid}_{t}.png","a":"1:1","t":True,"fx":True,
+                "q":f"{TOWER}. {tdesc}, {tt}. 3/4 isometric angle. Glowing vibrant colors. {BG_BLACK}."})
     
     branches = [("rocketBattery","Hwacha rocket launcher tower, rows of rockets, fiery smoke"),
                 ("spiritHunter","elite sniper watchtower, scope crossbow, cyan spirit bullet"),
@@ -276,34 +276,35 @@ def build_tower_jobs():
                 ("phoenixTotem","phoenix nest guardian totem, golden egg, fire feather rain effect"),
                 ("earthSpiritAltar","jade earth spirit altar, moss covered boulders, green rune glow")]
     for bid, bdesc in branches:
-        jobs.append({"p":f"towers/tower_{bid}.png","a":"1:1","t":True,
-            "q":f"{TOWER}. Ultimate tier 4 branch: {bdesc}. Magnificent glowing. 3/4 angle. {BG_GREEN}."})
+        jobs.append({"p":f"towers/tower_{bid}.png","a":"1:1","t":True,"fx":True,
+            "q":f"{TOWER}. Ultimate tier 4 branch: {bdesc}. Magnificent glowing. 3/4 angle. {BG_BLACK}."})
     return jobs
 
 def build_misc_jobs():
     jobs = []
     jobs += [
-        {"p":"objects/obj_sacred_tree.png","a":"1:1","t":True,"q":f"{TOWER}. Korean sacred Dangsan tree, gnarled ancient trunk, cherry blossoms, colored prayer ribbons, golden glow. {BG_GREEN}."},
-        {"p":"objects/obj_shrine.png","a":"1:1","t":True,"q":f"{TOWER}. Korean stone cairn shrine (Seonghwangdang), stacked prayer stones, small wooden gate, blue-purple spiritual aura. {BG_GREEN}."},
-        {"p":"soldiers/soldier_normal.png","a":"1:1","t":True,"q":f"{HERO}. A Korean militia soldier (Uibyeong), blue hanbok, wooden spear, straw hat, brave face. {BG_GREEN}."},
-        {"p":"soldiers/soldier_grappler.png","a":"1:1","t":True,"q":f"{HERO}. A heavy Korean Ssireum wrestler, big muscular body, padded vest, bandaged fists, headband. {BG_GREEN}."},
+        {"p":"objects/obj_sacred_tree.png","a":"1:1","t":True,"fx":True,"q":f"{TOWER}. Korean sacred Dangsan tree, gnarled ancient trunk, cherry blossoms, colored prayer ribbons, golden glow. Glowing vibrant. {BG_BLACK}."},
+        {"p":"objects/obj_shrine.png","a":"1:1","t":True,"fx":True,"q":f"{TOWER}. Korean stone cairn shrine (Seonghwangdang), stacked prayer stones, small wooden gate, blue-purple spiritual aura. Glowing vibrant. {BG_BLACK}."},
+        {"p":"soldiers/soldier_normal.png","a":"1:1","t":True,"fx":True,"q":f"{HERO}. A Korean militia soldier (Uibyeong), blue hanbok, wooden spear, straw hat, brave face. Glowing vibrant colors. {BG_BLACK}."},
+        {"p":"soldiers/soldier_grappler.png","a":"1:1","t":True,"fx":True,"q":f"{HERO}. A heavy Korean Ssireum wrestler, big muscular body, padded vest, bandaged fists, headband. Glowing vibrant colors. {BG_BLACK}."},
     ]
+    tier4_desc = "ultimate magnificent glowing outfit, majestic aura, floating celestial ribbons, master tier"
     for pid, pdesc in {
-        "bari":"shaman princess Bari, warm brown eyes, colorful ceremonial robes, magnolia flower crown",
-        "gangnim":"grim reaper Gangrim, sharp crimson eyes, pale face, black dopo robe, black gat hat",
-        "kkaebi":"red Dokkaebi goblin, golden sparkly eyes, stubby horns, fang grin, tiger-skin vest",
-        "miho":"nine-tailed fox girl, amber-gold eyes, silver-white hair, fluffy fox ears, pink hanbok",
-        "sua":"water ghost Sua, cyan-glowing eyes, long wet black hair, pale porcelain face, white hanbok",
+        "bari": f"shaman princess Bari, warm brown eyes, black hair. {tier4_desc}",
+        "gangrim": f"grim reaper Gangrim, dark cool eyes, pale skin. {tier4_desc}",
+        "kkaebi": f"Dokkaebi boy, mischievous golden eyes, small cute horns. {tier4_desc}",
+        "guMiho": f"nine-tailed fox girl, amber-gold eyes, silver-white hair, fluffy fox ears. {tier4_desc}",
+        "sua": f"water ghost Sua, cyan-glowing eyes, long wet black hair, pale porcelain face. {tier4_desc}",
     }.items():
-        jobs.append({"p":f"portraits/portrait_{pid}.png","a":"1:1","t":True,
-            "q":f"{PORT}. Close-up bust portrait of {pdesc}. Beautiful detailed anime eyes, glossy hair highlights. {BG_GREEN}."})
+        jobs.append({"p":f"portraits/portrait_{pid}.png","a":"1:1","t":True,"fx":True,
+            "q":f"{PORT}. Close-up bust portrait of {pdesc}. Beautiful detailed anime eyes, glossy hair highlights. Glowing vibrant. {BG_BLACK}."})
     
     jobs += [
-        {"p":"ui/icon_coin.png","a":"1:1","t":True,"q":f"{UI}. Golden Korean brass coin (Yeopjeon), square hole center, embossed characters, golden glow. {BG_GREEN}."},
-        {"p":"ui/icon_gem.png","a":"1:1","t":True,"q":f"{UI}. Jade gemstone (Gogok), comma-shaped, emerald green, inner mystical glow. {BG_GREEN}."},
-        {"p":"ui/icon_sinmyeong.png","a":"1:1","t":True,"q":f"{UI}. Divine spirit energy symbol (Sinmyeong), swirling blue-gold sacred flame. {BG_GREEN}."},
-        {"p":"ui/shop_starter_pack.png","a":"1:1","t":True,"q":f"{UI}. Starter treasure chest overflowing with gold coins, jade gems, magical scroll, wooden chest with golden clasps. {BG_GREEN}."},
-        {"p":"ui/shop_gems_pack.png","a":"1:1","t":True,"q":f"{UI}. Golden ornate bowl overflowing with jade gemstones of various sizes, emerald glow. {BG_GREEN}."},
+        {"p":"ui/icon_coin.png","a":"1:1","t":True,"fx":True,"q":f"{UI}. Golden Korean brass coin (Yeopjeon), square hole center, embossed characters, golden glow. Glowing vibrant. {BG_BLACK}."},
+        {"p":"ui/icon_gem.png","a":"1:1","t":True,"fx":True,"q":f"{UI}. Jade gemstone (Gogok), comma-shaped, emerald green, inner mystical glow. Glowing vibrant. {BG_BLACK}."},
+        {"p":"ui/icon_sinmyeong.png","a":"1:1","t":True,"fx":True,"q":f"{UI}. Divine spirit energy symbol (Sinmyeong), swirling blue-gold sacred flame. Glowing vibrant. {BG_BLACK}."},
+        {"p":"ui/shop_starter_pack.png","a":"1:1","t":True,"fx":True,"q":f"{UI}. Starter treasure chest overflowing with gold coins, jade gems, magical scroll, wooden chest with golden clasps. Glowing vibrant. {BG_BLACK}."},
+        {"p":"ui/shop_gems_pack.png","a":"1:1","t":True,"fx":True,"q":f"{UI}. Golden ornate bowl overflowing with jade gemstones of various sizes, emerald glow. Glowing vibrant. {BG_BLACK}."},
     ]
     return jobs
 

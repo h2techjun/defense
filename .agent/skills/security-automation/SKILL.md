@@ -2,6 +2,7 @@
 name: Security Automation
 description: 보안 취약점 자동 스캔 및 RLS 정책 검증
 version: 1.0.0
+scope: project-specific
 ---
 
 # 🛡️ Security Automation Skill

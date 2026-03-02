@@ -48,55 +48,10 @@ class EnemyRenderer extends PositionComponent
 
   /// EnemyId → 이미지 파일 경로 매핑
   String _getImagePath() {
-    switch (data.id) {
-      // ── 보스 (개별 에셋) ──
-      case EnemyId.bossOgreLord:
-        return 'enemies/boss_ogre_lord.png';
-      case EnemyId.bossMountainLord:
-        return 'enemies/boss_mountain_lord.png';
-      case EnemyId.bossGreatEggGhost:
-        return 'enemies/boss_great_egg.png';
-      case EnemyId.bossTyrantKing:
-        return 'enemies/boss_tyrant_king.png';
-      case EnemyId.bossGatekeeper:
-        return 'enemies/boss_gatekeeper.png';
-      // ── 챕터 1 일반 적 ──
-      case EnemyId.hungryGhost:
-        return 'enemies/enemy_hungry_ghost.png';
-      case EnemyId.strawShoeSpirit:
-        return 'enemies/enemy_straw_shoe.png';
-      case EnemyId.burdenedLaborer:
-        return 'enemies/enemy_burdened.png';
-      case EnemyId.maidenGhost:
-        return 'enemies/enemy_maiden.png';
-      case EnemyId.eggGhost:
-        return 'enemies/enemy_egg_ghost.png';
-      // ── 챕터 2 ──
-      case EnemyId.tigerSlave:
-        return 'enemies/enemy_tiger_slave.png';
-      case EnemyId.fireDog:
-        return 'enemies/enemy_fire_dog.png';
-      case EnemyId.shadowGolem:
-        return 'enemies/enemy_shadow_golem.png';
-      case EnemyId.oldFoxWoman:
-        return 'enemies/enemy_old_fox.png';
-      case EnemyId.failedDragon:
-        return 'enemies/enemy_failed_dragon.png';
-      // ── 챕터 3 ──
-      case EnemyId.changGwiEvolved:
-        return 'enemies/enemy_evolved_tiger.png';
-      case EnemyId.saetani:
-        return 'enemies/enemy_saetani.png';
-      case EnemyId.shadowChild:
-        return 'enemies/enemy_shadow_child.png';
-      case EnemyId.maliciousBird:
-        return 'enemies/enemy_malicious_bird.png';
-      case EnemyId.faceStealerGhost:
-        return 'enemies/enemy_face_stealer.png';
-      // 챕터 4, 5 (이미지 미지원 → 폴백)
-      default:
-        return 'enemies/enemy_hungry_ghost.png'; // 기본 이미지 폴백
+    if (data.isBoss) {
+      return 'enemies/boss_${data.id.name.replaceAll('boss', '')}.png'.replaceFirst('boss__', 'boss_');
     }
+    return 'enemies/${data.id.name}.png';
   }
 
   /// 피격 플래시 효과 트리거

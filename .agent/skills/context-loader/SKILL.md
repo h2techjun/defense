@@ -2,6 +2,7 @@
 name: Context Auto-Loader
 description: 사용자 요청 유형을 분석하여 필요한 규칙/페르소나 파일을 자동으로 로드
 version: 2.0.0
+scope: project-specific
 ---
 
 # 🧠 Context Auto-Loader Skill v2.0

@@ -74,28 +74,7 @@ class TowerRenderer extends PositionComponent
 
   /// TowerBranch → 파일명 매핑
   String _getBranchImageName(TowerBranch branch) {
-    switch (branch) {
-      case TowerBranch.rocketBattery:
-        return 'tower_rocket_battery';
-      case TowerBranch.spiritHunter:
-        return 'tower_spirit_hunter';
-      case TowerBranch.generalTotem:
-        return 'tower_general_totem';
-      case TowerBranch.goblinRing:
-        return 'tower_goblin_ring';
-      case TowerBranch.shamanTemple:
-        return 'tower_shaman_temple';
-      case TowerBranch.grimReaperOffice:
-        return 'tower_grim_reaper';
-      case TowerBranch.fireDragon:
-        return 'tower_fire_dragon';
-      case TowerBranch.heavenlyThunder:
-        return 'tower_heavenly_thunder';
-      case TowerBranch.phoenixTotem:
-        return 'tower_phoenix_totem';
-      case TowerBranch.earthSpiritAltar:
-        return 'tower_earth_spirit';
-    }
+    return 'tower_${branch.name}';
   }
 
   /// 업그레이드 또는 분기 변경 시 스프라이트 갱신

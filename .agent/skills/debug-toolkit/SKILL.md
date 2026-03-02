@@ -1,6 +1,7 @@
 ---
 name: debug-toolkit
 description: Create standalone scripts to debug API or Logic without UI
+scope: project-specific
 ---
 
 # 🛠️ Skill: Debug Toolkit
