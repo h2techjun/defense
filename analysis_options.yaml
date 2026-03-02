@@ -2,36 +2,52 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
-    # 안전성
-    avoid_print: true
-    avoid_dynamic_calls: true
+    # 안전성 (AP-002, AP-004, AP-006)
+    avoid_print: true                    # AP-010: 디버그 출력 금지
+    avoid_dynamic_calls: true            # AP-002: dynamic 남용 방지
     avoid_type_to_string: true
     cancel_subscriptions: true
     close_sinks: true
+    no_leading_underscores_for_local_identifiers: false
 
-    # 코드 품질
+    # 코드 품질 (AP-005, AP-009)
     prefer_const_constructors: true
     prefer_const_declarations: true
-    prefer_final_fields: true
+    prefer_final_fields: true            # AP-009: 불변 상태 장려
     prefer_final_locals: true
     unnecessary_this: true
     unnecessary_late: true
+    cascade_invocations: true            # 체이닝 장려
+    prefer_expression_function_bodies: false
+    avoid_unnecessary_containers: true   # Flutter 위젯 정리
 
-    # 스타일
+    # 타입 안전성 (AP-002)
+    always_specify_types: false          # 추론 허용하되
+    omit_local_variable_types: false     # 명시적 타입 장려
+    avoid_catches_without_on_clauses: true  # AP-006: 에러 타입 명시
+
+    # 스타일 (AP-009)
     always_declare_return_types: true
     annotate_overrides: true
     prefer_single_quotes: true
     sort_constructors_first: true
     use_super_parameters: true
 
+    # 컬렉션/성능 (AP-016)
+    prefer_collection_literals: true
+    prefer_for_elements_to_map_from_iterable: true
+    avoid_function_literals_in_foreach_calls: true
+
     # 문서화
-    public_member_api_docs: false # 초기에는 비활성화
+    public_member_api_docs: false        # 초기에는 비활성화
 
 analyzer:
   errors:
-    avoid_print: warning
+    avoid_print: warning                 # AP-010
     missing_return: error
-    dead_code: warning
+    dead_code: warning                   # AP-003
+    avoid_dynamic_calls: warning         # AP-002
+    avoid_catches_without_on_clauses: warning  # AP-006
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"

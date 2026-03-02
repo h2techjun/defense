@@ -35,11 +35,11 @@ class TowerSelectPanel extends ConsumerWidget {
 
     // 타워 타입별 메타데이터
     const towerMeta = <TowerType, Map<String, dynamic>>{
-      TowerType.archer: {'icon': '🛖', 'image': 'tower_archer_t1', 'color': AppColors.towerArcher, 'tooltip': '빠른 공격속도로 원거리 단일 적을 공격'},
-      TowerType.barracks: {'icon': '🤼', 'image': 'tower_barracks_t1', 'color': AppColors.towerBarracks, 'tooltip': '적을 발이 묶어 경로 진행을 차단'},
-      TowerType.shaman: {'icon': '🔮', 'image': 'tower_shaman_t1', 'color': AppColors.towerShaman, 'tooltip': '마법 공격으로 방어 무시 + 감속'},
-      TowerType.artillery: {'icon': '💥', 'image': 'tower_artillery_t1', 'color': AppColors.towerArtillery, 'tooltip': '느리지만 범위 폭발 데미지'},
-      TowerType.sotdae: {'icon': '🪶', 'image': 'tower_sotdae_t1', 'color': AppColors.towerSotdae, 'tooltip': '주변 타워 공격력/공속 버프'},
+      TowerType.archer: {'icon': '🛖', 'image': 'tower_archer_1', 'color': AppColors.towerArcher, 'tooltip': '빠른 공격속도로 원거리 단일 적을 공격'},
+      TowerType.barracks: {'icon': '🤼', 'image': 'tower_barracks_1', 'color': AppColors.towerBarracks, 'tooltip': '적을 발이 묶어 경로 진행을 차단'},
+      TowerType.shaman: {'icon': '🔮', 'image': 'tower_shaman_1', 'color': AppColors.towerShaman, 'tooltip': '마법 공격으로 방어 무시 + 감속'},
+      TowerType.artillery: {'icon': '💥', 'image': 'tower_artillery_1', 'color': AppColors.towerArtillery, 'tooltip': '느리지만 범위 폭발 데미지'},
+      TowerType.sotdae: {'icon': '🪶', 'image': 'tower_sotdae_1', 'color': AppColors.towerSotdae, 'tooltip': '주변 타워 공격력/공속 버프'},
     };
 
     return Positioned(

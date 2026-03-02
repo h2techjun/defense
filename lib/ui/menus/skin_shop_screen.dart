@@ -12,6 +12,7 @@ import '../../services/ad_manager.dart';
 import '../../common/responsive.dart';
 import '../../services/game_event_bridge.dart';
 import '../theme/app_colors.dart';
+import '../common/hero_sprite_viewer.dart';
 
 class SkinShopScreen extends ConsumerWidget {
   final VoidCallback onBack;
@@ -233,12 +234,14 @@ class SkinShopScreen extends ConsumerWidget {
               child: ClipOval(
                 child: ColorFiltered(
                   colorFilter: ColorFilter.mode(
-                    skin.rarity == SkinRarity.common ? Colors.transparent : skin.primaryColor.withOpacity(0.4),
+                    skin.rarity == SkinRarity.common ? Colors.transparent : skin.primaryColor.withAlpha(100),
                     BlendMode.srcATop,
                   ),
-                  child: Image.asset(
-                    'assets/images/heroes/hero_${_getHeroFilePref(skin.heroId)}_${_getTierForRarity(skin.rarity)}.png',
-                    fit: BoxFit.cover,
+                  child: HeroSpriteViewer(
+                    imagePath: 'assets/images/heroes/${_getHeroFilePref(skin.heroId)}_tier${_getTierForRarity(skin.rarity)}_sprites.png',
+                    width: 70,
+                    height: 70,
+                    fallbackText: skin.rarity.emoji,
                   ),
                 ),
               ),
@@ -430,10 +433,10 @@ class _SkinCard extends StatelessWidget {
                                     skin.primaryColor.withAlpha(40),
                                     BlendMode.srcATop,
                                   ),
-                            child: Image.asset(
-                              'assets/images/heroes/hero_${_getHeroFilePref(skin.heroId)}_${_getTierForRarity(skin.rarity)}.png',
-                              fit: BoxFit.cover,
-                              alignment: Alignment.topCenter,
+                            child: HeroSpriteViewer(
+                              imagePath: 'assets/images/heroes/${_getHeroFilePref(skin.heroId)}_tier${_getTierForRarity(skin.rarity)}_sprites.png',
+                              width: double.infinity,
+                              height: 180 * s, // 대략적인 높이 할당
                             ),
                           ),
                         )
@@ -444,10 +447,10 @@ class _SkinCard extends StatelessWidget {
                             0.2, 0.2, 0.2, 0, 0,
                             0, 0, 0, 0.35, 0,
                           ]),
-                          child: Image.asset(
-                            'assets/images/heroes/hero_${_getHeroFilePref(skin.heroId)}_${_getTierForRarity(skin.rarity)}.png',
-                            fit: BoxFit.cover,
-                            alignment: Alignment.topCenter,
+                          child: HeroSpriteViewer(
+                            imagePath: 'assets/images/heroes/${_getHeroFilePref(skin.heroId)}_tier${_getTierForRarity(skin.rarity)}_sprites.png',
+                            width: double.infinity,
+                            height: 180 * s,
                           ),
                         ),
                 ),
@@ -704,23 +707,17 @@ String _getHeroFilePref(HeroId id) {
   switch (id) {
     case HeroId.kkaebi:  return 'kkaebi';
     case HeroId.miho:    return 'guMiho';
-    case HeroId.gangrim: return 'darkYeomra';
-    case HeroId.sua:     return 'hongGildong';
-    case HeroId.bari:    return 'tigerHunter';
+    case HeroId.gangrim: return 'gangrim';
+    case HeroId.sua:     return 'sua';
+    case HeroId.bari:    return 'bari';
   }
 }
 
 int _getTierForRarity(SkinRarity rarity) {
   switch (rarity) {
-    case SkinRarity.common:
-    case SkinRarity.uncommon:
-      return 1;
-    case SkinRarity.rare:
-    case SkinRarity.epic:
-      return 2;
-    case SkinRarity.legendary:
-    case SkinRarity.mythic:
-    case SkinRarity.divine:
-      return 3;
+    case SkinRarity.common: return 1;
+    case SkinRarity.rare: return 2;
+    case SkinRarity.epic: return 3;
+    case SkinRarity.legendary: return 4;
   }
 }

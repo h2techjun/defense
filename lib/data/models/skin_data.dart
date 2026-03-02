@@ -4,15 +4,12 @@
 import 'package:flutter/material.dart';
 import '../../common/enums.dart';
 
-/// 스킨 등급 (7단계)
+/// 스킨 등급 (4단계)
 enum SkinRarity {
   common,    // 기본
-  uncommon,  // 수련
   rare,      // 정제
   epic,      // 명작
-  legendary, // 걸작
-  mythic,    // 전설
-  divine,    // 한정
+  legendary, // 전설 (걸작)
 }
 
 /// 스킨 ID
@@ -78,36 +75,27 @@ extension SkinRarityExt on SkinRarity {
   String get displayName {
     switch (this) {
       case SkinRarity.common:    return '기본';
-      case SkinRarity.uncommon:  return '수련';
       case SkinRarity.rare:      return '정제';
       case SkinRarity.epic:      return '명작';
-      case SkinRarity.legendary: return '걸작';
-      case SkinRarity.mythic:    return '전설';
-      case SkinRarity.divine:    return '한정';
+      case SkinRarity.legendary: return '전설';
     }
   }
 
   Color get color {
     switch (this) {
       case SkinRarity.common:    return const Color(0xFF9E9E9E);
-      case SkinRarity.uncommon:  return const Color(0xFF4CAF50);
       case SkinRarity.rare:      return const Color(0xFF2196F3);
       case SkinRarity.epic:      return const Color(0xFF9C27B0);
-      case SkinRarity.legendary: return const Color(0xFFFF9800);
-      case SkinRarity.mythic:    return const Color(0xFFE91E63);
-      case SkinRarity.divine:    return const Color(0xFFFFD700);
+      case SkinRarity.legendary: return const Color(0xFFFFD700);
     }
   }
 
   String get emoji {
     switch (this) {
       case SkinRarity.common:    return '⚪';
-      case SkinRarity.uncommon:  return '🟢';
       case SkinRarity.rare:      return '🔵';
       case SkinRarity.epic:      return '🟣';
-      case SkinRarity.legendary: return '🟠';
-      case SkinRarity.mythic:    return '🔴';
-      case SkinRarity.divine:    return '🌟';
+      case SkinRarity.legendary: return '🌟';
     }
   }
 
@@ -155,7 +143,7 @@ final Map<SkinId, SkinData> allSkins = {
   ),
   SkinId.mihoMoonlight: const SkinData(
     id: SkinId.mihoMoonlight, heroId: HeroId.miho,
-    name: '달빛 미호', rarity: SkinRarity.uncommon,
+    name: '달빛 미호', rarity: SkinRarity.rare,
     primaryColor: Color(0xFFCE93D8), secondaryColor: Color(0xFF8E24AA),
     price: 100,
   ),
@@ -168,7 +156,7 @@ final Map<SkinId, SkinData> allSkins = {
   ),
   SkinId.mihoNine: const SkinData(
     id: SkinId.mihoNine, heroId: HeroId.miho,
-    name: '구미선녀', rarity: SkinRarity.mythic,
+    name: '구미선녀', rarity: SkinRarity.legendary,
     primaryColor: Color(0xFFE1BEE7), secondaryColor: Color(0xFFAB47BC),
     glowColor: Color(0x66E040FB), hasParticle: true,
     price: 2000,
@@ -188,14 +176,14 @@ final Map<SkinId, SkinData> allSkins = {
   ),
   SkinId.gangrimBlood: const SkinData(
     id: SkinId.gangrimBlood, heroId: HeroId.gangrim,
-    name: '혈염 차사', rarity: SkinRarity.legendary,
+    name: '혈염 차사', rarity: SkinRarity.epic,
     primaryColor: Color(0xFF4A0000), secondaryColor: Color(0xFFFF1744),
     glowColor: Color(0x66FF1744),
     price: 1000,
   ),
   SkinId.gangrimReaper: const SkinData(
     id: SkinId.gangrimReaper, heroId: HeroId.gangrim,
-    name: '대차사', rarity: SkinRarity.divine,
+    name: '대차사', rarity: SkinRarity.legendary,
     primaryColor: Color(0xFF1A237E), secondaryColor: Color(0xFFFFD700),
     glowColor: Color(0x88FFD700), hasParticle: true,
     price: 5000,
@@ -209,7 +197,7 @@ final Map<SkinId, SkinData> allSkins = {
   ),
   SkinId.suaCoral: const SkinData(
     id: SkinId.suaCoral, heroId: HeroId.sua,
-    name: '산호빛 수아', rarity: SkinRarity.uncommon,
+    name: '산호빛 수아', rarity: SkinRarity.rare,
     primaryColor: Color(0xFFFF7043), secondaryColor: Color(0xFFE64A19),
     price: 100,
   ),
@@ -222,7 +210,7 @@ final Map<SkinId, SkinData> allSkins = {
   ),
   SkinId.suaTide: const SkinData(
     id: SkinId.suaTide, heroId: HeroId.sua,
-    name: '조류 수아', rarity: SkinRarity.mythic,
+    name: '조류 수아', rarity: SkinRarity.legendary,
     primaryColor: Color(0xFF0D47A1), secondaryColor: Color(0xFF00E5FF),
     glowColor: Color(0x6600E5FF), hasParticle: true,
     price: 2000,
@@ -242,14 +230,14 @@ final Map<SkinId, SkinData> allSkins = {
   ),
   SkinId.bariAurora: const SkinData(
     id: SkinId.bariAurora, heroId: HeroId.bari,
-    name: '여명 바리', rarity: SkinRarity.legendary,
+    name: '여명 바리', rarity: SkinRarity.epic,
     primaryColor: Color(0xFFFFCC80), secondaryColor: Color(0xFFFF6F00),
     glowColor: Color(0x66FFCC80),
     price: 1000,
   ),
   SkinId.bariDivine: const SkinData(
     id: SkinId.bariDivine, heroId: HeroId.bari,
-    name: '신녀 바리', rarity: SkinRarity.divine,
+    name: '신녀 바리', rarity: SkinRarity.legendary,
     primaryColor: Color(0xFFFFFFFF), secondaryColor: Color(0xFFFFD700),
     glowColor: Color(0x88FFFFFF), hasParticle: true,
     price: 5000,

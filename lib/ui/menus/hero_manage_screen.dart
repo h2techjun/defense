@@ -13,6 +13,7 @@ import '../../l10n/app_strings.dart';
 import '../../services/save_manager.dart';
 import '../../game/components/actors/base_hero.dart';
 import '../theme/app_colors.dart';
+import '../common/hero_sprite_viewer.dart';
 
 /// 영웅 관리 화면
 class HeroManageScreen extends ConsumerStatefulWidget {
@@ -257,17 +258,11 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                     : null,
               ),
               child: ClipOval(
-                child: Image.asset(
-                  'assets/images/heroes/hero_${_getHeroFileName(hero.id)}_${_getCurrentHeroTier(hero.id)}.png',
+                child: HeroSpriteViewer(
+                  imagePath: 'assets/images/heroes/${_getHeroFileName(hero.id)}_tier${_getCurrentHeroTier(hero.id)}_sprites.png',
                   width: 40 * Responsive.scale(context),
                   height: 40 * Responsive.scale(context),
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => Center(
-                    child: Text(
-                      _getHeroEmoji(hero.id),
-                      style: TextStyle(fontSize: Responsive.fontSize(context, 18)),
-                    ),
-                  ),
+                  fallbackText: _getHeroEmoji(hero.id),
                 ),
               ),
             ),
@@ -378,15 +373,23 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                 ],
               ),
               child: ClipOval(
-                child: Image.asset(
-                  'assets/images/heroes/hero_${_getHeroFileName(hero.id)}_${_getSelectedTierNumber()}.png',
+                child: SizedBox(
                   width: 72 * Responsive.scale(context),
                   height: 72 * Responsive.scale(context),
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => Center(
-                    child: Text(
-                      _getHeroEmoji(hero.id),
-                      style: TextStyle(fontSize: Responsive.fontSize(context, 32)),
+                  child: OverflowBox(
+                    maxWidth: 72 * Responsive.scale(context) * 3,
+                    maxHeight: 72 * Responsive.scale(context),
+                    alignment: Alignment.centerLeft,
+                    child: Image.asset(
+                      'assets/images/heroes/${_getHeroFileName(hero.id)}_tier${_getSelectedTierNumber()}_sprites.png',
+                      height: 72 * Responsive.scale(context),
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => Center(
+                        child: Text(
+                          _getHeroEmoji(hero.id),
+                          style: TextStyle(fontSize: Responsive.fontSize(context, 32)),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -1027,9 +1030,9 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
     return switch (id) {
       HeroId.kkaebi => 'kkaebi',
       HeroId.miho => 'guMiho',
-      HeroId.gangrim => 'darkYeomra',
-      HeroId.sua => 'hongGildong',
-      HeroId.bari => 'tigerHunter',
+      HeroId.gangrim => 'gangrim',
+      HeroId.sua => 'sua',
+      HeroId.bari => 'bari',
     };
   }
 

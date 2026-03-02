@@ -454,8 +454,16 @@ class _PackageCardState extends ConsumerState<_PackageCard> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                  // 이모지
-                  Text(package.emoji, style: TextStyle(fontSize: 36 * s)),
+                  // 아이콘 (고품질 이미지 또는 이모지)
+                  if (package.imagePath != null)
+                    Image.asset(
+                      package.imagePath!,
+                      height: 52 * s,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => Text(package.emoji, style: TextStyle(fontSize: 36 * s)),
+                    )
+                  else
+                    Text(package.emoji, style: TextStyle(fontSize: 36 * s)),
                   SizedBox(height: 6 * s),
 
                   // 이름

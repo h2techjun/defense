@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../common/responsive.dart';
 import '../theme/app_colors.dart';
+import '../common/hero_sprite_viewer.dart';
 
 /// 영웅 스킬 패널 데이터
 class HeroSkillInfo {
@@ -141,17 +142,14 @@ class _HeroSkillButton extends StatelessWidget {
                   if (info.heroId != null)
                     ClipRRect(
                       borderRadius: BorderRadius.circular(6),
-                      child: Image.asset(
-                        'assets/images/heroes/hero_${info.heroId}_1.png',
+                      child: SizedBox(
                         width: 32 * Responsive.scale(context),
                         height: 32 * Responsive.scale(context),
-                        fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => Text(
-                          info.emoji,
-                          style: TextStyle(
-                            fontSize: Responsive.fontSize(context, 22),
-                            color: info.isDead ? Colors.white30 : null,
-                          ),
+                        child: HeroSpriteViewer(
+                          imagePath: 'assets/images/heroes/${info.heroId}_tier1_sprites.png',
+                          width: 32 * Responsive.scale(context),
+                          height: 32 * Responsive.scale(context),
+                          fallbackText: info.emoji,
                         ),
                       ),
                     )

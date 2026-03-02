@@ -49,7 +49,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
             child: Opacity(
               opacity: 0.1,
               child: Image.asset(
-                'assets/images/objects/obj_sotdae.png',
+                'assets/images/objects/obj_shrine.png',
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
               ),

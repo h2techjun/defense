@@ -20,11 +20,11 @@ class TowerManageScreen extends ConsumerWidget {
 
   // 타워 메타 (아이콘/색상)
   static const _meta = <TowerType, Map<String, dynamic>>{
-    TowerType.archer: {'icon': '🛖', 'image': 'tower_archer_t1', 'color': AppColors.towerArcher, 'desc': '빠른 공격, 단일 타격'},
-    TowerType.barracks: {'icon': '🤼', 'image': 'tower_barracks_t1', 'color': AppColors.towerBarracks, 'desc': '유닛 소환, 경로 차단'},
-    TowerType.shaman: {'icon': '🔮', 'image': 'tower_shaman_t1', 'color': AppColors.towerShaman, 'desc': '마법 공격, 방어 무시'},
-    TowerType.artillery: {'icon': '💥', 'image': 'tower_artillery_t1', 'color': AppColors.towerArtillery, 'desc': '느린 공격, 광역 피해'},
-    TowerType.sotdae: {'icon': '🪶', 'image': 'tower_sotdae_t1', 'color': AppColors.towerSotdae, 'desc': '아군 버프 + 정화'},
+    TowerType.archer: {'icon': '🛖', 'image': 'tower_archer_1', 'color': AppColors.towerArcher, 'desc': '빠른 공격, 단일 타격'},
+    TowerType.barracks: {'icon': '🤼', 'image': 'tower_barracks_1', 'color': AppColors.towerBarracks, 'desc': '유닛 소환, 경로 차단'},
+    TowerType.shaman: {'icon': '🔮', 'image': 'tower_shaman_1', 'color': AppColors.towerShaman, 'desc': '마법 공격, 방어 무시'},
+    TowerType.artillery: {'icon': '💥', 'image': 'tower_artillery_1', 'color': AppColors.towerArtillery, 'desc': '느린 공격, 광역 피해'},
+    TowerType.sotdae: {'icon': '🪶', 'image': 'tower_sotdae_1', 'color': AppColors.towerSotdae, 'desc': '아군 버프 + 정화'},
   };
 
   @override

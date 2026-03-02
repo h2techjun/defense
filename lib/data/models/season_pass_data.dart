@@ -371,6 +371,7 @@ class ShopPackage {
   final Duration? expiresAfter;    // 첫 노출 후 만료 시간 (예: 72시간)
   final int firstPurchaseMultiplier; // 첫 구매 보너스 배율 (1 = 없음, 3 = 3배)
   final int discountPercent;       // 할인율 (0 = 없음)
+  final String? imagePath;         // 고품질 에셋 경로
 
   const ShopPackage({
     required this.id,
@@ -387,6 +388,7 @@ class ShopPackage {
     this.expiresAfter,
     this.firstPurchaseMultiplier = 1,
     this.discountPercent = 0,
+    this.imagePath,
   });
 
   /// 할인 적용 가격
@@ -524,6 +526,7 @@ const List<ShopPackage> timeLimitedPackages = [
     isHighlight: true,
     expiresAfter: Duration(hours: 72),
     discountPercent: 35,
+    imagePath: 'assets/images/icons/pkg_limited_hero.png',
   ),
   ShopPackage(
     id: 'limited_72h_tower',
@@ -537,6 +540,7 @@ const List<ShopPackage> timeLimitedPackages = [
     isHighlight: true,
     expiresAfter: Duration(hours: 72),
     discountPercent: 40,
+    imagePath: 'assets/images/icons/pkg_limited_tower.png',
   ),
 ];
 

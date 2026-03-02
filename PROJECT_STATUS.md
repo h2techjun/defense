@@ -9,7 +9,7 @@
 ## 📂 프로젝트 구조
 
 ```
-e:\01_defense\
+e:\defense\
 ├── lib/
 │   ├── main.dart                 # 앱 진입점, 라우팅, 세이브/로드
 │   ├── common/

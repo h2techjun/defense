@@ -26,6 +26,18 @@
 
 ---
 
+## 🎨 그래픽 파이프라인 도구
+
+| 패키지 | 버전 | 용도 |
+|--------|------|------|
+| `rembg` | 2.0.72 | AI 기반 배경 제거 (U2-Net / isnet-anime) |
+| `onnxruntime` | >=1.24.2 | rembg 추론 백엔드 (NumPy 2.x 호환 필수) |
+| `pillow` | 12.x | 이미지 처리 |
+| `scipy` | 1.17.x | alpha_matting 등 수학 처리 |
+| Imagen API | v1 | Google Cloud 이미지 생성 |
+
+> 📌 상세 규칙: `.agent/rules/GRAPHICS_PIPELINE.md` 참조
+
 ## 🏗️ 아키텍처
 
 ```

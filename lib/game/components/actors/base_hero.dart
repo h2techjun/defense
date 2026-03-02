@@ -71,7 +71,7 @@ class BaseHero extends PositionComponent
   late CircleComponent _rangeIndicator;
 
   // 스프라이트 이미지
-  SpriteComponent? _spriteComponent;
+  PositionComponent? _spriteComponent;
   bool _heroSpriteLoaded = false;
   EvolutionTier _lastTier = EvolutionTier.base;
 
@@ -353,32 +353,45 @@ class BaseHero extends PositionComponent
     add(RectangleHitbox());
   }
 
-  /// 영웅 스프라이트 이미지 로드 (티어별 다른 이미지)
+  /// 영웅 단일 캐릭터 이미지 로드 (1:1 비율)
+  /// 공격/스킬 애니메이션은 코드(흔들기/기울이기) + 이펙트 오버레이로 처리
   Future<void> _loadHeroSprite() async {
     try {
-      // HeroId → 파일명 매핑
       final heroName = _getHeroFileName(data.id);
-      final tierNum = _getTierNumber(currentTier);
-      final imagePath = 'heroes/hero_${heroName}_$tierNum.png';
-
+      final tierNum = _getSkinTierNumber();
+      
+      final imagePath = 'heroes/${heroName}_tier${tierNum}_sprites.png';
       final image = await game.images.load(imagePath);
+      
+      // 단일 이미지 전체가 1장의 캐릭터
       final sprite = Sprite(image);
+      final idleAnim = SpriteAnimation.spriteList([sprite], stepTime: 1.0);
+      
+      // 공격: 동일 스프라이트 + 코드 애니메이션(흔들기)으로 처리
+      final attackAnim = SpriteAnimation.spriteList([sprite], stepTime: 0.3, loop: false);
+      // 스킬: 동일 스프라이트 + 이펙트 오버레이로 처리
+      final skillAnim = SpriteAnimation.spriteList([sprite], stepTime: 0.5, loop: false);
 
-      // 기존 스프라이트 제거
       if (_spriteComponent != null) {
         _spriteComponent!.removeFromParent();
       }
 
-      // 새 스프라이트 추가
-      _spriteComponent = SpriteComponent(
-        sprite: sprite,
+      final animComponent = SpriteAnimationGroupComponent<String>(
+        animations: {
+          'idle': idleAnim,
+          'attack': attackAnim,
+          'skill': skillAnim,
+        },
+        current: 'idle',
         size: size,
         position: Vector2.zero(),
         priority: 1,
       );
+      _spriteComponent = animComponent;
       add(_spriteComponent!);
       _heroSpriteLoaded = true;
     } catch (e) {
+      if (kDebugMode) debugPrint('Sprite load err: $e');
       _heroSpriteLoaded = false;
     }
   }
@@ -386,20 +399,35 @@ class BaseHero extends PositionComponent
   /// HeroId → 파일명 부분 매핑
   String _getHeroFileName(HeroId id) {
     switch (id) {
-      case HeroId.kkaebi:
-        return 'kkaebi';
-      case HeroId.miho:
-        return 'guMiho';
-      case HeroId.gangrim:
-        return 'darkYeomra';
-      case HeroId.sua:
-        return 'tigerHunter';
-      case HeroId.bari:
-        return 'hongGildong';
+      case HeroId.kkaebi: return 'kkaebi';
+      case HeroId.miho: return 'guMiho';
+      case HeroId.gangrim: return 'gangrim';
+      case HeroId.sua: return 'sua';
+      case HeroId.bari: return 'bari';
     }
   }
 
-  /// EvolutionTier → 숫자 매핑
+  /// 장착된 스킨 등급을 기반으로 그래픽 티어 번호(1~4) 산출
+  int _getSkinTierNumber() {
+    try {
+      final skinState = game.ref.read(skinProvider);
+      final skinId = skinState.equippedSkins[data.id];
+      if (skinId != null) {
+        final skin = allSkins[skinId];
+        if (skin != null) {
+          switch (skin.rarity) {
+            case SkinRarity.common: return 1;
+            case SkinRarity.rare: return 2;
+            case SkinRarity.epic: return 3;
+            case SkinRarity.legendary: return 4;
+          }
+        }
+      }
+    } catch (_) {}
+    return 1; // 기본
+  }
+
+  /// EvolutionTier → 숫자 매핑 (사용 안 함: 스킨 기반으로 변경)
   int _getTierNumber(EvolutionTier tier) {
     switch (tier) {
       case EvolutionTier.base:
@@ -539,6 +567,16 @@ class BaseHero extends PositionComponent
     }
 
     if (target != null) {
+      // 애니메이션 재생
+      if (_spriteComponent is SpriteAnimationGroupComponent<String>) {
+        final anim = _spriteComponent as SpriteAnimationGroupComponent<String>;
+        // 애니메이션 강제 재시작을 위해 현재 상태를 뺐다가 다시 넣음 (reset 대용)
+        if (anim.current == 'attack') {
+          anim.current = 'idle';
+        }
+        anim.current = 'attack';
+      }
+
       // 크리티컬 확률 적용 (도깨비 방망이 유물)
       double dmg = effectiveAttack;
       if (criticalChance > 0 && math.Random().nextDouble() < criticalChance) {
@@ -562,6 +600,15 @@ class BaseHero extends PositionComponent
     _skillReady = false;
     // 유물 쿨다운 감소 적용 (노리개)
     _skillCooldown = data.skill.cooldown * (1 - cooldownReduction);
+
+    if (_spriteComponent is SpriteAnimationGroupComponent<String>) {
+      final anim = _spriteComponent as SpriteAnimationGroupComponent<String>;
+      // 애니메이션 강제 재시작 (reset 대용)
+      if (anim.current == 'skill') {
+        anim.current = 'idle';
+      }
+      anim.current = 'skill';
+    }
 
     // 스킬 효과 (영웅별)
     switch (data.id) {
@@ -841,8 +888,8 @@ class BaseHero extends PositionComponent
     _body.paint.color = _getHeroColor(data.id).withAlpha(80);
     _hpBar.paint.color = const Color(0xFF666666);
     // 스프라이트 반투명
-    if (_spriteComponent != null) {
-      _spriteComponent!.paint = Paint()..color = const Color(0x50FFFFFF);
+    if (_spriteComponent != null && _spriteComponent is HasPaint) {
+      (_spriteComponent as HasPaint).paint = Paint()..color = const Color(0x50FFFFFF);
     }
     SoundManager.instance.playSfx(SfxType.heroDeath);
   }
@@ -854,8 +901,8 @@ class BaseHero extends PositionComponent
     _body.paint.color = _getHeroColor(data.id);
     _hpBar.paint.color = const Color(0xFF44FF44);
     // 스프라이트 원복
-    if (_spriteComponent != null) {
-      _spriteComponent!.paint = Paint()..color = const Color(0xFFFFFFFF);
+    if (_spriteComponent != null && _spriteComponent is HasPaint) {
+      (_spriteComponent as HasPaint).paint = Paint()..color = const Color(0xFFFFFFFF);
     }
     SoundManager.instance.playSfx(SfxType.heroRevive);
   }

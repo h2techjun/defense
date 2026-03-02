@@ -13,6 +13,7 @@ import '../../data/models/wave_data.dart';
 import '../../state/hero_party_provider.dart';
 import '../../state/user_state.dart';
 import '../theme/app_colors.dart';
+import '../common/hero_sprite_viewer.dart';
 
 /// 영웅 해금 조건: 해당 스테이지 클리어 시 해금
 const Map<HeroId, int> heroUnlockStage = {
@@ -456,12 +457,19 @@ class _PartySlotWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ClipOval(
-                      child: Image.asset(
-                        'assets/images/heroes/hero_${_getHeroFileName(heroData!.id)}_1.png',
-                        width: 36 * s, height: 36 * s, fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Text(
-                          _getHeroEmoji(heroData!.id),
-                          style: TextStyle(fontSize: Responsive.fontSize(context, 28)),
+                      child: SizedBox(
+                        width: 36 * s, height: 36 * s,
+                        child: OverflowBox(
+                          maxWidth: 36 * s * 3, maxHeight: 36 * s,
+                          alignment: Alignment.centerLeft,
+                          child: Image.asset(
+                            'assets/images/heroes/${_getHeroFileName(heroData!.id)}_tier1_sprites.png',
+                            height: 36 * s, fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => Text(
+                              _getHeroEmoji(heroData!.id),
+                              style: TextStyle(fontSize: Responsive.fontSize(context, 28)),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -632,13 +640,11 @@ class _HeroPoolCard extends StatelessWidget {
             Opacity(
               opacity: 0.3,
               child: ClipOval(
-                child: Image.asset(
-                  'assets/images/heroes/hero_${_getHeroFileName(hero.id)}_1.png',
-                  width: 28 * s, height: 28 * s, fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Text(
-                    _getHeroEmoji(hero.id),
-                    style: TextStyle(fontSize: Responsive.fontSize(context, 22)),
-                  ),
+                child: HeroSpriteViewer(
+                  imagePath: 'assets/images/heroes/${_getHeroFileName(hero.id)}_tier1_sprites.png',
+                  width: 28 * s,
+                  height: 28 * s,
+                  fallbackText: _getHeroEmoji(hero.id),
                 ),
               ),
             ),
@@ -685,13 +691,11 @@ class _HeroPoolCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ClipOval(
-                child: Image.asset(
-                  'assets/images/heroes/hero_${_getHeroFileName(hero.id)}_1.png',
-                  width: 28 * s, height: 28 * s, fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Text(
-                    _getHeroEmoji(hero.id),
-                    style: TextStyle(fontSize: Responsive.fontSize(context, 22)),
-                  ),
+                child: HeroSpriteViewer(
+                  imagePath: 'assets/images/heroes/${_getHeroFileName(hero.id)}_tier1_sprites.png',
+                  width: 28 * s,
+                  height: 28 * s,
+                  fallbackText: _getHeroEmoji(hero.id),
                 ),
               ),
               SizedBox(height: 2 * s),

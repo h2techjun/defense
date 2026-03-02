@@ -17,7 +17,7 @@ ASSETS_DIR = Path(__file__).parent.parent / "assets" / "images"
 BACKUP_DIR = Path(__file__).parent.parent / "assets" / "images_backup"
 
 # 처리 대상 폴더 (fx 포함 — 마스터 요청)
-TARGET_FOLDERS = ["enemies", "heroes", "towers", "projectiles", "objects", "fx"]
+TARGET_FOLDERS = ["enemies", "heroes", "towers", "projectiles", "objects", "fx", "soldiers", "portraits", "ui"]
 
 # 배경 판별 임계값
 ALPHA_THRESHOLD = 200       # 이 이상 불투명한 픽셀만 보존
