@@ -246,6 +246,7 @@ class TowerManageScreen extends ConsumerWidget {
                 },
               ),
             ),
+          ],
         ),
     );
   }

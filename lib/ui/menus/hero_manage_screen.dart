@@ -30,9 +30,25 @@ import '../../data/models/story_data.dart';
 import '../../l10n/app_strings.dart';
 import '../../services/save_manager.dart';
 import '../../game/components/actors/base_hero.dart';
+import '../../state/skin_provider.dart';
+import '../../game/components/actors/base_hero.dart';
+
+
+import '../../state/skin_provider.dart';
+
+
+import '../../data/models/skin_data.dart';
+
+
 import '../theme/app_colors.dart';
+
+
 import '../theme/themed_scaffold.dart';
+
+
 import '../widgets/touch_button.dart';
+
+
 import '../common/hero_sprite_viewer.dart';
 
 
@@ -187,7 +203,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
 
 
   Widget build(BuildContext context) {
-
+    final skinState = ref.watch(skinProvider);
 
     return Scaffold(
 
@@ -300,7 +316,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                       width: 200 * Responsive.scale(context),
 
 
-                      child: _buildHeroList(),
+                      child: _buildHeroList(skinState),
 
 
                     ),
@@ -312,7 +328,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                     Expanded(
 
 
-                      child: _buildHeroDetail(),
+                      child: _buildHeroDetail(skinState),
 
 
                     ),
@@ -528,7 +544,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
   /// 영웅 리스트 (왼쪽 패널)
 
 
-  Widget _buildHeroList() {
+  Widget _buildHeroList(SkinState skinState) {
 
 
     final heroes = GameDataLoader.getHeroes().values.toList();
@@ -573,7 +589,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           final isSelected = hero.id == _selectedHeroId;
 
 
-          return _buildHeroCard(hero, isSelected);
+          return _buildHeroCard(hero, isSelected, skinState);
 
 
         },
@@ -594,7 +610,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
   /// 영웅 카드 (리스트 아이템)
 
 
-  Widget _buildHeroCard(HeroData hero, bool isSelected) {
+  Widget _buildHeroCard(HeroData hero, bool isSelected, SkinState skinState) {
 
 
     final color = _getHeroColor(hero.id);
@@ -616,15 +632,6 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           _selectedHeroId = hero.id;
           _selectedEvolutionIndex = 0;
         });
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (context) => Padding(
-            padding: EdgeInsets.only(top: kToolbarHeight),
-            child: _buildHeroDetail(),
-          ),
-        );
 
 
       },
@@ -775,47 +782,17 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
 
 
               child: ClipOval(
-
-
                 child: Image.asset(
-
-
                   'assets/images/portraits/portrait_${_getHeroFileName(hero.id)}.png',
-
-
                   width: 40 * Responsive.scale(context),
-
-
                   height: 40 * Responsive.scale(context),
-
-
                   fit: BoxFit.cover,
-
-
-                  errorBuilder: (_, __, ___) => Center(
-
-
-                    child: Text(
-
-
-                      _getHeroEmoji(hero.id),
-
-
-                      style: TextStyle(fontSize: Responsive.fontSize(context, 20)),
-
-
-                    ),
-
-
+                  errorBuilder: (context, error, stackTrace) => Text(
+                    _getHeroEmoji(hero.id),
+                    style: TextStyle(fontSize: 20 * Responsive.scale(context)),
                   ),
-
-
                 ),
-
-
               ),
-
-
             ),
 
 
@@ -915,7 +892,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
   /// 영웅 상세 (오른쪽 패널)
 
 
-  Widget _buildHeroDetail() {
+  Widget _buildHeroDetail(SkinState skinState) {
 
 
     final hero = _selectedHero;
@@ -966,21 +943,16 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           children: [
 
 
-            // 영웅 이름 & 칭호
-
-
-            _buildNameSection(hero, color),
-
-
+            // 영웅 이름 & 초상화 (포트레이트)
+            _buildNameSection(hero, color, skinState),
             SizedBox(height: 16 * Responsive.scale(context)),
 
+            // 장착된 스킨 프리뷰 (스킨상점 카드 스타일)
+            _buildEquippedSkinCard(hero, color, skinState),
+            SizedBox(height: 16 * Responsive.scale(context)),
 
             // 진화 단계 선택
-
-
             _buildEvolutionTabs(hero, color),
-
-
             SizedBox(height: 16 * Responsive.scale(context)),
 
 
@@ -1047,7 +1019,43 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
   /// 이름 섹션
 
 
-  Widget _buildNameSection(HeroData hero, Color color) {
+  Widget _buildNameSection(HeroData hero, Color color, SkinState skinState) {
+
+
+    // 장착 중인 스킨 데이터 가져오기
+
+
+    final skinId = skinState.equippedSkins[hero.id];
+
+
+    final skins = getSkinsForHero(hero.id);
+
+
+    final equippedSkin = skinId != null 
+
+
+        ? skins.firstWhere((s) => s.id == skinId, orElse: () => skins.first)
+
+
+        : skins.where((s) => s.rarity == SkinRarity.common).firstOrNull;
+
+
+
+
+
+    final displayName = equippedSkin?.name ?? hero.name;
+
+
+    final displayTitle = equippedSkin?.rarity.displayName != null 
+
+
+        ? '${equippedSkin!.rarity.displayName} 등급 ' + hero.title
+
+
+        : hero.title;
+
+
+
 
 
     return Row(
@@ -1138,53 +1146,19 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
 
 
               child: ClipOval(
-
-
                 child: Image.asset(
-
-
-                    'assets/images/portraits/portrait_${_getHeroFileName(hero.id)}.png',
-
-
-                    width: 72 * Responsive.scale(context),
-
-
-                    height: 72 * Responsive.scale(context),
-
-
-                    fit: BoxFit.cover,
-
-
-                    errorBuilder: (_, __, ___) => Center(
-
-
-                      child: Text(
-
-
-                        _getHeroEmoji(hero.id),
-
-
-                        style: TextStyle(fontSize: Responsive.fontSize(context, 32)),
-
-
-                      ),
-
-
-                    ),
-
-
+                  'assets/images/portraits/portrait_${_getHeroFileName(hero.id)}.png',
+                  width: 72 * Responsive.scale(context),
+                  height: 72 * Responsive.scale(context),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Text(
+                    _getHeroEmoji(hero.id),
+                    style: TextStyle(fontSize: 32 * Responsive.scale(context)),
                   ),
-
-
+                ),
               ),
-
-
             );
-
-
           },
-
-
         ),
 
 
@@ -1206,7 +1180,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
               Text(
 
 
-                hero.name,
+                displayName,
 
 
                 style: TextStyle(
@@ -1236,7 +1210,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
               Text(
 
 
-                hero.title,
+                displayTitle,
 
 
                 style: TextStyle(
@@ -1303,6 +1277,185 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
 
 
     );
+
+
+  }
+
+
+  Widget _buildEquippedSkinCard(HeroData hero, Color color, SkinState skinState) {
+    final s = Responsive.scale(context);
+    final skinId = skinState.equippedSkins[hero.id];
+    final skins = getSkinsForHero(hero.id);
+    final skin = skinId != null
+        ? skins.firstWhere((s) => s.id == skinId, orElse: () => skins.first)
+        : skins.where((s) => s.rarity == SkinRarity.common).firstOrNull ?? skins.first;
+
+    final double glowIntensity = switch (skin.rarity) {
+      SkinRarity.common => 0.0,
+      SkinRarity.rare => 8.0,
+      SkinRarity.epic => 14.0,
+      SkinRarity.legendary => 18.0,
+    };
+
+    final int tier = switch (skin.rarity) {
+      SkinRarity.common => 1,
+      SkinRarity.rare => 2,
+      SkinRarity.epic => 3,
+      SkinRarity.legendary => 4,
+    };
+
+    return Container(
+      height: 140 * s,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14 * s),
+        border: Border.all(
+          color: AppColors.sinmyeongGold,
+          width: 2.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.sinmyeongGold.withAlpha(60),
+            blurRadius: glowIntensity > 0 ? glowIntensity : 4.0,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12 * s),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // 배경 그라디언트
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    skin.primaryColor.withAlpha(80),
+                    Colors.black.withAlpha(180),
+                    skin.secondaryColor.withAlpha(60),
+                  ],
+                ),
+              ),
+            ),
+            // 영웅 스프라이트 렌더링
+            Positioned.fill(
+              child: Padding(
+                padding: EdgeInsets.only(top: 8 * s),
+                child: ShaderMask(
+                  shaderCallback: (rect) {
+                    return LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white,
+                        Colors.white,
+                        skin.primaryColor.withAlpha(160),
+                        Colors.transparent,
+                      ],
+                      stops: const [0.0, 0.5, 0.85, 1.0],
+                    ).createShader(rect);
+                  },
+                  blendMode: BlendMode.dstIn,
+                  child: ColorFiltered(
+                    colorFilter: skin.rarity == SkinRarity.common
+                        ? const ColorFilter.mode(Colors.transparent, BlendMode.dst)
+                        : ColorFilter.mode(
+                            skin.primaryColor.withAlpha(40),
+                            BlendMode.srcATop,
+                          ),
+                    child: HeroSpriteViewer(
+                      imagePath: 'assets/images/heroes/${_getHeroFileName(hero.id)}_tier${tier}_sprites.png',
+                      width: double.infinity,
+                      height: 140 * s,
+                      fallbackText: skin.rarity.emoji,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // 왼쪽 상단 스킨 이름 배지
+            Positioned(
+              left: 12 * s,
+              top: 12 * s,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 4 * s),
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(150),
+                  borderRadius: BorderRadius.circular(8 * s),
+                  border: Border.all(color: skin.rarity.color.withAlpha(100)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      skin.rarity.emoji,
+                      style: TextStyle(fontSize: 12 * s),
+                    ),
+                    SizedBox(width: 4 * s),
+                    Text(
+                      skin.name,
+                      style: TextStyle(
+                        color: skin.rarity.color,
+                        fontSize: 12 * s,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getEquippedSkinSprite(HeroId heroId, SkinState skinState) {
+
+
+    final skinId = skinState.equippedSkins[heroId];
+
+
+    final skins = getSkinsForHero(heroId);
+
+
+    final equippedSkin = skinId != null 
+
+
+        ? skins.firstWhere((s) => s.id == skinId, orElse: () => skins.first)
+
+
+        : skins.where((s) => s.rarity == SkinRarity.common).firstOrNull ?? skins.first;
+
+
+    
+
+
+    final tier = switch (equippedSkin.rarity) {
+
+
+      SkinRarity.common => 1,
+
+
+      SkinRarity.rare => 2,
+
+
+      SkinRarity.epic => 3,
+
+
+      SkinRarity.legendary => 4,
+
+
+    };
+
+
+    
+
+
+    return 'assets/images/heroes/${_getHeroFileName(heroId)}_tier${tier}_sprites.png';
 
 
   }

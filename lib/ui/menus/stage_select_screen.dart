@@ -299,9 +299,6 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
               ),
             ],
           ),
-        ),
-        ],
-      ),
     );
   }
 }

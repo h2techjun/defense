@@ -1,5 +1,5 @@
-// ?�원??�?- 무한????+ ?�일 ?�전 UI ?�면
-// ??진행?? �?미리보기, ?�일 ?�전 ??
+// 해원의 문 - 무한의 탑 + 일일 도전 UI 화면
+// 탑 진행도, 층 미리보기, 일일 도전 탭
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -46,21 +46,21 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
     super.dispose();
   }
 
-  /// 무한?????�작
+  /// 무한의 탑 시작
   void _startTowerFloor(int floor) {
     final floorData = TowerFloorGenerator.generateFloor(floor);
 
-    // ?�식 층이�?보상 ?�택 ?�이?�로�??�시
+    // 휴식 층이면 보상 선택 다이얼로그 표시
     if (floorData.type == TowerFloorType.rest) {
       _showRestRewardDialog(floorData);
       return;
     }
 
-    // ?�적 LevelData ?�성
+    // 동적 LevelData 생성
     final waves = WaveBuilder.buildEndlessTowerFloor(floorData);
     final levelData = _buildLevelData(floorData, waves);
 
-    // 진행 ?�태 ?�데?�트
+    // 진행 상태 업데이트
     if (ref.read(endlessTowerProvider).currentFloor == 0) {
       ref.read(endlessTowerProvider.notifier).startRun();
     }
@@ -68,7 +68,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
     widget.onStartLevel(levelData, GameMode.endlessTower);
   }
 
-  /// ?�일 ?�전 ?�작
+  /// 일일 도전 시작
   void _startDailyChallenge() {
     final challenge = DailyChallengeGenerator.today;
     final floorData = TowerFloorData(
@@ -80,8 +80,8 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       bonusGems: challenge.reward.gems,
       bonusExp: challenge.reward.exp,
       waveCount: challenge.targetWaves,
-      floorTitle: '?�� ${challenge.title}',
-      narrative: '"?�늘???�련???�작?�다..."',
+      floorTitle: '📅 ${challenge.title}',
+      narrative: '"오늘의 시련이 시작된다..."',
     );
 
     final waves = WaveBuilder.buildEndlessTowerFloor(floorData);
@@ -90,9 +90,9 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
     widget.onStartLevel(levelData, GameMode.dailyChallenge);
   }
 
-  /// TowerFloorData ??LevelData 변??
+  /// TowerFloorData → LevelData 변환
   LevelData _buildLevelData(TowerFloorData floorData, List<WaveData> waves) {
-    // 기존 ?�벨?�서 경로 ?�이??차용 (�?번호???�라 ?�양??경로)
+    // 기존 레벨에서 경로 데이터 차용 (층 번호에 따라 다양한 경로)
     final existingLevels = JsonDataLoader.allLevels;
     final pathIdx = (floorData.floor - 1) % existingLevels.length;
     final referencedLevel = existingLevels.isNotEmpty
@@ -103,7 +103,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       [0, 300], [200, 300], [200, 150], [400, 150], [400, 300], [600, 300],
     ];
 
-    // ?�이?�에 ?�른 ?�원�?HP ?��??�링
+    // 난이도에 따른 해원문 HP 스케일링
     final baseHp = 20;
     final scaledHp = (baseHp * (1 + floorData.difficultyScale * 0.1)).round();
 
@@ -111,7 +111,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       levelNumber: 1000 + floorData.floor,
       chapter: Chapter.values[(floorData.floor - 1) % Chapter.values.length],
       name: floorData.floorTitle,
-      briefing: floorData.narrative ?? '무한????${floorData.floor}�?,
+      briefing: floorData.narrative ?? '무한의 탑 ${floorData.floor}층',
       startingSinmyeong: (200 * floorData.difficultyScale).round(),
       gatewayHp: scaledHp,
       waves: waves,
@@ -119,7 +119,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
     );
   }
 
-  /// ?�식 �?보상 ?�택 ?�이?�로�?
+  /// 휴식 층 보상 선택 다이얼로그
   void _showRestRewardDialog(TowerFloorData floorData) {
     showDialog(
       context: context,
@@ -128,7 +128,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
         backgroundColor: AppColors.surfaceDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          '?���?${floorData.floor}�????�식',
+          '🏕️ ${floorData.floor}층 — 휴식',
           style: const TextStyle(color: Colors.white, fontSize: 20),
         ),
         content: SizedBox(
@@ -137,7 +137,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                '보상???�나 ?�택?�세??,
+                '보상을 하나 선택하세요',
                 style: TextStyle(color: Colors.white70, fontSize: 14),
               ),
               const SizedBox(height: 16),
@@ -169,12 +169,12 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       backgroundColor: AppColors.scaffoldBg,
       body: Stack(
         children: [
-          // 공통 ???�마 배경 (?�?�?�게 ?�과)
+          // 공통 탑 테마 배경 (은은하게 투과)
           Positioned.fill(
             child: Opacity(
               opacity: 0.15,
               child: Image.asset(
-                'assets/images/towers/tower_sotdae_3.png',
+                'assets/images/objects/obj_sotdae.png',
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
               ),
@@ -226,7 +226,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '?�� 무한????,
+                  '🗼 무한의 탑',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: Responsive.fontSize(context, 22),
@@ -234,7 +234,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                   ),
                 ),
                 Text(
-                  '최고 기록: ${state.highestFloor}�?| 보석: ${state.totalGemsEarned}?��',
+                  '최고 기록: ${state.highestFloor}층 | 보석: ${state.totalGemsEarned}💎',
                   style: TextStyle(
                     color: Colors.white60,
                     fontSize: Responsive.fontSize(context, 12),
@@ -254,7 +254,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               border: Border.all(color: Colors.amber.withValues(alpha: 0.5)),
             ),
             child: Text(
-              '?�️ ${state.totalFloorsCleared}�??�리??,
+              '⚔️ ${state.totalFloorsCleared}층 클리어',
               style: TextStyle(
                 color: Colors.amber,
                 fontSize: Responsive.fontSize(context, 12),
@@ -280,8 +280,8 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
           fontWeight: FontWeight.bold,
         ),
         tabs: const [
-          Tab(text: '?�� 무한????),
-          Tab(text: '?�� ?�일 ?�전'),
+          Tab(text: '🗼 무한의 탑'),
+          Tab(text: '📅 일일 도전'),
         ],
       ),
     );
@@ -304,7 +304,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '?�성 버프: ${state.activeBuffs.map((b) => b.name).join(', ')} (${state.buffRemainingFloors}�??�음)',
+                  '활성 버프: ${state.activeBuffs.map((b) => b.name).join(', ')} (${state.buffRemainingFloors}층 남음)',
                   style: TextStyle(
                     color: Colors.greenAccent,
                     fontSize: Responsive.fontSize(context, 12),
@@ -352,8 +352,8 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               ),
               child: Text(
                 state.currentFloor > 0
-                    ? '?�️ ${startFloor}�?계속?�기'
-                    : '?�� ???�전 ?�작',
+                    ? '⚔️ ${startFloor}층 계속하기'
+                    : '🗼 탑 도전 시작',
                 style: TextStyle(
                   fontSize: Responsive.fontSize(context, 16),
                   fontWeight: FontWeight.bold,
@@ -379,7 +379,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
             padding: EdgeInsets.all(Responsive.spacing(context, 20)),
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: const AssetImage('assets/images/objects/obj_shrine.png'),
+                image: const AssetImage('assets/images/objects/obj_grave_mound.png'),
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(const Color(0xFF16213E).withAlpha(200), BlendMode.darken),
               ),
@@ -401,7 +401,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '?�� ?�늘???�전',
+                  '📅 오늘의 도전',
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: Responsive.fontSize(context, 12),
@@ -419,7 +419,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                 SizedBox(height: Responsive.spacing(context, 16)),
 
                 Text(
-                  '?�수 규칙',
+                  '특수 규칙',
                   style: TextStyle(
                     color: Colors.amber,
                     fontSize: Responsive.fontSize(context, 14),
@@ -470,9 +470,9 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _rewardItem(context, '?��', '${challenge.reward.gems}', '보석'),
-                      _rewardItem(context, '�?, '${challenge.reward.exp}', '경험�?),
-                      _rewardItem(context, '?��', challenge.reward.title, '�?��'),
+                      _rewardItem(context, '💎', '${challenge.reward.gems}', '보석'),
+                      _rewardItem(context, '⭐', '${challenge.reward.exp}', '경험치'),
+                      _rewardItem(context, '🏆', challenge.reward.title, '칭호'),
                     ],
                   ),
                 ),
@@ -491,9 +491,9 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _statItem(context, '?��', '${state.streak}??, '?�속 ?�전'),
-                _statItem(context, '?�️', '${state.bestWavesSurvived}', '최고 ?�이�?),
-                _statItem(context, '?��', '${state.totalChallengesCompleted}', '�??�료'),
+                _statItem(context, '🔥', '${state.streak}일', '연속 도전'),
+                _statItem(context, '⚔️', '${state.bestWavesSurvived}', '최고 웨이브'),
+                _statItem(context, '🏅', '${state.totalChallengesCompleted}', '총 완료'),
               ],
             ),
           ),
@@ -512,7 +512,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                 ),
               ),
               child: Text(
-                isCompleted ? '???�늘???�전 ?�료!' : '?�️ ?�전 ?�작',
+                isCompleted ? '✅ 오늘의 도전 완료!' : '⚔️ 도전 시작',
                 style: TextStyle(
                   fontSize: Responsive.fontSize(context, 16),
                   fontWeight: FontWeight.bold,
@@ -562,7 +562,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
   }
 }
 
-// ?�?� ?�위 ?�젯 ?�?�
+// ── 하위 위젯 ──
 
 class _TowerFloorCard extends StatelessWidget {
   final TowerFloorData floor;
@@ -661,8 +661,8 @@ class _TowerFloorCard extends StatelessWidget {
                       SizedBox(height: Responsive.spacing(context, 2)),
                       Text(
                         floor.type == TowerFloorType.rest
-                            ? '보상 ?�택'
-                            : '?�이�? ${floor.waveCount} | ?�이?? ×${floor.difficultyScale.toStringAsFixed(1)}',
+                            ? '보상 선택'
+                            : '웨이브: ${floor.waveCount} | 난이도: ×${floor.difficultyScale.toStringAsFixed(1)}',
                         style: TextStyle(
                           color: Colors.white38,
                           fontSize: Responsive.fontSize(context, 11),
@@ -683,7 +683,7 @@ class _TowerFloorCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      '?��${floor.bonusGems}',
+                      '💎${floor.bonusGems}',
                       style: TextStyle(
                         color: Colors.amber,
                         fontSize: Responsive.fontSize(context, 11),
@@ -770,4 +770,3 @@ class _RestRewardButton extends StatelessWidget {
     );
   }
 }
-
