@@ -49,5 +49,10 @@
     "hud_gateway": "마력",
     "wave": "웨이브",
     "hud_day": "낮 (준비)",
-    "hud_night": "밤 (전투)"
+    "hud_night": "밤 (전투)",
+    "hero_stats": "영웅 스탯",
+    "hero_select_prompt": "수호자를 선택하세요",
+    "skill_damage": "스킬 데미지",
+    "skill_cooltime": "쿨타임",
+    "range": "사거리"
 }
