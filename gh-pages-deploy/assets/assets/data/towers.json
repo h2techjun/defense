@@ -1,0 +1,210 @@
+{
+  "towers": [
+    {
+      "type": "archer",
+      "name": "산적 초소",
+      "description": "빠른 연사. 공중 유닛 요격 특화.",
+      "baseCost": 50,
+      "baseDamage": 20,
+      "baseRange": 150,
+      "baseFireRate": 1.5,
+      "damageType": "physical",
+      "branchA": "rocketBattery",
+      "branchB": "spiritHunter",
+      "upgrades": [
+        {"level": 1, "name": "산적 초소", "cost": 0, "damage": 20, "range": 150, "fireRate": 1.5},
+        {"level": 2, "name": "의병 망루", "cost": 80, "damage": 32, "range": 170, "fireRate": 1.8},
+        {"level": 3, "name": "호국 망루", "cost": 140, "damage": 50, "range": 200, "fireRate": 2.0}
+      ]
+    },
+    {
+      "type": "barracks",
+      "name": "씨름터",
+      "description": "병사 3명을 소환하여 길목 차단 (Blocking).",
+      "baseCost": 70,
+      "baseDamage": 10,
+      "baseRange": 80,
+      "baseFireRate": 0.8,
+      "damageType": "physical",
+      "branchA": "generalTotem",
+      "branchB": "goblinRing",
+      "upgrades": [
+        {"level": 1, "name": "씨름터", "cost": 0, "damage": 10, "range": 80, "fireRate": 0.8},
+        {"level": 2, "name": "무관청", "cost": 120, "damage": 18, "range": 90, "fireRate": 1.0},
+        {"level": 3, "name": "수호 전당", "cost": 200, "damage": 28, "range": 100, "fireRate": 1.2}
+      ]
+    },
+    {
+      "type": "shaman",
+      "name": "서당",
+      "description": "광역 마법/정화. 고방어 적에게 관통.",
+      "baseCost": 90,
+      "baseDamage": 45,
+      "baseRange": 130,
+      "baseFireRate": 1.0,
+      "damageType": "magical",
+      "branchA": "shamanTemple",
+      "branchB": "grimReaperOffice",
+      "upgrades": [
+        {"level": 1, "name": "서당", "cost": 0, "damage": 45, "range": 130, "fireRate": 1.0},
+        {"level": 2, "name": "부적집", "cost": 120, "damage": 75, "range": 150, "fireRate": 1.2},
+        {"level": 3, "name": "신당", "cost": 200, "damage": 110, "range": 170, "fireRate": 1.4, "specialAbility": "정화 가능"}
+      ]
+    },
+    {
+      "type": "artillery",
+      "name": "돌팔매",
+      "description": "느리지만 강력한 광역 폭발. 밀집 적에게 효과적.",
+      "baseCost": 110,
+      "baseDamage": 80,
+      "baseRange": 220,
+      "baseFireRate": 0.35,
+      "damageType": "magical",
+      "branchA": "fireDragon",
+      "branchB": "heavenlyThunder",
+      "upgrades": [
+        {"level": 1, "name": "돌팔매", "cost": 0, "damage": 80, "range": 220, "fireRate": 0.35},
+        {"level": 2, "name": "투석기", "cost": 140, "damage": 130, "range": 250, "fireRate": 0.4},
+        {"level": 3, "name": "대포", "cost": 230, "damage": 190, "range": 280, "fireRate": 0.45, "specialAbility": "스플래시 범위 +20%"}
+      ]
+    },
+    {
+      "type": "sotdae",
+      "name": "솟대",
+      "description": "수호결계로 아군 타워에 디버프 내성 + 한(怨) 게이지 억제.",
+      "baseCost": 80,
+      "baseDamage": 0,
+      "baseRange": 150,
+      "baseFireRate": 0,
+      "damageType": "purification",
+      "branchA": "phoenixTotem",
+      "branchB": "earthSpiritAltar",
+      "upgrades": [
+        {"level": 1, "name": "솟대", "cost": 0, "damage": 0, "range": 150, "fireRate": 0, "specialAbility": "디버프 내성 50%, 한 억제 30%"},
+        {"level": 2, "name": "성황당", "cost": 100, "damage": 0, "range": 180, "fireRate": 0, "specialAbility": "디버프 내성 70%, 공속 +15%"},
+        {"level": 3, "name": "해원 제단", "cost": 180, "damage": 0, "range": 220, "fireRate": 0, "specialAbility": "디버프 내성 90%, 범위/버프 +50%"}
+      ]
+    }
+  ],
+  "branches": [
+    {
+      "branch": "rocketBattery",
+      "name": "신기전",
+      "description": "광역 폭발 로켓을 발사합니다. 밀집 적에게 효과적.",
+      "cost": 280,
+      "damage": 75,
+      "range": 220,
+      "fireRate": 1.2,
+      "splashRadius": 60,
+      "specialAbility": "로켓 폭발: 범위 60 스플래시"
+    },
+    {
+      "branch": "spiritHunter",
+      "name": "신궁",
+      "description": "일격필살. 방어 관통 + 은신 감지.",
+      "cost": 280,
+      "damage": 120,
+      "range": 280,
+      "fireRate": 0.6,
+      "canDetectStealth": true,
+      "hasPiercing": true,
+      "overrideDamageType": "purification",
+      "specialAbility": "관통 + 은신 감지"
+    },
+    {
+      "branch": "generalTotem",
+      "name": "천하대장군",
+      "description": "장승 병사가 적을 단단히 막습니다. HP 3배.",
+      "cost": 320,
+      "damage": 35,
+      "range": 110,
+      "fireRate": 0.8,
+      "soldierHpMultiplier": 3.0,
+      "extraSoldierCount": 1,
+      "specialAbility": "병사 HP 3배, 병사 4명"
+    },
+    {
+      "branch": "goblinRing",
+      "name": "도깨비 씨름판",
+      "description": "도깨비가 적을 1:1로 붙잡아 제압합니다.",
+      "cost": 320,
+      "damage": 55,
+      "range": 100,
+      "fireRate": 1.5,
+      "soldierHpMultiplier": 1.5,
+      "goldBonusRatio": 0.5,
+      "specialAbility": "1:1 제압 + 처치 시 신명 보너스 150%"
+    },
+    {
+      "branch": "shamanTemple",
+      "name": "만신전",
+      "description": "작두를 타며 광역 저주를 내립니다.",
+      "cost": 300,
+      "damage": 110,
+      "range": 190,
+      "fireRate": 0.8,
+      "slowAuraRatio": 0.3,
+      "specialAbility": "작두타기: 적 이속 30% 감소"
+    },
+    {
+      "branch": "grimReaperOffice",
+      "name": "저승사자 출장소",
+      "description": "저승차사가 HP 8% 이하 적을 즉시 데려갑니다.",
+      "cost": 300,
+      "damage": 85,
+      "range": 170,
+      "fireRate": 0.7,
+      "instantKillThreshold": 0.08,
+      "overrideDamageType": "purification",
+      "specialAbility": "즉사: HP 8% 이하 즉시 처치"
+    },
+    {
+      "branch": "fireDragon",
+      "name": "화차",
+      "description": "화염 포탄으로 잔여 화상 데미지를 입힙니다.",
+      "cost": 350,
+      "damage": 200,
+      "range": 290,
+      "fireRate": 0.4,
+      "splashRadius": 55,
+      "dotDamage": 15,
+      "dotDuration": 4,
+      "specialAbility": "화염 DoT: 15/s × 4초"
+    },
+    {
+      "branch": "heavenlyThunder",
+      "name": "비격진천뢰",
+      "description": "하늘의 벼락을 내리쳐 초고데미지를 입힙니다.",
+      "cost": 350,
+      "damage": 500,
+      "range": 300,
+      "fireRate": 0.15,
+      "splashRadius": 40,
+      "stunDuration": 2.0,
+      "specialAbility": "천뢰: 초고데미지 500 + 2초 스턴"
+    },
+    {
+      "branch": "phoenixTotem",
+      "name": "수호신단",
+      "description": "디버프 면역 + 한 억제 50%. 전장 타워 디버프 해제 스킬.",
+      "cost": 250,
+      "damage": 0,
+      "range": 250,
+      "fireRate": 0,
+      "buffMultiplier": 1.0,
+      "specialAbility": "디버프 면역 + 한 억제 50%"
+    },
+    {
+      "branch": "earthSpiritAltar",
+      "name": "지신제단",
+      "description": "대지의 힘으로 적 공격력 -20% + 감속 오라 20%.",
+      "cost": 250,
+      "damage": 0,
+      "range": 280,
+      "fireRate": 0,
+      "buffMultiplier": 1.5,
+      "slowAuraRatio": 0.2,
+      "specialAbility": "적 공격력 -20% + 감속 20%"
+    }
+  ]
+}
