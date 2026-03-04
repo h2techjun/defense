@@ -62,7 +62,7 @@ class BarracksSoldier extends PositionComponent
     this.goldBonusRatio = 0,
   })  : maxHp = hp,
         super(
-          size: Vector2(22, 22),
+          size: Vector2(32, 32),
           anchor: Anchor.center,
           priority: 10,
         );

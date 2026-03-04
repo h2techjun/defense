@@ -182,18 +182,24 @@ class SpriteHitEffect extends SpriteAnimationComponent
     final sprites = <Sprite>[];
     final prefix = type.assetPrefix;
 
-    // 4프레임 로드
-    for (int i = 0; i < 4; i++) {
-      final image = await game.images.load('fx/${prefix}_$i.png');
-      sprites.add(Sprite(image));
-    }
+    try {
+      // 4프레임 로드
+      for (int i = 0; i < 4; i++) {
+        final image = await game.images.load('fx/${prefix}_$i.png');
+        sprites.add(Sprite(image));
+      }
 
-    // 스프라이트 애니메이션 설정
-    animation = SpriteAnimation.spriteList(
-      sprites,
-      stepTime: _stepTime,
-      loop: false,
-    );
+      // 스프라이트 애니메이션 설정
+      animation = SpriteAnimation.spriteList(
+        sprites,
+        stepTime: _stepTime,
+        loop: false,
+      );
+    } catch (e) {
+      // fx 디렉토리나 에셋이 없을 경우 예외를 삼키고 컴포넌트를 즉시 제거
+      // 이를 통해 게임 루프(update) 전체가 멈추는 크리티컬 버그 방지
+      removeFromParent();
+    }
 
     return super.onLoad();
   }

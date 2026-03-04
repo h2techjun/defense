@@ -10,6 +10,7 @@ import '../../defense_game.dart'; // [FIX] 누락된 import 추가
 import '../actors/base_enemy.dart';
 import '../effects/particle_effect.dart';
 import '../effects/sprite_effect.dart';
+import '../effects/sprite_hit_effect.dart';
 
 /// 투사체 컴포넌트 - 타워에서 발사되어 적에게 데미지를 줍니다
 class Projectile extends PositionComponent {
@@ -241,6 +242,21 @@ class Projectile extends PositionComponent {
       } else {
         parent?.add(ParticleEffect.hit(position: position, color: hitColor));
         parent?.add(SpriteEffect(type: SpriteEffectType.hit, position: position));
+      }
+    }
+
+    // 스프라이트 히트 이펙트 (영웅 타격 차별화)
+    if (SpriteHitEffect.canCreate) {
+      switch (damageType) {
+        case DamageType.physical:
+          parent?.add(SpriteHitEffect.physical(position: position));
+          break;
+        case DamageType.magical:
+          parent?.add(SpriteHitEffect.magic(position: position));
+          break;
+        case DamageType.purification:
+          parent?.add(SpriteHitEffect.purify(position: position));
+          break;
       }
     }
 

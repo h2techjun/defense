@@ -49,29 +49,50 @@ class ParticleEffect extends PositionComponent {
     _activeCount++;
   }
 
-  /// 폭발 파티클 (적 피격 — 밝고 부드러운 스파크)
+  /// 폭발 파티클 (물리 피격 — 강렬한 스파크와 충격파)
   factory ParticleEffect.hit({
     required Vector2 position,
     required Color color,
-    int count = 8,
+    int count = 20, // 파티클 대폭 증가
   }) {
     final effect = ParticleEffect(position: position);
     final rng = Random();
 
+    // 1. 코어 번쩍임 (빠르게 사라지는 큰 점)
+    effect._particles.add(_Particle(
+      x: 0, y: 0, vx: 0, vy: 0,
+      life: 0.15,
+      size: 15,
+      color: const Color(0xFFFFFFFF),
+      shape: _ParticleShape.circle,
+    ));
+
+    // 2. 사방으로 튀는 날카로운 파편들
     for (int i = 0; i < count; i++) {
       final angle = rng.nextDouble() * pi * 2;
-      final speed = 35 + rng.nextDouble() * 70;
+      final speed = 80 + rng.nextDouble() * 150; // 속도 대폭 증가
       final shape = rng.nextBool() ? _ParticleShape.diamond : _ParticleShape.circle;
       effect._particles.add(_Particle(
         x: 0, y: 0,
         vx: cos(angle) * speed,
         vy: sin(angle) * speed,
-        life: 0.25 + rng.nextDouble() * 0.25,
-        size: 2 + rng.nextDouble() * 3,
-        color: Color.lerp(color, const Color(0xFFFFFFFF), rng.nextDouble() * 0.4)!,
+        life: 0.3 + rng.nextDouble() * 0.3,
+        size: 3 + rng.nextDouble() * 5, // 크기 증가
+        color: Color.lerp(color, const Color(0xFFFFFFFF), rng.nextDouble() * 0.6)!,
+        gravity: 150, // 물리적 낙하 효과 강하게
         shape: shape,
       ));
     }
+
+    // 3. 충격파 링
+    effect._particles.add(_Particle(
+      x: 0, y: 0, vx: 0, vy: 0,
+      life: 0.25,
+      size: 20,
+      color: Color.fromARGB(150, color.red, color.green, color.blue),
+      shape: _ParticleShape.ring,
+    ));
+
     return effect;
   }
 
@@ -179,59 +200,84 @@ class ParticleEffect extends PositionComponent {
     return effect;
   }
 
-  /// 힐/정화 이펙트 (상승 빛 + 별)
+  /// 힐/정화 이펙트 (성스러운 빛의 기둥 + 황금빛 별 무리)
   factory ParticleEffect.heal({
     required Vector2 position,
-    Color color = const Color(0xFF81C784),
+    Color color = const Color(0xFFFFF59D), // 더 밝은 황금빛 (기본 녹색에서 변경)
   }) {
     final effect = ParticleEffect(position: position);
     final rng = Random();
 
-    for (int i = 0; i < 8; i++) {
+    // 1. 위로 솟구치는 성스러운 빛 무리
+    for (int i = 0; i < 20; i++) {
       effect._particles.add(_Particle(
-        x: -8 + rng.nextDouble() * 16,
-        y: 5,
-        vx: -4 + rng.nextDouble() * 8,
-        vy: -35 - rng.nextDouble() * 50,
+        x: -15 + rng.nextDouble() * 30,
+        y: 10 + rng.nextDouble() * 10,
+        vx: -10 + rng.nextDouble() * 20,
+        vy: -80 - rng.nextDouble() * 100, // 위로 강하게 솟구침
         life: 0.5 + rng.nextDouble() * 0.5,
-        size: 2 + rng.nextDouble() * 3,
-        color: Color.lerp(color, const Color(0xFFFFFFFF), rng.nextDouble() * 0.5)!,
-        shape: rng.nextBool() ? _ParticleShape.star : _ParticleShape.diamond,
+        size: 3 + rng.nextDouble() * 5,
+        color: Color.lerp(color, const Color(0xFFFFFFFF), rng.nextDouble() * 0.8)!,
+        shape: rng.nextDouble() > 0.3 ? _ParticleShape.star : _ParticleShape.diamond,
       ));
     }
-    // 중심 플래시
+
+    // 2. 중심 플래시 (크고 눈부시게)
     effect._particles.add(_Particle(
       x: 0, y: 0,
-      vx: 0, vy: -10,
-      life: 0.3,
-      size: 8,
+      vx: 0, vy: -5,
+      life: 0.4,
+      size: 15,
+      color: Color.fromARGB(150, color.red, color.green, color.blue),
+      shape: _ParticleShape.circle,
+    ));
+
+    // 3. 퍼져나가는 후광 링
+    effect._particles.add(_Particle(
+      x: 0, y: 0,
+      vx: 0, vy: 0,
+      life: 0.35,
+      size: 10,
       color: Color.fromARGB(100, color.red, color.green, color.blue),
       shape: _ParticleShape.ring,
     ));
+
     return effect;
   }
 
-  /// 마법 이펙트 (나선형 빛 + 반짝이)
+  /// 마법 이펙트 (폭주하는 비전 에너지 산란)
   factory ParticleEffect.magic({
     required Vector2 position,
-    Color color = const Color(0xFF64B5F6),
+    Color color = const Color(0xFF42A5F5), // 강렬한 푸른색
   }) {
     final effect = ParticleEffect(position: position);
     final rng = Random();
 
-    for (int i = 0; i < 12; i++) {
-      final angle = (i / 12) * pi * 2;
-      final speed = 40 + rng.nextDouble() * 35;
+    // 1. 소용돌이치며 흩어지는 마법 구체들
+    for (int i = 0; i < 24; i++) {
+      final angle = (i / 24) * pi * 2 + rng.nextDouble(); // 약간 불규칙한 방사상
+      final speed = 60 + rng.nextDouble() * 80;
       effect._particles.add(_Particle(
         x: 0, y: 0,
         vx: cos(angle) * speed,
         vy: sin(angle) * speed,
-        life: 0.35 + rng.nextDouble() * 0.25,
-        size: 2 + rng.nextDouble() * 2.5,
-        color: Color.lerp(color, const Color(0xFFE1F5FE), rng.nextDouble() * 0.4)!,
+        life: 0.4 + rng.nextDouble() * 0.3,
+        size: 3 + rng.nextDouble() * 4.5,
+        color: Color.lerp(color, const Color(0xFFE3F2FD), rng.nextDouble() * 0.6)!,
         shape: _ParticleShape.diamond,
       ));
     }
+
+    // 2. 내부 십자광(별) 폭발
+    effect._particles.add(_Particle(
+      x: 0, y: 0,
+      vx: 0, vy: 0,
+      life: 0.2,
+      size: 25,
+      color: const Color(0xAAFFFFFF),
+      shape: _ParticleShape.star,
+    ));
+
     return effect;
   }
 

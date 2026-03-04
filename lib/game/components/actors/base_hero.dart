@@ -201,7 +201,7 @@ class BaseHero extends PositionComponent
     required Vector2 position,
     this.level = 1,
   }) : super(
-    size: Vector2.all(96),
+    size: Vector2.all(64),
     position: position,
     anchor: Anchor.center,
     priority: 5,
@@ -358,9 +358,14 @@ class BaseHero extends PositionComponent
   Future<void> _loadHeroSprite() async {
     try {
       final heroName = _getHeroFileName(data.id);
-      final tierNum = _getSkinTierNumber();
-      
-      final imagePath = 'heroes/${heroName}_tier${tierNum}_sprites.png';
+    // 스킨이 장착되어 있으면 스킨 이미지, 아니면 진화 이미지
+    final skinTier = _getSkinTierNumber();
+    final evoTier = _getTierNumber(currentTier);
+    final hasSkin = skinTier > 1; // common(1) 이상이면 스킨 장착
+    
+    final imagePath = hasSkin
+        ? 'heroes/${heroName}_tier${skinTier}_sprites.png'
+        : 'heroes/${heroName}_evo${evoTier}_sprites.png';
       final image = await game.images.load(imagePath);
       
       // 단일 이미지 전체가 1장의 캐릭터

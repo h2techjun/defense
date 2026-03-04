@@ -28,6 +28,7 @@ import '../../data/game_data_loader.dart';
 import '../../data/models/hero_data.dart';
 import '../../data/models/story_data.dart';
 import '../../l10n/app_strings.dart';
+import '../common/hero_sprite_viewer.dart';
 import '../../services/save_manager.dart';
 import '../../game/components/actors/base_hero.dart';
 import '../../state/skin_provider.dart';
@@ -782,15 +783,11 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
 
 
               child: ClipOval(
-                child: Image.asset(
-                  'assets/images/portraits/portrait_${_getHeroFileName(hero.id)}.png',
+                child: HeroSpriteViewer(
+                  imagePath: 'assets/images/heroes/${_getHeroFileName(hero.id)}_tier1_sprites.png',
                   width: 40 * Responsive.scale(context),
                   height: 40 * Responsive.scale(context),
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Text(
-                    _getHeroEmoji(hero.id),
-                    style: TextStyle(fontSize: 20 * Responsive.scale(context)),
-                  ),
+                  fallbackText: _getHeroEmoji(hero.id),
                 ),
               ),
             ),
@@ -948,8 +945,12 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
             SizedBox(height: 16 * Responsive.scale(context)),
 
             // 장착된 스킨 프리뷰 (스킨상점 카드 스타일)
-            _buildEquippedSkinCard(hero, color, skinState),
-            SizedBox(height: 16 * Responsive.scale(context)),
+          _buildEquippedSkinCard(hero, color, skinState),
+          SizedBox(height: 16 * Responsive.scale(context)),
+
+          // 스킨 외형 미리보기 (코스메틱)
+          _buildSkinPreviewSection(hero, color),
+          SizedBox(height: 16 * Responsive.scale(context)),
 
             // 진화 단계 선택
             _buildEvolutionTabs(hero, color),
@@ -1146,15 +1147,11 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
 
 
               child: ClipOval(
-                child: Image.asset(
-                  'assets/images/portraits/portrait_${_getHeroFileName(hero.id)}.png',
+                child: HeroSpriteViewer(
+                  imagePath: 'assets/images/heroes/${_getHeroFileName(hero.id)}_tier1_sprites.png',
                   width: 72 * Responsive.scale(context),
                   height: 72 * Responsive.scale(context),
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Text(
-                    _getHeroEmoji(hero.id),
-                    style: TextStyle(fontSize: 32 * Responsive.scale(context)),
-                  ),
+                  fallbackText: _getHeroEmoji(hero.id),
                 ),
               ),
             );
@@ -1773,177 +1770,211 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
   /// 진화 단계 탭
 
 
+  /// 진화 단계 탭 (스탯 관련 — 기본/중급/궁극)
   Widget _buildEvolutionTabs(HeroData hero, Color color) {
-
-
     return Row(
-
-
       children: List.generate(hero.evolutions.length, (i) {
-
-
         final evo = hero.evolutions[i];
-
-
         final isSelected = i == _selectedEvolutionIndex;
+        final heroFileName = _getHeroFileName(hero.id);
+        final tierNumber = i + 1;
 
-
-        final tierName = switch (evo.tier) {
-
-
+        // 진화 단계별 스타일
+        final tierColor = switch (evo.tier) {
+          EvolutionTier.base => const Color(0xFF9E9E9E),
+          EvolutionTier.intermediate => const Color(0xFF42A5F5),
+          EvolutionTier.ultimate => const Color(0xFFAB47BC),
+        };
+        final tierLabel = switch (evo.tier) {
           EvolutionTier.base => AppStrings.get(ref.watch(gameLanguageProvider), 'evo_base'),
-
-
           EvolutionTier.intermediate => AppStrings.get(ref.watch(gameLanguageProvider), 'evo_intermediate'),
-
-
           EvolutionTier.ultimate => AppStrings.get(ref.watch(gameLanguageProvider), 'evo_ultimate'),
-
-
         };
-
-
-        final tierIcon = switch (evo.tier) {
-
-
-          EvolutionTier.base => '⚪',
-
-
-          EvolutionTier.intermediate => '🔵',
-
-
-          EvolutionTier.ultimate => '🟣',
-
-
+        final tierBadge = switch (evo.tier) {
+          EvolutionTier.base => 'Lv.1',
+          EvolutionTier.intermediate => 'Lv.15',
+          EvolutionTier.ultimate => 'Lv.35',
         };
-
-
-
-
 
         return Expanded(
-
-
           child: GestureDetector(
-
-
             onTap: () => setState(() => _selectedEvolutionIndex = i),
-
-
             child: AnimatedContainer(
-
-
-              duration: const Duration(milliseconds: 200),
-
-
+              duration: const Duration(milliseconds: 250),
               margin: EdgeInsets.only(right: i < hero.evolutions.length - 1 ? 6 : 0),
-
-
-              padding: EdgeInsets.symmetric(vertical: 10 * Responsive.scale(context)),
-
-
+              padding: EdgeInsets.symmetric(vertical: 8 * Responsive.scale(context), horizontal: 4),
               decoration: BoxDecoration(
-
-
                 gradient: isSelected
-
-
                     ? LinearGradient(
-
-
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                         colors: [
-
-
-                          color.withValues(alpha: 0.3),
-
-
-                          color.withValues(alpha: 0.1),
-
-
+                          tierColor.withValues(alpha: 0.35),
+                          tierColor.withValues(alpha: 0.1),
                         ],
-
-
                       )
-
-
                     : null,
-
-
                 color: isSelected ? null : const Color(0x08FFFFFF),
-
-
-                borderRadius: BorderRadius.circular(10),
-
-
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-
-
-                  color: isSelected ? color.withValues(alpha: 0.5) : const Color(0x22FFFFFF),
-
-
+                  color: isSelected ? tierColor.withValues(alpha: 0.6) : const Color(0x22FFFFFF),
+                  width: isSelected ? 1.5 : 1,
                 ),
-
-
+                boxShadow: isSelected
+                    ? [BoxShadow(color: tierColor.withValues(alpha: 0.2), blurRadius: 8, spreadRadius: 1)]
+                    : null,
               ),
-
-
               child: Column(
-
-
+                mainAxisSize: MainAxisSize.min,
                 children: [
-
-
-                  Text(tierIcon, style: TextStyle(fontSize: Responsive.fontSize(context, 14))),
-
-
-                  const SizedBox(height: 2),
-
-
-                  Text(
-
-
-                    tierName,
-
-
-                    style: TextStyle(
-
-
-                      fontSize: Responsive.fontSize(context, 11),
-
-
-                      color: isSelected ? Colors.white : Colors.white54,
-
-
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-
-
+                  // 스프라이트 미리보기 (원형)
+                  Container(
+                    width: 40 * Responsive.scale(context),
+                    height: 40 * Responsive.scale(context),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected ? tierColor : tierColor.withValues(alpha: 0.3),
+                        width: isSelected ? 2 : 1,
+                      ),
+                      boxShadow: isSelected && evo.tier == EvolutionTier.ultimate
+                          ? [BoxShadow(color: tierColor.withValues(alpha: 0.5), blurRadius: 10)]
+                          : null,
                     ),
-
-
+                    child: ClipOval(
+                      child: HeroSpriteViewer(
+                        imagePath: 'assets/images/heroes/${heroFileName}_evo${tierNumber}_sprites.png',
+                        width: 40 * Responsive.scale(context),
+                        height: 40 * Responsive.scale(context),
+                        fallbackText: evo.tier == EvolutionTier.base ? '⚪' : evo.tier == EvolutionTier.intermediate ? '🔵' : '🟣',
+                      ),
+                    ),
                   ),
-
-
+                  const SizedBox(height: 4),
+                  // 이름
+                  Text(
+                    tierLabel,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 10),
+                      color: isSelected ? Colors.white : Colors.white54,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  // 레벨 뱃지
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: tierColor.withValues(alpha: isSelected ? 0.25 : 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      tierBadge,
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 8),
+                        color: isSelected ? tierColor : Colors.white38,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ],
-
-
               ),
-
-
             ),
-
-
           ),
-
-
         );
-
-
       }),
-
-
     );
+  }
 
+  /// 스킨 미리보기 섹션 (코스메틱 — 기본/정제/명작/전설)
+  Widget _buildSkinPreviewSection(HeroData hero, Color color) {
+    final heroFileName = _getHeroFileName(hero.id);
+    final skins = SkinRarity.values;
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 섹션 헤더
+        Row(
+          children: [
+            Text(
+              '🎨 ${AppStrings.get(ref.watch(gameLanguageProvider), 'skin_preview')}',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 14),
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8 * Responsive.scale(context)),
+        // 스킨 카드 4개 가로 배치
+        Row(
+          children: List.generate(skins.length, (i) {
+            final rarity = skins[i];
+            final tierNumber = i + 1;
+
+            return Expanded(
+              child: Container(
+                margin: EdgeInsets.only(right: i < skins.length - 1 ? 6 : 0),
+                padding: EdgeInsets.symmetric(vertical: 8 * Responsive.scale(context)),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      rarity.color.withValues(alpha: 0.15),
+                      rarity.color.withValues(alpha: 0.03),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: rarity.color.withValues(alpha: 0.3)),
+                  boxShadow: rarity.hasGlow
+                      ? [BoxShadow(color: rarity.color.withValues(alpha: 0.2), blurRadius: 8)]
+                      : null,
+                ),
+                child: Column(
+                  children: [
+                    // 스프라이트
+                    Container(
+                      width: 36 * Responsive.scale(context),
+                      height: 36 * Responsive.scale(context),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: rarity.hasBorder
+                            ? Border.all(color: rarity.color, width: 1.5)
+                            : null,
+                        boxShadow: rarity.hasGlow
+                            ? [BoxShadow(color: rarity.color.withValues(alpha: 0.5), blurRadius: 8)]
+                            : null,
+                      ),
+                      child: ClipOval(
+                        child: HeroSpriteViewer(
+                          imagePath: 'assets/images/heroes/${heroFileName}_tier${tierNumber}_sprites.png',
+                          width: 36 * Responsive.scale(context),
+                          height: 36 * Responsive.scale(context),
+                          fallbackText: rarity.emoji,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // 등급 이름
+                    Text(
+                      rarity.displayName,
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 9),
+                        color: rarity.color,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ),
+      ],
+    );
   }
 
 

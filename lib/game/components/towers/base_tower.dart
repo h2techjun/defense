@@ -130,7 +130,7 @@ class BaseTower extends PositionComponent
     this.externalLevel = 1,
   }) : super(
     // 타일 크기보다 약간 작게
-    size: Vector2.all(GameConstants.tileSize * 0.8),
+    size: Vector2.all(GameConstants.tileSize * 1.0),
     position: position,
     anchor: Anchor.center,
   );

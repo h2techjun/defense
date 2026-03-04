@@ -367,17 +367,79 @@ class GlassPanel extends StatelessWidget {
 
 ---
 
+### AP-027: gh-pages 배포 시 빌드 파일이 서브폴더에 배치되는 오류
+
+**문제**: `git clone --branch gh-pages` → 빌드 복사 → `git push origin HEAD:gh-pages -f`로 배포 시, 빌드 파일이 gh-pages 브랜치의 **루트가 아닌 서브폴더**(`gh-pages-deploy/`)에 들어가서 GitHub Pages에서 404 발생
+**근본원인**: main 브랜치 커밋 히스토리를 가진 클론 폴더에서 push하면, 로컬 `main` 브랜치의 구조가 그대로 gh-pages에 반영됨
+**해결**: **orphan 브랜치 전략** 사용 — 히스토리 없는 깨끗한 브랜치에 빌드 파일만 커밋
+
+```powershell
+# ✅ 올바른 gh-pages 배포 방법
+mkdir gh-pages-clean; cd gh-pages-clean
+git init; git checkout --orphan gh-pages
+Copy-Item -Recurse -Force ..\build\web\* .
+git add .; git commit -m "deploy: clean build"
+git remote add origin <REPO_URL>
+git push origin gh-pages -f
+```
+
+**감지**: `gh-pages` 브랜치에 `lib/`, `pubspec.yaml` 등 소스 파일이 존재하거나, `index.html`이 서브폴더 안에 있을 때
+**실제 사례**: 해원의 문 GitHub Pages 배포 실패 3회 반복 (2026-03-03)
+
+---
+
+### AP-028: 커밋 전 git restore로 로컬 변경 유실
+
+**문제**: 파일 복원 목적으로 `git restore`를 실행했더니, 아직 커밋하지 않은 다른 파일의 코드 변경까지 함께 롤백되어 작업물이 영구 소실
+**근본원인**: `git restore`는 워킹 디렉토리의 변경을 **되돌릴 수 없게** 삭제함. 커밋/스태시 없는 변경은 복구 불가
+**해결**: 
+1. `git restore` 실행 전에 반드시 `git stash` 또는 `git commit`으로 현재 변경 보호
+2. 특정 파일만 복원: `git restore -- <specific-file>` (전체 restore 금지)
+
+```powershell
+# ❌ Bad: 커밋 안 한 상태에서 전체 restore
+git restore .
+
+# ✅ Good: 먼저 스태시 후 필요한 파일만 복원
+git stash
+git restore -- specific_missing_file.dart
+git stash pop
+```
+
+**감지**: `git restore` 명령 사용 시 "커밋되지 않은 변경이 있습니다" 경고 자동 발생
+**실제 사례**: hero_manage_screen.dart의 HeroSpriteViewer 적용 및 ko.json 번역 키 추가가 유실 (2026-03-03)
+
+---
+
 ## 📊 통계
 
 ### 자주 발생하는 실수 (Top 5)
 
 1. 무한 재시도 (AP-011): 빈도 높음
 2. 컨텍스트 미확인 (AP-012): 빈도 높음
-3. 반복 래핑 수작업 (AP-023): UI작업 시 빈도 높음
-4. 크로마키 배경 투명화 (AP-026): 그래픽 작업 시 빈도 높음 ⭐ NEW
-5. Riverpod Build() 상태 변이 (AP-025): 라이프사이클 에러 빈도 높음
+3. gh-pages 서브폴더 배포 (AP-027): 배포 작업 시 빈도 높음
+4. 커밋 전 git restore 유실 (AP-028): 복원 작업 시 빈도 높음
+5. 크로마키 배경 투명화 (AP-026): 그래픽 작업 시 빈도 높음
 
-**마지막 업데이트**: 2026-03-03 (v4.4 — AP-026 추가, 그래픽 파이프라인 규칙 신설)
+---
+
+### AP-029: 번역 키에 잘못된 값 복붙
+
+**문제**: `ko.json`의 `evo_base/intermediate/ultimate` 키에 "스킨 기본/스킨 정제/스킨 명작"이라는 스킨 이름을 복붙하여, 진화 탭에 스킨 이름이 표시됨
+**근본원인**: 번역 키 추가 시 맥락 없이 기존 값을 복사해서 붙여넣기
+**해결**: 번역 키 추가 후 해당 화면에서 실제 표시값을 반드시 검증. 키 이름과 값의 의미적 일치 확인
+**감지**: `evo_` 접두사 키에 `스킨` 단어 포함, 또는 번역 키와 값의 도메인 불일치 시 경고
+
+---
+
+### AP-030: 게임 시스템 간 에셋 공유 설계 누락
+
+**문제**: 진화(스탯)와 스킨(코스메틱) 시스템이 동일한 `_tierN_sprites.png` 에셋을 공유하여, UI에서 두 섹션이 중복처럼 보임
+**근본원인**: 시스템 설계 시 에셋 독립성을 고려하지 않음
+**해결**: 시스템별 에셋 네이밍 컨벤션 분리 (`_evoN` vs `_tierN`), 시스템 설계 시 에셋 의존 관계를 명시적으로 문서화
+**감지**: 두 개 이상의 독립 게임 시스템이 동일 에셋 경로를 참조할 때 경고
+
+**마지막 업데이트**: 2026-03-04 (v4.6 — AP-029, AP-030 추가, 번역/에셋 안티패턴)
 
 ---
 
