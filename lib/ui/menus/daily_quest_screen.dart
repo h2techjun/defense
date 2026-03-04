@@ -92,10 +92,12 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                       SizedBox(height: 16 * s),
 
                       // ── 보너스 미션 ──
-                      if (questState.bonusQuest != null) ...[
+                      if (questState.bonusQuests.isNotEmpty) ...[
                         _buildSectionTitle('⭐ 보너스 미션', s),
                         SizedBox(height: 8 * s),
-                        _buildQuestCard(context, ref, questState, questState.bonusQuest!, true, s),
+                        ...questState.bonusQuests.map(
+                          (q) => _buildQuestCard(context, ref, questState, q, true, s),
+                        ),
                         SizedBox(height: 16 * s),
                       ],
 
@@ -597,7 +599,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                   ? '수령 완료!'
                   : isReady
                       ? '탭하여 수령하세요!'
-                      : '일일 미션 3개를 모두 완료하세요',
+                      : '메인 미션 6개를 모두 완료하세요',
               style: TextStyle(
                 color: isClaimed ? Colors.green.shade300 : Colors.white60,
                 fontSize: 12 * s,

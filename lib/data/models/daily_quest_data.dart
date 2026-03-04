@@ -135,10 +135,10 @@ const List<DailyQuest> _questPool = [
   DailyQuest(id: 'q_kill_boss3', type: QuestType.killBoss,         description: '보스 몬스터 3마리 처치',   targetValue: 3,   rewardPassXp: 45, rewardGold: 1200, rewardGems: 2), // 신규 추가
 ];
 
-/// 올클리어 보너스 보상
-const int allClearBonusGems = 5;
-const int allClearBonusPassXp = 30;
-const int allClearBonusGold = 1000;
+/// 올클리어 보너스 보상 (8개 전부 완료 시)
+const int allClearBonusGems = 8;
+const int allClearBonusPassXp = 50;
+const int allClearBonusGold = 1500;
 
 /// 일일 미션 생성기
 class DailyQuestGenerator {
@@ -156,7 +156,29 @@ class DailyQuestGenerator {
     return v;
   }
 
-  /// 오늘의 미션 3개 + 보너스 1개 생성
+  /// 쉬운 풀에서 N개 뽑기 (타입 중복 방지)
+  static void _pickFromPool(
+    List<DailyQuest> pool,
+    int count,
+    int seed,
+    int seedOffset,
+    List<DailyQuest> result,
+    Set<QuestType> usedTypes,
+  ) {
+    for (int n = 0; n < count; n++) {
+      final startIdx = _seededRandom(seed, seedOffset + n) % pool.length;
+      for (int i = 0; i < pool.length; i++) {
+        final candidate = pool[(startIdx + i) % pool.length];
+        if (!usedTypes.contains(candidate.type)) {
+          result.add(candidate);
+          usedTypes.add(candidate.type);
+          break;
+        }
+      }
+    }
+  }
+
+  /// 오늘의 미션 8개 생성 (쉬운4 + 중간2 + 어려운2)
   static List<DailyQuest> generateForDate(DateTime date) {
     final seed = _dateToSeed(date);
 
@@ -170,40 +192,19 @@ class DailyQuestGenerator {
     final result = <DailyQuest>[];
     final usedTypes = <QuestType>{};
 
-    // 미션 1: 쉬운 미션에서 1개
-    final easy1Idx = _seededRandom(seed, 0) % easyPool.length;
-    result.add(easyPool[easy1Idx]);
-    usedTypes.add(easyPool[easy1Idx].type);
+    // 쉬운 미션 4개
+    _pickFromPool(easyPool, 4, seed, 0, result, usedTypes);
 
-    // 미션 2: 쉬운 미션에서 1개 (중복 타입 방지)
-    var easy2Idx = _seededRandom(seed, 1) % easyPool.length;
-    for (int i = 0; i < easyPool.length; i++) {
-      final candidate = easyPool[(easy2Idx + i) % easyPool.length];
-      if (!usedTypes.contains(candidate.type)) {
-        result.add(candidate);
-        usedTypes.add(candidate.type);
-        break;
-      }
-    }
+    // 중간 미션 2개
+    _pickFromPool(mediumPool, 2, seed, 10, result, usedTypes);
 
-    // 미션 3: 중간 미션에서 1개
-    final med1Idx = _seededRandom(seed, 2) % mediumPool.length;
-    for (int i = 0; i < mediumPool.length; i++) {
-      final candidate = mediumPool[(med1Idx + i) % mediumPool.length];
-      if (!usedTypes.contains(candidate.type)) {
-        result.add(candidate);
-        usedTypes.add(candidate.type);
-        break;
-      }
-    }
+    // 어려운(보너스) 미션 2개
+    _pickFromPool(hardPool, 2, seed, 20, result, usedTypes);
 
-    // 보너스 미션: 어려운 미션에서 1개
-    final hardIdx = _seededRandom(seed, 3) % hardPool.length;
-    result.add(hardPool[hardIdx]);
-
-    // 최소 4개 보장 (중복 방지 실패 시 폴백)
-    while (result.length < 4) {
-      result.add(easyPool[_seededRandom(seed, 10 + result.length) % easyPool.length]);
+    // 최소 8개 보장 (중복 방지 실패 시 폴백)
+    while (result.length < 8) {
+      final fallbackIdx = _seededRandom(seed, 30 + result.length) % easyPool.length;
+      result.add(easyPool[fallbackIdx]);
     }
 
     return result;

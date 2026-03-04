@@ -1,8 +1,10 @@
 // 해원의 문 - 사운드 매니저
-// mp3 파일 효과음 + Web Audio 합성 하이브리드
-// FlameAudio로 mp3 재생, Web Audio로 폴백 합성
+// mp3/wav 파일 효과음 + Web Audio 합성 하이브리드
+// FlameAudio로 mp3/wav 재생, Web Audio로 폴백 합성
+// BGM: AI 생성(Lyria RealTime) 10곡 셔플 재생
 
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'audio_synth_stub.dart'
@@ -67,15 +69,33 @@ class SoundManager {
   bool _initialized = false;
   BgmType? _currentBgm;
   Timer? _bgmLoopTimer;
-  bool _useFileBgm = false;  // mp3 BGM 사용 여부
+  bool _useFileBgm = false;  // 파일 BGM 사용 여부
+  final Random _rng = Random();
 
-  /// BGM 파일 매핑 — BgmType → mp3 파일명
-  static const Map<BgmType, String> _bgmFileMap = {
-    BgmType.menu: 'bgm/joseon_trap_uprising.mp3',
-    BgmType.dayBgm: 'bgm/Joseon Trap Uprising-1.mp3',
-    BgmType.nightBgm: 'bgm/검은 깃발.mp3',
-    BgmType.boss: 'bgm/검은 깃발.mp3',
+  /// AI 생성 BGM 트랙 목록 (Lyria RealTime 10곡)
+  static const List<String> _bgmTracks = [
+    'bgm/joseon_kpop_battle.wav',
+    'bgm/spirit_realm_ambience.wav',
+    'bgm/tower_defense_hype.wav',
+    'bgm/moonlit_strategy.wav',
+    'bgm/boss_wave_fury.wav',
+    'bgm/folk_village_peace.wav',
+    'bgm/neon_hanbok_groove.wav',
+    'bgm/dark_shaman_ritual.wav',
+    'bgm/victory_celebration.wav',
+    'bgm/ancient_gateway_epic.wav',
+  ];
+
+  /// BgmType별 추천 트랙 인덱스 (분위기 매칭)
+  static const Map<BgmType, List<int>> _bgmTypePreferred = {
+    BgmType.menu: [5, 1, 9, 3],       // 평화로운/서사적
+    BgmType.dayBgm: [0, 2, 6, 8],     // 활기찬/전투
+    BgmType.nightBgm: [1, 3, 7, 9],   // 어둡고/몽환적
+    BgmType.boss: [4, 0, 7, 2],       // 격렬한/긴박
   };
+
+  /// 최근 재생한 트랙 인덱스 (중복 방지)
+  int _lastBgmIndex = -1;
 
   /// SFX 파일 매핑 — SfxType → mp3/wav 파일명
   static const Map<SfxType, String> _sfxFileMap = {
@@ -172,13 +192,11 @@ class SoundManager {
           'sfx/branch_thunder.wav',
           'sfx/branch_fire.wav',
           'sfx/branch_grapple.wav',
-          // BGM
-          'bgm/joseon_trap_uprising.mp3',
-          'bgm/Joseon Trap Uprising-1.mp3',
-          'bgm/검은 깃발.mp3',
+          // BGM (AI 생성 10곡)
+          ..._bgmTracks,
         ]);
         _useFileBgm = true;
-        if (kDebugMode) debugPrint('🎵 mp3 에셋 로드 완료');
+        if (kDebugMode) debugPrint('🎵 오디오 에셋 로드 완료 (BGM ${_bgmTracks.length}곡)');
       } catch (e) {
         if (kDebugMode) debugPrint('⚠️ mp3 로드 실패 (합성 폴백 사용): $e');
       }
@@ -485,12 +503,19 @@ class SoundManager {
     }
   }
 
-  /// mp3 파일 BGM 재생 (루프)
+  /// BGM 파일 재생 — BgmType에 맞는 추천곡 중 랜덤 선택
   void _playFileBgm() {
-    final bgmFile = _bgmFileMap[_currentBgm] ?? 'bgm/joseon_trap_uprising.mp3';
+    final preferred = _bgmTypePreferred[_currentBgm] ?? [0, 1, 2, 3];
+    // 최근 곡과 다른 곡 선택
+    final candidates = preferred.where((i) => i != _lastBgmIndex).toList();
+    final idx = candidates.isNotEmpty
+        ? candidates[_rng.nextInt(candidates.length)]
+        : preferred[_rng.nextInt(preferred.length)];
+    _lastBgmIndex = idx;
+    final bgmFile = _bgmTracks[idx];
     try {
       FlameAudio.bgm.play(bgmFile, volume: _bgmVolume);
-      if (kDebugMode) debugPrint('🎵 BGM 재생: $bgmFile');
+      if (kDebugMode) debugPrint('🎵 BGM 재생: $bgmFile (${_currentBgm?.name})');
     } catch (e) {
       if (kDebugMode) debugPrint('⚠️ BGM 파일 재생 실패: $e');
       // 폴백: 합성 BGM

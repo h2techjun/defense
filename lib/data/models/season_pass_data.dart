@@ -64,11 +64,12 @@ class SeasonInfo {
     required this.rewards,
   });
 
-  /// 레벨별 필요 XP (점진적 증가: 60 + level × 3)
-  /// Lv1=63, Lv10=90, Lv25=135, Lv40=180, Lv50=210
-  int xpForLevel(int level) => 60 + (level * 3);
+  /// 레벨별 필요 XP (점진적 증가: 80 + level × 5)
+  /// Lv1=85, Lv10=130, Lv25=205, Lv40=280, Lv50=330
+  /// 총 필요 XP ≈ 10,225 (55일 만렙 목표, 20시즌 장기 운영 대비)
+  int xpForLevel(int level) => 80 + (level * 5);
 
-  /// 전체 필요 XP 합계 (Lv1→50 = 약 6,825)
+  /// 전체 필요 XP 합계 (Lv1→50 ≈ 10,225)
   int get totalXpRequired {
     int total = 0;
     for (int i = 1; i < maxLevel; i++) {

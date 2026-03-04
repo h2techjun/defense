@@ -249,10 +249,11 @@ class SaveManager {
 
   // ── 유물 시스템 ──
 
-  /// 유물 상태 저장 (잠금해제 + 영웅별 장착)
+  /// 유물 상태 저장 (잠금해제 + 영웅별 장착 + 강화 레벨)
   Future<void> saveRelics({
     required Set<RelicId> unlockedRelics,
     required Map<HeroId, RelicId?> equippedRelics,
+    Map<RelicId, int> relicLevels = const {},
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final data = {
@@ -260,6 +261,7 @@ class SaveManager {
       'equipped': equippedRelics.map(
         (heroId, relicId) => MapEntry(heroId.name, relicId?.name),
       ),
+      'levels': relicLevels.map((k, v) => MapEntry(k.name, v)),
     };
     await prefs.setString(_keyRelicData, jsonEncode(data));
   }
@@ -303,9 +305,20 @@ class SaveManager {
         }
       }
 
+      // 강화 레벨 파싱
+      final rawLevels = (data['levels'] as Map<String, dynamic>?) ?? {};
+      final levels = <RelicId, int>{};
+      for (final entry in rawLevels.entries) {
+        try {
+          final relicId = RelicId.values.firstWhere((r) => r.name == entry.key);
+          levels[relicId] = (entry.value as num).toInt();
+        } catch (_) {}
+      }
+
       return {
         'unlocked': unlocked,
         'equipped': equipped,
+        'levels': levels,
       };
     } catch (e) {
       print('[SAVE] 유물 데이터 파싱 오류: $e');

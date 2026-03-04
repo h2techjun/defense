@@ -12,7 +12,7 @@ import 'summon_provider.dart';
 /// 일일 미션 상태
 class DailyQuestState {
   final String questDate;                    // "2026-02-24" 형식
-  final List<DailyQuest> quests;             // 오늘의 미션 4개 (3+보너스1)
+  final List<DailyQuest> quests;             // 오늘의 미션 8개 (메인6+보너스2)
   final Map<String, int> progress;           // questId → 현재 진행도
   final Set<String> claimed;                 // 보상 수령한 미션 ID
   final bool allClearClaimed;                // 올클리어 보너스 수령 여부
@@ -53,11 +53,11 @@ class DailyQuestState {
     );
   }
 
-  /// 일반 미션 3개 (보너스 제외)
-  List<DailyQuest> get mainQuests => quests.length > 3 ? quests.sublist(0, 3) : quests;
+  /// 메인 미션 6개 (쉬운4 + 중간2)
+  List<DailyQuest> get mainQuests => quests.length > 6 ? quests.sublist(0, 6) : quests;
 
-  /// 보너스 미션 (4번째)
-  DailyQuest? get bonusQuest => quests.length > 3 ? quests[3] : null;
+  /// 보너스 미션 2개 (어려운)
+  List<DailyQuest> get bonusQuests => quests.length > 6 ? quests.sublist(6) : [];
 
   /// 미션 완료 여부
   bool isCompleted(String questId) {
