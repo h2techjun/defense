@@ -952,6 +952,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           const popupWidth = 240.0;
                           const popupHeight = 200.0; // 예상 높이
                           const gap = 8.0;
+                          const bottomPadding = 100.0; // 하단 타워 선택 패널 영역
+                          const topPadding = 50.0; // 상단 HUD 영역
 
                           // 좌우 위치: 타워 중심 기준
                           final left = (_tappedTowerScreenPos.dx - popupWidth / 2)
@@ -961,9 +963,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           final bool showAbove = _tappedTowerScreenPos.dy > screenSize.height * 0.55;
                           final top = showAbove
                               ? (_tappedTowerScreenPos.dy - _tappedTowerHeight / 2 - popupHeight - gap)
-                                  .clamp(8.0, screenSize.height - popupHeight - 8)
+                                  .clamp(topPadding, screenSize.height - popupHeight - bottomPadding)
                               : (_tappedTowerScreenPos.dy + _tappedTowerHeight / 2 + gap)
-                                  .clamp(8.0, screenSize.height - popupHeight - 8);
+                                  .clamp(topPadding, screenSize.height - popupHeight - bottomPadding);
 
                           return Positioned(
                             left: left,
@@ -1143,8 +1145,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             // ── 영웅 스킬 패널 (우측 하단) ──
             _buildHeroSkillPanel(),
 
-            // ── 호버 툴팁 ──
-            if (_tooltipData != null && !_showTutorial)
+            // ── 호버 툴팁 (타워 업그레이드 팝업 열려있으면 숨김) ──
+            if (_tooltipData != null && !_showTutorial && _tappedTower == null)
               GameTooltip(
                 data: _tooltipData!,
                 position: _mousePosition,
