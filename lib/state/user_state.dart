@@ -25,7 +25,7 @@ class UserState {
     this.highestChapter = 1,
     this.highestLevel = 1,
     this.totalStars = 0,
-    this.gems = 100,         // 초기 보석 100개
+    this.gems = 1000,         // 초기 보석 1000개
     this.gold = 1000,        // 초기 골드 1000개
     this.membershipPoints = 0, // 초기 멤버십 포인트
     this.isPremium = false,
@@ -94,7 +94,7 @@ class UserState {
       highestChapter: (json['highestChapter'] as num?)?.toInt() ?? 1,
       highestLevel: (json['highestLevel'] as num?)?.toInt() ?? 1,
       totalStars: (json['totalStars'] as num?)?.toInt() ?? 0,
-      gems: (json['gems'] as num?)?.toInt() ?? 100,
+      gems: (json['gems'] as num?)?.toInt() ?? 1000,
       gold: (json['gold'] as num?)?.toInt() ?? 1000,
       membershipPoints: (json['membershipPoints'] as num?)?.toInt() ?? 0,
       isPremium: json['isPremium'] as bool? ?? false,
