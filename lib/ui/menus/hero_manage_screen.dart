@@ -39,6 +39,7 @@ import '../../state/skin_provider.dart';
 
 
 import '../../data/models/skin_data.dart';
+import '../../audio/sound_manager.dart';
 
 
 import '../theme/app_colors.dart';
@@ -949,7 +950,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           SizedBox(height: 16 * Responsive.scale(context)),
 
           // 스킨 외형 미리보기 (코스메틱)
-          _buildSkinPreviewSection(hero, color),
+          _buildSkinPreviewSection(hero, color, skinState),
           SizedBox(height: 16 * Responsive.scale(context)),
 
             // 진화 단계 선택
@@ -1887,9 +1888,12 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
   }
 
   /// 스킨 미리보기 섹션 (코스메틱 — 기본/정제/명작/전설)
-  Widget _buildSkinPreviewSection(HeroData hero, Color color) {
+  /// 탭하여 보유 스킨 장착 가능, 장착 중인 스킨 하이라이트
+  Widget _buildSkinPreviewSection(HeroData hero, Color color, SkinState skinState) {
     final heroFileName = _getHeroFileName(hero.id);
-    final skins = SkinRarity.values;
+    final rarities = SkinRarity.values;
+    final heroSkins = getSkinsForHero(hero.id);
+    final equippedSkinId = skinState.equippedSkins[hero.id];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1910,64 +1914,130 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
         SizedBox(height: 8 * Responsive.scale(context)),
         // 스킨 카드 4개 가로 배치
         Row(
-          children: List.generate(skins.length, (i) {
-            final rarity = skins[i];
+          children: List.generate(rarities.length, (i) {
+            final rarity = rarities[i];
             final tierNumber = i + 1;
 
+            // 이 등급에 해당하는 스킨 찾기
+            final skinForRarity = heroSkins
+                .where((s) => s.rarity == rarity)
+                .firstOrNull;
+            final skinId = skinForRarity?.id;
+            final isOwned = skinId != null && skinState.ownedSkins.contains(skinId);
+            final isEquipped = skinId != null && skinId == equippedSkinId;
+
             return Expanded(
-              child: Container(
-                margin: EdgeInsets.only(right: i < skins.length - 1 ? 6 : 0),
-                padding: EdgeInsets.symmetric(vertical: 8 * Responsive.scale(context)),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      rarity.color.withValues(alpha: 0.15),
-                      rarity.color.withValues(alpha: 0.03),
-                    ],
+              child: GestureDetector(
+                onTap: () {
+                  if (isOwned && skinId != null && !isEquipped) {
+                    ref.read(skinProvider.notifier).equipSkin(hero.id, skinId);
+                    SoundManager.instance.playSfx(SfxType.uiClick);
+                  }
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: EdgeInsets.only(right: i < rarities.length - 1 ? 6 : 0),
+                  padding: EdgeInsets.symmetric(vertical: 8 * Responsive.scale(context)),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: isEquipped
+                          ? [
+                              rarity.color.withValues(alpha: 0.35),
+                              rarity.color.withValues(alpha: 0.12),
+                            ]
+                          : [
+                              rarity.color.withValues(alpha: 0.15),
+                              rarity.color.withValues(alpha: 0.03),
+                            ],
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isEquipped
+                          ? rarity.color.withValues(alpha: 0.8)
+                          : rarity.color.withValues(alpha: 0.3),
+                      width: isEquipped ? 2.0 : 1.0,
+                    ),
+                    boxShadow: isEquipped
+                        ? [BoxShadow(color: rarity.color.withValues(alpha: 0.4), blurRadius: 10)]
+                        : rarity.hasGlow
+                            ? [BoxShadow(color: rarity.color.withValues(alpha: 0.2), blurRadius: 8)]
+                            : null,
                   ),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: rarity.color.withValues(alpha: 0.3)),
-                  boxShadow: rarity.hasGlow
-                      ? [BoxShadow(color: rarity.color.withValues(alpha: 0.2), blurRadius: 8)]
-                      : null,
-                ),
-                child: Column(
-                  children: [
-                    // 스프라이트
-                    Container(
-                      width: 36 * Responsive.scale(context),
-                      height: 36 * Responsive.scale(context),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: rarity.hasBorder
-                            ? Border.all(color: rarity.color, width: 1.5)
-                            : null,
-                        boxShadow: rarity.hasGlow
-                            ? [BoxShadow(color: rarity.color.withValues(alpha: 0.5), blurRadius: 8)]
-                            : null,
-                      ),
-                      child: ClipOval(
-                        child: HeroSpriteViewer(
-                          imagePath: 'assets/images/heroes/${heroFileName}_tier${tierNumber}_sprites.png',
-                          width: 36 * Responsive.scale(context),
-                          height: 36 * Responsive.scale(context),
-                          fallbackText: rarity.emoji,
+                  child: Stack(
+                    children: [
+                      // 메인 콘텐츠
+                      Opacity(
+                        opacity: isOwned ? 1.0 : 0.4,
+                        child: Column(
+                          children: [
+                            // 스프라이트
+                            Container(
+                              width: 36 * Responsive.scale(context),
+                              height: 36 * Responsive.scale(context),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: rarity.hasBorder
+                                    ? Border.all(color: rarity.color, width: 1.5)
+                                    : null,
+                                boxShadow: rarity.hasGlow
+                                    ? [BoxShadow(color: rarity.color.withValues(alpha: 0.5), blurRadius: 8)]
+                                    : null,
+                              ),
+                              child: ClipOval(
+                                child: HeroSpriteViewer(
+                                  imagePath: 'assets/images/heroes/${heroFileName}_tier${tierNumber}_sprites.png',
+                                  width: 36 * Responsive.scale(context),
+                                  height: 36 * Responsive.scale(context),
+                                  fallbackText: rarity.emoji,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            // 등급 이름
+                            Text(
+                              rarity.displayName,
+                              style: TextStyle(
+                                fontSize: Responsive.fontSize(context, 9),
+                                color: isEquipped ? Colors.white : rarity.color,
+                                fontWeight: isEquipped ? FontWeight.bold : FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    // 등급 이름
-                    Text(
-                      rarity.displayName,
-                      style: TextStyle(
-                        fontSize: Responsive.fontSize(context, 9),
-                        color: rarity.color,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+                      // 장착 중 체크마크
+                      if (isEquipped)
+                        Positioned(
+                          top: 0,
+                          right: 4,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: rarity.color,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.check,
+                              size: 10 * Responsive.scale(context),
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      // 미보유 잠금 아이콘
+                      if (!isOwned)
+                        Positioned.fill(
+                          child: Center(
+                            child: Icon(
+                              Icons.lock_outline,
+                              size: 18 * Responsive.scale(context),
+                              color: Colors.white.withValues(alpha: 0.5),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             );
