@@ -29,6 +29,7 @@ import 'ui/menus/achievement_screen.dart';
 import 'ui/menus/package_shop_screen.dart';
 import 'ui/menus/daily_quest_screen.dart';
 import 'state/daily_quest_provider.dart';
+import 'state/skin_provider.dart';
 import 'ui/menus/lore_collection_screen.dart';
 import 'state/endless_tower_provider.dart';
 import 'ui/hud/game_hud.dart';
@@ -168,6 +169,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       debugPrint('🚀 [GameScreen] 세이브 데이터 로드 시작');
       await ref.read(userStateProvider.notifier).loadFromSave();
       await ref.read(dailyQuestProvider.notifier).loadFromSave();
+      await ref.read(skinProvider.notifier).loadFromSave();
       debugPrint('🚀 [GameScreen] 세이브 데이터 로드 완료');
     });
   }
