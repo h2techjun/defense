@@ -48,7 +48,7 @@ class BarkBubble extends PositionComponent {
     super.render(canvas);
     if (_opacity <= 0) return;
 
-    const maxWidth = 140.0;
+    const maxWidth = 160.0;
     const padding = 6.0;
     const borderRadius = 8.0;
     const tailHeight = 6.0;
@@ -59,7 +59,7 @@ class BarkBubble extends PositionComponent {
         text: text,
         style: TextStyle(
           color: Colors.white.withOpacity(_opacity),
-          fontSize: 10,
+          fontSize: 12,
           fontWeight: FontWeight.w600,
           height: 1.2,
         ),

@@ -3,6 +3,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../common/responsive.dart';
 import '../theme/app_colors.dart';
 
 /// 웨이브 안내 배너 — HUD 위에 오버레이
@@ -85,8 +86,11 @@ class _WaveAnnounceBannerState extends State<WaveAnnounceBanner>
       },
       child: Center(
         child: Container(
-          margin: const EdgeInsets.only(top: 100),
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+          margin: EdgeInsets.only(top: Responsive.spacing(context, 100)),
+          padding: EdgeInsets.symmetric(
+            horizontal: Responsive.spacing(context, 40),
+            vertical: Responsive.spacing(context, 20),
+          ),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isBoss

@@ -33,15 +33,28 @@ class Responsive {
   }
 
   /// 균등 스케일 팩터 (가로/세로 중 작은 것 기준)
+  /// ⚠️ 게임 엔진(Flame) 렌더링용 — 원본 유지!
   static double scale(BuildContext context) {
     final sx = scaleX(context);
     final sy = scaleY(context);
     return (sx < sy ? sx : sy).clamp(0.5, 2.5);
   }
 
-  /// 반응형 폰트 크기
+  /// UI 위젯 전용 스케일 (모바일에서 최소 0.7 보장)
+  /// Flutter HUD/패널/배너 등 UI 위젯에 사용
+  static double uiScale(BuildContext context) {
+    final s = scale(context);
+    return deviceType(context) == DeviceType.phone
+        ? s.clamp(0.7, 2.5)
+        : s;
+  }
+
+  /// 반응형 폰트 크기 (phone에서 최소 9px 보장, uiScale 기반)
   static double fontSize(BuildContext context, double baseFontSize) {
-    return baseFontSize * scale(context);
+    final size = baseFontSize * uiScale(context);
+    return deviceType(context) == DeviceType.phone
+        ? size.clamp(9.0, double.infinity)
+        : size;
   }
 
   /// 반응형 패딩/마진
@@ -49,9 +62,12 @@ class Responsive {
     return baseSpacing * scale(context);
   }
 
-  /// 반응형 아이콘 크기
+  /// 반응형 아이콘 크기 (phone에서 최소 16px 보장, uiScale 기반)
   static double iconSize(BuildContext context, double baseIconSize) {
-    return baseIconSize * scale(context);
+    final size = baseIconSize * uiScale(context);
+    return deviceType(context) == DeviceType.phone
+        ? size.clamp(16.0, double.infinity)
+        : size;
   }
 
   /// 반응형 EdgeInsets

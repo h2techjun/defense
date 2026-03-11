@@ -949,12 +949,17 @@ class BaseTower extends PositionComponent
       )
     );
     
-    // 1초 뒤 컴포넌트 정리
-    Future.delayed(const Duration(seconds: 1), () {
-      if (pulse.isMounted) {
-        pulse.removeFromParent();
-      }
-    });
+    // 1초 뒤 컴포넌트 정리 (Flame TimerComponent 사용)
+    add(TimerComponent(
+      period: 1.0,
+      repeat: false,
+      removeOnFinish: true,
+      onTick: () {
+        if (pulse.isMounted) {
+          pulse.removeFromParent();
+        }
+      },
+    ));
   }
 
   /// 솟대 버프: 범위 내 아군 타워 공격속도 증가
@@ -1209,11 +1214,16 @@ void _fireShaman() {
     );
     add(hitFlash);
 
-    // 0.25초 후 광선/플래시 제거
-    Future.delayed(const Duration(milliseconds: 250), () {
-      if (beam.isMounted) beam.removeFromParent();
-      if (hitFlash.isMounted) hitFlash.removeFromParent();
-    });
+    // 0.25초 후 광선/플래시 제거 (Flame TimerComponent 사용)
+    add(TimerComponent(
+      period: 0.25,
+      repeat: false,
+      removeOnFinish: true,
+      onTick: () {
+        if (beam.isMounted) beam.removeFromParent();
+        if (hitFlash.isMounted) hitFlash.removeFromParent();
+      },
+    ));
   }
 
   // 마법 파티클 이펙트
@@ -1233,11 +1243,16 @@ void _fireShaman() {
     SoundManager.instance.playSfx(SfxType.towerMagic);
   }
 
-  // 0.4초 후 범위 원 제거
-  Future.delayed(const Duration(milliseconds: 400), () {
-    if (rangePulse.isMounted) rangePulse.removeFromParent();
-    if (innerPulse.isMounted) innerPulse.removeFromParent();
-  });
+  // 0.4초 후 범위 원 제거 (Flame TimerComponent 사용)
+  add(TimerComponent(
+    period: 0.4,
+    repeat: false,
+    removeOnFinish: true,
+    onTick: () {
+      if (rangePulse.isMounted) rangePulse.removeFromParent();
+      if (innerPulse.isMounted) innerPulse.removeFromParent();
+    },
+  ));
 }
   // ══════════════════════════════
   // 범위 색상

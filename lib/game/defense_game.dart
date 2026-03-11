@@ -24,17 +24,17 @@ import 'components/objects/map_object_component.dart';
 import '../state/hero_party_provider.dart';
 import '../audio/sound_manager.dart';
 import '../services/save_manager.dart';
-import '../data/models/bark_data.dart';
-import '../data/bark_database.dart';
 import '../state/relic_provider.dart';
 import '../data/models/relic_data.dart';
-import 'components/ui/bark_bubble.dart';
 import '../services/game_event_bridge.dart';
 import '../state/endless_tower_provider.dart';
+import 'mixins/game_bark_mixin.dart';
+import 'mixins/game_camera_effects_mixin.dart';
 
 /// 메인 게임 클래스
 class DefenseGame extends FlameGame
-    with HasCollisionDetection, TapCallbacks, RiverpodGameMixin {
+    with HasCollisionDetection, TapCallbacks, RiverpodGameMixin,
+         GameBarkMixin, GameCameraEffectsMixin {
   // 선언 시점에 초기화 (late 제거 — UI에서 gameplay 전환 시 안전하게 접근)
   WaveManager? _waveManager;
   WaveManager get waveManager => _waveManager ??= WaveManager(game: this);
@@ -113,9 +113,8 @@ class DefenseGame extends FlameGame
   List<MapObjectComponent> activeMapObjects = [];
   final Map<String, bool> _mapObjectFlags = {};
 
-  /// ── 대사(Bark) 쿨다운 (동시 말풍선 방지) ──
-  double _barkCooldown = 0;
-  DayCycle? _previousDayCycle;
+  // Bark 시스템은 GameBarkMixin에서 관리
+  // Camera 이펙트는 GameCameraEffectsMixin에서 관리
 
   /// 현재 게임 속도 (1.0 / 2.0 / 3.0)
   double get gameSpeed => _gameSpeed;
@@ -476,22 +475,7 @@ class DefenseGame extends FlameGame
     _pendingStateFlush = true;
   }
 
-  /// 화면 흔들림 (Screen Shake) — 외부 호출 가능
-  double _shakeTimer = 0;
-  double _shakeIntensity = 0;
-
-  /// 빨간 플래시 오버레이 (보스 기믹 등)
-  double redFlashTimer = 0;
-
-  void shakeScreen(double intensity, {double duration = 0.3}) {
-    _shakeIntensity = intensity;
-    _shakeTimer = duration;
-  }
-
-  /// 빨간 플래시 발동 (보스 기믹 시각 이펙트)
-  void triggerRedFlash({double duration = 0.5}) {
-    redFlashTimer = duration;
-  }
+  // shakeScreen, triggerRedFlash, redFlashTimer → GameCameraEffectsMixin
 
   /// 적 처치 시
   void onEnemyKilled(int sinmyeongReward, {bool isBoss = false, EnemyId? enemyId}) {
@@ -525,7 +509,7 @@ class DefenseGame extends FlameGame
 
     // 보스 처치 대사
     if (isBoss) {
-      _triggerBark(BarkTrigger.bossKill);
+      onBossKilled();
     }
   }
 
@@ -643,40 +627,16 @@ class DefenseGame extends FlameGame
     _renderFrameCount++;
     try {
       super.render(canvas);
-      // ── 밤 오버레이 ──
-      _renderNightOverlay(canvas);
-      // ── 보스 기믹 빨간 플래시 오버레이 ──
-      if (redFlashTimer > 0) {
-        final alpha = (redFlashTimer.clamp(0, 0.5) / 0.5 * 80).toInt();
-        canvas.drawRect(
-          Rect.fromLTWH(0, 0, size.x, size.y),
-          Paint()..color = Color.fromARGB(alpha, 255, 0, 0),
-        );
-      }
+      // ── 밤 오버레이 + 빨간 플래시 ── (GameCameraEffectsMixin)
+      renderNightOverlay(canvas);
+      renderRedFlash(canvas);
     } catch (e, st) {
       debugPrint('🚨 [RENDER-ERROR] $e');
       debugPrint('$st');
     }
   }
 
-  // ── 밤 오버레이 부드러운 전환 ──
-  double _nightOverlayAlpha = 0;
-
-  void _renderNightOverlay(Canvas canvas) {
-    final targetAlpha = dayNightSystem.nightOverlayOpacity;
-    // 부드러운 전환 (lerp)
-    _nightOverlayAlpha += (targetAlpha - _nightOverlayAlpha) * 0.03;
-
-    if (_nightOverlayAlpha > 0.01) {
-      final paint = Paint()
-        ..color = Color.fromRGBO(15, 20, 50, _nightOverlayAlpha)
-        ..blendMode = BlendMode.srcOver;
-      canvas.drawRect(
-        Rect.fromLTWH(0, 0, size.x, size.y),
-        paint,
-      );
-    }
-  }
+  // Night overlay rendering → GameCameraEffectsMixin.renderNightOverlay()
 
   @override
   void update(double dt) {
@@ -826,111 +786,24 @@ class DefenseGame extends FlameGame
       }
     }
 
-    // ── 화면 흔들림 (Screen Shake) ──
-    if (_shakeTimer > 0) {
-      _shakeTimer -= dt; // 실제 dt 사용 (배속 무관)
-      final rng = math.Random();
-      final offsetX = (rng.nextDouble() - 0.5) * 2 * _shakeIntensity;
-      final offsetY = (rng.nextDouble() - 0.5) * 2 * _shakeIntensity;
-      camera.viewfinder.position = Vector2(
-        GameConstants.gameWidth / 2 + offsetX,
-        GameConstants.gameHeight / 2 + offsetY,
-      );
-    } else if (_shakeIntensity > 0) {
-      // 흔들림 종료 → 카메라 복귀
-      _shakeIntensity = 0;
-      camera.viewfinder.position = Vector2(
-        GameConstants.gameWidth / 2,
-        GameConstants.gameHeight / 2,
-      );
+    // ── 카메라 이펙트 (GameCameraEffectsMixin) ──
+    updateScreenShake(dt);
+    updateRedFlash(dt);
+
+    // ── 대사 시스템 (GameBarkMixin) ──
+    updateBarkCooldown(dt);
+    final transitioned = checkDayCycleTransition();
+    if (transitioned == DayCycle.night) {
+      SoundManager.instance.playBgm(BgmType.nightBgm);
+    } else if (transitioned == DayCycle.day) {
+      SoundManager.instance.playBgm(BgmType.dayBgm);
     }
 
-    // ── 빨간 플래시 카운트다운 ──
-    if (redFlashTimer > 0) {
-      redFlashTimer -= dt;
-    }
-
-    // ── 대사 쿨다운 감소 ──
-    if (_barkCooldown > 0) {
-      _barkCooldown -= dt;
-    }
-
-    // ── 밤/낮 전환 대사 + BGM 전환 ──
-    final currentCycle = dayNightSystem.currentCycle;
-    if (_previousDayCycle != null && _previousDayCycle != currentCycle) {
-      if (currentCycle == DayCycle.night) {
-        _triggerBark(BarkTrigger.nightTransition);
-        SoundManager.instance.playBgm(BgmType.nightBgm);
-      } else {
-        SoundManager.instance.playBgm(BgmType.dayBgm);
-      }
-    }
-    _previousDayCycle = currentCycle;
-
-    // ── 아군 위기 대사 (게이트웨이 HP 30% 이하) ──
+    // ── 아군 위기 대사 ──
     final state = ref.read(gameStateProvider);
-    final hpRatio = state.maxGatewayHp > 0
-        ? state.gatewayHp / state.maxGatewayHp
-        : 1.0;
-    if (state.gatewayHp > 0 && hpRatio <= 0.3) {
-      _triggerBark(BarkTrigger.allyDanger);
-    }
+    checkAllyDangerBark(state.gatewayHp, state.maxGatewayHp);
   }
 
-  // ─────────────────────────────────────────────
-  // 대사(Bark) 시스템
-  // ─────────────────────────────────────────────
-
-  /// 보스 등장 시 호출 (WaveManager에서 호출)
-  void onBossAppear() {
-    _triggerBark(BarkTrigger.bossAppear);
-  }
-
-  /// 전투 시작 시 호출
-  void onBattleStart() {
-    _triggerBark(BarkTrigger.battleStart);
-  }
-
-  /// 영웅 궁극기 사용 시 호출
-  void onHeroUltimate(HeroId heroId) {
-    _triggerBarkForHero(heroId, BarkTrigger.ultimateUsed);
-  }
-
-  /// 특정 트리거에 대해 랜덤 영웅이 대사를 말함
-  void _triggerBark(BarkTrigger trigger) {
-    if (_barkCooldown > 0 || activeHeroes.isEmpty) return;
-
-    final aliveHeroes = activeHeroes.where((h) => !h.isDead).toList();
-    if (aliveHeroes.isEmpty) return;
-
-    // 랜덤 영웅 선택
-    final rng = math.Random();
-    final hero = aliveHeroes[rng.nextInt(aliveHeroes.length)];
-    _triggerBarkForHero(hero.data.id, trigger);
-  }
-
-  /// 특정 영웅이 대사를 말함
-  void _triggerBarkForHero(HeroId heroId, BarkTrigger trigger) {
-    if (_barkCooldown > 0) return;
-
-    final lines = getBarkLines(heroId, trigger);
-    if (lines.isEmpty) return;
-
-    final rng = math.Random();
-    final line = lines[rng.nextInt(lines.length)];
-
-    // 해당 영웅 컴포넌트 찾기
-    final heroComp = activeHeroes
-        .where((h) => h.data.id == heroId && !h.isDead)
-        .firstOrNull;
-    if (heroComp == null) return;
-
-    final bubble = BarkBubble(
-      text: line,
-      heroPosition: heroComp.position,
-    );
-    world.add(bubble);
-
-    _barkCooldown = 8.0; // 8초 쿨다운 (대사 스팸 방지)
-  }
+  // Bark 시스템 → GameBarkMixin (game_bark_mixin.dart)
+  // Camera 이펙트 → GameCameraEffectsMixin (game_camera_effects_mixin.dart)
 }

@@ -1,6 +1,7 @@
 // 해원의 문 - 상점 상태 관리 (Riverpod)
 // 패키지 구매 및 보상 지급 시스템
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/season_pass_data.dart';
 import '../services/save_manager.dart';
@@ -120,7 +121,7 @@ class ShopNotifier extends StateNotifier<ShopState> {
           _ref.read(summonProvider.notifier).addTickets(key, value);
           break;
         default:
-          print('[Shop] 미구현 보상 타입: $key');
+          debugPrint('[Shop] 미구현 보상 타입: $key');
       }
     });
 

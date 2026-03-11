@@ -1,6 +1,7 @@
 // 해원의 문 - 사용자 데이터 상태 (Riverpod)
 // 게임 세션 간 유지되는 데이터를 관리합니다.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../common/enums.dart';
 import '../services/save_manager.dart';
@@ -113,10 +114,10 @@ class UserStateNotifier extends StateNotifier<UserState> {
     final stageStars = await SaveManager.instance.loadStageStars();
     if (savedState != null) {
       state = savedState.copyWith(stageStars: stageStars);
-      print('[SAVE] 세이브 데이터 로드 완료: level ${state.highestLevel}, stars ${state.totalStars}');
+      debugPrint('[SAVE] 세이브 데이터 로드 완료: level ${state.highestLevel}, stars ${state.totalStars}');
     } else {
       state = UserState(stageStars: stageStars);
-      print('[SAVE] 신규 게임 시작');
+      debugPrint('[SAVE] 신규 게임 시작');
     }
   }
 

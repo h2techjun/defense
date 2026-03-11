@@ -246,14 +246,19 @@ class SoundManager {
       _sfxLastPlayedMs[type] = nowMs;
     }
 
-    // mp3 파일이 있으면 파일 재생 우선
+    // mp3/wav 파일이 있으면 파일 재생 우선
     final sfxFile = _sfxFileMap[type];
     if (sfxFile != null) {
       try {
-        FlameAudio.play(sfxFile, volume: _sfxVolume);
+        // FlameAudio.play()는 Future를 반환 — 비동기 에러를 반드시 catch해야 함!
+        // 안 그러면 Zone으로 전파되어 "Invalid argument" 에러 화면 유발
+        FlameAudio.play(sfxFile, volume: _sfxVolume).catchError((e) {
+          // 오디오 재생 실패 무시 (게임 진행에 영향 없음)
+          if (kDebugMode) debugPrint('⚠️ SFX 재생 실패[$type]: $e');
+        });
         return;
       } catch (_) {
-        // 파일 재생 실패 시 합성 폴백
+        // 동기 에러도 무시 — 합성 폴백으로 진행
       }
     }
 
@@ -514,7 +519,14 @@ class SoundManager {
     _lastBgmIndex = idx;
     final bgmFile = _bgmTracks[idx];
     try {
-      FlameAudio.bgm.play(bgmFile, volume: _bgmVolume);
+      // FlameAudio.bgm.play()도 비동기 에러 발생 가능 — catchError로 흡수
+      FlameAudio.bgm.play(bgmFile, volume: _bgmVolume).catchError((e) {
+        if (kDebugMode) debugPrint('⚠️ BGM 파일 재생 실패: $e');
+        // 폴백: 합성 BGM
+        if (_synth != null && _currentBgm != null) {
+          _startBgmLoop(_currentBgm!);
+        }
+      });
       if (kDebugMode) debugPrint('🎵 BGM 재생: $bgmFile (${_currentBgm?.name})');
     } catch (e) {
       if (kDebugMode) debugPrint('⚠️ BGM 파일 재생 실패: $e');

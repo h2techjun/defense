@@ -153,9 +153,14 @@ class SpiritComponent extends PositionComponent
     _glow.paint.color = const Color(0xFF00FF88);
     scale = Vector2.all(1.5);
 
-    Future.delayed(const Duration(milliseconds: 150), () {
-      if (isMounted) removeFromParent();
-    });
+    add(TimerComponent(
+      period: 0.15,
+      repeat: false,
+      removeOnFinish: true,
+      onTick: () {
+        if (isMounted) removeFromParent();
+      },
+    ));
   }
 
   /// 수거 완료 후 프레임 (사용하지 않으나 안전 가드)
@@ -188,10 +193,15 @@ class SpiritComponent extends PositionComponent
       nearest.buffBerserk();
     }
 
-    // 흡수 이펙트 후 제거
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (isMounted) removeFromParent();
-    });
+    // 흡수 이펙트 후 제거 (Flame TimerComponent 사용)
+    add(TimerComponent(
+      period: 0.3,
+      repeat: false,
+      removeOnFinish: true,
+      onTick: () {
+        if (isMounted) removeFromParent();
+      },
+    ));
   }
 }
 

@@ -1,4 +1,4 @@
-// 해원의 문 - 스프라이트 다중 프레임 기반 2D 이펙트 컴포넌트
+﻿// 해원의 문 - 스프라이트 다중 프레임 기반 2D 이펙트 컴포넌트
 
 import 'package:flame/components.dart';
 import '../../defense_game.dart';

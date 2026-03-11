@@ -431,9 +431,14 @@ class MapObjectComponent extends PositionComponent with TapCallbacks, HasGameRef
   /// 신명 부족 시각 피드백
   void _showInsufficientFeedback() {
     _canInteract = false;
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _canInteract = true;
-    });
+    add(TimerComponent(
+      period: 0.5,
+      repeat: false,
+      removeOnFinish: true,
+      onTick: () {
+        _canInteract = true;
+      },
+    ));
   }
 
   // ── 유틸리티 ──

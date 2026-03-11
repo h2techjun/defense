@@ -1,4 +1,4 @@
-// 해원의 문 - JSON 데이터 로더
+﻿// 해원의 문 - JSON 데이터 로더
 // JSON 에셋 파일에서 게임 데이터를 로딩합니다.
 
 import 'dart:convert';
@@ -67,15 +67,15 @@ class JsonDataLoader {
       ]);
       _isLoaded = true;
       if (kDebugMode) {
-        print('[JsonDataLoader] ✅ 모든 데이터 로드 완료');
-        print('  영웅: ${_heroes.length}명');
-        print('  적: ${_enemies.length}종');
-        print('  타워: ${_towers.length}종, 분기: ${_branches.length}개');
-        print('  레벨: ${allLevels.length}개');
+        debugPrint('[JsonDataLoader] ✅ 모든 데이터 로드 완료');
+        debugPrint('  영웅: ${_heroes.length}명');
+        debugPrint('  적: ${_enemies.length}종');
+        debugPrint('  타워: ${_towers.length}종, 분기: ${_branches.length}개');
+        debugPrint('  레벨: ${allLevels.length}개');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[JsonDataLoader] ❌ 데이터 로드 실패: $e');
+        debugPrint('[JsonDataLoader] ❌ 데이터 로드 실패: $e');
       }
       rethrow;
     }

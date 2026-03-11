@@ -2,6 +2,7 @@
 // 현대적 아기자기 스타일 — 빛나는 투사체 + 트레일
 
 import 'dart:ui';
+import 'dart:math' as math;
 import 'package:flame/components.dart';
 
 import '../../../common/enums.dart';
@@ -34,6 +35,7 @@ class Projectile extends PositionComponent {
   bool _hitTarget = false;
   double _trailTimer = 0;
   double _traveledDistance = 0;
+  double _angle = 0; // 이동 방향 각도 (라디안)
 
   /// 이미 타격한 적 목록 (관통 시 중복 타격 방지)
   final Set<BaseEnemy> _hitEnemies = {};
@@ -91,28 +93,43 @@ class Projectile extends PositionComponent {
 
     switch (damageType) {
       case DamageType.physical:
-        // 화살 — 둥근 빛나는 삼각형 + 트레일
-        // 글로우
-        canvas.drawCircle(center, 5,
-          Paint()..color = Color.fromARGB(40, glowColor.red, glowColor.green, glowColor.blue));
+        // 🏹 화살 — 이동 방향으로 회전하는 리얼 화살
+        canvas.save();
+        canvas.translate(center.dx, center.dy);
+        canvas.rotate(_angle + math.pi / 2); // 위쪽이 기본 → 이동방향 보정
+
+        // 글로우 트레일
+        canvas.drawCircle(const Offset(0, 4), 4,
+          Paint()..color = Color.fromARGB(30, glowColor.red, glowColor.green, glowColor.blue));
+
+        // 화살대 (몸통)
+        final shaftPaint = Paint()
+          ..color = const Color(0xFF8B6914) // 나무색
+          ..strokeWidth = 1.8
+          ..strokeCap = StrokeCap.round;
+        canvas.drawLine(const Offset(0, -6), const Offset(0, 8), shaftPaint);
+
         // 화살촉 (삼각형)
-        final arrowPath = Path()
-          ..moveTo(5, 0)    // 위쪽 꼭짓점
-          ..lineTo(1, 9)    // 좌하
-          ..lineTo(9, 9)    // 우하
+        final headPath = Path()
+          ..moveTo(0, -10)   // 앞쪽 끝
+          ..lineTo(-3, -5)
+          ..lineTo(3, -5)
           ..close();
-        canvas.drawPath(arrowPath, Paint()..color = color);
-        canvas.drawPath(arrowPath, Paint()
+        canvas.drawPath(headPath, Paint()..color = color);
+        canvas.drawPath(headPath, Paint()
           ..color = const Color(0xFFFFE0B2)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 0.8);
-        // 꼬리 (부드러운 선)
-        canvas.drawLine(
-          const Offset(5, 9), const Offset(5, 14),
-          Paint()
-            ..color = Color.fromARGB(120, color.red, color.green, color.blue)
-            ..strokeWidth = 1.5
-            ..strokeCap = StrokeCap.round);
+          ..strokeWidth = 0.6);
+
+        // 깃털 (뒤쪽)
+        final featherPaint = Paint()
+          ..color = const Color(0xFFCC4444)
+          ..strokeWidth = 1.2
+          ..strokeCap = StrokeCap.round;
+        canvas.drawLine(const Offset(0, 8), const Offset(-2.5, 11), featherPaint);
+        canvas.drawLine(const Offset(0, 8), const Offset(2.5, 11), featherPaint);
+
+        canvas.restore();
         break;
 
       case DamageType.magical:
@@ -189,6 +206,11 @@ class Projectile extends PositionComponent {
       // 2) 일반: 타겟 추적 이동
       final toTarget = target.position - position;
       final distance = toTarget.length;
+
+      // 이동 방향 각도 갱신 (화살 회전용)
+      if (distance > 0.1) {
+        _angle = math.atan2(toTarget.y, toTarget.x);
+      }
 
       if (distance < moveStep) {
         // 적중

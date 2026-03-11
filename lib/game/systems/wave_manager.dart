@@ -2,7 +2,7 @@
 // 웨이브별 적 스폰 스케줄링, 웨이브 클리어 판정
 
 import 'package:flame/components.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../common/constants.dart';
 import '../../common/enums.dart';
@@ -76,10 +76,10 @@ class WaveManager extends Component with HasGameReference<DefenseGame> {
 
   void startNextWave() {
     _currentWaveIndex++;
-    print('[WAVE] startNextWave: waveIndex=$_currentWaveIndex / total=${_waves.length}, alive=$_enemiesAlive');
+    debugPrint('[WAVE] startNextWave: waveIndex=$_currentWaveIndex / total=${_waves.length}, alive=$_enemiesAlive');
     if (_currentWaveIndex >= _waves.length) {
       // 모든 웨이브 완료
-      print('[WAVE] All waves done! alive=$_enemiesAlive');
+      debugPrint('[WAVE] All waves done! alive=$_enemiesAlive');
       if (_enemiesAlive <= 0) {
         _game.victory();
       }
@@ -161,8 +161,8 @@ class WaveManager extends Component with HasGameReference<DefenseGame> {
     try {
       _doUpdate(dt);
     } catch (e, st) {
-      print('[WAVE] ERROR in update: $e');
-      print('[WAVE] StackTrace: $st');
+      debugPrint('[WAVE] ERROR in update: $e');
+      debugPrint('[WAVE] StackTrace: $st');
       // 에러 발생해도 게임 루프는 계속 동작
     }
   }
@@ -212,14 +212,14 @@ class WaveManager extends Component with HasGameReference<DefenseGame> {
         gs.timer = 0;
         gs.spawned++;
         _spawnEnemy(gs.group.enemyId);
-        print('[WAVE] Spawned ${gs.group.enemyId}, group ${gs.spawned}/${gs.group.count}');
+        debugPrint('[WAVE] Spawned ${gs.group.enemyId}, group ${gs.spawned}/${gs.group.count}');
       }
     }
 
     // 모든 그룹 스폰 완료 + 적 전멸
     if (allGroupsDone) {
       _waveActive = false;
-      print('[WAVE] All groups spawned for wave $_currentWaveIndex, checking complete...');
+      debugPrint('[WAVE] All groups spawned for wave $_currentWaveIndex, checking complete...');
       // 살아있는 적 체크 (다음 프레임에서 확인)
       _checkWaveComplete();
     }
@@ -291,18 +291,18 @@ class WaveManager extends Component with HasGameReference<DefenseGame> {
   void _checkWaveComplete() {
     // 살아있는 적 카운트 (캐시 활용)
     _enemiesAlive = _game.cachedAliveEnemies.length;
-    print('[WAVE] checkComplete: wave=$_currentWaveIndex, alive=$_enemiesAlive, pending=$_pendingCheck');
+    debugPrint('[WAVE] checkComplete: wave=$_currentWaveIndex, alive=$_enemiesAlive, pending=$_pendingCheck');
 
     if (_enemiesAlive <= 0) {
       _pendingCheck = false;
       if (_currentWaveIndex >= _waves.length - 1) {
-        print('[WAVE] VICTORY!');
+        debugPrint('[WAVE] VICTORY!');
         _game.victory();
       } else {
         // 다음 웨이브 쿨다운
         _inCooldown = true;
         _cooldownTimer = GameConstants.waveCooldown;
-        print('[WAVE] Cooldown ${GameConstants.waveCooldown}s -> next wave ${_currentWaveIndex + 1}');
+        debugPrint('[WAVE] Cooldown ${GameConstants.waveCooldown}s -> next wave ${_currentWaveIndex + 1}');
       }
     } else {
       // update()에서 1초 주기로 재체크

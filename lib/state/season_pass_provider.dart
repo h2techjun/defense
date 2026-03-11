@@ -1,8 +1,8 @@
 // 해원의 문 - 시즌 패스 + VIP 상태 관리
 // Riverpod StateNotifier 기반
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../common/enums.dart';
 import '../data/models/season_pass_data.dart';
 import '../data/models/skin_data.dart';
 import '../data/models/relic_data.dart';
@@ -239,7 +239,7 @@ class SeasonPassNotifier extends StateNotifier<SeasonPassState> {
             final skinId = SkinId.values.firstWhere((s) => s.name == reward.unlockId);
             _ref.read(skinProvider.notifier).unlockSkin(skinId);
           } catch (_) {
-            print('[SeasonPass] Unknown SkinId: ${reward.unlockId}');
+            debugPrint('[SeasonPass] Unknown SkinId: ${reward.unlockId}');
           }
         }
         break;
@@ -249,16 +249,16 @@ class SeasonPassNotifier extends StateNotifier<SeasonPassState> {
             final relicId = RelicId.values.firstWhere((r) => r.name == reward.unlockId);
             _ref.read(relicProvider.notifier).unlockRelic(relicId);
           } catch (_) {
-            print('[SeasonPass] Unknown RelicId: ${reward.unlockId}');
+            debugPrint('[SeasonPass] Unknown RelicId: ${reward.unlockId}');
           }
         }
         break;
       case PassRewardType.summonTicket:
         _ref.read(summonProvider.notifier).addTickets('summonTicket', reward.amount);
-        print('[SeasonPass] 소환권 보상 획득: ${reward.amount}');
+        debugPrint('[SeasonPass] 소환권 보상 획득: ${reward.amount}');
         break;
       default:
-        print('[SeasonPass] 기타 보상 획득: ${reward.name}');
+        debugPrint('[SeasonPass] 기타 보상 획득: ${reward.name}');
         break;
     }
   }
