@@ -1,6 +1,7 @@
 // 해원의 문 - 업적 + 랭킹 상태 관리
 // Riverpod StateNotifier 기반
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/achievement_data.dart';
 import '../common/enums.dart';
@@ -129,10 +130,12 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
 
     // 달성 여부 확인
     final newCompleted = Set<String>.from(state.completed);
+    bool justAchieved = false;
     try {
       final achievement = allAchievements.firstWhere((a) => a.id == achievementId);
-      if (newValue >= achievement.targetValue) {
+      if (newValue >= achievement.targetValue && !state.completed.contains(achievementId)) {
         newCompleted.add(achievementId);
+        justAchieved = true;
       }
     } catch (_) {
       // 알 수 없는 업적 ID는 무시
@@ -140,6 +143,12 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
 
     state = state.copyWith(progress: newProgress, completed: newCompleted);
     _persist();
+
+    // 업적 달성 알림
+    if (justAchieved) {
+      _ref.read(lastAchievedIdProvider.notifier).state = achievementId;
+      debugPrint('[🏆 ACHIEVEMENT] 업적 달성: $achievementId');
+    }
   }
 
   /// 여러 업적을 한 번에 증가 (Map 복사 1회, persist 1회 — 성능 최적화)
@@ -298,3 +307,6 @@ final rankingProvider =
     StateNotifierProvider<RankingNotifier, RankingState>(
   (ref) => RankingNotifier(),
 );
+
+/// 최근 달성된 업적 ID (업적 팝업 트리거용)
+final lastAchievedIdProvider = StateProvider<String?>((ref) => null);

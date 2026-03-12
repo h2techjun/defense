@@ -19,6 +19,7 @@ class UserState {
   final bool isPremium;
   final bool hasCompletedTutorial;
   final Map<String, int> stageStars; // "chapter:level" -> stars
+  final DateTime? speedPassExpiresAt; // 2배속 해금 만료일 (매월 리셋)
 
   const UserState({
     this.unlockedHeroes = const {HeroId.kkaebi},
@@ -32,6 +33,7 @@ class UserState {
     this.isPremium = false,
     this.hasCompletedTutorial = false,
     this.stageStars = const {},
+    this.speedPassExpiresAt,
   });
 
   UserState copyWith({
@@ -46,6 +48,7 @@ class UserState {
     bool? isPremium,
     bool? hasCompletedTutorial,
     Map<String, int>? stageStars,
+    DateTime? speedPassExpiresAt,
   }) {
     return UserState(
       unlockedHeroes: unlockedHeroes ?? this.unlockedHeroes,
@@ -59,7 +62,14 @@ class UserState {
       isPremium: isPremium ?? this.isPremium,
       hasCompletedTutorial: hasCompletedTutorial ?? this.hasCompletedTutorial,
       stageStars: stageStars ?? this.stageStars,
+      speedPassExpiresAt: speedPassExpiresAt ?? this.speedPassExpiresAt,
     );
+  }
+
+  /// 2배속 해금 여부 (매월 리셋)
+  bool get hasSpeedPass {
+    if (speedPassExpiresAt == null) return false;
+    return DateTime.now().isBefore(speedPassExpiresAt!);
   }
 
   /// 특정 스테이지의 별 수 조회
@@ -79,6 +89,7 @@ class UserState {
     'membershipPoints': membershipPoints,
     'isPremium': isPremium,
     'hasCompletedTutorial': hasCompletedTutorial,
+    'speedPassExpiresAt': speedPassExpiresAt?.toIso8601String(),
   };
 
   factory UserState.fromJson(Map<String, dynamic> json) {
@@ -100,6 +111,9 @@ class UserState {
       membershipPoints: (json['membershipPoints'] as num?)?.toInt() ?? 0,
       isPremium: json['isPremium'] as bool? ?? false,
       hasCompletedTutorial: json['hasCompletedTutorial'] as bool? ?? false,
+      speedPassExpiresAt: json['speedPassExpiresAt'] != null
+          ? DateTime.tryParse(json['speedPassExpiresAt'] as String)
+          : null,
     );
   }
 }
@@ -198,6 +212,16 @@ class UserStateNotifier extends StateNotifier<UserState> {
   void addMembershipPoints(int amount) {
     state = state.copyWith(membershipPoints: state.membershipPoints + amount);
     _autoSave();
+  }
+
+  /// 2배속 해금 (현금 구매 시 호출 → 해당 월 말일까지 유효)
+  void grantSpeedPass() {
+    final now = DateTime.now();
+    // 해당 월의 마지막 날 23:59:59
+    final endOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
+    state = state.copyWith(speedPassExpiresAt: endOfMonth);
+    _autoSave();
+    debugPrint('[SPEED] 2배속 해금! 만료: $endOfMonth');
   }
 }
 

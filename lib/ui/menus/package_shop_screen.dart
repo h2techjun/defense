@@ -603,9 +603,16 @@ class _PackageCardState extends ConsumerState<_PackageCard> {
     );
   }
 
-  /// 가격 행: 할인 시 원가 취소선 + 할인가 표시
+  /// 가격 행: 할인 시 원가 취소선 + 할인가 + 가치 문구 표시
   Widget _buildPriceRow(ShopPackage package, bool hasDiscount, double s) {
     if (hasDiscount) {
+      // 내용물의 보석 환산 가치 계산 (보석 1개 = ₩20 기준)
+      final gemValue = (package.contents['gems'] ?? 0) * 20;
+      final goldValue = ((package.contents['gold'] ?? 0) / 100).round() * 20; // 골드 100 = 보석1
+      final ticketValue = (package.contents['summonTicket'] ?? 0) * 500; // 소환권 1장 = ₩500
+      final totalValue = gemValue + goldValue + ticketValue;
+      final showValue = totalValue > package.discountedPrice;
+
       return Column(
         children: [
           Text(
@@ -625,6 +632,15 @@ class _PackageCardState extends ConsumerState<_PackageCard> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          if (showValue)
+            Text(
+              '₩${_formatNum(package.discountedPrice)}으로 ₩${_formatNum(totalValue)} 가치!',
+              style: TextStyle(
+                color: Colors.amber,
+                fontSize: 9 * s,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
         ],
       );
     }

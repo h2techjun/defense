@@ -138,18 +138,14 @@ class DefenseGame extends FlameGame
     paused = isPaused;
   }
 
-  /// 배속 순환 (1× → 2× → 3× → 1×)
+  /// 배속 토글 (1× ↔ 2×) — 3배속 제거 (시스템 부하 방지)
   void cycleGameSpeed() {
-    if (_gameSpeed >= 3.0) {
-      _gameSpeed = 1.0;
-    } else {
-      _gameSpeed += 1.0;
-    }
+    _gameSpeed = _gameSpeed >= 2.0 ? 1.0 : 2.0;
   }
 
   /// 배속 직접 설정
   void setGameSpeed(double speed) {
-    _gameSpeed = speed.clamp(1.0, 3.0);
+    _gameSpeed = speed.clamp(1.0, 2.0);
   }
 
   /// 현재 범위 강조 중인 타워

@@ -130,6 +130,9 @@ class ShopNotifier extends StateNotifier<ShopState> {
       purchaseCounts: {...state.purchaseCounts, package.id: currentCount + 1},
     );
 
+    // 9. 2배속 패스 부여 (현금 구매 시 해당 월 말일까지 유효)
+    _ref.read(userStateProvider.notifier).grantSpeedPass();
+
     _save();
     return true;
   }

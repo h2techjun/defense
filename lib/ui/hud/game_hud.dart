@@ -1,4 +1,4 @@
-﻿// 해원의 문 - 게임 HUD (인게임 UI 오버레이)
+// 해원의 문 - 게임 HUD (인게임 UI 오버레이)
 
 import '../theme/glass_panel.dart';
 import 'hud_widgets.dart';
@@ -18,8 +18,9 @@ class GameHud extends ConsumerWidget {
   final VoidCallback? onPause;
   final VoidCallback? onNextWave;
   final VoidCallback? onSpeedToggle;
+  final bool isSpeedLocked; // 2배속 잠금 여부
 
-  const GameHud({super.key, this.onPause, this.onNextWave, this.onSpeedToggle});
+  const GameHud({super.key, this.onPause, this.onNextWave, this.onSpeedToggle, this.isSpeedLocked = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -124,29 +125,43 @@ class GameHud extends ConsumerWidget {
 
                   // 배속 버튼
                   GestureDetector(
-                    onTap: onSpeedToggle,
+                    onTap: isSpeedLocked ? null : onSpeedToggle,
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: isPhone ? 6 * s : 10 * s, vertical: isPhone ? 4 * s : 6 * s),
                       decoration: BoxDecoration(
-                        color: state.gameSpeed > 1.0
-                            ? AppColors.peachCoral.withAlpha(60)
-                            : const Color(0x44FFFFFF),
+                        color: isSpeedLocked
+                            ? const Color(0x33FFFFFF)
+                            : state.gameSpeed > 1.0
+                                ? AppColors.peachCoral.withAlpha(60)
+                                : const Color(0x44FFFFFF),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: state.gameSpeed > 1.0
-                              ? AppColors.peachCoral
-                              : const Color(0x66FFFFFF),
+                          color: isSpeedLocked
+                              ? const Color(0x44FFFFFF)
+                              : state.gameSpeed > 1.0
+                                  ? AppColors.peachCoral
+                                  : const Color(0x66FFFFFF),
                         ),
                       ),
-                      child: Text(
-                        '${state.gameSpeed.toInt()}×',
-                        style: TextStyle(
-                          color: state.gameSpeed > 1.0
-                              ? AppColors.peachCoral
-                              : Colors.white70,
-                          fontSize: Responsive.fontSize(context, isPhone ? 12 : 14),
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (isSpeedLocked)
+                            Icon(Icons.lock, color: Colors.white38, size: Responsive.fontSize(context, isPhone ? 10 : 12)),
+                          if (isSpeedLocked) SizedBox(width: 2 * s),
+                          Text(
+                            isSpeedLocked ? '2×' : '${state.gameSpeed.toInt()}×',
+                            style: TextStyle(
+                              color: isSpeedLocked
+                                  ? Colors.white38
+                                  : state.gameSpeed > 1.0
+                                      ? AppColors.peachCoral
+                                      : Colors.white70,
+                              fontSize: Responsive.fontSize(context, isPhone ? 12 : 14),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

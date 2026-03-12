@@ -36,6 +36,8 @@ import 'ui/dialogs/game_result_dialog.dart';
 import 'ui/dialogs/tower_upgrade_dialog.dart';
 import 'ui/hud/game_tooltip.dart';
 import 'state/user_state.dart';
+import 'state/achievement_provider.dart';
+import 'data/models/achievement_data.dart';
 
 import 'ui/hud/wave_announce_banner.dart';
 import 'ui/dialogs/story_cutscene_dialog.dart';
@@ -632,6 +634,44 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 업적 달성 알림 리스너
+    ref.listen<String?>(lastAchievedIdProvider, (prev, next) {
+      if (next != null && next != prev) {
+        try {
+          final achievement = allAchievements.firstWhere((a) => a.id == next);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    Text(achievement.emoji, style: const TextStyle(fontSize: 24)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('🏆 업적 달성!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                          Text(achievement.name, style: const TextStyle(fontSize: 11)),
+                        ],
+                      ),
+                    ),
+                    Text('💎${achievement.rewardGems}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                backgroundColor: const Color(0xFF6633AA),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                duration: const Duration(seconds: 3),
+              ),
+            );
+            // 효과음 재생 (SFX)
+            SoundManager.instance.playSfx('level_up');
+          }
+        } catch (_) {}
+      }
+    });
+
     // 메인 메뉴
     if (_currentScreen == 'mainMenu') {
       // 메뉴 BGM 재생 (에러 안전 처리 — 웹에서 타임아웃 방지)
@@ -876,12 +916,23 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
             // ── HUD 오버레이 ──
             GameHud(
+              isSpeedLocked: !ref.watch(userStateProvider).hasSpeedPass,
               onPause: () {
                 _dismissTowerPopup();
                 _game.togglePause();
                 setState(() {}); // UI 갱신
               },
               onSpeedToggle: () {
+                if (!ref.read(userStateProvider).hasSpeedPass) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('🔒 상점에서 아무 상품을 구매하면 2배속이 해금됩니다!'),
+                      backgroundColor: Color(0xFF6633AA),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
                 _game.cycleGameSpeed();
                 ref.read(gameStateProvider.notifier).setGameSpeed(_game.gameSpeed);
               },

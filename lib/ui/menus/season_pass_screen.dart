@@ -113,8 +113,28 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                     Text(
                       'D-${season.daysRemaining} | Lv.${state.currentLevel}/${season.maxLevel}',
                       style: TextStyle(
-                        color: Colors.white60,
+                        color: season.daysRemaining <= 7 ? Colors.redAccent : Colors.white60,
                         fontSize: Responsive.fontSize(context, 12),
+                        fontWeight: season.daysRemaining <= 7 ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                    SizedBox(height: Responsive.spacing(context, 4)),
+                    // 시즌 진행률 프로그레스 바
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: SizedBox(
+                        height: Responsive.spacing(context, 6),
+                        child: LinearProgressIndicator(
+                          value: (() {
+                            final totalDays = season.endDate.difference(season.startDate).inDays;
+                            final elapsed = DateTime.now().difference(season.startDate).inDays;
+                            return (elapsed / totalDays).clamp(0.0, 1.0);
+                          })(),
+                          backgroundColor: Colors.white12,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            season.daysRemaining <= 7 ? Colors.redAccent : Colors.amber,
+                          ),
+                        ),
                       ),
                     ),
                   ],
