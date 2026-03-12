@@ -1,6 +1,6 @@
 // 해원의 문 - 메인 게임 루프 (DefenseGame)
 
-import 'dart:math' as math;
+
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flame/game.dart';

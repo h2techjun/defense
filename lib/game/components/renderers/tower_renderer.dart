@@ -1,7 +1,6 @@
 // 해원의 문 — 타워 커스텀 렌더러
 // 스프라이트 이미지 기반 고품질 렌더링 (Canvas 폴백 포함)
 
-import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show LinearGradient, RadialGradient, Alignment;

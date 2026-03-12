@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../common/enums.dart';
+
 import '../../common/responsive.dart';
 import '../theme/app_colors.dart';
 import '../theme/glass_panel.dart';

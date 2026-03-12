@@ -6,7 +6,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../common/enums.dart';
+
 import '../../data/models/season_pass_data.dart';
 import '../../state/shop_provider.dart';
 import '../../state/user_state.dart';

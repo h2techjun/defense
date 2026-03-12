@@ -3,7 +3,7 @@
 // VIP 등급, 소액 패키지, 구매 제한 포함
 
 import 'package:flutter/material.dart';
-import '../../common/enums.dart';
+
 
 // ═══════════════════════════════════════════
 // 시즌 패스
