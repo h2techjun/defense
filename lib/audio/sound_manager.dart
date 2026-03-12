@@ -160,51 +160,57 @@ class SoundManager {
       _synth = WebAudioSynth();
       _synth!.init();
 
-      // mp3 파일 프리로드 (실패해도 합성 폴백으로 동작)
-      try {
-        await FlameAudio.audioCache.loadAll([
-          // 전투
-          'sfx/Arrow.wav',
-          'sfx/cannon_fire.wav',
-          'sfx/Magical.wav',
-          'sfx/sotdae_purify.wav',
-          // 적
-          'sfx/enemy_hit.wav',
-          'sfx/enemy_death.wav',
-          'sfx/boss_appear.wav',
-          // 영웅
-          'sfx/hero_skill.wav',
-          'sfx/hero_death.wav',
-          'sfx/hero_revive.wav',
-          // UI
-          'sfx/Uiclick.mp3',
-          'sfx/ui_place.mp3',
-          'sfx/ui_upgrade.mp3',
-          'sfx/ui_error.mp3',
-          'sfx/typewriter.mp3',
-          // 게임 이벤트
-          'sfx/victory.mp3',
-          'sfx/defeat.mp3',
-          'sfx/gateway_hit.mp3',
-          'sfx/wave_start.wav',
-          // 분기
-          'sfx/branch_select.wav',
-          'sfx/branch_thunder.wav',
-          'sfx/branch_fire.wav',
-          'sfx/branch_grapple.wav',
-          // BGM (AI 생성 10곡)
-          ..._bgmTracks,
-        ]);
-        _useFileBgm = true;
-        if (kDebugMode) debugPrint('🎵 오디오 에셋 로드 완료 (BGM ${_bgmTracks.length}곡)');
-      } catch (e) {
-        if (kDebugMode) debugPrint('⚠️ mp3 로드 실패 (합성 폴백 사용): $e');
+      // 웹에서는 대량 프리로드 스킵 (30초+ 타임아웃 방지)
+      // 네이티브에서만 mp3/wav 프리로드
+      if (!kIsWeb) {
+        try {
+          await FlameAudio.audioCache.loadAll([
+            // 전투
+            'sfx/Arrow.wav',
+            'sfx/cannon_fire.wav',
+            'sfx/Magical.wav',
+            'sfx/sotdae_purify.wav',
+            // 적
+            'sfx/enemy_hit.wav',
+            'sfx/enemy_death.wav',
+            'sfx/boss_appear.wav',
+            // 영웅
+            'sfx/hero_skill.wav',
+            'sfx/hero_death.wav',
+            'sfx/hero_revive.wav',
+            // UI
+            'sfx/Uiclick.mp3',
+            'sfx/ui_place.mp3',
+            'sfx/ui_upgrade.mp3',
+            'sfx/ui_error.mp3',
+            'sfx/typewriter.mp3',
+            // 게임 이벤트
+            'sfx/victory.mp3',
+            'sfx/defeat.mp3',
+            'sfx/gateway_hit.mp3',
+            'sfx/wave_start.wav',
+            // 분기
+            'sfx/branch_select.wav',
+            'sfx/branch_thunder.wav',
+            'sfx/branch_fire.wav',
+            'sfx/branch_grapple.wav',
+            // BGM (AI 생성 10곡)
+            ..._bgmTracks,
+          ]);
+          _useFileBgm = true;
+          if (kDebugMode) debugPrint('🎵 오디오 에셋 로드 완료 (BGM ${_bgmTracks.length}곡)');
+        } catch (e) {
+          if (kDebugMode) debugPrint('⚠️ mp3 로드 실패 (합성 폴백 사용): $e');
+        }
+      } else {
+        if (kDebugMode) debugPrint('🌐 웹 환경 — 오디오 프리로드 스킵 (합성 폴백 사용)');
       }
 
       _initialized = true;
       if (kDebugMode) debugPrint('🔊 SoundManager 초기화 완료');
     } catch (e) {
       if (kDebugMode) debugPrint('⚠️ SoundManager 초기화 실패: $e');
+      _initialized = true; // 실패해도 initialized 마킹 (재호출 방지)
     }
   }
 

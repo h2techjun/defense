@@ -634,9 +634,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Widget build(BuildContext context) {
     // 메인 메뉴
     if (_currentScreen == 'mainMenu') {
-      // 메뉴 BGM 재생
+      // 메뉴 BGM 재생 (에러 안전 처리 — 웹에서 타임아웃 방지)
       SoundManager.instance.init().then((_) {
         SoundManager.instance.playBgm(BgmType.menu);
+      }).catchError((e) {
+        debugPrint('⚠️ [GameScreen] SoundManager 초기화/BGM 실패: $e');
       });
       return MainMenu(
         onStageSelect: () {

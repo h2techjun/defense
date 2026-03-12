@@ -48,18 +48,23 @@ Future<void> main() async {
     debugPrint('🌐 [main] 웹 환경 — .env 로드 스킵');
   }
 
-  // Supabase 초기화
-  try {
-    final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
-    final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
-    if (supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty && supabaseUrl != 'YOUR_SUPABASE_URL_HERE') {
-      await Supabase.initialize(
-        url: supabaseUrl,
-        anonKey: supabaseAnonKey,
-      );
+  // Supabase 초기화 (웹에서는 .env 없으므로 스킵)
+  if (!kIsWeb) {
+    try {
+      final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
+      final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+      if (supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty && supabaseUrl != 'YOUR_SUPABASE_URL_HERE') {
+        await Supabase.initialize(
+          url: supabaseUrl,
+          anonKey: supabaseAnonKey,
+        );
+        debugPrint('✅ [main] Supabase 초기화 완료');
+      }
+    } catch (e) {
+      debugPrint('⚠️ [main] Supabase 초기화 실패: $e');
     }
-  } on Exception catch (e) {
-    debugPrint('⚠️ [main] Supabase 초기화 실패: $e');
+  } else {
+    debugPrint('🌐 [main] 웹 환경 — Supabase 초기화 스킵');
   }
 
   // 가로 모드 고정
@@ -77,7 +82,7 @@ Future<void> main() async {
   try {
     await GameDataLoader.initFromJson();
     debugPrint('✅ [main] GameDataLoader 초기화 완료');
-  } on Exception catch (e) {
+  } catch (e) {
     debugPrint('⚠️ [main] GameDataLoader 초기화 실패, 폴백 사용: $e');
   }
 
@@ -85,7 +90,7 @@ Future<void> main() async {
   try {
     await AppStrings.init(GameLanguage.ko);
     debugPrint('✅ [main] AppStrings 초기화 완료');
-  } on Exception catch (e) {
+  } catch (e) {
     debugPrint('⚠️ [main] AppStrings 초기화 실패: $e');
   }
 
