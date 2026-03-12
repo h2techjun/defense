@@ -251,6 +251,42 @@ class SkinShopScreen extends ConsumerWidget {
               '등급: ${skin.rarity.displayName}',
               style: TextStyle(color: skin.rarity.color),
             ),
+            // 이펙트 설명 (있는 경우만)
+            if (skin.effectDescription != null) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: skin.rarity.color.withAlpha(20),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: skin.rarity.color.withAlpha(40)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('⚡ ', style: TextStyle(fontSize: 14)),
+                    Flexible(
+                      child: Text(
+                        skin.effectDescription!,
+                        style: TextStyle(color: skin.rarity.color, fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            // 배경 스토리 (있는 경우만)
+            if (skin.lore != null) ...[
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  skin.lore!,
+                  style: const TextStyle(color: Colors.white38, fontSize: 11, fontStyle: FontStyle.italic),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

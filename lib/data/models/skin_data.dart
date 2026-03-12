@@ -56,6 +56,8 @@ class SkinData {
   final Color glowColor;       // 오라 색상 (legendary+)
   final bool hasParticle;      // 파티클 효과 (mythic+)
   final int price;             // 신명석 가격 (0 = 기본)
+  final String? effectDescription; // 이펙트 설명 (공격/스킬 변경)
+  final String? lore;              // 배경 스토리
 
   const SkinData({
     required this.id,
@@ -67,6 +69,8 @@ class SkinData {
     this.glowColor = Colors.transparent,
     this.hasParticle = false,
     this.price = 0,
+    this.effectDescription,
+    this.lore,
   });
 }
 
@@ -126,6 +130,8 @@ final Map<SkinId, SkinData> allSkins = {
     primaryColor: Color(0xFFFF5722), secondaryColor: Color(0xFFFFD700),
     glowColor: Color(0x44FF5722),
     price: 500,
+    effectDescription: '공격 시 화염 파티클 효과',
+    lore: '지하 세계의 화염을 다스리는 도깨비. 그의 방망이는 적을 재로 만든다.',
   ),
   SkinId.kkaebiGoldhorn: const SkinData(
     id: SkinId.kkaebiGoldhorn, heroId: HeroId.kkaebi,
@@ -133,6 +139,8 @@ final Map<SkinId, SkinData> allSkins = {
     primaryColor: Color(0xFFFFD700), secondaryColor: Color(0xFFFF8F00),
     glowColor: Color(0x66FFD700), hasParticle: false,
     price: 1000,
+    effectDescription: '황금 오라 + 흘나는 검기',
+    lore: '천년을 수련한 도깨비의 왕. 그의 황금 뻔은 적의 의지를 꼬부라뜨린다.',
   ),
 
   // ═══ 미호 ═══
@@ -153,6 +161,8 @@ final Map<SkinId, SkinData> allSkins = {
     primaryColor: Color(0xFFB71C1C), secondaryColor: Color(0xFFFFD700),
     glowColor: Color(0x44B71C1C),
     price: 500,
+    effectDescription: '공격 시 한기 게이지 증가량 +5%',
+    lore: '피에 굴주린 미호. 그녀의 여우 방울은 적의 피를 먹고 강해진다.',
   ),
   SkinId.mihoNine: const SkinData(
     id: SkinId.mihoNine, heroId: HeroId.miho,
@@ -160,6 +170,8 @@ final Map<SkinId, SkinData> allSkins = {
     primaryColor: Color(0xFFE1BEE7), secondaryColor: Color(0xFFAB47BC),
     glowColor: Color(0x66E040FB), hasParticle: true,
     price: 2000,
+    effectDescription: '스킬 범위 +10% + 달빛 오라',
+    lore: '아홉 꼽리가 모두 피어난 구미선녀. 한달의 정수를 담은 미호는 영혼을 다스릴 수 있다.',
   ),
 
   // ═══ 강림 ═══
@@ -180,6 +192,8 @@ final Map<SkinId, SkinData> allSkins = {
     primaryColor: Color(0xFF4A0000), secondaryColor: Color(0xFFFF1744),
     glowColor: Color(0x66FF1744),
     price: 1000,
+    effectDescription: '적 처치 시 취약점 표시 효과',
+    lore: '저승의 혈흐른 강을 건넌 차사. 그의 낫이 닿는 곳에는 좽음만이 남는다.',
   ),
   SkinId.gangrimReaper: const SkinData(
     id: SkinId.gangrimReaper, heroId: HeroId.gangrim,
@@ -187,6 +201,8 @@ final Map<SkinId, SkinData> allSkins = {
     primaryColor: Color(0xFF1A237E), secondaryColor: Color(0xFFFFD700),
     glowColor: Color(0x88FFD700), hasParticle: true,
     price: 5000,
+    effectDescription: '황금 파티클 + 적 처치 시 보석 0.5% 드랍',
+    lore: '저승의 왕. 염라대왕의 침묵을 받은 기사단장. 그의 등장에 원령들이 묶이는다.',
   ),
 
   // ═══ 수아 ═══

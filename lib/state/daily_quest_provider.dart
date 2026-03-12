@@ -19,6 +19,9 @@ class DailyQuestState {
   final int loginStreak;                     // 연속 출석 일수 (1~7, 7 이후 리셋)
   final String lastLoginDate;               // 마지막 접속일
   final Set<int> streakRewardsClaimed;       // 수령한 출석 보상 일차 (1~7)
+  final int monthlyLoginCount;               // 월간 누적 출석일 (1~28)
+  final String monthlyLoginMonth;            // 현재 월간 출석 월 ("2026-03")
+  final Set<int> monthlyRewardsClaimed;      // 수령한 월간 보상 일차
 
   const DailyQuestState({
     this.questDate = '',
@@ -29,6 +32,9 @@ class DailyQuestState {
     this.loginStreak = 0,
     this.lastLoginDate = '',
     this.streakRewardsClaimed = const {},
+    this.monthlyLoginCount = 0,
+    this.monthlyLoginMonth = '',
+    this.monthlyRewardsClaimed = const {},
   });
 
   DailyQuestState copyWith({
@@ -40,6 +46,9 @@ class DailyQuestState {
     int? loginStreak,
     String? lastLoginDate,
     Set<int>? streakRewardsClaimed,
+    int? monthlyLoginCount,
+    String? monthlyLoginMonth,
+    Set<int>? monthlyRewardsClaimed,
   }) {
     return DailyQuestState(
       questDate: questDate ?? this.questDate,
@@ -50,6 +59,9 @@ class DailyQuestState {
       loginStreak: loginStreak ?? this.loginStreak,
       lastLoginDate: lastLoginDate ?? this.lastLoginDate,
       streakRewardsClaimed: streakRewardsClaimed ?? this.streakRewardsClaimed,
+      monthlyLoginCount: monthlyLoginCount ?? this.monthlyLoginCount,
+      monthlyLoginMonth: monthlyLoginMonth ?? this.monthlyLoginMonth,
+      monthlyRewardsClaimed: monthlyRewardsClaimed ?? this.monthlyRewardsClaimed,
     );
   }
 
@@ -100,6 +112,9 @@ class DailyQuestState {
     'loginStreak': loginStreak,
     'lastLoginDate': lastLoginDate,
     'streakRewardsClaimed': streakRewardsClaimed.toList(),
+    'monthlyLoginCount': monthlyLoginCount,
+    'monthlyLoginMonth': monthlyLoginMonth,
+    'monthlyRewardsClaimed': monthlyRewardsClaimed.toList(),
   };
 
   factory DailyQuestState.fromJson(Map<String, dynamic> json) {
@@ -113,6 +128,10 @@ class DailyQuestState {
       loginStreak: (json['loginStreak'] as num?)?.toInt() ?? 0,
       lastLoginDate: json['lastLoginDate'] as String? ?? '',
       streakRewardsClaimed: ((json['streakRewardsClaimed'] as List?) ?? [])
+          .map((e) => (e as num).toInt()).toSet(),
+      monthlyLoginCount: (json['monthlyLoginCount'] as num?)?.toInt() ?? 0,
+      monthlyLoginMonth: json['monthlyLoginMonth'] as String? ?? '',
+      monthlyRewardsClaimed: ((json['monthlyRewardsClaimed'] as List?) ?? [])
           .map((e) => (e as num).toInt()).toSet(),
     );
   }
@@ -137,6 +156,7 @@ class DailyQuestNotifier extends StateNotifier<DailyQuestState> {
       // 새로운 날 → 미션 갱신
       final newQuests = DailyQuestGenerator.today;
       _checkLoginStreak(today);
+      _checkMonthlyLogin(today);
 
       state = state.copyWith(
         questDate: today,
@@ -257,6 +277,48 @@ class DailyQuestNotifier extends StateNotifier<DailyQuestState> {
 
     state = state.copyWith(
       streakRewardsClaimed: {...state.streakRewardsClaimed, day},
+    );
+    _persist();
+    return true;
+  }
+
+  /// 월간 출석 체크 (날짜가 바뀐 때 initialize에서 호출)
+  void _checkMonthlyLogin(String today) {
+    final currentMonth = today.substring(0, 7); // "2026-03"
+    if (state.monthlyLoginMonth != currentMonth) {
+      // 새 월 → 리셋
+      state = state.copyWith(
+        monthlyLoginCount: 1,
+        monthlyLoginMonth: currentMonth,
+        monthlyRewardsClaimed: {},
+      );
+    } else if (state.lastLoginDate != today) {
+      // 같은 월, 다른 날 → 카운트 증가 (최대 28)
+      final newCount = (state.monthlyLoginCount + 1).clamp(1, 28);
+      state = state.copyWith(monthlyLoginCount: newCount);
+    }
+  }
+
+  /// 월간 출석 보상 수령
+  bool claimMonthlyReward(int day) {
+    if (day > state.monthlyLoginCount) return false; // 아직 도달 못한 날
+    if (state.monthlyRewardsClaimed.contains(day)) return false; // 이미 수령
+    if (day < 1 || day > monthlyLoginRewards.length) return false;
+
+    final reward = monthlyLoginRewards[day - 1];
+    final userNotifier = _ref.read(userStateProvider.notifier);
+
+    if (reward.gold > 0) userNotifier.addGold(reward.gold);
+    if (reward.gems > 0) userNotifier.addGems(reward.gems);
+    if (reward.summonTickets > 0) {
+      _ref.read(summonProvider.notifier).addTickets('hero', reward.summonTickets);
+    }
+    if (reward.passXp > 0) {
+      _ref.read(seasonPassProvider.notifier).addXp(reward.passXp);
+    }
+
+    state = state.copyWith(
+      monthlyRewardsClaimed: {...state.monthlyRewardsClaimed, day},
     );
     _persist();
     return true;

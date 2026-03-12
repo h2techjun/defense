@@ -105,6 +105,61 @@ const List<LoginStreakReward> loginStreakRewards = [
   LoginStreakReward(day: 7, gems: 10, summonTickets: 1, displayName: '보석 10 + 소환권', emoji: '🎁'),
 ];
 
+/// 월간 출석 보상 (28일, 7/14/21/28일 특별 보너스)
+class MonthlyLoginReward {
+  final int day;              // 1~28
+  final int gems;
+  final int gold;
+  final int summonTickets;
+  final int passXp;
+  final String displayName;
+  final String emoji;
+  final bool isSpecial;       // 7/14/21/28일 특별 보너스
+
+  const MonthlyLoginReward({
+    required this.day,
+    this.gems = 0,
+    this.gold = 0,
+    this.summonTickets = 0,
+    this.passXp = 0,
+    required this.displayName,
+    required this.emoji,
+    this.isSpecial = false,
+  });
+}
+
+/// 28일 월간 출석 보상 테이블
+const List<MonthlyLoginReward> monthlyLoginRewards = [
+  MonthlyLoginReward(day: 1,  gold: 500,  displayName: '골드 500',  emoji: '🪙'),
+  MonthlyLoginReward(day: 2,  gold: 600,  displayName: '골드 600',  emoji: '🪙'),
+  MonthlyLoginReward(day: 3,  gold: 700,  displayName: '골드 700',  emoji: '🪙'),
+  MonthlyLoginReward(day: 4,  gold: 800,  displayName: '골드 800',  emoji: '🪙'),
+  MonthlyLoginReward(day: 5,  gold: 900,  displayName: '골드 900',  emoji: '🪙'),
+  MonthlyLoginReward(day: 6,  gold: 1000, displayName: '골드 1,000', emoji: '🪙'),
+  MonthlyLoginReward(day: 7,  gems: 30, summonTickets: 1, displayName: '🌟 보석 30 + 소환권', emoji: '🎁', isSpecial: true),
+  MonthlyLoginReward(day: 8,  gold: 1000, displayName: '골드 1,000', emoji: '🪙'),
+  MonthlyLoginReward(day: 9,  gold: 1100, displayName: '골드 1,100', emoji: '🪙'),
+  MonthlyLoginReward(day: 10, gold: 1200, displayName: '골드 1,200', emoji: '🪙'),
+  MonthlyLoginReward(day: 11, gold: 1300, displayName: '골드 1,300', emoji: '🪙'),
+  MonthlyLoginReward(day: 12, gold: 1400, displayName: '골드 1,400', emoji: '🪙'),
+  MonthlyLoginReward(day: 13, gold: 1500, displayName: '골드 1,500', emoji: '🪙'),
+  MonthlyLoginReward(day: 14, gems: 50, passXp: 200, displayName: '🌟 보석 50 + 패스XP 200', emoji: '🎁', isSpecial: true),
+  MonthlyLoginReward(day: 15, gold: 1500, displayName: '골드 1,500', emoji: '🪙'),
+  MonthlyLoginReward(day: 16, gold: 1600, displayName: '골드 1,600', emoji: '🪙'),
+  MonthlyLoginReward(day: 17, gold: 1700, displayName: '골드 1,700', emoji: '🪙'),
+  MonthlyLoginReward(day: 18, gold: 1800, displayName: '골드 1,800', emoji: '🪙'),
+  MonthlyLoginReward(day: 19, gold: 1900, displayName: '골드 1,900', emoji: '🪙'),
+  MonthlyLoginReward(day: 20, gold: 2000, displayName: '골드 2,000', emoji: '🪙'),
+  MonthlyLoginReward(day: 21, gems: 80, summonTickets: 2, displayName: '🌟 보석 80 + 소환권 2장', emoji: '🎁', isSpecial: true),
+  MonthlyLoginReward(day: 22, gold: 2000, displayName: '골드 2,000', emoji: '🪙'),
+  MonthlyLoginReward(day: 23, gold: 2100, displayName: '골드 2,100', emoji: '🪙'),
+  MonthlyLoginReward(day: 24, gold: 2200, displayName: '골드 2,200', emoji: '🪙'),
+  MonthlyLoginReward(day: 25, gold: 2300, displayName: '골드 2,300', emoji: '🪙'),
+  MonthlyLoginReward(day: 26, gold: 2400, displayName: '골드 2,400', emoji: '🪙'),
+  MonthlyLoginReward(day: 27, gold: 2500, displayName: '골드 2,500', emoji: '🪙'),
+  MonthlyLoginReward(day: 28, gems: 150, summonTickets: 3, passXp: 500, displayName: '🌟 보석 150 + 소환권 3장 + XP 500', emoji: '👑', isSpecial: true),
+];
+
 /// 일일 미션 풀 (여기서 랜덤 3 + 보너스 1을 뽑음)
 const List<DailyQuest> _questPool = [
   // ── 쉬운 미션 (필수 포함 가능) ──

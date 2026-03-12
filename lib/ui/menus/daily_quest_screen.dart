@@ -80,6 +80,10 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                     children: [
                       // ── 연속 출석 캘린더 ──
                       _buildStreakCalendar(context, ref, questState, s),
+                      SizedBox(height: 16 * s),
+
+                      // ── 월간 출석 캘린더 (28일) ──
+                      _buildMonthlyCalendar(context, ref, questState, s),
                       SizedBox(height: 20 * s),
 
                       // ── 일일 미션 카드 ──
@@ -616,6 +620,120 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// ── 28일 월간 출석 캘린더 ──
+  Widget _buildMonthlyCalendar(
+    BuildContext context, WidgetRef ref, DailyQuestState state, double s,
+  ) {
+    return Container(
+      padding: EdgeInsets.all(12 * s),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF1A1040), Color(0xFF16213E)],
+        ),
+        borderRadius: BorderRadius.circular(16 * s),
+        border: Border.all(color: AppColors.lavender.withAlpha(40)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text('📅 월간 출석 보상', style: TextStyle(
+                color: Colors.white,
+                fontSize: 15 * s,
+                fontWeight: FontWeight.bold,
+              )),
+              const Spacer(),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 3 * s),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withAlpha(30),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text('${state.monthlyLoginCount}/28일', style: TextStyle(
+                  color: Colors.amber,
+                  fontSize: 11 * s,
+                  fontWeight: FontWeight.bold,
+                )),
+              ),
+            ],
+          ),
+          SizedBox(height: 10 * s),
+          // 4행 × 7열 그리드
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              mainAxisSpacing: 4 * s,
+              crossAxisSpacing: 4 * s,
+              childAspectRatio: 1.0,
+            ),
+            itemCount: 28,
+            itemBuilder: (context, index) {
+              final day = index + 1;
+              final reward = monthlyLoginRewards[index];
+              final isClaimed = state.monthlyRewardsClaimed.contains(day);
+              final canClaim = day <= state.monthlyLoginCount && !isClaimed;
+              final isLocked = day > state.monthlyLoginCount;
+
+              return GestureDetector(
+                onTap: canClaim ? () {
+                  ref.read(dailyQuestProvider.notifier).claimMonthlyReward(day);
+                } : null,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isClaimed
+                        ? Colors.green.withAlpha(30)
+                        : canClaim
+                            ? Colors.amber.withAlpha(30)
+                            : Colors.white.withAlpha(5),
+                    borderRadius: BorderRadius.circular(8 * s),
+                    border: Border.all(
+                      color: reward.isSpecial
+                          ? Colors.amber.withAlpha(isClaimed ? 60 : 180)
+                          : isClaimed
+                              ? Colors.green.withAlpha(60)
+                              : canClaim
+                                  ? Colors.amber.withAlpha(80)
+                                  : Colors.white12,
+                      width: reward.isSpecial ? 2 : 1,
+                    ),
+                    boxShadow: reward.isSpecial && !isLocked ? [
+                      BoxShadow(color: Colors.amber.withAlpha(30), blurRadius: 6),
+                    ] : null,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (isClaimed)
+                        Icon(Icons.check_circle, color: Colors.green, size: 14 * s)
+                      else
+                        Text(
+                          reward.isSpecial ? '🎁' : reward.emoji,
+                          style: TextStyle(
+                            fontSize: reward.isSpecial ? 12 * s : 10 * s,
+                          ),
+                        ),
+                      Text(
+                        '$day',
+                        style: TextStyle(
+                          color: isLocked ? Colors.white24 : Colors.white70,
+                          fontSize: 9 * s,
+                          fontWeight: reward.isSpecial ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }

@@ -203,6 +203,63 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
             minHeight: Responsive.spacing(context, 8),
           ),
         ),
+        SizedBox(height: Responsive.spacing(context, 8)),
+        // XP 부스트 구매 버튼
+        if (!state.isMaxLevel)
+          GestureDetector(
+            onTap: () {
+              final userState = ref.read(userStateProvider);
+              if (userState.gems >= 10) {
+                ref.read(userStateProvider.notifier).spendGems(10);
+                ref.read(seasonPassProvider.notifier).addXp(50);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('⚡ XP +50! (💎10 사용)'),
+                    backgroundColor: const Color(0xFF6633AA),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('💎 보석이 부족합니다 (필요: 10개)'),
+                    backgroundColor: Colors.red.shade700,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: Responsive.spacing(context, 12),
+                vertical: Responsive.spacing(context, 6),
+              ),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF6633AA), Color(0xFF4488CC)],
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('⚡', style: TextStyle(fontSize: Responsive.fontSize(context, 14))),
+                  SizedBox(width: Responsive.spacing(context, 4)),
+                  Text(
+                    'XP 부스트 (💎10 → +50XP)',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Responsive.fontSize(context, 11),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
       ],
     );
   }

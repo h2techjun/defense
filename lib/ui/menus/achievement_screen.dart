@@ -279,6 +279,60 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
 
           SizedBox(height: Responsive.spacing(context, 20)),
 
+          // ── 이번 시즌 기록 (매월 리셋) ──
+          _sectionTitle(context, '📅 이번 시즌 (${state.seasonMonth.isNotEmpty ? state.seasonMonth : "시즌 대기"})'),
+          Container(
+            padding: EdgeInsets.all(Responsive.spacing(context, 12)),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF1A1040), Color(0xFF16213E)],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.amber.withAlpha(40)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _rankStat(context, '🗼', '${state.seasonBestTower}', '탑 최고'),
+                Container(width: 1, height: Responsive.spacing(context, 30), color: Colors.white12),
+                _rankStat(context, '📅', '${state.seasonBestDaily}', '도전 최고'),
+              ],
+            ),
+          ),
+
+          SizedBox(height: Responsive.spacing(context, 20)),
+
+          // ── 층별 마일스톤 ──
+          if (state.floorMilestones.isNotEmpty) ...[
+            _sectionTitle(context, '🏅 층별 마일스톤'),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: (state.floorMilestones.keys.toList()..sort()).map((floor) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Responsive.spacing(context, 10),
+                      vertical: Responsive.spacing(context, 6),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withAlpha(20),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.amber.withAlpha(60)),
+                    ),
+                    child: Text(
+                      '$floor층 ✅',
+                      style: TextStyle(
+                        color: Colors.amber,
+                        fontSize: Responsive.fontSize(context, 12),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }).toList(),
+            ),
+            SizedBox(height: Responsive.spacing(context, 20)),
+          ],
+
           // 무한의 탑 랭킹
           _sectionTitle(context, '🗼 무한의 탑 기록'),
           if (state.towerRankings.isEmpty)

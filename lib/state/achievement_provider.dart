@@ -72,12 +72,20 @@ class RankingState {
   final List<RankingEntry> dailyRankings;     // 일일 도전 기록
   final int personalBestTower;                // 개인 최고 (탑)
   final int personalBestDaily;                // 개인 최고 (일일)
+  final String seasonMonth;                   // 시즌 월 ("2026-03") → 매월 리셋
+  final int seasonBestTower;                  // 이번 시즌 탑 최고
+  final int seasonBestDaily;                  // 이번 시즌 도전 최고
+  final Map<int, int> floorMilestones;        // 층별 최고 기록 {10: 3시간, 20: 5시간, ...}
 
   const RankingState({
     this.towerRankings = const [],
     this.dailyRankings = const [],
     this.personalBestTower = 0,
     this.personalBestDaily = 0,
+    this.seasonMonth = '',
+    this.seasonBestTower = 0,
+    this.seasonBestDaily = 0,
+    this.floorMilestones = const {},
   });
 
   RankingState copyWith({
@@ -85,11 +93,19 @@ class RankingState {
     List<RankingEntry>? dailyRankings,
     int? personalBestTower,
     int? personalBestDaily,
+    String? seasonMonth,
+    int? seasonBestTower,
+    int? seasonBestDaily,
+    Map<int, int>? floorMilestones,
   }) => RankingState(
     towerRankings: towerRankings ?? this.towerRankings,
     dailyRankings: dailyRankings ?? this.dailyRankings,
     personalBestTower: personalBestTower ?? this.personalBestTower,
     personalBestDaily: personalBestDaily ?? this.personalBestDaily,
+    seasonMonth: seasonMonth ?? this.seasonMonth,
+    seasonBestTower: seasonBestTower ?? this.seasonBestTower,
+    seasonBestDaily: seasonBestDaily ?? this.seasonBestDaily,
+    floorMilestones: floorMilestones ?? this.floorMilestones,
   );
 
   Map<String, dynamic> toJson() => {
@@ -97,6 +113,10 @@ class RankingState {
     'dailyRankings': dailyRankings.map((e) => e.toJson()).toList(),
     'personalBestTower': personalBestTower,
     'personalBestDaily': personalBestDaily,
+    'seasonMonth': seasonMonth,
+    'seasonBestTower': seasonBestTower,
+    'seasonBestDaily': seasonBestDaily,
+    'floorMilestones': floorMilestones.map((k, v) => MapEntry(k.toString(), v)),
   };
 
   factory RankingState.fromJson(Map<String, dynamic> json) {
@@ -109,6 +129,11 @@ class RankingState {
           .toList(),
       personalBestTower: (json['personalBestTower'] as num?)?.toInt() ?? 0,
       personalBestDaily: (json['personalBestDaily'] as num?)?.toInt() ?? 0,
+      seasonMonth: json['seasonMonth'] as String? ?? '',
+      seasonBestTower: (json['seasonBestTower'] as num?)?.toInt() ?? 0,
+      seasonBestDaily: (json['seasonBestDaily'] as num?)?.toInt() ?? 0,
+      floorMilestones: ((json['floorMilestones'] as Map<String, dynamic>?) ?? {})
+          .map((k, v) => MapEntry(int.parse(k), (v as num).toInt())),
     );
   }
 }
@@ -260,6 +285,21 @@ class RankingNotifier extends StateNotifier<RankingState> {
     final best = floor > state.personalBestTower ? floor : state.personalBestTower;
 
     state = state.copyWith(towerRankings: top10, personalBestTower: best);
+
+    // 시즌 기록 업데이트
+    _checkSeasonReset();
+    final seasonBest = floor > state.seasonBestTower ? floor : state.seasonBestTower;
+    state = state.copyWith(seasonBestTower: seasonBest);
+
+    // 층별 마일스톤 기록 (10, 20, 30층 도달 시)
+    final milestones = Map<int, int>.from(state.floorMilestones);
+    for (final milestone in [10, 20, 30, 50, 100]) {
+      if (floor >= milestone && !milestones.containsKey(milestone)) {
+        milestones[milestone] = DateTime.now().millisecondsSinceEpoch;
+      }
+    }
+    state = state.copyWith(floorMilestones: milestones);
+
     _persist();
   }
 
@@ -279,7 +319,26 @@ class RankingNotifier extends StateNotifier<RankingState> {
     final best = waves > state.personalBestDaily ? waves : state.personalBestDaily;
 
     state = state.copyWith(dailyRankings: top10, personalBestDaily: best);
+
+    // 시즌 기록 업데이트
+    _checkSeasonReset();
+    final seasonBest = waves > state.seasonBestDaily ? waves : state.seasonBestDaily;
+    state = state.copyWith(seasonBestDaily: seasonBest);
+
     _persist();
+  }
+
+  /// 시즌 리셋 체크 (매월 1일 자동 리셋)
+  void _checkSeasonReset() {
+    final now = DateTime.now();
+    final currentMonth = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+    if (state.seasonMonth != currentMonth) {
+      state = state.copyWith(
+        seasonMonth: currentMonth,
+        seasonBestTower: 0,
+        seasonBestDaily: 0,
+      );
+    }
   }
 
   void _persist() async {
