@@ -666,7 +666,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               ),
             );
             // 효과음 재생 (SFX)
-            SoundManager.instance.playSfx('level_up');
+            SoundManager.instance.playSfx(SfxType.uiUpgrade);
           }
         } catch (_) {}
       }

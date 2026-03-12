@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/responsive.dart';
 import '../../data/models/season_pass_data.dart';
 import '../../state/season_pass_provider.dart';
+import '../../state/user_state.dart';
 import '../theme/app_colors.dart';
 
 class SeasonPassScreen extends ConsumerStatefulWidget {
