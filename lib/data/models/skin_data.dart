@@ -275,3 +275,110 @@ SkinId getDefaultSkin(HeroId heroId) {
     case HeroId.bari:    return SkinId.bariDefault;
   }
 }
+
+/// ═══════════════════════════════════════
+/// 스킨 세트 보너스 시스템
+/// ═══════════════════════════════════════
+
+/// 세트 보너스 효과
+class SetBonus {
+  final SkinRarity rarity;       // 어떤 등급 세트인지
+  final int requiredCount;       // 필요 장착 수
+  final String name;             // 보너스 이름
+  final String description;      // 효과 설명
+  final String emoji;
+  final double atkBonus;         // 공격력 % 증가
+  final double hpBonus;          // 체력 % 증가
+  final double goldBonus;        // 골드 획득 % 증가
+  final double xpBonus;          // XP 획득 % 증가
+
+  const SetBonus({
+    required this.rarity,
+    required this.requiredCount,
+    required this.name,
+    required this.description,
+    required this.emoji,
+    this.atkBonus = 0,
+    this.hpBonus = 0,
+    this.goldBonus = 0,
+    this.xpBonus = 0,
+  });
+}
+
+/// 등급별 세트 보너스 정의
+const List<SetBonus> skinSetBonuses = [
+  // ── 정제(Rare) 세트 ──
+  SetBonus(rarity: SkinRarity.rare, requiredCount: 2,
+    name: '정제 2세트', description: '골드 획득 +5%',
+    emoji: '🔵', goldBonus: 0.05),
+  SetBonus(rarity: SkinRarity.rare, requiredCount: 3,
+    name: '정제 3세트', description: '공격력 +3%, 골드 +5%',
+    emoji: '🔵', atkBonus: 0.03, goldBonus: 0.05),
+  SetBonus(rarity: SkinRarity.rare, requiredCount: 5,
+    name: '정제 풀세트', description: '공격력 +5%, 체력 +5%, 골드 +10%',
+    emoji: '🔵', atkBonus: 0.05, hpBonus: 0.05, goldBonus: 0.10),
+
+  // ── 명작(Epic) 세트 ──
+  SetBonus(rarity: SkinRarity.epic, requiredCount: 2,
+    name: '명작 2세트', description: '공격력 +5%, XP +5%',
+    emoji: '🟣', atkBonus: 0.05, xpBonus: 0.05),
+  SetBonus(rarity: SkinRarity.epic, requiredCount: 3,
+    name: '명작 3세트', description: '공격력 +8%, 체력 +5%, XP +10%',
+    emoji: '🟣', atkBonus: 0.08, hpBonus: 0.05, xpBonus: 0.10),
+  SetBonus(rarity: SkinRarity.epic, requiredCount: 5,
+    name: '명작 풀세트', description: '공격력 +12%, 체력 +10%, XP +15%, 골드 +10%',
+    emoji: '🟣', atkBonus: 0.12, hpBonus: 0.10, xpBonus: 0.15, goldBonus: 0.10),
+
+  // ── 전설(Legendary) 세트 ──
+  SetBonus(rarity: SkinRarity.legendary, requiredCount: 2,
+    name: '전설 2세트', description: '공격력 +10%, XP +10%',
+    emoji: '🌟', atkBonus: 0.10, xpBonus: 0.10),
+  SetBonus(rarity: SkinRarity.legendary, requiredCount: 3,
+    name: '전설 3세트', description: '공격력 +15%, 체력 +10%, XP +15%, 골드 +10%',
+    emoji: '🌟', atkBonus: 0.15, hpBonus: 0.10, xpBonus: 0.15, goldBonus: 0.10),
+  SetBonus(rarity: SkinRarity.legendary, requiredCount: 5,
+    name: '전설 풀세트', description: '공격력 +25%, 체력 +20%, XP +25%, 골드 +20%',
+    emoji: '🌟', atkBonus: 0.25, hpBonus: 0.20, xpBonus: 0.25, goldBonus: 0.20),
+];
+
+/// 현재 활성화된 세트 보너스 계산
+List<SetBonus> calculateActiveSetBonuses(Map<HeroId, SkinId> equippedSkins) {
+  // 등급별 장착 수 카운트
+  final rarityCount = <SkinRarity, int>{};
+  for (final skinId in equippedSkins.values) {
+    final skin = allSkins[skinId];
+    if (skin != null && skin.rarity != SkinRarity.common) {
+      rarityCount[skin.rarity] = (rarityCount[skin.rarity] ?? 0) + 1;
+    }
+  }
+
+  // 활성 보너스 수집 (각 등급의 최고 활성 세트만)
+  final active = <SetBonus>[];
+  for (final rarity in [SkinRarity.rare, SkinRarity.epic, SkinRarity.legendary]) {
+    final count = rarityCount[rarity] ?? 0;
+    SetBonus? best;
+    for (final bonus in skinSetBonuses) {
+      if (bonus.rarity == rarity && count >= bonus.requiredCount) {
+        best = bonus; // 더 높은 requiredCount가 나중에 오므로 마지막이 최고
+      }
+    }
+    if (best != null) active.add(best);
+  }
+  return active;
+}
+
+/// 활성 세트 보너스의 합산 스탯
+({double atk, double hp, double gold, double xp}) totalSetBonusStats(
+  Map<HeroId, SkinId> equippedSkins,
+) {
+  final bonuses = calculateActiveSetBonuses(equippedSkins);
+  double atk = 0, hp = 0, gold = 0, xp = 0;
+  for (final b in bonuses) {
+    atk += b.atkBonus;
+    hp += b.hpBonus;
+    gold += b.goldBonus;
+    xp += b.xpBonus;
+  }
+  return (atk: atk, hp: hp, gold: gold, xp: xp);
+}
+

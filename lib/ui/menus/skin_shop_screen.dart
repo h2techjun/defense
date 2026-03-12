@@ -45,6 +45,9 @@ class SkinShopScreen extends ConsumerWidget {
             // ── 헤더 ──
             _buildHeader(context, userState.gems, ref),
 
+            // ── 세트 보너스 표시 ──
+            _buildSetBonusBanner(context, skinState),
+
             // ── 영웅 탭 + 스킨 목록 ──
             Expanded(
               child: DefaultTabController(
@@ -754,4 +757,69 @@ int _getTierForRarity(SkinRarity rarity) {
     case SkinRarity.epic: return 3;
     case SkinRarity.legendary: return 4;
   }
+}
+
+Widget _buildSetBonusBanner(BuildContext context, SkinState skinState) {
+  final activeBonuses = calculateActiveSetBonuses(skinState.equippedSkins);
+  final s = Responsive.scale(context);
+
+  if (activeBonuses.isEmpty) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 6 * s),
+      color: const Color(0xFF16213E).withAlpha(150),
+      child: Row(
+        children: [
+          Text('👗', style: TextStyle(fontSize: 14 * s)),
+          SizedBox(width: 6 * s),
+          Expanded(
+            child: Text(
+              '같은 등급 스킨을 장착하면 세트 보너스!',
+              style: TextStyle(color: Colors.white38, fontSize: 11 * s),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 12 * s, vertical: 8 * s),
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [const Color(0xFF1A1040).withAlpha(200), const Color(0xFF16213E).withAlpha(200)],
+      ),
+      border: Border(bottom: BorderSide(color: Colors.amber.withAlpha(30))),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('👗 세트 보너스 활성!', style: TextStyle(
+          color: Colors.amber, fontSize: 12 * s, fontWeight: FontWeight.bold,
+        )),
+        SizedBox(height: 4 * s),
+        Wrap(
+          spacing: 6 * s,
+          runSpacing: 4 * s,
+          children: activeBonuses.map((bonus) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 3 * s),
+              decoration: BoxDecoration(
+                color: bonus.rarity.color.withAlpha(25),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: bonus.rarity.color.withAlpha(80)),
+              ),
+              child: Text(
+                '${bonus.emoji} ${bonus.name}: ${bonus.description}',
+                style: TextStyle(
+                  color: bonus.rarity.color,
+                  fontSize: 10 * s,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    ),
+  );
 }
