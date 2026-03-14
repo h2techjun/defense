@@ -213,7 +213,7 @@ class MainMenu extends ConsumerWidget {
           final btnWidth = (availableWidth - spacing) / 2;
 
           return Padding(
-            padding: EdgeInsets.symmetric(vertical: 8 * s, horizontal: 16 * s),
+            padding: EdgeInsets.only(top: 20 * s, bottom: 8 * s, left: 16 * s, right: 16 * s),
             child: Column(
               children: [
                 // 나머지 2열 그리드
