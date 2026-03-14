@@ -26,10 +26,14 @@ class VictoryOverlay extends ConsumerWidget {
     final state = ref.watch(gameStateProvider);
     final lang = ref.watch(gameLanguageProvider);
 
+    final screenSize = MediaQuery.of(context).size;
+    final dialogWidth = (screenSize.width * 0.45).clamp(240.0, 360.0);
+
     return Container(
       color: const Color(0xBB000000),
       child: Center(
-        child: GlassPanel(
+        child: SingleChildScrollView(
+          child: GlassPanel(
           borderRadius: 20,
           blurAmount: 12,
           gradient: const LinearGradient(
@@ -48,7 +52,7 @@ class VictoryOverlay extends ConsumerWidget {
             ),
           ],
           child: SizedBox(
-            width: 280,
+            width: dialogWidth,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -124,6 +128,7 @@ class VictoryOverlay extends ConsumerWidget {
             ),
           ),
         ),
+        ),
       ),
     );
   }
@@ -145,10 +150,14 @@ class DefeatOverlay extends ConsumerWidget {
     final state = ref.watch(gameStateProvider);
     final lang = ref.watch(gameLanguageProvider);
 
+    final screenSize = MediaQuery.of(context).size;
+    final dialogWidth = (screenSize.width * 0.45).clamp(240.0, 360.0);
+
     return Container(
       color: const Color(0xBB000000),
       child: Center(
-        child: GlassPanel(
+        child: SingleChildScrollView(
+          child: GlassPanel(
           borderRadius: 20,
           blurAmount: 12,
           gradient: const LinearGradient(
@@ -248,6 +257,7 @@ class DefeatOverlay extends ConsumerWidget {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

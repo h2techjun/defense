@@ -127,28 +127,28 @@ class _TowerButtonState extends State<_TowerButton> {
 
   @override
   Widget build(BuildContext context) {
+    final s = Responsive.scale(context);
+    final borderColor = widget.canAfford ? Colors.white70 : AppColors.berserkRed;
+    
     final content = ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(10),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          width: 64 * Responsive.scale(context),
-          padding: EdgeInsets.all(4 * Responsive.scale(context)),
+          width: 52 * s,
+          height: 52 * s,
+          padding: EdgeInsets.all(4 * s),
           decoration: BoxDecoration(
             color: widget.isSelected
                 ? widget.color.withAlpha(100)
                 : _isHovered
                     ? widget.color.withAlpha(40)
-                    : Colors.black.withAlpha(50),
-            borderRadius: BorderRadius.circular(12),
+                    : Colors.black.withAlpha(80),
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: widget.isSelected
-                  ? widget.color
-                  : widget.canAfford
-                      ? widget.color.withAlpha(100)
-                      : AppColors.borderDefault,
-              width: widget.isSelected ? 2 : 1,
+              color: widget.isSelected ? widget.color : borderColor,
+              width: widget.isSelected ? 2.5 : 1.5,
             ),
             boxShadow: widget.isSelected
                 ? [
@@ -160,56 +160,42 @@ class _TowerButtonState extends State<_TowerButton> {
                   ]
                 : null,
           ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 44 * Responsive.scale(context),
-            height: 44 * Responsive.scale(context),
+          child: Center(
             child: Image.asset(
               'assets/images/towers/${widget.imageName}.png',
+              width: 40 * s, height: 40 * s,
               fit: BoxFit.contain,
               errorBuilder: (_, __, ___) => Text(widget.icon, style: TextStyle(fontSize: Responsive.fontSize(context, 20))),
             ),
           ),
-          SizedBox(height: 2 * Responsive.scale(context)),
-          SizedBox(height: 2 * Responsive.scale(context)),
+        ),
+      ),
+    );
+
+    // 선택 시 가격 정보 팝업을 위에 표시
+    final contentWithInfo = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (widget.isSelected)
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 6 * Responsive.scale(context), vertical: 1 * Responsive.scale(context)),
+            margin: EdgeInsets.only(bottom: 4 * s),
+            padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 3 * s),
             decoration: BoxDecoration(
-              color: widget.canAfford
-                  ? AppColors.sinmyeongGold.withAlpha(68)
-                  : AppColors.berserkRed.withAlpha(34),
-              borderRadius: BorderRadius.circular(6),
+              color: Colors.black.withAlpha(200),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: widget.color.withAlpha(120)),
             ),
             child: Text(
               '✨${widget.cost}',
-              maxLines: 1,
-              overflow: TextOverflow.clip,
               style: TextStyle(
-                color: widget.canAfford
-                    ? AppColors.sinmyeongGold
-                    : AppColors.berserkRed.withAlpha(170),
-                fontSize: Responsive.fontSize(context, 9),
+                color: AppColors.sinmyeongGold,
+                fontSize: Responsive.fontSize(context, 10),
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          if (widget.isSelected) ...[
-            SizedBox(height: 4 * Responsive.scale(context)),
-            Container(
-              width: 20 * Responsive.scale(context),
-              height: 3 * Responsive.scale(context),
-              decoration: BoxDecoration(
-                color: widget.color,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ],
-        ],
-      ),
-      ),
-      ),
+        content,
+      ],
     );
 
     if (!widget.canAfford) {
@@ -219,7 +205,7 @@ class _TowerButtonState extends State<_TowerButton> {
           onExit: (_) => setState(() => _isHovered = false),
           child: GestureDetector(
             onTap: widget.onTap,
-            child: content,
+            child: contentWithInfo,
           ),
         ),
       );
@@ -252,14 +238,14 @@ class _TowerButtonState extends State<_TowerButton> {
             ),
           ),
         ),
-        childWhenDragging: Opacity(opacity: 0.3, child: content),
+        childWhenDragging: Opacity(opacity: 0.3, child: contentWithInfo),
         onDragStarted: () => widget.onTap?.call(),
         child: MouseRegion(
           onEnter: (_) => setState(() => _isHovered = true),
           onExit: (_) => setState(() => _isHovered = false),
           child: GestureDetector(
             onTap: widget.onTap,
-            child: content,
+            child: contentWithInfo,
           ),
         ),
       ),
