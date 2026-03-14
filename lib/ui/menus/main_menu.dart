@@ -205,45 +205,52 @@ class MainMenu extends ConsumerWidget {
     ];
 
     if (isLandscape) {
-      // 가로 모드: 스크롤 없이 한 화면에 모두 표시
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 8 * s, horizontal: 16 * s),
-        child: Column(
-          children: [
-            // 나머지 2열 그리드 — Expanded로 공간 채우기
-            Expanded(
-              child: Wrap(
-                spacing: 8 * s,
-                runSpacing: 4 * s,
-                alignment: WrapAlignment.center,
-                children: buttons.skip(1).map((btn) {
-                  return SizedBox(
-                    width: (Responsive.screenWidth(context) * 0.5 - 36 * s) / 2,
-                    child: NotificationBadge(
-                      show: btn.showBadge,
-                      child: _MenuButton(
-                        label: btn.label,
-                        onTap: btn.onTap,
-                        isPrimary: btn.isPrimary,
-                        compact: true,
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
+      // 가로 모드: LayoutBuilder로 실제 너비 기반 2열 그리드
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final availableWidth = constraints.maxWidth - 32 * s; // padding 16*2
+          final spacing = 8 * s;
+          final btnWidth = (availableWidth - spacing) / 2;
+
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 8 * s, horizontal: 16 * s),
+            child: Column(
+              children: [
+                // 나머지 2열 그리드
+                Expanded(
+                  child: Wrap(
+                    spacing: spacing,
+                    runSpacing: 4 * s,
+                    children: buttons.skip(1).map((btn) {
+                      return SizedBox(
+                        width: btnWidth,
+                        child: NotificationBadge(
+                          show: btn.showBadge,
+                          child: _MenuButton(
+                            label: btn.label,
+                            onTap: btn.onTap,
+                            isPrimary: btn.isPrimary,
+                            compact: true,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                SizedBox(height: 4 * s),
+                // 전투 시작 — 맨 아래 풀 너비
+                _MenuButton(
+                  label: buttons[0].label,
+                  onTap: buttons[0].onTap,
+                  isPrimary: true,
+                  compact: true,
+                ),
+                SizedBox(height: 4 * s),
+                _buildFooter(context, lang, s),
+              ],
             ),
-            SizedBox(height: 4 * s),
-            // 전투 시작 — 맨 아래 풀 너비
-            _MenuButton(
-              label: buttons[0].label,
-              onTap: buttons[0].onTap,
-              isPrimary: true,
-              compact: true,
-            ),
-            SizedBox(height: 4 * s),
-            _buildFooter(context, lang, s),
-          ],
-        ),
+          );
+        },
       );
     } else {
       // 세로 모드: 세로 리스트
