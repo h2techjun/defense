@@ -437,26 +437,7 @@ class SaveManager {
     }
   }
 
-  // ── VIP ──
 
-  /// VIP 상태 저장
-  Future<void> saveVip(Map<String, dynamic> data) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('vip_data', jsonEncode(data));
-  }
-
-  /// VIP 상태 로드
-  Future<Map<String, dynamic>?> loadVip() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final raw = prefs.getString('vip_data');
-      if (raw == null) return null;
-      return jsonDecode(raw) as Map<String, dynamic>;
-    } catch (e) {
-      debugPrint('[SAVE] VIP 로드 오류: $e');
-      return null;
-    }
-  }
 
   // ── 업적 ──
 

@@ -1,5 +1,5 @@
-﻿// 해원의 문 - 게임 이벤트 ↔ Provider 브릿지
-// 게임 이벤트(kill, clear, build, skill)를 업적/시즌패스/VIP/랭킹/도감/일일미션에 연결
+// 해원의 문 - 게임 이벤트 ↔ Provider 브릿지
+// 게임 이벤트(kill, clear, build, skill)를 업적/시즌패스/랭킹/도감/일일미션에 연결
 // 성능: kill/skill 이벤트는 배치 처리, 나머지는 즉시 처리
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';

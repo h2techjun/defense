@@ -1,4 +1,4 @@
-﻿// 해원의 문 - 시즌 패스 + VIP 상태 관리
+// 해원의 문 - 시즌 패스 상태 관리
 // Riverpod StateNotifier 기반
 
 import 'package:flutter/foundation.dart';

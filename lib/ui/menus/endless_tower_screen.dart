@@ -1,4 +1,4 @@
-﻿// 해원의 문 - 무한의 탑 + 일일 도전 UI 화면
+// 해원의 문 - 무한의 탑 + 일일 도전 UI 화면
 // 탑 진행도, 층 미리보기, 일일 도전 탭
 
 import 'dart:ui';
@@ -104,7 +104,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
     ];
 
     // 난이도에 따른 해원문 HP 스케일링
-    final baseHp = 20;
+    final baseHp = 15;
     final scaledHp = (baseHp * (1 + floorData.difficultyScale * 0.1)).round();
 
     return LevelData(
