@@ -213,7 +213,7 @@ class MainMenu extends ConsumerWidget {
           final btnWidth = (availableWidth - spacing) / 2;
 
           return Padding(
-            padding: EdgeInsets.only(top: 20 * s, bottom: 8 * s, left: 16 * s, right: 16 * s),
+            padding: EdgeInsets.only(top: 28 * s, bottom: 8 * s, left: 16 * s, right: 16 * s),
             child: Column(
               children: [
                 // 나머지 2열 그리드
@@ -237,7 +237,7 @@ class MainMenu extends ConsumerWidget {
                     }).toList(),
                   ),
                 ),
-                SizedBox(height: 4 * s),
+                SizedBox(height: 2 * s),
                 // 전투 시작 — 맨 아래 풀 너비
                 _MenuButton(
                   label: buttons[0].label,
