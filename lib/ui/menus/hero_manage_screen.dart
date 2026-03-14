@@ -1767,6 +1767,9 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
 
   /// 진화 단계 탭 (스탯 관련 — 기본/중급/궁극)
   Widget _buildEvolutionTabs(HeroData hero, Color color) {
+    // TODO: 실제 영웅 레벨 연동 시 provider에서 가져오기
+    final heroLevel = 1;
+
     return Row(
       children: List.generate(hero.evolutions.length, (i) {
         final evo = hero.evolutions[i];
@@ -1774,7 +1777,6 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
         final heroFileName = _getHeroFileName(hero.id);
         final tierNumber = i + 1;
 
-        // 진화 단계별 스타일
         final tierColor = switch (evo.tier) {
           EvolutionTier.base => const Color(0xFF9E9E9E),
           EvolutionTier.intermediate => const Color(0xFF42A5F5),
@@ -1785,21 +1787,23 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           EvolutionTier.intermediate => AppStrings.get(ref.watch(gameLanguageProvider), 'evo_intermediate'),
           EvolutionTier.ultimate => AppStrings.get(ref.watch(gameLanguageProvider), 'evo_ultimate'),
         };
-        final tierBadge = switch (evo.tier) {
-          EvolutionTier.base => 'Lv.1',
-          EvolutionTier.intermediate => 'Lv.15',
-          EvolutionTier.ultimate => 'Lv.35',
+        final requiredLevel = switch (evo.tier) {
+          EvolutionTier.base => 1,
+          EvolutionTier.intermediate => 15,
+          EvolutionTier.ultimate => 35,
         };
+        final tierBadge = 'Lv.$requiredLevel';
+        final isLocked = heroLevel < requiredLevel;
 
         return Expanded(
           child: GestureDetector(
-            onTap: () => setState(() => _selectedEvolutionIndex = i),
+            onTap: isLocked ? null : () => setState(() => _selectedEvolutionIndex = i),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 250),
               margin: EdgeInsets.only(right: i < hero.evolutions.length - 1 ? 6 : 0),
               padding: EdgeInsets.symmetric(vertical: 8 * Responsive.scale(context), horizontal: 4),
               decoration: BoxDecoration(
-                gradient: isSelected
+                gradient: isSelected && !isLocked
                     ? LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -1809,70 +1813,84 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                         ],
                       )
                     : null,
-                color: isSelected ? null : const Color(0x08FFFFFF),
+                color: isSelected && !isLocked ? null : const Color(0x08FFFFFF),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? tierColor.withValues(alpha: 0.6) : const Color(0x22FFFFFF),
-                  width: isSelected ? 1.5 : 1,
+                  color: isLocked
+                      ? const Color(0x22FFFFFF)
+                      : isSelected
+                          ? tierColor.withValues(alpha: 0.6)
+                          : const Color(0x22FFFFFF),
+                  width: isSelected && !isLocked ? 1.5 : 1,
                 ),
-                boxShadow: isSelected
+                boxShadow: isSelected && !isLocked
                     ? [BoxShadow(color: tierColor.withValues(alpha: 0.2), blurRadius: 8, spreadRadius: 1)]
                     : null,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // 스프라이트 미리보기 (원형)
-                  Container(
-                    width: 40 * Responsive.scale(context),
-                    height: 40 * Responsive.scale(context),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isSelected ? tierColor : tierColor.withValues(alpha: 0.3),
-                        width: isSelected ? 2 : 1,
-                      ),
-                      boxShadow: isSelected && evo.tier == EvolutionTier.ultimate
-                          ? [BoxShadow(color: tierColor.withValues(alpha: 0.5), blurRadius: 10)]
-                          : null,
+              child: Opacity(
+                opacity: isLocked ? 0.4 : 1.0,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 스프라이트 또는 잠금 아이콘
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: 40 * Responsive.scale(context),
+                          height: 40 * Responsive.scale(context),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isLocked
+                                  ? Colors.white24
+                                  : isSelected ? tierColor : tierColor.withValues(alpha: 0.3),
+                              width: isSelected && !isLocked ? 2 : 1,
+                            ),
+                            boxShadow: isSelected && !isLocked && evo.tier == EvolutionTier.ultimate
+                                ? [BoxShadow(color: tierColor.withValues(alpha: 0.5), blurRadius: 10)]
+                                : null,
+                          ),
+                          child: ClipOval(
+                            child: HeroSpriteViewer(
+                              imagePath: 'assets/images/heroes/${heroFileName}_evo${tierNumber}_sprites.png',
+                              width: 40 * Responsive.scale(context),
+                              height: 40 * Responsive.scale(context),
+                              fallbackText: evo.tier == EvolutionTier.base ? '⚪' : evo.tier == EvolutionTier.intermediate ? '🔵' : '🟣',
+                            ),
+                          ),
+                        ),
+                        if (isLocked)
+                          Icon(Icons.lock, color: Colors.white60, size: 20 * Responsive.scale(context)),
+                      ],
                     ),
-                    child: ClipOval(
-                      child: HeroSpriteViewer(
-                        imagePath: 'assets/images/heroes/${heroFileName}_evo${tierNumber}_sprites.png',
-                        width: 40 * Responsive.scale(context),
-                        height: 40 * Responsive.scale(context),
-                        fallbackText: evo.tier == EvolutionTier.base ? '⚪' : evo.tier == EvolutionTier.intermediate ? '🔵' : '🟣',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  // 이름
-                  Text(
-                    tierLabel,
-                    style: TextStyle(
-                      fontSize: Responsive.fontSize(context, 10),
-                      color: isSelected ? Colors.white : Colors.white54,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  // 레벨 뱃지
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                    decoration: BoxDecoration(
-                      color: tierColor.withValues(alpha: isSelected ? 0.25 : 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      tierBadge,
+                    const SizedBox(height: 4),
+                    Text(
+                      tierLabel,
                       style: TextStyle(
-                        fontSize: Responsive.fontSize(context, 8),
-                        color: isSelected ? tierColor : Colors.white38,
-                        fontWeight: FontWeight.w600,
+                        fontSize: Responsive.fontSize(context, 10),
+                        color: isLocked ? Colors.white30 : isSelected ? Colors.white : Colors.white54,
+                        fontWeight: isSelected && !isLocked ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 2),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                      decoration: BoxDecoration(
+                        color: tierColor.withValues(alpha: isSelected && !isLocked ? 0.25 : 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        tierBadge,
+                        style: TextStyle(
+                          fontSize: Responsive.fontSize(context, 8),
+                          color: isLocked ? Colors.white30 : isSelected ? tierColor : Colors.white38,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
