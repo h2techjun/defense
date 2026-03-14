@@ -46,26 +46,38 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
     super.dispose();
   }
 
-  /// 무한의 탑 시작
   void _startTowerFloor(int floor) {
-    final floorData = TowerFloorGenerator.generateFloor(floor);
+    try {
+      final floorData = TowerFloorGenerator.generateFloor(floor);
 
-    // 휴식 층이면 보상 선택 다이얼로그 표시
-    if (floorData.type == TowerFloorType.rest) {
-      _showRestRewardDialog(floorData);
-      return;
+      // 휴식 층이면 보상 선택 다이얼로그 표시
+      if (floorData.type == TowerFloorType.rest) {
+        _showRestRewardDialog(floorData);
+        return;
+      }
+
+      // 동적 LevelData 생성
+      final waves = WaveBuilder.buildEndlessTowerFloor(floorData);
+      final levelData = _buildLevelData(floorData, waves);
+
+      // 진행 상태 업데이트
+      if (ref.read(endlessTowerProvider).currentFloor == 0) {
+        ref.read(endlessTowerProvider.notifier).startRun();
+      }
+
+      widget.onStartLevel(levelData, GameMode.endlessTower);
+    } catch (e, st) {
+      debugPrint('Endless Tower Error: $e\n$st');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error starting floor: $e'),
+            duration: const Duration(seconds: 5),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
-
-    // 동적 LevelData 생성
-    final waves = WaveBuilder.buildEndlessTowerFloor(floorData);
-    final levelData = _buildLevelData(floorData, waves);
-
-    // 진행 상태 업데이트
-    if (ref.read(endlessTowerProvider).currentFloor == 0) {
-      ref.read(endlessTowerProvider.notifier).startRun();
-    }
-
-    widget.onStartLevel(levelData, GameMode.endlessTower);
   }
 
   /// 일일 도전 시작
@@ -94,7 +106,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
   LevelData _buildLevelData(TowerFloorData floorData, List<WaveData> waves) {
     // 기존 레벨에서 경로 데이터 차용 (층 번호에 따라 다양한 경로)
     final existingLevels = JsonDataLoader.allLevels;
-    final pathIdx = (floorData.floor - 1) % existingLevels.length;
+    final pathIdx = existingLevels.isNotEmpty ? (floorData.floor - 1) % existingLevels.length : 0;
     final referencedLevel = existingLevels.isNotEmpty
         ? existingLevels[pathIdx]
         : null;
@@ -328,9 +340,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                 floor: floor,
                 isCurrent: isCurrent,
                 isCleared: isCleared,
-                onTap: isCurrent
-                    ? () => _startTowerFloor(floor.floor)
-                    : null,
+                onTap: () => _startTowerFloor(state.currentFloor > 0 ? state.currentFloor : 1),
               );
             },
           ),
