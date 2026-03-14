@@ -20,6 +20,8 @@ Future<void> main() async {
   debugPrint('🚀 [main] Flutter app starting...');
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Zone mismatch 경고는 무해 (ensureInitialized: 루트 Zone, runApp: guarded Zone)
+
   // 에러 핸들러 — 빨간 에러 화면 방지, 로그만 출력
   FlutterError.onError = (FlutterErrorDetails details) {
     debugPrint('');
@@ -41,6 +43,7 @@ Future<void> main() async {
   if (!kIsWeb) {
     try {
       await dotenv.load(fileName: '.env');
+    // ignore: avoid_catches_without_on_clauses — FileNotFoundError는 Error 타입
     } catch (e) {
       debugPrint('⚠️ [main] .env 파일 로드 실패 (무시): $e');
     }
@@ -60,6 +63,7 @@ Future<void> main() async {
         );
         debugPrint('✅ [main] Supabase 초기화 완료');
       }
+    // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       debugPrint('⚠️ [main] Supabase 초기화 실패: $e');
     }
@@ -82,6 +86,7 @@ Future<void> main() async {
   try {
     await GameDataLoader.initFromJson();
     debugPrint('✅ [main] GameDataLoader 초기화 완료');
+  // ignore: avoid_catches_without_on_clauses
   } catch (e) {
     debugPrint('⚠️ [main] GameDataLoader 초기화 실패, 폴백 사용: $e');
   }
@@ -90,6 +95,7 @@ Future<void> main() async {
   try {
     await AppStrings.init(GameLanguage.ko);
     debugPrint('✅ [main] AppStrings 초기화 완료');
+  // ignore: avoid_catches_without_on_clauses
   } catch (e) {
     debugPrint('⚠️ [main] AppStrings 초기화 실패: $e');
   }

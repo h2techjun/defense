@@ -18,15 +18,15 @@ class Responsive {
   // 🔧 모바일 UI 부스트 — 이 값 하나로 전체 모바일 UI 크기 제어
   // 1.0 = 원본, 1.2 = 20% 확대, 1.4 = 40% 확대
   // ═══════════════════════════════════════════
-  static const double _mobileUiBoost = 1.4;
-  static const double _minMobileFontSize = 12.0;
+  static const double _mobileUiBoost = 1.6;
+  static const double _minMobileFontSize = 13.0;
   static const double _minMobileIconSize = 20.0;
 
-  /// 현재 디바이스 유형 판별
+  /// 현재 디바이스 유형 판별 (shortestSide 기준 — 가로/세로 모드 공통)
   static DeviceType deviceType(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width < 600) return DeviceType.phone;
-    if (width < 1200) return DeviceType.tablet;
+    final shortSide = MediaQuery.of(context).size.shortestSide;
+    if (shortSide < 600) return DeviceType.phone;
+    if (shortSide < 900) return DeviceType.tablet;
     return DeviceType.desktop;
   }
 
