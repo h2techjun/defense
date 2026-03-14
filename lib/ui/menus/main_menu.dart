@@ -205,9 +205,9 @@ class MainMenu extends ConsumerWidget {
     ];
 
     if (isLandscape) {
-      // 가로 모드: 스크롤 가능한 2열 그리드
-      return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(vertical: 16 * s, horizontal: 20 * s),
+      // 가로 모드: 스크롤 없이 한 화면에 모두 표시
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 8 * s, horizontal: 16 * s),
         child: Column(
           children: [
             // 전투 시작은 풀 너비로
@@ -215,28 +215,31 @@ class MainMenu extends ConsumerWidget {
               label: buttons[0].label,
               onTap: buttons[0].onTap,
               isPrimary: true,
+              compact: true,
             ),
-            SizedBox(height: 12 * s),
-            // 나머지 2열 그리드
-            Wrap(
-              spacing: 10 * s,
-              runSpacing: 8 * s,
-              children: buttons.skip(1).map((btn) {
-                return SizedBox(
-                  width: (Responsive.screenWidth(context) * 0.5 - 40 * s) / 2,
-                  child: NotificationBadge(
-                    show: btn.showBadge,
-                    child: _MenuButton(
-                      label: btn.label,
-                      onTap: btn.onTap,
-                      isPrimary: btn.isPrimary,
-                      compact: true,
+            SizedBox(height: 6 * s),
+            // 나머지 2열 그리드 — Expanded로 공간 채우기
+            Expanded(
+              child: Wrap(
+                spacing: 8 * s,
+                runSpacing: 4 * s,
+                alignment: WrapAlignment.center,
+                children: buttons.skip(1).map((btn) {
+                  return SizedBox(
+                    width: (Responsive.screenWidth(context) * 0.5 - 36 * s) / 2,
+                    child: NotificationBadge(
+                      show: btn.showBadge,
+                      child: _MenuButton(
+                        label: btn.label,
+                        onTap: btn.onTap,
+                        isPrimary: btn.isPrimary,
+                        compact: true,
+                      ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
-            SizedBox(height: 16 * s),
             _buildFooter(context, lang, s),
           ],
         ),
