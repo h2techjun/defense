@@ -912,8 +912,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             Positioned.fill(
               child: DragTarget<TowerType>(
                 onAcceptWithDetails: (details) {
-                  // 드롭 위치를 게임 엔진에 전달
-                  _game.handleDragDrop(details.offset, details.data);
+                  // RenderBox를 통해 게임 위젯 기준 로컬 좌표 획득
+                  final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+                  if (renderBox != null) {
+                    final localPos = renderBox.globalToLocal(details.offset);
+                    _game.handleDragDrop(localPos, details.data, renderBox.size);
+                  } else {
+                    _game.handleDragDrop(details.offset, details.data, null);
+                  }
                   // 드래그 후 선택 상태 초기화 (UI 업데이트)
                   setState(() {
                     _selectedTower = null;

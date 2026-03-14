@@ -1,4 +1,4 @@
-// 해원의 문 - 메인 게임 루프 (DefenseGame)
+﻿// 해원의 문 - 메인 게임 루프 (DefenseGame)
 
 
 import 'dart:ui';
@@ -385,35 +385,38 @@ class DefenseGame extends FlameGame
     }
   }
 
-  /// 드래그 앤 드롭으로 타워 배치 처리
-  void handleDragDrop(Offset globalPosition, TowerType towerType) {
+  /// 드래그 앤 드롭으로 타워 배치 처리 (위젯 로컬 좌표 기반)
+  void handleDragDrop(Offset localPosition, TowerType towerType, Size? widgetSize) {
     if (!isGameRunning) return;
 
-    if (kDebugMode) debugPrint('DragDrop at $globalPosition with $towerType');
-    
-    // 마우스 포인터 위치 보정 (아이콘 중앙이 놓는 지점이 되도록)
-    // TowerSelectPanel에서 Offset(-32, -32)를 줬으므로, 받은 좌표는 TopLeft임.
-    // 다시 +32를 해줘야 실제 마우스 좌표가 됨.
-    final correctedPosition = globalPosition + const Offset(32, 32);
-
-
+    if (kDebugMode) debugPrint('DragDrop local=$localPosition widget=$widgetSize type=$towerType');
 
     // 드롭된 타워 타입 설정
     selectedTowerType = towerType;
 
-    // 화면 좌표(Global) -> 월드 좌표 변환
-    final worldPos = camera.viewfinder.transform.globalToLocal(
-      Vector2(correctedPosition.dx, correctedPosition.dy)
-    );
-    
+    // Draggable feedback 중앙 보정 (+32, +32)
+    final centerOffset = localPosition + const Offset(32, 32);
 
+    Vector2 worldPos;
+    if (widgetSize != null && widgetSize.width > 0 && widgetSize.height > 0) {
+      // 위젯 크기 대비 비율로 게임 좌표 계산 (가장 정확)
+      final ratioX = centerOffset.dx / widgetSize.width;
+      final ratioY = centerOffset.dy / widgetSize.height;
+      worldPos = Vector2(
+        ratioX * GameConstants.gameWidth,
+        ratioY * GameConstants.gameHeight,
+      );
+    } else {
+      worldPos = camera.viewfinder.transform.globalToLocal(
+        Vector2(centerOffset.dx, centerOffset.dy)
+      );
+    }
 
     // 가장 가까운 빈 배치 지점 찾기
     final slotIndex = gameMap.findNearestEmptySlot(worldPos);
-    
+
     if (slotIndex != null) {
       _placeTowerAtSlot(slotIndex);
-      // 배치 후 선택 해제 (원치 않으면 주석 처리)
       selectedTowerType = null;
     } else {
       if (kDebugMode) debugPrint('No valid slot found near $worldPos');

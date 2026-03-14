@@ -31,7 +31,7 @@ class VictoryOverlay extends ConsumerWidget {
     final lang = ref.watch(gameLanguageProvider);
 
     final screenSize = MediaQuery.of(context).size;
-    final dialogWidth = (screenSize.width * 0.45).clamp(240.0, 360.0);
+    final dialogWidth = (screenSize.width * 0.30).clamp(180.0, 260.0);
 
     return Container(
       color: const Color(0xBB000000),
@@ -47,7 +47,7 @@ class VictoryOverlay extends ConsumerWidget {
           ),
           borderColor: AppColors.sinmyeongGold,
           borderWidth: 2,
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(12),
           boxShadow: [
             BoxShadow(
               color: AppColors.sinmyeongGold.withAlpha(68),
@@ -60,8 +60,8 @@ class VictoryOverlay extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('🌸', style: TextStyle(fontSize: 48)),
-                const SizedBox(height: 12),
+                const Text('🌸', style: TextStyle(fontSize: 32)),
+                const SizedBox(height: 8),
                 ShaderMask(
                   shaderCallback: (bounds) => const LinearGradient(
                     colors: [AppColors.sinmyeongGold, AppColors.peachCoral],
@@ -69,7 +69,7 @@ class VictoryOverlay extends ConsumerWidget {
                   child: Text(
                     AppStrings.get(lang, 'victory_title'),
                     style: const TextStyle(
-                      fontSize: 28,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -79,7 +79,7 @@ class VictoryOverlay extends ConsumerWidget {
                 Text(
                   AppStrings.get(lang, 'victory_quote'),
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 10,
                     color: AppColors.lavender,
                     fontStyle: FontStyle.italic,
                   ),
@@ -198,7 +198,7 @@ class DefeatOverlay extends ConsumerWidget {
     final lang = ref.watch(gameLanguageProvider);
 
     final screenSize = MediaQuery.of(context).size;
-    final dialogWidth = (screenSize.width * 0.45).clamp(240.0, 360.0);
+    final dialogWidth = (screenSize.width * 0.30).clamp(180.0, 240.0);
 
     return Container(
       color: const Color(0xBB000000),
@@ -214,7 +214,7 @@ class DefeatOverlay extends ConsumerWidget {
           ),
           borderColor: AppColors.berserkRed,
           borderWidth: 2,
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(12),
           boxShadow: [
             BoxShadow(
               color: AppColors.berserkRed.withAlpha(68),
@@ -223,12 +223,12 @@ class DefeatOverlay extends ConsumerWidget {
             ),
           ],
           child: SizedBox(
-            width: 280,
+            width: dialogWidth,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('💀', style: TextStyle(fontSize: 48)),
-                const SizedBox(height: 12),
+                const Text('💀', style: TextStyle(fontSize: 32)),
+                const SizedBox(height: 8),
                 ShaderMask(
                   shaderCallback: (bounds) => const LinearGradient(
                     colors: [AppColors.berserkRed, AppColors.peachCoral],
@@ -236,7 +236,7 @@ class DefeatOverlay extends ConsumerWidget {
                   child: Text(
                     AppStrings.get(lang, 'defeat_title'),
                     style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
