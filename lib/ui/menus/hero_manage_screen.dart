@@ -991,13 +991,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
             _buildBackstorySection(hero, color),
 
 
-            SizedBox(height: 16 * Responsive.scale(context)),
 
-
-            // 대사
-
-
-            if (hero.barks.isNotEmpty) _buildBarksSection(hero, color),
 
 
           ],
@@ -3008,10 +3002,10 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                 loreText,
 
 
-                style: const TextStyle(
+                style: TextStyle(
 
 
-                  fontSize: 14,
+                  fontSize: Responsive.fontSize(context, 14),
 
 
                   color: Colors.white,
