@@ -112,7 +112,7 @@ class TowerManageScreen extends ConsumerWidget {
                               } : null,
                               child: Container(
                                 margin: EdgeInsets.symmetric(horizontal: 2 * s),
-                                height: 70 * s,
+                                height: 100 * s,
                                 decoration: BoxDecoration(
                                   color: isHovering
                                       ? const Color(0x44CC88FF)
@@ -134,7 +134,7 @@ class TowerManageScreen extends ConsumerWidget {
                                           children: [
                                             Image.asset(
                                               'assets/images/towers/${meta?['image'] as String? ?? 'tower_archer_t1'}.png',
-                                              width: 36 * s, height: 36 * s, fit: BoxFit.contain,
+                                              width: 56 * s, height: 56 * s, fit: BoxFit.contain,
                                               errorBuilder: (_, __, ___) => Text(meta?['icon'] as String? ?? '?', style: TextStyle(fontSize: Responsive.fontSize(context, 18))),
                                             ),
                                             Text(
@@ -284,8 +284,8 @@ class TowerManageScreen extends ConsumerWidget {
           Row(
             children: [
               Container(
-                width: 40 * s,
-                height: 40 * s,
+                width: 56 * s,
+                height: 56 * s,
                 decoration: BoxDecoration(
                   color: color.withAlpha(40),
                   borderRadius: BorderRadius.circular(6),
@@ -294,7 +294,7 @@ class TowerManageScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(6),
                   child: Image.asset(
                     'assets/images/towers/${meta['image'] as String}.png',
-                    width: 40 * s, height: 40 * s, fit: BoxFit.contain,
+                    width: 56 * s, height: 56 * s, fit: BoxFit.contain,
                     errorBuilder: (_, __, ___) => Center(
                       child: Text(meta['icon'] as String, style: TextStyle(fontSize: Responsive.fontSize(context, 16))),
                     ),
