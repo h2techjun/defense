@@ -259,8 +259,8 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                   children: [
                     // 날짜 원형
                     Container(
-                      width: 36 * s,
-                      height: 36 * s,
+                      width: 44 * s,
+                      height: 44 * s,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isClaimed
@@ -287,7 +287,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                       child: Center(
                         child: Text(
                           isClaimed ? '✅' : reward.emoji,
-                          style: TextStyle(fontSize: 14 * s),
+                          style: TextStyle(fontSize: 18 * s),
                         ),
                       ),
                     ),
@@ -297,7 +297,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                       '${reward.day}일',
                       style: TextStyle(
                         color: isReached ? Colors.white : Colors.white38,
-                        fontSize: 10 * s,
+                        fontSize: 12 * s,
                         fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
@@ -316,7 +316,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
       title,
       style: TextStyle(
         color: AppColors.lavender,
-        fontSize: 16 * s,
+        fontSize: 18 * s,
         fontWeight: FontWeight.bold,
         letterSpacing: 1,
       ),
@@ -363,7 +363,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
           Row(
             children: [
               // 아이콘
-              Text(quest.type.emoji, style: TextStyle(fontSize: 22 * s)),
+              Text(quest.type.emoji, style: TextStyle(fontSize: 28 * s)),
               SizedBox(width: 10 * s),
               Expanded(
                 child: Column(
@@ -383,7 +383,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                               '보너스',
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 9 * s,
+                                fontSize: 11 * s,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -393,7 +393,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                             quest.description,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 14 * s,
+                              fontSize: 16 * s,
                               fontWeight: FontWeight.w600,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -484,7 +484,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                     );
                   },
                   icon: Icon(Icons.flight_takeoff, size: 14 * s, color: Colors.cyan),
-                  label: Text('이동', style: TextStyle(color: Colors.cyan, fontSize: 11 * s, fontWeight: FontWeight.bold)),
+                  label: Text('이동', style: TextStyle(color: Colors.cyan, fontSize: 13 * s, fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: Colors.cyan.withAlpha(100)),
                     padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 4 * s),
@@ -494,7 +494,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
               else
                 Text(
                   '$progress/${quest.targetValue}',
-                  style: TextStyle(color: Colors.white54, fontSize: 12 * s),
+                  style: TextStyle(color: Colors.white54, fontSize: 14 * s),
                 ),
             ],
           ),
@@ -532,7 +532,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
       ),
       child: Text(
         text,
-        style: TextStyle(color: color, fontSize: 10 * s, fontWeight: FontWeight.bold),
+        style: TextStyle(color: color, fontSize: 13 * s, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -711,19 +711,19 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (isClaimed)
-                        Icon(Icons.check_circle, color: Colors.green, size: 14 * s)
+                        Icon(Icons.check_circle, color: Colors.green, size: 18 * s)
                       else
                         Text(
                           reward.isSpecial ? '🎁' : reward.emoji,
                           style: TextStyle(
-                            fontSize: reward.isSpecial ? 12 * s : 10 * s,
+                            fontSize: reward.isSpecial ? 16 * s : 14 * s,
                           ),
                         ),
                       Text(
                         '$day',
                         style: TextStyle(
                           color: isLocked ? Colors.white24 : Colors.white70,
-                          fontSize: 9 * s,
+                          fontSize: 11 * s,
                           fontWeight: reward.isSpecial ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
