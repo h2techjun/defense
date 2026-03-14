@@ -295,7 +295,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
       padding: EdgeInsets.symmetric(horizontal: 12 * s),
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 130 * s,
+          maxCrossAxisExtent: 180 * s,
           mainAxisSpacing: 8 * s,
           crossAxisSpacing: 8 * s,
           childAspectRatio: 0.85,
@@ -410,8 +410,8 @@ class _PartySlotWidget extends StatelessWidget {
         : _getHeroColor(heroData!.id);
 
     return Container(
-      width: 90 * s,
-      height: 110 * s,
+      width: 120 * s,
+      height: 140 * s,
       decoration: BoxDecoration(
         color: color.withAlpha(isEmpty ? 60 : 40),
         borderRadius: BorderRadius.circular(14 * s),
@@ -458,13 +458,13 @@ class _PartySlotWidget extends StatelessWidget {
                   children: [
                     ClipOval(
                       child: SizedBox(
-                        width: 36 * s, height: 36 * s,
+                        width: 50 * s, height: 50 * s,
                         child: OverflowBox(
-                          maxWidth: 36 * s * 3, maxHeight: 36 * s,
+                          maxWidth: 50 * s * 3, maxHeight: 50 * s,
                           alignment: Alignment.centerLeft,
                           child: Image.asset(
                             'assets/images/heroes/${_getHeroFileName(heroData!.id)}_tier1_sprites.png',
-                            height: 36 * s, fit: BoxFit.contain,
+                            height: 50 * s, fit: BoxFit.contain,
                             errorBuilder: (_, __, ___) => Text(
                               _getHeroEmoji(heroData!.id),
                               style: TextStyle(fontSize: Responsive.fontSize(context, 28)),
@@ -642,8 +642,8 @@ class _HeroPoolCard extends StatelessWidget {
               child: ClipOval(
                 child: HeroSpriteViewer(
                   imagePath: 'assets/images/heroes/${_getHeroFileName(hero.id)}_tier1_sprites.png',
-                  width: 36 * s,
-                  height: 36 * s,
+                  width: 50 * s,
+                  height: 50 * s,
                   fallbackText: _getHeroEmoji(hero.id),
                 ),
               ),
@@ -693,8 +693,8 @@ class _HeroPoolCard extends StatelessWidget {
               ClipOval(
                 child: HeroSpriteViewer(
                   imagePath: 'assets/images/heroes/${_getHeroFileName(hero.id)}_tier1_sprites.png',
-                  width: 36 * s,
-                  height: 36 * s,
+                  width: 50 * s,
+                  height: 50 * s,
                   fallbackText: _getHeroEmoji(hero.id),
                 ),
               ),
