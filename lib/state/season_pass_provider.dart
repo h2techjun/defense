@@ -1,4 +1,4 @@
-// 해원의 문 - 시즌 패스 + VIP 상태 관리
+﻿// 해원의 문 - 시즌 패스 + VIP 상태 관리
 // Riverpod StateNotifier 기반
 
 import 'package:flutter/foundation.dart';
@@ -96,52 +96,6 @@ class SeasonPassState {
       seasonNumber: (json['seasonNumber'] as num?)?.toInt() ?? 1,
     );
   }
-}
-
-// ═══════════════════════════════════════════
-// VIP 상태
-// ═══════════════════════════════════════════
-
-class VipState {
-  final int totalSpendKRW;       // 누적 결제액
-  final String lastDailyReward;  // 마지막 일일 보상 수령 날짜 (yyyy-MM-dd)
-  final bool hasMonthlySubscription;
-  final String subscriptionEndDate; // yyyy-MM-dd
-
-  const VipState({
-    this.totalSpendKRW = 0,
-    this.lastDailyReward = '',
-    this.hasMonthlySubscription = false,
-    this.subscriptionEndDate = '',
-  });
-
-  VipTier get tier => VipTierExt.fromTotalSpend(totalSpendKRW);
-
-  VipState copyWith({
-    int? totalSpendKRW,
-    String? lastDailyReward,
-    bool? hasMonthlySubscription,
-    String? subscriptionEndDate,
-  }) => VipState(
-    totalSpendKRW: totalSpendKRW ?? this.totalSpendKRW,
-    lastDailyReward: lastDailyReward ?? this.lastDailyReward,
-    hasMonthlySubscription: hasMonthlySubscription ?? this.hasMonthlySubscription,
-    subscriptionEndDate: subscriptionEndDate ?? this.subscriptionEndDate,
-  );
-
-  Map<String, dynamic> toJson() => {
-    'totalSpendKRW': totalSpendKRW,
-    'lastDailyReward': lastDailyReward,
-    'hasMonthlySubscription': hasMonthlySubscription,
-    'subscriptionEndDate': subscriptionEndDate,
-  };
-
-  factory VipState.fromJson(Map<String, dynamic> json) => VipState(
-    totalSpendKRW: (json['totalSpendKRW'] as num?)?.toInt() ?? 0,
-    lastDailyReward: json['lastDailyReward'] as String? ?? '',
-    hasMonthlySubscription: json['hasMonthlySubscription'] as bool? ?? false,
-    subscriptionEndDate: json['subscriptionEndDate'] as String? ?? '',
-  );
 }
 
 // ═══════════════════════════════════════════
@@ -308,92 +262,8 @@ class SeasonPassNotifier extends StateNotifier<SeasonPassState> {
   }
 }
 
-// ═══════════════════════════════════════════
-// VIP Notifier
-// ═══════════════════════════════════════════
-
-class VipNotifier extends StateNotifier<VipState> {
-  final Ref _ref;
-  VipNotifier(this._ref) : super(const VipState());
-
-  /// 결제 기록 추가
-  void addPurchase(int amountKRW) {
-    state = state.copyWith(
-      totalSpendKRW: state.totalSpendKRW + amountKRW,
-    );
-    _persist();
-  }
-
-  /// 월정액 구매 [💰 Monetize]
-  void purchaseMonthlySubscription() {
-    final today = DateTime.now();
-    final end = today.add(const Duration(days: 30));
-    final endStr = end.toIso8601String().substring(0, 10);
-    
-    // 월정액 가격 임의 합산 (9,900원)
-    state = state.copyWith(
-      hasMonthlySubscription: true,
-      subscriptionEndDate: endStr,
-      totalSpendKRW: state.totalSpendKRW + 9900,
-    );
-    _persist();
-  }
-
-  /// 일일 보석 보상 수령 (VIP + 월정액)
-  int claimDailyBonus() {
-    final todayStr = DateTime.now().toIso8601String().substring(0, 10);
-    if (state.lastDailyReward == todayStr) return 0;
-
-    int totalBonus = 0;
-    
-    // VIP 티어 기본 보너스
-    totalBonus += state.tier.dailyGemBonus;
-
-    // 월정액 구독자 추가 보상
-    if (state.hasMonthlySubscription && state.subscriptionEndDate.compareTo(todayStr) >= 0) {
-      totalBonus += 50; // 월정액 유저는 매일 50개 추가 보석
-    }
-
-    if (totalBonus <= 0) return 0;
-
-    state = state.copyWith(lastDailyReward: todayStr);
-    _persist();
-
-    // 실제 보석 지급
-    _ref.read(userStateProvider.notifier).addGems(totalBonus);
-    
-    return totalBonus;
-  }
-
-  /// 일일 보상 수령 가능 여부
-  bool get canClaimDaily {
-    if (state.tier == VipTier.none) return false;
-    final today = DateTime.now().toIso8601String().substring(0, 10);
-    return state.lastDailyReward != today;
-  }
-
-  void _persist() async {
-    await SaveManager.instance.saveVip(state.toJson());
-  }
-
-  Future<void> loadFromSave() async {
-    final data = await SaveManager.instance.loadVip();
-    if (data != null) {
-      state = VipState.fromJson(data);
-    }
-  }
-}
-
-// ═══════════════════════════════════════════
-// Providers
-// ═══════════════════════════════════════════
-
 final seasonPassProvider =
     StateNotifierProvider<SeasonPassNotifier, SeasonPassState>(
   (ref) => SeasonPassNotifier(ref),
 );
 
-final vipProvider =
-    StateNotifierProvider<VipNotifier, VipState>(
-  (ref) => VipNotifier(ref),
-);

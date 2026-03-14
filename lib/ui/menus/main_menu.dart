@@ -20,14 +20,14 @@ class MainMenu extends ConsumerWidget {
   final VoidCallback onHeroManage;
   final VoidCallback onTowerManage;
   final VoidCallback onSkinShop;
-  final VoidCallback onPackageShop;
+
   final VoidCallback onEndlessTower;
   final VoidCallback onSeasonPass;
   final VoidCallback onAchievement;
   final VoidCallback onDailyQuest;
   final VoidCallback onLoreCollection;
 
-  const MainMenu({super.key, required this.onStageSelect, required this.onHeroManage, required this.onTowerManage, required this.onSkinShop, required this.onPackageShop, required this.onEndlessTower, required this.onSeasonPass, required this.onAchievement, required this.onDailyQuest, required this.onLoreCollection});
+  const MainMenu({super.key, required this.onStageSelect, required this.onHeroManage, required this.onTowerManage, required this.onSkinShop, required this.onEndlessTower, required this.onSeasonPass, required this.onAchievement, required this.onDailyQuest, required this.onLoreCollection});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -197,7 +197,7 @@ class MainMenu extends ConsumerWidget {
       _ButtonData('📋 일일 미션', onDailyQuest, false, showBadge: unclaimed.hasDailyQuest),
       _ButtonData('📜 설화도감', onLoreCollection, false),
       _ButtonData('🎨 스킨 상점', onSkinShop, false),
-      _ButtonData('💰 상점 패키지', onPackageShop, false),
+
       _ButtonData('🗼 무한의 탑', onEndlessTower, false),
       _ButtonData('🌸 시즌 패스', onSeasonPass, false, showBadge: unclaimed.hasSeasonPass),
       _ButtonData('🏆 업적 & 랭킹', onAchievement, false, showBadge: unclaimed.hasAchievements),

@@ -1,4 +1,4 @@
-// 해원의 문 - 게임 화면 (메인메뉴 ↔ 게임플레이 전환)
+﻿// 해원의 문 - 게임 화면 (메인메뉴 ↔ 게임플레이 전환)
 // main.dart에서 분리 (P0-1 리팩토링)
 
 import 'package:flutter/material.dart';
@@ -22,7 +22,7 @@ import 'ui/menus/skin_shop_screen.dart';
 import 'ui/menus/endless_tower_screen.dart';
 import 'ui/menus/season_pass_screen.dart';
 import 'ui/menus/achievement_screen.dart';
-import 'ui/menus/package_shop_screen.dart';
+
 import 'ui/menus/daily_quest_screen.dart';
 import 'state/daily_quest_provider.dart';
 import 'state/skin_provider.dart';
@@ -702,11 +702,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             _currentScreen = 'skinShop';
           });
         },
-        onPackageShop: () {
-          setState(() {
-            _currentScreen = 'packageShop';
-          });
-        },
         onEndlessTower: () {
           setState(() {
             _currentScreen = 'endlessTower';
@@ -793,16 +788,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       );
     }
 
-    // 패키지 상점
-    if (_currentScreen == 'packageShop') {
-      return PackageShopScreen(
-        onBack: () {
-          setState(() {
-            _currentScreen = 'mainMenu';
-          });
-        },
-      );
-    }
+
 
     // 일일 미션
     if (_currentScreen == 'dailyQuest') {
