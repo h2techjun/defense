@@ -117,7 +117,7 @@ class TowerManageScreen extends ConsumerWidget {
                                   color: isHovering
                                       ? const Color(0x44CC88FF)
                                       : hasSlot
-                                          ? (meta?['color'] as Color?)?.withAlpha(60) ?? const Color(0x33FFFFFF)
+                                          ? (meta?['color'] as Color?)?.withAlpha(150) ?? const Color(0x88FFFFFF)
                                           : const Color(0x11FFFFFF),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
