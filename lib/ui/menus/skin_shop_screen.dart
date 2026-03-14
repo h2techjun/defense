@@ -222,79 +222,75 @@ class SkinShopScreen extends ConsumerWidget {
           '${skin.rarity.emoji} ${skin.name}',
           style: TextStyle(color: skin.rarity.color, fontWeight: FontWeight.bold),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // 스킨 미리보기
-            Container(
-              width: 70,
-              height: 70,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: skin.primaryColor,
-                border: skin.rarity.hasBorder
-                    ? Border.all(color: skin.secondaryColor, width: 3)
-                    : null,
-                boxShadow: skin.rarity.hasGlow
-                    ? [BoxShadow(color: skin.glowColor, blurRadius: 12)]
-                    : null,
-              ),
-              child: ClipOval(
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    skin.rarity == SkinRarity.common ? Colors.transparent : skin.primaryColor.withAlpha(100),
-                    BlendMode.srcATop,
-                  ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 스킨 미리보기 — 카드형 큰 캐릭터
+              Container(
+                width: 140,
+                height: 180,
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(180),
+                  borderRadius: BorderRadius.circular(12),
+                  border: skin.rarity.hasBorder
+                      ? Border.all(color: skin.secondaryColor, width: 2)
+                      : Border.all(color: Colors.white12),
+                  boxShadow: skin.rarity.hasGlow
+                      ? [BoxShadow(color: skin.glowColor, blurRadius: 12)]
+                      : null,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(11),
                   child: HeroSpriteViewer(
                     imagePath: 'assets/images/heroes/${_getHeroFilePref(skin.heroId)}_tier${_getTierForRarity(skin.rarity)}_sprites.png',
-                    width: 70,
-                    height: 70,
+                    width: 140,
+                    height: 180,
                     fallbackText: skin.rarity.emoji,
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '등급: ${skin.rarity.displayName}',
-              style: TextStyle(color: skin.rarity.color),
-            ),
-            // 이펙트 설명 (있는 경우만)
-            if (skin.effectDescription != null) ...[
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: skin.rarity.color.withAlpha(20),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: skin.rarity.color.withAlpha(40)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('⚡ ', style: TextStyle(fontSize: 14)),
-                    Flexible(
-                      child: Text(
-                        skin.effectDescription!,
-                        style: TextStyle(color: skin.rarity.color, fontSize: 12, fontWeight: FontWeight.bold),
+              const SizedBox(height: 12),
+              Text(
+                '등급: ${skin.rarity.displayName}',
+                style: TextStyle(color: skin.rarity.color),
+              ),
+              // 이펙트 설명 (있는 경우만)
+              if (skin.effectDescription != null) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: skin.rarity.color.withAlpha(20),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: skin.rarity.color.withAlpha(40)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('⚡ ', style: TextStyle(fontSize: 14)),
+                      Flexible(
+                        child: Text(
+                          skin.effectDescription!,
+                          style: TextStyle(color: skin.rarity.color, fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-            // 배경 스토리 (있는 경우만)
-            if (skin.lore != null) ...[
-              const SizedBox(height: 6),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text(
-                  skin.lore!,
-                  style: const TextStyle(color: Colors.white38, fontSize: 11, fontStyle: FontStyle.italic),
-                  textAlign: TextAlign.center,
+              ],
+              // 배경 스토리 (있는 경우만)
+              if (skin.lore != null) ...[
+                const SizedBox(height: 6),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    skin.lore!,
+                    style: const TextStyle(color: Colors.white38, fontSize: 11, fontStyle: FontStyle.italic),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-            ],
+              ],
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -310,6 +306,7 @@ class SkinShopScreen extends ConsumerWidget {
               ],
             ),
           ],
+          ),
         ),
         actions: [
           TextButton(
