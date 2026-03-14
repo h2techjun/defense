@@ -1,5 +1,5 @@
-// 해원의 문 - 게임 화면 (메인메뉴 ↔ 게임플레이 전환)
-// main.dart에서 분리 (P0-1 리팩토링)
+// ?�원??�?- 게임 ?�면 (메인메뉴 ??게임?�레???�환)
+// main.dart?�서 분리 (P0-1 리팩?�링)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,7 +46,7 @@ import 'data/models/story_data.dart';
 import 'common/responsive.dart';
 import 'ui/common/ad_side_banners.dart';
 
-/// 게임 화면 (메인메뉴 ↔ 게임 전환)
+/// 게임 ?�면 (메인메뉴 ??게임 ?�환)
 class GameScreen extends ConsumerStatefulWidget {
   const GameScreen({super.key});
 
@@ -60,14 +60,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   LevelData? _currentLevel;
   TowerType? _selectedTower;
 
-  bool _showTutorial = false; // 튜토리얼 표시 여부
+  bool _showTutorial = false; // ?�토리얼 ?�시 ?��?
   final _gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<DefenseGame>>();
 
-  // 툴팁 상태
+  // ?�팁 ?�태
   GameTooltipData? _tooltipData;
   Offset _mousePosition = Offset.zero;
 
-  // 타워 업그레이드 팝업 상태
+  // ?�???�그?�이???�업 ?�태
   BaseTower? _tappedTower;
   Offset _tappedTowerScreenPos = Offset.zero;
   double _tappedTowerHeight = 0;
@@ -75,31 +75,31 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void initState() {
     super.initState();
-    debugPrint('🚀 [GameScreen] initState 시작');
+    debugPrint('?? [GameScreen] initState ?�작');
     _game = DefenseGame();
     _setupGameCallbacks();
-    // 세이브 데이터 로드
+    // ?�이�??�이??로드
     Future.microtask(() async {
-      debugPrint('🚀 [GameScreen] 세이브 데이터 로드 시작');
+      debugPrint('?? [GameScreen] ?�이�??�이??로드 ?�작');
       await ref.read(userStateProvider.notifier).loadFromSave();
       await ref.read(dailyQuestProvider.notifier).loadFromSave();
       await ref.read(skinProvider.notifier).loadFromSave();
-      debugPrint('🚀 [GameScreen] 세이브 데이터 로드 완료');
+      debugPrint('?? [GameScreen] ?�이�??�이??로드 ?�료');
     });
   }
 
   void _setupGameCallbacks() {
-    // 타워 클릭 → 판매/업그레이드 다이얼로그
+    // ?�???�릭 ???�매/?�그?�이???�이?�로�?
     _game.onTowerTappedCallback = (tower) {
       _showTowerDialog(tower);
     };
-    // 타워 설치 후 선택 해제
+    // ?�???�치 ???�택 ?�제
     _game.onTowerPlacedCallback = () {
       setState(() {
         _selectedTower = null;
       });
     };
-    // 호버 툴팁
+    // ?�버 ?�팁
     _game.onComponentHover = (info) {
       setState(() {
         _tooltipData = _buildTooltipFromInfo(info);
@@ -112,26 +112,26 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     };
   }
 
-  /// 호버 정보 → 툴팁 데이터 변환
+  /// ?�버 ?�보 ???�팁 ?�이??변??
   GameTooltipData _buildTooltipFromInfo(Map<String, dynamic> info) {
     final type = info['type'] as String;
     if (type == 'tower') {
       return GameTooltipData(
-        title: info['name'] as String? ?? '타워',
+        title: info['name'] as String? ?? '?�??,
         subtitle: 'Lv.${info['level']}',
         description: info['description'] as String?,
         color: _getTowerColor(info['towerType'] as TowerType),
         icon: _getTowerIcon(info['towerType'] as TowerType),
         stats: [
-          TooltipStat('공격력', '${(info['damage'] as double).toStringAsFixed(0)}'),
-          TooltipStat('사거리', '${(info['range'] as double).toStringAsFixed(0)}'),
-          TooltipStat('공격속도', '${(info['fireRate'] as double).toStringAsFixed(2)}/s'),
+          TooltipStat('공격??, '${(info['damage'] as double).toStringAsFixed(0)}'),
+          TooltipStat('?�거�?, '${(info['range'] as double).toStringAsFixed(0)}'),
+          TooltipStat('공격?�도', '${(info['fireRate'] as double).toStringAsFixed(2)}/s'),
           if (info['specialAbility'] != null)
-            TooltipStat('특수', info['specialAbility'] as String, highlight: true),
+            TooltipStat('?�수', info['specialAbility'] as String, highlight: true),
         ],
       );
     } else if (type == 'hero') {
-      // 영웅 툴팁
+      // ?�웅 ?�팁
       final isDead = info['isDead'] as bool? ?? false;
       final colorInt = info['color'] as int? ?? 0xFFFFAA00;
       final heroLevel = info['level'] as int? ?? 1;
@@ -144,35 +144,35 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       return GameTooltipData(
         title: '${info['name']}',
         subtitle: '${info['title']} · Lv.$heroLevel',
-        description: '🎯 ${info['skillName']}\n${info['skillDesc']}\n⏱ 쿨타임: ${info['skillCooldown']}초',
+        description: '?�� ${info['skillName']}\n${info['skillDesc']}\n??쿨�??? ${info['skillCooldown']}�?,
         color: Color(colorInt),
-        icon: info['emoji'] as String? ?? '⚔️',
+        icon: info['emoji'] as String? ?? '?�️',
         stats: [
           TooltipStat('HP', '${info['hp']} / ${info['maxHp']}',
             highlight: isDead),
-          TooltipStat('공격력', info['attack'] as String? ?? '-'),
-          TooltipStat('사거리', info['range'] as String? ?? '-'),
-          TooltipStat('속성', info['damageType'] as String? ?? '-'),
-          TooltipStat('경험치', xpText, highlight: heroLevel >= heroMaxLevel),
+          TooltipStat('공격??, info['attack'] as String? ?? '-'),
+          TooltipStat('?�거�?, info['range'] as String? ?? '-'),
+          TooltipStat('?�성', info['damageType'] as String? ?? '-'),
+          TooltipStat('경험�?, xpText, highlight: heroLevel >= heroMaxLevel),
           if (isDead)
-            TooltipStat('상태', '💀 부활 대기', highlight: true),
+            TooltipStat('?�태', '?? 부???��?, highlight: true),
         ],
       );
     } else {
-      // 적
+      // ??
       return GameTooltipData(
-        title: info['name'] as String? ?? '적',
+        title: info['name'] as String? ?? '??,
         subtitle: 'HP: ${info['hp']}',
         description: info['description'] as String?,
         color: (info['isBerserk'] as bool? ?? false)
             ? const Color(0xFFFF4500)
             : const Color(0xFFCC3333),
-        icon: '👻',
+        icon: '?��',
         stats: [
-          TooltipStat('속도', info['speed'] as String? ?? ''),
-          TooltipStat('보상', '✨${info['reward']}'),
+          TooltipStat('?�도', info['speed'] as String? ?? ''),
+          TooltipStat('보상', '??{info['reward']}'),
           if ((info['abilities'] as String? ?? '').isNotEmpty)
-            TooltipStat('능력', info['abilities'] as String, highlight: true),
+            TooltipStat('?�력', info['abilities'] as String, highlight: true),
         ],
       );
     }
@@ -190,11 +190,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   String _getTowerIcon(TowerType type) {
     switch (type) {
-      case TowerType.archer:   return '🛖';
-      case TowerType.barracks: return '🤼';
-      case TowerType.shaman:   return '🔮';
-      case TowerType.artillery:return '💥';
-      case TowerType.sotdae:   return '🪶';
+      case TowerType.archer:   return '?��';
+      case TowerType.barracks: return '?��';
+      case TowerType.shaman:   return '?��';
+      case TowerType.artillery:return '?��';
+      case TowerType.sotdae:   return '?��';
     }
   }
 
@@ -209,18 +209,18 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         SoundManager.instance.stopBgm();
         _game.startLevel(level, mode: mode);
 
-        // 튜토리얼 트리거 (캠페인 1스테이지 & 미완료 시)
+        // ?�토리얼 ?�리�?(캠페??1?�테?��? & 미완�???
         final userState = ref.read(userStateProvider);
         if (mode == GameMode.campaign && level.levelNumber == 1 && !userState.hasCompletedTutorial) {
           setState(() {
             _showTutorial = true;
           });
-          _game.pauseEngine(); // 튜토리얼이 떠있는 동안 엔진 정지
+          _game.pauseEngine(); // ?�토리얼???�있???�안 ?�진 ?��?
         }
       });
     }
 
-    // 캠페인 모드일 경우 레벨 조건에 따라 스토리 컷씬 재생 분기
+    // 캠페??모드??경우 ?�벨 조건???�라 ?�토�?컷씬 ?�생 분기
     if (mode == GameMode.campaign) {
       List<StoryScene>? scenes;
       if (level.levelNumber == 1) {
@@ -247,7 +247,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             },
           ),
         );
-        return; // 다이얼로그 콜백에서 실제 게임을 시작하도록 대기
+        return; // ?�이?�로�?콜백?�서 ?�제 게임???�작?�도�??��?
       }
     }
 
@@ -296,12 +296,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       });
       _startLevel(nextLevel);
     } else {
-      // 마지막 스테이지 → 메뉴 복귀
+      // 마�?�??�테?��? ??메뉴 복�?
       _returnToMenu();
     }
   }
 
-  /// 레벨 번호로 챕터 번호 계산
+  /// ?�벨 번호�?챕터 번호 계산
   int _getChapterForLevel(int levelNumber) {
     if (levelNumber <= 20) return 1;
     if (levelNumber <= 40) return 2;
@@ -310,7 +310,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     return 5;
   }
 
-  /// 승리 시 진행 상황 저장
+  /// ?�리 ??진행 ?�황 ?�??
   void _saveProgress() {
     if (_currentLevel == null) return;
     final gameState = ref.read(gameStateProvider);
@@ -321,9 +321,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         _currentLevel!.levelNumber,
         gameState.starRating,
       );
-      debugPrint('[SAVE] Ch.$chapter 스테이지 ${_currentLevel!.levelNumber} 클리어! 별: ${gameState.starRating}');
+      debugPrint('[SAVE] Ch.$chapter ?�테?��? ${_currentLevel!.levelNumber} ?�리?? �? ${gameState.starRating}');
 
-      // 영웅 해금 체크
+      // ?�웅 ?�금 체크
       final userState = ref.read(userStateProvider);
       final newlyUnlocked = <HeroId>[];
       for (final entry in heroUnlockStage.entries) {
@@ -332,11 +332,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             !userState.unlockedHeroes.contains(entry.key)) {
           ref.read(userStateProvider.notifier).unlockHero(entry.key);
           newlyUnlocked.add(entry.key);
-          debugPrint('[UNLOCK] 영웅 해금: ${entry.key.name} (Stage ${entry.value} 조건 충족)');
+          debugPrint('[UNLOCK] ?�웅 ?�금: ${entry.key.name} (Stage ${entry.value} 조건 충족)');
         }
       }
 
-      // 해금 축하 팝업 표시 (승리 화면 위에 순차 표시)
+      // ?�금 축하 ?�업 ?�시 (?�리 ?�면 ?�에 ?�차 ?�시)
       if (newlyUnlocked.isNotEmpty && mounted) {
         Future.delayed(const Duration(milliseconds: 1500), () async {
           for (final heroId in newlyUnlocked) {
@@ -350,7 +350,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   void _onTowerSelected(TowerType type) {
     setState(() {
-      // 토글: 같은 타워를 다시 누르면 해제
+      // ?��?: 같�? ?�?��? ?�시 ?�르�??�제
       if (_selectedTower == type) {
         _selectedTower = null;
         _game.selectedTowerType = null;
@@ -361,33 +361,33 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     });
   }
 
-  /// 배치된 타워 클릭 시 → 판매/업그레이드 다이얼로그
+  /// 배치???�???�릭 ?????�매/?�그?�이???�이?�로�?
   void _showTowerDialog(BaseTower tower) {
-    // 타워 선택 중이면 무시 (배치 모드)
+    // ?�???�택 중이�?무시 (배치 모드)
     if (_selectedTower != null) return;
 
-    // 타워의 게임 좌표 → 화면 좌표 변환
+    // ?�?�의 게임 좌표 ???�면 좌표 변??
     final gameWidgetBox = _gameWidgetKey.currentContext?.findRenderObject() as RenderBox?;
     if (gameWidgetBox == null) return;
 
     final gameWidgetSize = gameWidgetBox.size;
     final gameSize = _game.size;
 
-    // 게임 좌표를 화면 비율로 변환
+    // 게임 좌표�??�면 비율�?변??
     final scaleX = gameWidgetSize.width / gameSize.x;
     final scaleY = gameWidgetSize.height / gameSize.y;
     final scale = scaleX < scaleY ? scaleX : scaleY;
 
-    // 게임이 화면 중앙에 위치할 때의 오프셋
+    // 게임???�면 중앙???�치???�의 ?�프??
     final offsetX = (gameWidgetSize.width - gameSize.x * scale) / 2;
     final offsetY = (gameWidgetSize.height - gameSize.y * scale) / 2;
 
-    // 타워 중심 화면 좌표
+    // ?�??중심 ?�면 좌표
     final centerX = tower.position.x * scale + offsetX;
     final centerY = tower.position.y * scale + offsetY;
     final towerHeight = tower.size.y * scale;
 
-    // GameWidget의 글로벌 위치 추가
+    // GameWidget??글로벌 ?�치 추�?
     final globalPos = gameWidgetBox.localToGlobal(Offset.zero);
 
     setState(() {
@@ -409,20 +409,20 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
   }
 
-  /// 타워 액션 처리 (판매/업그레이드/분기)
+  /// ?�???�션 처리 (?�매/?�그?�이??분기)
   void _handleTowerAction(BaseTower tower, TowerActionResult action) {
     final stateNotifier = ref.read(gameStateProvider.notifier);
 
     switch (action) {
       case TowerSellResult():
-        // 환불 금액 추가
+        // ?�불 금액 추�?
         stateNotifier.addSinmyeong(tower.sellRefund);
-        // 슬롯 해제
+        // ?�롯 ?�제
         final slotIndex = _game.gameMap.findSlotAt(tower.position);
         if (slotIndex != null) {
           _game.gameMap.freeSlot(slotIndex);
         }
-        // 타워 제거
+        // ?�???�거
         tower.removeFromParent();
         break;
 
@@ -435,7 +435,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         break;
 
       case TowerMaxUpgradeResult():
-        // 레벨 3까지 순차 업그레이드 (비용 순차 차감)
+        // ?�벨 3까�? ?�차 ?�그?�이??(비용 ?�차 차감)
         while (tower.upgradeLevel < 3 && tower.upgradeLevel < tower.data.upgrades.length) {
           final cost = tower.data.upgrades[tower.upgradeLevel].cost;
           if (!stateNotifier.spendSinmyeong(cost)) break;
@@ -449,13 +449,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             : 300;
         if (stateNotifier.spendSinmyeong(branchCost)) {
           tower.selectBranch(branch);
-          // selectBranch 내부에서 upgradeLevel = 4 설정 완료
+          // selectBranch ?��??�서 upgradeLevel = 4 ?�정 ?�료
         }
         break;
     }
   }
 
-  /// 일시정지 메뉴 버튼 빌더
+  /// ?�시?��? 메뉴 버튼 빌더
   Widget _buildPauseMenuButton({
     required IconData icon,
     required String label,
@@ -486,7 +486,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     );
   }
 
-  /// 사운드 토글 버튼 빌더 (일시정지 메뉴용)
+  /// ?�운???��? 버튼 빌더 (?�시?��? 메뉴??
   Widget _buildSoundToggle({
     required IconData icon,
     required String label,
@@ -521,14 +521,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     );
   }
 
-  /// 영웅 스킬 패널 빌더 (실시간 상태 반영)
+  /// ?�웅 ?�킬 ?�널 빌더 (?�시�??�태 반영)
   Widget _buildHeroSkillPanel() {
     return Positioned(
       right: 16,
       bottom: 16,
       child: StatefulBuilder(
         builder: (context, localSetState) {
-          // 250ms마다 영웅 상태 갱신
+          // 250ms마다 ?�웅 ?�태 갱신
           Future.delayed(const Duration(milliseconds: 250), () {
             if (mounted && _currentScreen == 'gameplay') {
               localSetState(() {});
@@ -543,7 +543,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             final hero = heroes[i];
             final heroEmoji = _getHeroEmoji(hero.data.id);
 
-            // HeroId → 파일명 매핑
+            // HeroId ???�일�?매핑
             String heroFileName;
             switch (hero.data.id) {
               case HeroId.kkaebi: heroFileName = 'kkaebi'; break;
@@ -575,24 +575,24 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     );
   }
 
-  /// 영웅 ID별 이모지
+  /// ?�웅 ID�??�모지
   String _getHeroEmoji(HeroId id) {
     switch (id) {
       case HeroId.kkaebi:
-        return '👹'; // 도깨비
+        return '?��'; // ?�깨�?
       case HeroId.miho:
-        return '🦊'; // 여우
+        return '?��'; // ?�우
       case HeroId.gangrim:
-        return '💀'; // 저승차사
+        return '??'; // ?�?�차??
       case HeroId.sua:
-        return '🌊'; // 물의 정령
+        return '?��'; // 물의 ?�령
       case HeroId.bari:
-        return '🌸'; // 바리공주
+        return '?��'; // 바리공주
     }
   }
 
 
-  /// 확인 다이얼로그 (재시작/나가기 등 비가역 액션)
+  /// ?�인 ?�이?�로�?(?�시???��?�???비�????�션)
   void _showConfirmDialog({
     required String title,
     required String message,
@@ -626,7 +626,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('확인', style: TextStyle(color: Colors.white)),
+            child: const Text('?�인', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -635,7 +635,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 업적 달성 알림 리스너
+    // ?�적 ?�성 ?�림 리스??
     ref.listen<String?>(lastAchievedIdProvider, (prev, next) {
       if (next != null && next != prev) {
         try {
@@ -652,12 +652,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('🏆 업적 달성!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                          const Text('?�� ?�적 ?�성!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                           Text(achievement.name, style: const TextStyle(fontSize: 11)),
                         ],
                       ),
                     ),
-                    Text('💎${achievement.rewardGems}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text('?��${achievement.rewardGems}', style: const TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
                 backgroundColor: const Color(0xFF6633AA),
@@ -666,7 +666,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 duration: const Duration(seconds: 3),
               ),
             );
-            // 효과음 재생 (SFX)
+            // ?�과???�생 (SFX)
             SoundManager.instance.playSfx(SfxType.uiUpgrade);
           }
         } catch (_) {}
@@ -675,13 +675,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
     // 메인 메뉴
     if (_currentScreen == 'mainMenu') {
-      // 메뉴 BGM 재생 (에러 안전 처리 — 웹에서 타임아웃 방지)
+      // 메뉴 BGM ?�생 (?�러 ?�전 처리 ???�에???�?�아??방�?)
       SoundManager.instance.init().then((_) {
         SoundManager.instance.playBgm(BgmType.menu);
       }).catchError((e) {
-        debugPrint('⚠️ [GameScreen] SoundManager 초기화/BGM 실패: $e');
+        debugPrint('?�️ [GameScreen] SoundManager 초기??BGM ?�패: $e');
       });
-      return AdSideBanners(child: MainMenu(
+      return MainMenu(
         onStageSelect: () {
           setState(() {
             _currentScreen = 'stageSelect';
@@ -732,35 +732,35 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             _currentScreen = 'loreCollection';
           });
         },
-      ));
+      );
     }
 
-    // 타워 관리
+    // ?�??관�?
     if (_currentScreen == 'towerManage') {
-      return AdSideBanners(child: TowerManageScreen(
+      return TowerManageScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      ));
+      );
     }
 
-    // 스킨 상점
+    // ?�킨 ?�점
     if (_currentScreen == 'skinShop') {
-      return AdSideBanners(child: SkinShopScreen(
+      return SkinShopScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      // 스킨 상점 닫기
-      ));
+      // ?�킨 ?�점 ?�기
+      );
     }
 
-    // 무한의 탑
+    // 무한????
     if (_currentScreen == 'endlessTower') {
-      return AdSideBanners(child: EndlessTowerScreen(
+      return EndlessTowerScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
@@ -769,85 +769,85 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         onStartLevel: (level, mode) {
           _startLevel(level, mode: mode);
         },
-      // 무한의 탑 닫기
-      ));
+      // 무한?????�기
+      );
     }
 
-    // 시즌 패스
+    // ?�즌 ?�스
     if (_currentScreen == 'seasonPass') {
-      return AdSideBanners(child: SeasonPassScreen(
+      return SeasonPassScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      // 시즌 패스 닫기
-      ));
+      // ?�즌 ?�스 ?�기
+      );
     }
 
-    // 업적 & 랭킹
+    // ?�적 & ??��
     if (_currentScreen == 'achievement') {
-      return AdSideBanners(child: AchievementScreen(
+      return AchievementScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      // 업적 닫기
-      ));
+      // ?�적 ?�기
+      );
     }
 
-    // 패키지 상점
+    // ?�키지 ?�점
     if (_currentScreen == 'packageShop') {
-      return AdSideBanners(child: PackageShopScreen(
+      return PackageShopScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      // 패키지 상점 닫기
-      ));
+      // ?�키지 ?�점 ?�기
+      );
     }
 
-    // 일일 미션
+    // ?�일 미션
     if (_currentScreen == 'dailyQuest') {
-      return AdSideBanners(child: DailyQuestScreen(
+      return DailyQuestScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      // 일일 미션 닫기
-      ));
+      // ?�일 미션 ?�기
+      );
     }
 
-    // 설화도감
+    // ?�화?�감
     if (_currentScreen == 'loreCollection') {
-      return AdSideBanners(child: LoreCollectionScreen(
+      return LoreCollectionScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      // 설화도감 닫기
-      ));
+      // ?�화?�감 ?�기
+      );
     }
 
-    // 영웅 관리
+    // ?�웅 관�?
     if (_currentScreen == 'heroManage') {
-      return AdSideBanners(child: HeroManageScreen(
+      return HeroManageScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      // 영웅관리 닫기
-      ));
+      // ?�웅관�??�기
+      );
     }
 
-    // 스테이지 선택
+    // ?�테?��? ?�택
     if (_currentScreen == 'stageSelect') {
-      return AdSideBanners(child: StageSelectScreen(
+      return StageSelectScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
@@ -859,13 +859,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             _currentScreen = 'heroDeploy';
           });
         },
-      // 스테이지선택 닫기
-      ));
+      // ?�테?��??�택 ?�기
+      );
     }
 
-    // 출전 준비 화면
+    // 출전 준�??�면
     if (_currentScreen == 'heroDeploy' && _currentLevel != null) {
-      return AdSideBanners(child: HeroDeployScreen(
+      return HeroDeployScreen(
         level: _currentLevel!,
         onBack: () {
           setState(() {
@@ -873,24 +873,24 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           });
         },
         onStartBattle: _startLevel,
-      ));
+      );
     }
 
 
-    return Scaffold(
+    return AdSideBanners(child: Scaffold(
       body: MouseRegion(
         onHover: (event) {
           _mousePosition = event.position;
         },
         child: Stack(
           children: [
-            // ── Flame 게임 위젯 (드래그 타겟) ──
+            // ?�?� Flame 게임 ?�젯 (?�래�??��? ?�?�
             Positioned.fill(
               child: DragTarget<TowerType>(
                 onAcceptWithDetails: (details) {
-                  // 드롭 위치를 게임 엔진에 전달
+                  // ?�롭 ?�치�?게임 ?�진???�달
                   _game.handleDragDrop(details.offset, details.data);
-                  // 드래그 후 선택 상태 초기화 (UI 업데이트)
+                  // ?�래�????�택 ?�태 초기??(UI ?�데?�트)
                   setState(() {
                     _selectedTower = null;
                   });
@@ -924,7 +924,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               ),
             ),
 
-            // ── HUD 오버레이 ──
+            // ?�?� HUD ?�버?�이 ?�?�
             GameHud(
               isSpeedLocked: !ref.watch(userStateProvider).hasSpeedPass,
               onPause: () {
@@ -936,7 +936,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 if (!ref.read(userStateProvider).hasSpeedPass) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('🔒 상점에서 아무 상품을 구매하면 2배속이 해금됩니다!'),
+                      content: Text('?�� ?�점?�서 ?�무 ?�품??구매?�면 2배속???�금?�니??'),
                       backgroundColor: Color(0xFF6633AA),
                       duration: Duration(seconds: 2),
                     ),
@@ -948,7 +948,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               },
             ),
 
-            // ── 타워 업그레이드 인라인 팝업 ──
+            // ?�?� ?�???�그?�이???�라???�업 ?�?�
             if (_tappedTower != null)
               Positioned.fill(
                 child: GestureDetector(
@@ -966,11 +966,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           final bottomPadding = 100.0 * s;
                           final topPadding = 50.0 * s;
 
-                          // 좌우 위치: 타워 중심 기준
+                          // 좌우 ?�치: ?�??중심 기�?
                           final left = (_tappedTowerScreenPos.dx - popupWidth / 2)
                               .clamp(8.0, screenSize.width - popupWidth - 8);
 
-                          // 상하 위치: 화면 하단 55% 이하면 위에 표시
+                          // ?�하 ?�치: ?�면 ?�단 55% ?�하�??�에 ?�시
                           final bool showAbove = _tappedTowerScreenPos.dy > screenSize.height * 0.55;
                           final top = showAbove
                               ? (_tappedTowerScreenPos.dy - _tappedTowerHeight / 2 - popupHeight - gap)
@@ -982,7 +982,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                             left: left,
                             top: top,
                             child: GestureDetector(
-                              onTap: () {}, // 팝업 내부 클릭 시 닫기 방지
+                              onTap: () {}, // ?�업 ?��? ?�릭 ???�기 방�?
                               child: SizedBox(
                                 width: popupWidth,
                                 child: Consumer(
@@ -1013,21 +1013,21 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 ),
               ),
 
-            // ── 웨이브 안내 & 쿨다운 ──
+            // ?�?� ?�이�??�내 & 쿨다???�?�
             Consumer(
               builder: (_, consumerRef, __) {
                 final state = consumerRef.watch(gameStateProvider);
                 final wm = _game.waveManager;
                 return StatefulBuilder(
                   builder: (context, localSetState) {
-                    // 300ms 주기로 쿨다운 갱신
+                    // 300ms 주기�?쿨다??갱신
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (mounted && _currentScreen == 'gameplay') {
                         localSetState(() {});
                       }
                     });
 
-                    // 쿨다운 카운트다운 표시
+                    // 쿨다??카운?�다???�시
                     if (wm.isInCooldown && wm.cooldownRemaining > 0) {
                       return Positioned.fill(
                         child: IgnorePointer(
@@ -1039,7 +1039,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       );
                     }
 
-                    // 웨이브 시작 배너 (웨이브 활성 시 잠시 표시)
+                    // ?�이�??�작 배너 (?�이�??�성 ???�시 ?�시)
                     if (wm.isWaveActive && state.currentWave > 0) {
                       final isBoss = state.currentWave == state.totalWaves;
                       return Positioned.fill(
@@ -1061,7 +1061,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               },
             ),
 
-            // 일시정지 메뉴 오버레이
+            // ?�시?��? 메뉴 ?�버?�이
             if (_game.isPaused)
               Positioned.fill(
                 child: Container(
@@ -1091,7 +1091,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           Icon(Icons.pause_circle_outline,
                               color: const Color(0xFF8B5CF6), size: 48 * Responsive.uiScale(context)),
                           SizedBox(height: 12 * Responsive.uiScale(context)),
-                          Text('일시정지',
+                          Text('?�시?��?',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: Responsive.fontSize(context, 22),
@@ -1099,14 +1099,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                                 letterSpacing: 2,
                               )),
                           SizedBox(height: 8 * Responsive.uiScale(context)),
-                          // 경과 시간 (폰에서 HUD에서 숨겨졌으므로 여기서 표시)
+                          // 경과 ?�간 (?�에??HUD?�서 ?�겨졌으므�??�기???�시)
                           Consumer(
                             builder: (_, consumerRef, __) {
                               final gs = consumerRef.watch(gameStateProvider);
                               final mins = gs.elapsedSeconds ~/ 60;
                               final secs = gs.elapsedSeconds % 60;
                               return Text(
-                                '⏱ ${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}',
+                                '??${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}',
                                 style: TextStyle(
                                   color: Colors.white54,
                                   fontSize: Responsive.fontSize(context, 13),
@@ -1115,7 +1115,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                             },
                           ),
                           SizedBox(height: 16 * Responsive.uiScale(context)),
-                          // SFX / BGM 토글 (항상 표시)
+                          // SFX / BGM ?��? (??�� ?�시)
                           StatefulBuilder(
                             builder: (ctx, localSetState) {
                               return Row(
@@ -1149,10 +1149,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                             },
                           ),
                           SizedBox(height: 20 * Responsive.uiScale(context)),
-                          // 계속하기 버튼
+                          // 계속?�기 버튼
                           _buildPauseMenuButton(
                             icon: Icons.play_arrow_rounded,
-                            label: '계속하기',
+                            label: '계속?�기',
                             color: const Color(0xFF10B981),
                             onTap: () {
                               _game.togglePause();
@@ -1160,15 +1160,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                             },
                           ),
                           SizedBox(height: 12 * Responsive.uiScale(context)),
-                          // 재시작 버튼
+                          // ?�시??버튼
                           _buildPauseMenuButton(
                             icon: Icons.refresh_rounded,
-                            label: '처음부터',
+                            label: '처음부??,
                             color: const Color(0xFFF59E0B),
                             onTap: () {
                               _showConfirmDialog(
-                                title: '재시작',
-                                message: '처음부터 다시 시작하시겠습니까?',
+                                title: '?�시??,
+                                message: '처음부???�시 ?�작?�시겠습?�까?',
                                 onConfirm: () {
                                   _game.togglePause();
                                   _restartLevel();
@@ -1177,15 +1177,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                             },
                           ),
                           SizedBox(height: 12 * Responsive.uiScale(context)),
-                          // 메뉴로 나가기 버튼
+                          // 메뉴�??��?�?버튼
                           _buildPauseMenuButton(
                             icon: Icons.home_rounded,
-                            label: '메뉴로 나가기',
+                            label: '메뉴�??��?�?,
                             color: const Color(0xFFEF4444),
                             onTap: () {
                               _showConfirmDialog(
-                                title: '나가기',
-                                message: '메뉴로 돌아가시겠습니까?\n현재 진행 상황은 사라집니다.',
+                                title: '?��?�?,
+                                message: '메뉴�??�아가?�겠?�니�?\n?�재 진행 ?�황?� ?�라집니??',
                                 onConfirm: () {
                                   _game.togglePause();
                                   _returnToMenu();
@@ -1200,40 +1200,40 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 ),
               ),
 
-            // ── 타워 선택 패널 ──
+            // ?�?� ?�???�택 ?�널 ?�?�
             TowerSelectPanel(
               selectedTower: _selectedTower,
               onTowerSelected: _onTowerSelected,
             ),
 
-            // ── 영웅 스킬 패널 (우측 하단) ──
+            // ?�?� ?�웅 ?�킬 ?�널 (?�측 ?�단) ?�?�
             _buildHeroSkillPanel(),
 
-            // ── 호버 툴팁 (타워 업그레이드 팝업 열려있으면 숨김) ──
+            // ?�?� ?�버 ?�팁 (?�???�그?�이???�업 ?�려?�으�??��?) ?�?�
             if (_tooltipData != null && !_showTutorial && _tappedTower == null)
               GameTooltip(
                 data: _tooltipData!,
                 position: _mousePosition,
               ),
 
-            // ── 튜토리얼 오버레이 ──
+            // ?�?� ?�토리얼 ?�버?�이 ?�?�
             if (_showTutorial)
               Positioned.fill(
                 child: TutorialOverlay(
                   steps: const [
                     TutorialStep(
-                      title: '환영합니다, 마스터!',
-                      content: '해원의 문에 오신 것을 환영합니다.\n먼저, 전장 우측 하단의 [타워 아이콘]을 클릭하거나 드래그하여 배치 영역에 놓아보세요.',
+                      title: '?�영?�니?? 마스??',
+                      content: '?�원??문에 ?�신 것을 ?�영?�니??\n먼�?, ?�장 ?�측 ?�단??[?�???�이�????�릭?�거???�래그하??배치 ?�역???�아보세??',
                       tooltipOffset: Offset(100, 100),
                     ),
                     TutorialStep(
-                      title: '원혼의 접근',
-                      content: '밤이 되면 영혼형 몬스터가 출몰합니다.\n영혼형 몬스터는 [정화] 속성 타워(솟대 등) 혹은 [마법] 속성 타워에 약합니다.',
+                      title: '?�혼???�근',
+                      content: '밤이 ?�면 ?�혼??몬스?��? 출몰?�니??\n?�혼??몬스?�는 [?�화] ?�성 ?�???��? ?? ?��? [마법] ?�성 ?�?�에 ?�합?�다.',
                       tooltipOffset: Offset(100, 100),
                     ),
                     TutorialStep(
-                      title: '영웅의 힘',
-                      content: '배치된 영웅은 강력한 스킬을 보유하고 있습니다.\n쿨타임이 차면 우측 하단의 스킬 아이콘을 눌러 전황을 뒤집으세요!',
+                      title: '?�웅????,
+                      content: '배치???�웅?� 강력???�킬??보유?�고 ?�습?�다.\n쿨�??�이 차면 ?�측 ?�단???�킬 ?�이콘을 ?�러 ?�황???�집?�세??',
                       tooltipOffset: Offset(100, 100),
                     ),
                   ],
@@ -1242,13 +1242,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       _showTutorial = false;
                     });
                     ref.read(userStateProvider.notifier).completeTutorial();
-                    _game.resumeEngine(); // 게임 재개
+                    _game.resumeEngine(); // 게임 ?�개
                   },
                 ),
               ),
           ],
         ),
       ),
-    );
+    ));
   }
 }
