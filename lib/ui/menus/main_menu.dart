@@ -210,14 +210,6 @@ class MainMenu extends ConsumerWidget {
         padding: EdgeInsets.symmetric(vertical: 8 * s, horizontal: 16 * s),
         child: Column(
           children: [
-            // 전투 시작은 풀 너비로
-            _MenuButton(
-              label: buttons[0].label,
-              onTap: buttons[0].onTap,
-              isPrimary: true,
-              compact: true,
-            ),
-            SizedBox(height: 6 * s),
             // 나머지 2열 그리드 — Expanded로 공간 채우기
             Expanded(
               child: Wrap(
@@ -240,6 +232,15 @@ class MainMenu extends ConsumerWidget {
                 }).toList(),
               ),
             ),
+            SizedBox(height: 4 * s),
+            // 전투 시작 — 맨 아래 풀 너비
+            _MenuButton(
+              label: buttons[0].label,
+              onTap: buttons[0].onTap,
+              isPrimary: true,
+              compact: true,
+            ),
+            SizedBox(height: 4 * s),
             _buildFooter(context, lang, s),
           ],
         ),

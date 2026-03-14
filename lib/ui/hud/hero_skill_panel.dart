@@ -161,38 +161,6 @@ class _HeroSkillButton extends StatelessWidget {
                         color: info.isDead ? Colors.white30 : null,
                       ),
                     ),
-                  SizedBox(height: 1 * Responsive.scale(context)),
-                  Text(
-                    info.name,
-                    style: TextStyle(
-                      color: info.isDead ? Colors.white30 : Colors.white70,
-                      fontSize: Responsive.fontSize(context, 8),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  // ⭐ 스킬명 표시
-                  Container(
-                    margin: EdgeInsets.only(top: 2 * Responsive.scale(context)),
-                    padding: EdgeInsets.symmetric(horizontal: 4 * Responsive.scale(context), vertical: 1 * Responsive.scale(context)),
-                    decoration: BoxDecoration(
-                      color: isReady
-                          ? AppColors.skyBlue.withAlpha(51)
-                          : const Color(0x22FFFFFF),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      info.skillName,
-                      style: TextStyle(
-                        color: isReady
-                            ? AppColors.skyBlue
-                            : Colors.white38,
-                        fontSize: Responsive.fontSize(context, 7),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
                 ],
               ),
             ),
