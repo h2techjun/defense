@@ -664,12 +664,12 @@ class _MenuButton extends StatelessWidget {
                       colors: [AppColors.cherryBlossom, AppColors.peachCoral],
                     )
                   : null,
-              color: isPrimary ? null : Colors.white.withAlpha(12),
+              color: isPrimary ? null : Colors.white.withAlpha(30),
               borderRadius: BorderRadius.circular(compact ? 10 * s : 16 * s),
               border: Border.all(
                 color: isPrimary
                     ? AppColors.cherryBlossom.withAlpha(180)
-                    : Colors.white.withAlpha(30),
+                    : Colors.white.withAlpha(60),
               ),
               boxShadow: isPrimary
                   ? [
@@ -685,10 +685,17 @@ class _MenuButton extends StatelessWidget {
               label,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: isPrimary ? Colors.white : AppColors.cherryBlossom.withAlpha(220),
+                color: isPrimary ? Colors.white : Colors.white,
                 fontSize: Responsive.fontSize(context, compact ? 15 : 18),
-                fontWeight: isPrimary ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isPrimary ? FontWeight.bold : FontWeight.w600,
                 letterSpacing: 2 * s,
+                shadows: [
+                  Shadow(
+                    color: Colors.black.withAlpha(120),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
