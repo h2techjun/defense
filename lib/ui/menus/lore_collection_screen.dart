@@ -143,7 +143,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
 
   Widget _buildMilestones(BuildContext context, WidgetRef ref, LoreCollectionState state, double s) {
     return Container(
-      height: 64 * s,
+      height: 80 * s,
       padding: EdgeInsets.symmetric(horizontal: 12 * s),
       color: const Color(0xFF16213E),
       child: Row(
