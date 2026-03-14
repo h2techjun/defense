@@ -32,7 +32,7 @@ class MainMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final lang = ref.watch(gameLanguageProvider);
-    final s = Responsive.scale(context);
+    final s = Responsive.uiScale(context);
     final isLand = Responsive.isLandscape(context);
 
     return ThemedScaffold(
@@ -593,7 +593,7 @@ class _MenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = Responsive.scale(context);
+    final s = Responsive.uiScale(context);
     final btnWidth = compact ? double.infinity : 260 * s;
 
     return GestureDetector(
@@ -642,7 +642,7 @@ class _MenuButton extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: isPrimary ? Colors.white : AppColors.cherryBlossom.withAlpha(220),
-                fontSize: Responsive.fontSize(context, compact ? 13 : 16),
+                fontSize: Responsive.fontSize(context, compact ? 15 : 18),
                 fontWeight: isPrimary ? FontWeight.bold : FontWeight.normal,
                 letterSpacing: 2 * s,
               ),

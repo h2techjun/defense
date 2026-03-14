@@ -41,8 +41,8 @@ Future<void> main() async {
   if (!kIsWeb) {
     try {
       await dotenv.load(fileName: '.env');
-    } on Exception catch (e) {
-      debugPrint('⚠️ [main] .env 파일 로드 실패: $e');
+    } catch (e) {
+      debugPrint('⚠️ [main] .env 파일 로드 실패 (무시): $e');
     }
   } else {
     debugPrint('🌐 [main] 웹 환경 — .env 로드 스킵');

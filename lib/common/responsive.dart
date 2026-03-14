@@ -14,6 +14,14 @@ class Responsive {
   static const double _baseWidth = 960.0;
   static const double _baseHeight = 576.0;
 
+  // ═══════════════════════════════════════════
+  // 🔧 모바일 UI 부스트 — 이 값 하나로 전체 모바일 UI 크기 제어
+  // 1.0 = 원본, 1.2 = 20% 확대, 1.4 = 40% 확대
+  // ═══════════════════════════════════════════
+  static const double _mobileUiBoost = 1.4;
+  static const double _minMobileFontSize = 12.0;
+  static const double _minMobileIconSize = 20.0;
+
   /// 현재 디바이스 유형 판별
   static DeviceType deviceType(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -32,28 +40,30 @@ class Responsive {
     return MediaQuery.of(context).size.height / _baseHeight;
   }
 
-  /// 균등 스케일 팩터 (가로/세로 중 작은 것 기준)
-  /// ⚠️ 게임 엔진(Flame) 렌더링용 — 원본 유지!
-  static double scale(BuildContext context) {
+  /// 원본 스케일 (게임 엔진 Flame 전용 — 부스트 없음)
+  static double rawScale(BuildContext context) {
     final sx = scaleX(context);
     final sy = scaleY(context);
     return (sx < sy ? sx : sy).clamp(0.5, 2.5);
   }
 
-  /// UI 위젯 전용 스케일 (모바일에서 최소 0.7 보장)
-  /// Flutter HUD/패널/배너 등 UI 위젯에 사용
-  static double uiScale(BuildContext context) {
-    final s = scale(context);
+  /// UI 스케일 (모바일에서 _mobileUiBoost 자동 적용)
+  /// ⚠️ 모든 UI 위젯 (메뉴/HUD/패널/다이얼로그)에서 사용
+  static double scale(BuildContext context) {
+    final raw = rawScale(context);
     return deviceType(context) == DeviceType.phone
-        ? s.clamp(0.7, 2.5)
-        : s;
+        ? (raw * _mobileUiBoost).clamp(0.7, 2.5)
+        : raw;
   }
 
-  /// 반응형 폰트 크기 (phone에서 최소 9px 보장, uiScale 기반)
+  /// UI 위젯 전용 스케일 (scale과 동일 — 호환성 유지)
+  static double uiScale(BuildContext context) => scale(context);
+
+  /// 반응형 폰트 크기 (phone에서 _minMobileFontSize 보장)
   static double fontSize(BuildContext context, double baseFontSize) {
-    final size = baseFontSize * uiScale(context);
+    final size = baseFontSize * scale(context);
     return deviceType(context) == DeviceType.phone
-        ? size.clamp(9.0, double.infinity)
+        ? size.clamp(_minMobileFontSize, double.infinity)
         : size;
   }
 
@@ -62,11 +72,11 @@ class Responsive {
     return baseSpacing * scale(context);
   }
 
-  /// 반응형 아이콘 크기 (phone에서 최소 16px 보장, uiScale 기반)
+  /// 반응형 아이콘 크기 (phone에서 _minMobileIconSize 보장)
   static double iconSize(BuildContext context, double baseIconSize) {
-    final size = baseIconSize * uiScale(context);
+    final size = baseIconSize * scale(context);
     return deviceType(context) == DeviceType.phone
-        ? size.clamp(16.0, double.infinity)
+        ? size.clamp(_minMobileIconSize, double.infinity)
         : size;
   }
 
