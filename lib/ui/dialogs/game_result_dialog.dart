@@ -39,7 +39,7 @@ class VictoryOverlay extends ConsumerWidget {
           ),
           borderColor: AppColors.sinmyeongGold,
           borderWidth: 2,
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(20),
           boxShadow: [
             BoxShadow(
               color: AppColors.sinmyeongGold.withAlpha(68),
@@ -48,7 +48,7 @@ class VictoryOverlay extends ConsumerWidget {
             ),
           ],
           child: SizedBox(
-            width: 360,
+            width: 280,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -158,7 +158,7 @@ class DefeatOverlay extends ConsumerWidget {
           ),
           borderColor: AppColors.berserkRed,
           borderWidth: 2,
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(20),
           boxShadow: [
             BoxShadow(
               color: AppColors.berserkRed.withAlpha(68),
@@ -167,7 +167,7 @@ class DefeatOverlay extends ConsumerWidget {
             ),
           ],
           child: SizedBox(
-            width: 360,
+            width: 280,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

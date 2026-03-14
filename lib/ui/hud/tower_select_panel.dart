@@ -64,7 +64,7 @@ class TowerSelectPanel extends ConsumerWidget {
               if (data == null) return const SizedBox.shrink();
               final meta = towerMeta[type] ?? {'icon': '❓', 'color': Colors.grey, 'tooltip': ''};
               return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 3 * Responsive.scale(context)),
+                padding: EdgeInsets.symmetric(horizontal: 6 * Responsive.scale(context)),
                 child: _TowerButton(
                   type: type,
                   name: data.name,
@@ -164,8 +164,8 @@ class _TowerButtonState extends State<_TowerButton> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 32 * Responsive.scale(context),
-            height: 32 * Responsive.scale(context),
+            width: 44 * Responsive.scale(context),
+            height: 44 * Responsive.scale(context),
             child: Image.asset(
               'assets/images/towers/${widget.imageName}.png',
               fit: BoxFit.contain,
@@ -173,17 +173,6 @@ class _TowerButtonState extends State<_TowerButton> {
             ),
           ),
           SizedBox(height: 2 * Responsive.scale(context)),
-          Text(
-            widget.name,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: TextStyle(
-              color: widget.canAfford ? Colors.white : Colors.white38,
-              fontSize: Responsive.fontSize(context, 8),
-              height: 1.2,
-            ),
-          ),
           SizedBox(height: 2 * Responsive.scale(context)),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 6 * Responsive.scale(context), vertical: 1 * Responsive.scale(context)),
@@ -195,11 +184,13 @@ class _TowerButtonState extends State<_TowerButton> {
             ),
             child: Text(
               '✨${widget.cost}',
+              maxLines: 1,
+              overflow: TextOverflow.clip,
               style: TextStyle(
                 color: widget.canAfford
                     ? AppColors.sinmyeongGold
                     : AppColors.berserkRed.withAlpha(170),
-                fontSize: Responsive.fontSize(context, 10),
+                fontSize: Responsive.fontSize(context, 9),
                 fontWeight: FontWeight.bold,
               ),
             ),
