@@ -67,8 +67,8 @@ class _HeroSkillButton extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
           child: Container(
-        width: 80 * Responsive.scale(context),
-        height: 86 * Responsive.scale(context),
+        width: 70 * Responsive.scale(context),
+        height: 76 * Responsive.scale(context),
         margin: EdgeInsets.only(bottom: 8 * Responsive.scale(context)),
         decoration: BoxDecoration(
           color: info.isDead
@@ -143,12 +143,12 @@ class _HeroSkillButton extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(6),
                       child: SizedBox(
-                        width: 32 * Responsive.scale(context),
-                        height: 32 * Responsive.scale(context),
+                        width: 28 * Responsive.scale(context),
+                        height: 28 * Responsive.scale(context),
                         child: HeroSpriteViewer(
                           imagePath: 'assets/images/heroes/${info.heroId}_tier1_sprites.png',
-                          width: 32 * Responsive.scale(context),
-                          height: 32 * Responsive.scale(context),
+                          width: 28 * Responsive.scale(context),
+                          height: 28 * Responsive.scale(context),
                           fallbackText: info.emoji,
                         ),
                       ),

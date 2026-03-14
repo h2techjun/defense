@@ -44,6 +44,7 @@ import 'ui/dialogs/story_cutscene_dialog.dart';
 import 'ui/dialogs/tutorial_overlay.dart';
 import 'data/models/story_data.dart';
 import 'common/responsive.dart';
+import 'ui/common/ad_side_banners.dart';
 
 /// 게임 화면 (메인메뉴 ↔ 게임 전환)
 class GameScreen extends ConsumerStatefulWidget {
@@ -680,7 +681,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       }).catchError((e) {
         debugPrint('⚠️ [GameScreen] SoundManager 초기화/BGM 실패: $e');
       });
-      return MainMenu(
+      return AdSideBanners(child: MainMenu(
         onStageSelect: () {
           setState(() {
             _currentScreen = 'stageSelect';
@@ -731,34 +732,35 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             _currentScreen = 'loreCollection';
           });
         },
-      );
+      ));
     }
 
     // 타워 관리
     if (_currentScreen == 'towerManage') {
-      return TowerManageScreen(
+      return AdSideBanners(child: TowerManageScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      );
+      ));
     }
 
     // 스킨 상점
     if (_currentScreen == 'skinShop') {
-      return SkinShopScreen(
+      return AdSideBanners(child: SkinShopScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      );
+      // 스킨 상점 닫기
+      ));
     }
 
     // 무한의 탑
     if (_currentScreen == 'endlessTower') {
-      return EndlessTowerScreen(
+      return AdSideBanners(child: EndlessTowerScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
@@ -767,78 +769,85 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         onStartLevel: (level, mode) {
           _startLevel(level, mode: mode);
         },
-      );
+      // 무한의 탑 닫기
+      ));
     }
 
     // 시즌 패스
     if (_currentScreen == 'seasonPass') {
-      return SeasonPassScreen(
+      return AdSideBanners(child: SeasonPassScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      );
+      // 시즌 패스 닫기
+      ));
     }
 
     // 업적 & 랭킹
     if (_currentScreen == 'achievement') {
-      return AchievementScreen(
+      return AdSideBanners(child: AchievementScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      );
+      // 업적 닫기
+      ));
     }
 
     // 패키지 상점
     if (_currentScreen == 'packageShop') {
-      return PackageShopScreen(
+      return AdSideBanners(child: PackageShopScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      );
+      // 패키지 상점 닫기
+      ));
     }
 
     // 일일 미션
     if (_currentScreen == 'dailyQuest') {
-      return DailyQuestScreen(
+      return AdSideBanners(child: DailyQuestScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      );
+      // 일일 미션 닫기
+      ));
     }
 
     // 설화도감
     if (_currentScreen == 'loreCollection') {
-      return LoreCollectionScreen(
+      return AdSideBanners(child: LoreCollectionScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      );
+      // 설화도감 닫기
+      ));
     }
 
     // 영웅 관리
     if (_currentScreen == 'heroManage') {
-      return HeroManageScreen(
+      return AdSideBanners(child: HeroManageScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
           });
         },
-      );
+      // 영웅관리 닫기
+      ));
     }
 
     // 스테이지 선택
     if (_currentScreen == 'stageSelect') {
-      return StageSelectScreen(
+      return AdSideBanners(child: StageSelectScreen(
         onBack: () {
           setState(() {
             _currentScreen = 'mainMenu';
@@ -850,12 +859,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             _currentScreen = 'heroDeploy';
           });
         },
-      );
+      // 스테이지선택 닫기
+      ));
     }
 
     // 출전 준비 화면
     if (_currentScreen == 'heroDeploy' && _currentLevel != null) {
-      return HeroDeployScreen(
+      return AdSideBanners(child: HeroDeployScreen(
         level: _currentLevel!,
         onBack: () {
           setState(() {
@@ -863,7 +873,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           });
         },
         onStartBattle: _startLevel,
-      );
+      ));
     }
 
 
