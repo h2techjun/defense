@@ -1,10 +1,12 @@
 // 해원의 문 - 게임 결과 다이얼로그 (승리/패배)
+// 광고 트리거: 패배 부활 + 승리 2배 보상
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../state/game_state.dart';
 import '../../l10n/app_strings.dart';
+import '../../services/ad_manager.dart';
 import '../theme/app_colors.dart';
 import '../theme/glass_panel.dart';
 
@@ -13,12 +15,14 @@ class VictoryOverlay extends ConsumerWidget {
   final VoidCallback onMenu;
   final VoidCallback onReplay;
   final VoidCallback onNextStage;
+  final VoidCallback? onDoubleReward; // 광고 보상 2배
 
   const VictoryOverlay({
     super.key,
     required this.onMenu,
     required this.onReplay,
     required this.onNextStage,
+    this.onDoubleReward,
   });
 
   @override
@@ -90,7 +94,48 @@ class VictoryOverlay extends ConsumerWidget {
                 _StatRow(AppStrings.get(lang, 'stat_kills'), '${state.enemiesKilled}'),
                 _StatRow(AppStrings.get(lang, 'stat_hp'), '${state.gatewayHp}/${state.maxGatewayHp}'),
                 _StatRow(AppStrings.get(lang, 'stat_score'), '${state.score}'),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+
+                // ── 광고 보상 2배 버튼 ──
+                if (onDoubleReward != null && AdManager.instance.canShowRewardedAd)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: GestureDetector(
+                      onTap: onDoubleReward,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFFF8C00), Color(0xFFFFD700)],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.amber.withAlpha(80),
+                              blurRadius: 12,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('📺', style: TextStyle(fontSize: 20)),
+                            SizedBox(width: 8),
+                            Text(
+                              '광고 보고 보상 2배!',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
 
                 // ── 3버튼 ──
                 Row(
@@ -138,11 +183,13 @@ class VictoryOverlay extends ConsumerWidget {
 class DefeatOverlay extends ConsumerWidget {
   final VoidCallback onRetry;
   final VoidCallback onMenu;
+  final VoidCallback? onRevive; // 광고 부활
 
   const DefeatOverlay({
     super.key,
     required this.onRetry,
     required this.onMenu,
+    this.onRevive,
   });
 
   @override
@@ -230,7 +277,48 @@ class DefeatOverlay extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+
+                // ── 광고 부활 버튼 ──
+                if (onRevive != null && AdManager.instance.canShowRewardedAd)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: GestureDetector(
+                      onTap: onRevive,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF22BB22), Color(0xFF44DD44)],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.green.withAlpha(80),
+                              blurRadius: 12,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('📺', style: TextStyle(fontSize: 20)),
+                            SizedBox(width: 8),
+                            Text(
+                              '광고 보고 부활! (HP 50%)',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
 
                 // ── 2버튼 ──
                 Row(

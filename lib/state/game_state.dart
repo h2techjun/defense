@@ -200,6 +200,15 @@ class GameStateNotifier extends StateNotifier<GameState> {
     state = state.copyWith(phase: phase);
   }
 
+  /// 광고 부활 — 게이트웨이 HP 회복 후 게임 재개
+  void reviveGateway(int healAmount) {
+    final newHp = (state.gatewayHp + healAmount).clamp(1, state.maxGatewayHp);
+    state = state.copyWith(
+      gatewayHp: newHp,
+      phase: GamePhase.playing,
+    );
+  }
+
   /// 게임 배속 변경
   void setGameSpeed(double speed) {
     state = state.copyWith(gameSpeed: speed);

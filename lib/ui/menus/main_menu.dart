@@ -11,7 +11,9 @@ import '../../audio/sound_manager.dart';
 import '../../common/responsive.dart';
 import '../../l10n/app_strings.dart';
 import '../../services/fullscreen_service.dart';
+import '../../services/ad_manager.dart';
 import '../../state/unclaimed_rewards_provider.dart';
+import '../../state/user_state.dart';
 import '../widgets/notification_badge.dart';
 
 /// 메인 메뉴 화면
@@ -28,6 +30,23 @@ class MainMenu extends ConsumerWidget {
   final VoidCallback onLoreCollection;
 
   const MainMenu({super.key, required this.onStageSelect, required this.onHeroManage, required this.onTowerManage, required this.onSkinShop, required this.onEndlessTower, required this.onSeasonPass, required this.onAchievement, required this.onDailyQuest, required this.onLoreCollection});
+
+  /// 무료 보석 광고 시청
+  Future<void> _showFreeGemsAd(BuildContext context, WidgetRef ref) async {
+    final reward = await AdManager.instance.showRewardedAd(
+      purpose: RewardedAdPurpose.freeGems,
+    );
+    if (reward != null && context.mounted) {
+      ref.read(userStateProvider.notifier).addGems(reward.gems);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${reward.description}'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -197,6 +216,12 @@ class MainMenu extends ConsumerWidget {
       _ButtonData('📋 일일 미션', onDailyQuest, false, showBadge: unclaimed.hasDailyQuest),
       _ButtonData('📜 설화도감', onLoreCollection, false),
       _ButtonData('🎨 스킨 상점', onSkinShop, false),
+      if (AdManager.instance.canShowFreeGemsAd)
+        _ButtonData('📺 무료 보석 (${AdManager.instance.remainingDailyFreeGems}회)',
+          () => _showFreeGemsAd(context, ref),
+          false,
+          showBadge: true,
+        ),
 
       _ButtonData('🗼 무한의 탑', onEndlessTower, false),
       _ButtonData('🌸 시즌 패스', onSeasonPass, false, showBadge: unclaimed.hasSeasonPass),

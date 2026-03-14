@@ -1,4 +1,4 @@
-﻿// 해원의 문 - 게임 화면 (메인메뉴 ↔ 게임플레이 전환)
+// 해원의 문 - 게임 화면 (메인메뉴 ↔ 게임플레이 전환)
 // main.dart에서 분리 (P0-1 리팩토링)
 
 import 'package:flutter/material.dart';
@@ -14,6 +14,8 @@ import 'game/defense_game.dart';
 import 'game/components/towers/base_tower.dart';
 import 'audio/sound_manager.dart';
 import 'state/game_state.dart';
+import 'state/user_state.dart';
+import 'services/ad_manager.dart';
 import 'ui/menus/main_menu.dart';
 import 'ui/menus/stage_select_screen.dart';
 import 'ui/menus/hero_manage_screen.dart';
@@ -298,6 +300,51 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     } else {
       // 마지막 스테이지 → 메뉴 복귀
       _returnToMenu();
+    }
+  }
+
+  /// 광고 보고 부활 (패배 시 HP 50% 회복)
+  Future<void> _handleAdRevive() async {
+    final reward = await AdManager.instance.showRewardedAd(
+      purpose: RewardedAdPurpose.revive,
+    );
+    if (reward != null && mounted) {
+      // 게이트웨이 HP 50% 회복
+      final maxHp = ref.read(gameStateProvider).maxGatewayHp;
+      ref.read(gameStateProvider.notifier).reviveGateway((maxHp * 0.5).toInt());
+      _game.overlays.remove('GameOverOverlay');
+      setState(() {});
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('💚 부활! 게이트웨이 HP가 50% 회복되었습니다!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
+  /// 광고 보고 보상 2배 (승리 시 보석 추가)
+  Future<void> _handleAdDoubleReward() async {
+    final reward = await AdManager.instance.showRewardedAd(
+      purpose: RewardedAdPurpose.doubleReward,
+    );
+    if (reward != null && mounted) {
+      // 보석 30개 추가 지급 (2배 보상)
+      ref.read(userStateProvider.notifier).addGems(30);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✨ 보상 2배! 💎 보석 30개 추가 획득!'),
+            backgroundColor: Colors.amber,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 
@@ -880,6 +927,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       'GameOverOverlay': (context, game) => DefeatOverlay(
                             onRetry: _restartLevel,
                             onMenu: _returnToMenu,
+                            onRevive: () => _handleAdRevive(),
                           ),
                       'VictoryOverlay': (context, game) => VictoryOverlay(
                             onMenu: () {
@@ -894,6 +942,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                               _saveProgress();
                               _goToNextStage();
                             },
+                            onDoubleReward: () => _handleAdDoubleReward(),
                           ),
                     },
                   );
