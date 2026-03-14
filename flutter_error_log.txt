@@ -1,0 +1,60 @@
+﻿[ +116 ms] Connecting to service protocol: http://127.0.0.1:54409/9c5_pd-bBJM=/
+[ +169 ms] Launching a Dart Developer Service (DDS) instance at http://127.0.0.1:0, connecting to VM service at http://127.0.0.1:54409/9c5_pd-bBJM=/.
+[ +167 ms] D/FlutterRenderer(11920): Width is zero. 0,0
+[ +120 ms] I/flutter (11920): ?? [main] Flutter app starting...
+[ +255 ms] E/flutter (11920): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: Instance of 'FileNotFoundError'
+[        ] E/flutter (11920): #0      DotEnv._getEntriesFromFile (package:flutter_dotenv/src/dotenv.dart:207:7)
+[        ] E/flutter (11920): <asynchronous suspension>
+[        ] E/flutter (11920): #1      DotEnv.load (package:flutter_dotenv/src/dotenv.dart:134:23)
+[        ] E/flutter (11920): <asynchronous suspension>
+[        ] E/flutter (11920): #2      main (package:gateway_of_regrets/main.dart:43:7)
+[        ] E/flutter (11920): <asynchronous suspension>
+[        ] E/flutter (11920): 
+[  +56 ms] D/FlutterRenderer(11920): Width is zero. 0,0
+[  +38 ms] D/FlutterJNI(11920): Sending viewport metrics to the engine.
+[  +47 ms] Successfully connected to service protocol: http://127.0.0.1:54409/9c5_pd-bBJM=/
+[ +101 ms] DevFS: Creating new filesystem on the device (null)
+[  +13 ms] DevFS: Created new filesystem on the device (file:///data/user/0/com.example.gateway_of_regrets/code_cache/05_DefenseYJLTEC/05_Defense/)
+[   +1 ms] Updating assets for android
+[        ] runHooks() with {TargetFile: D:\00_Project\05_Defense\lib\main.dart, BuildMode: debug} and TargetPlatform.android_x64
+[        ] runHooks() - will perform dart build
+[   +1 ms] Initializing file store
+[        ] Done initializing file store
+[  +95 ms] Skipping target: dart_build
+[        ] Persisting file store
+[   +1 ms] Done persisting file store
+[   +4 ms] runHooks() - done
+[ +362 ms] Manifest contained wildcard assets. Inserting missing file into build graph to force rerun. for more information see #56466.
+[   +4 ms] Syncing files to device sdk gphone64 x86 64...
+[   +3 ms] Compiling dart to kernel with 0 updated files
+[        ] Processing bundle.
+[   +1 ms] <- recompile package:gateway_of_regrets/main.dart d4a93cf2-fb94-407c-9ea7-53d8db6e0d11
+[        ] <- d4a93cf2-fb94-407c-9ea7-53d8db6e0d11
+[  +21 ms] Bundle processing done.
+[ +114 ms] Updating files.
+[        ] Pending asset builds completed. Writing dirty entries.
+[        ] DevFS: Sync finished
+[        ] Syncing files to device sdk gphone64 x86 64... (completed in 141ms)
+[   +1 ms] Synced 0.0MB.
+[        ] <- accept
+[  +13 ms] Connected to _flutterView/0x7eadc4527ac0.
+[   +2 ms] Flutter run key commands.
+[        ] r Hot reload. 
+[        ] R Hot restart.
+[        ] h List all available interactive commands.
+[        ] d Detach (terminate "flutter run" but leave application running).
+[        ] c Clear the screen
+[        ] q Quit (terminate the application on the device).
+[        ] A Dart VM Service on sdk gphone64 x86 64 is available at: http://127.0.0.1:54416/yG5aqkGihqc=/
+[        ] The Flutter DevTools debugger and profiler on sdk gphone64 x86 64 is available at: http://127.0.0.1:54416/yG5aqkGihqc=/devtools/?uri=ws://127.0.0.1:54416/yG5aqkGihqc=/ws
+[+1566 ms] I/Choreographer(11920): Skipped 143 frames!  The application may be doing too much work on its main thread.
+[  +19 ms] D/FlutterJNI(11920): Sending viewport metrics to the engine.
+[+3517 ms] D/ProfileInstaller(11920): Installing profile for com.example.gateway_of_regrets
+[+53231 ms] Service protocol connection closed.
+[        ] Lost connection to device.
+[   +1 ms] DevFS: Deleting filesystem on the device (file:///data/user/0/com.example.gateway_of_regrets/code_cache/05_DefenseYJLTEC/05_Defense/)
+[   +1 ms] DevFS: Deleted filesystem on the device (file:///data/user/0/com.example.gateway_of_regrets/code_cache/05_DefenseYJLTEC/05_Defense/)
+[   +2 ms] "flutter run" took 108,142ms.
+[  +23 ms] Running 3 shutdown hooks
+[  +11 ms] Shutdown hooks complete
+[ +189 ms] exiting with code 0
