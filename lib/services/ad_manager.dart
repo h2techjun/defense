@@ -56,9 +56,16 @@ class AdManager {
   int _stagesSinceLastInterstitial = 0;
   static const _interstitialInterval = 3;
 
-  // 무료 보석 타이머 (4시간마다 가능)
+  // 무료 보석 — 점진적 쿨다운 (총 12시간에 걸쳐 5회)
+  // 1회차: 즉시, 2회차: 30분, 3회차: 90분, 4회차: 3시간, 5회차: 7시간
   DateTime? _lastFreeGemsTime;
-  static const _freeGemsCooldown = Duration(hours: 4);
+  static const List<Duration> _freeGemsCooldowns = [
+    Duration.zero,              // 1회차: 즉시
+    Duration(minutes: 30),      // 2회차: 30분 후
+    Duration(minutes: 90),      // 3회차: 1시간 30분 후
+    Duration(hours: 3),         // 4회차: 3시간 후
+    Duration(hours: 7),         // 5회차: 7시간 후
+  ];
   static const _freeGemsAmount = 30;
   static const _maxDailyFreeGems = 5;
   int _dailyFreeGemsCount = 0;
@@ -77,13 +84,21 @@ class AdManager {
     return true;
   }
 
+  /// 현재 회차의 쿨다운
+  Duration get _currentFreeGemsCooldown {
+    if (_dailyFreeGemsCount >= _freeGemsCooldowns.length) {
+      return _freeGemsCooldowns.last;
+    }
+    return _freeGemsCooldowns[_dailyFreeGemsCount];
+  }
+
   /// 무료 보석 광고 시청 가능 여부
   bool get canShowFreeGemsAd {
     _checkDailyReset();
     if (_dailyFreeGemsCount >= _maxDailyFreeGems) return false;
     if (_lastFreeGemsTime != null) {
       final elapsed = DateTime.now().difference(_lastFreeGemsTime!);
-      if (elapsed < _freeGemsCooldown) return false;
+      if (elapsed < _currentFreeGemsCooldown) return false;
     }
     return canShowRewardedAd;
   }
@@ -92,9 +107,24 @@ class AdManager {
   int get freeGemsCooldownSeconds {
     if (_lastFreeGemsTime == null) return 0;
     final elapsed = DateTime.now().difference(_lastFreeGemsTime!);
-    final remaining = _freeGemsCooldown - elapsed;
+    final remaining = _currentFreeGemsCooldown - elapsed;
     return remaining.isNegative ? 0 : remaining.inSeconds;
   }
+
+  /// 남은 시간 포맷 ("2시간 30분" / "45분" / "즉시 가능")
+  String get freeGemsCooldownFormatted {
+    final secs = freeGemsCooldownSeconds;
+    if (secs <= 0) return '즉시 가능';
+    final hours = secs ~/ 3600;
+    final mins = (secs % 3600) ~/ 60;
+    if (hours > 0) {
+      return mins > 0 ? '${hours}시간 ${mins}분' : '${hours}시간';
+    }
+    return '${mins}분';
+  }
+
+  /// 현재 회차 번호 (1~5)
+  int get currentFreeGemsRound => _dailyFreeGemsCount + 1;
 
   /// 다음 보상형 광고까지 남은 시간 (초)
   int get rewardedAdCooldownSeconds {

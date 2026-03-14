@@ -216,12 +216,20 @@ class MainMenu extends ConsumerWidget {
       _ButtonData('📋 일일 미션', onDailyQuest, false, showBadge: unclaimed.hasDailyQuest),
       _ButtonData('📜 설화도감', onLoreCollection, false),
       _ButtonData('🎨 스킨 상점', onSkinShop, false),
-      if (AdManager.instance.canShowFreeGemsAd)
-        _ButtonData('📺 무료 보석 (${AdManager.instance.remainingDailyFreeGems}회)',
-          () => _showFreeGemsAd(context, ref),
-          false,
-          showBadge: true,
-        ),
+      // 무료 보석 버튼 (쿨다운 중에도 남은 시간 표시)
+      if (AdManager.instance.remainingDailyFreeGems > 0)
+        AdManager.instance.canShowFreeGemsAd
+          ? _ButtonData(
+              '📺 무료 보석 ${AdManager.instance.currentFreeGemsRound}/5',
+              () => _showFreeGemsAd(context, ref),
+              false,
+              showBadge: true,
+            )
+          : _ButtonData(
+              '⏳ ${AdManager.instance.freeGemsCooldownFormatted} (${AdManager.instance.currentFreeGemsRound}/5)',
+              () {},
+              false,
+            ),
 
       _ButtonData('🗼 무한의 탑', onEndlessTower, false),
       _ButtonData('🌸 시즌 패스', onSeasonPass, false, showBadge: unclaimed.hasSeasonPass),
