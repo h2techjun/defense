@@ -127,7 +127,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                       '${(rate * 100).toStringAsFixed(1)}%',
                       style: TextStyle(
                         color: AppColors.sinmyeongGold,
-                        fontSize: 12 * s,
+                        fontSize: 15 * s,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -143,7 +143,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
 
   Widget _buildMilestones(BuildContext context, WidgetRef ref, LoreCollectionState state, double s) {
     return Container(
-      height: 56 * s,
+      height: 64 * s,
       padding: EdgeInsets.symmetric(horizontal: 12 * s),
       color: const Color(0xFF16213E),
       child: Row(
@@ -185,12 +185,12 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(claimed ? '✅' : ms.emoji, style: TextStyle(fontSize: 14 * s)),
+                  Text(claimed ? '✅' : ms.emoji, style: TextStyle(fontSize: 20 * s)),
                   Text(
                     '${(ms.percentage * 100).toInt()}%',
                     style: TextStyle(
                       color: reached ? Colors.amber : Colors.white38,
-                      fontSize: 10 * s,
+                      fontSize: 14 * s,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -212,7 +212,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
         indicatorColor: AppColors.lavender,
         labelColor: Colors.white,
         unselectedLabelColor: Colors.white38,
-        labelStyle: TextStyle(fontSize: 13 * s, fontWeight: FontWeight.bold),
+        labelStyle: TextStyle(fontSize: 16 * s, fontWeight: FontWeight.bold),
         tabs: _categories.map((cat) => Tab(text: '${cat.emoji} ${cat.label}')).toList(),
       ),
     );
@@ -265,7 +265,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
             // 아이콘
             Text(
               isLocked ? '❓' : entry.emoji,
-              style: TextStyle(fontSize: 24 * s),
+              style: TextStyle(fontSize: 32 * s),
             ),
             SizedBox(width: 10 * s),
             Expanded(
@@ -276,7 +276,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                     isLocked ? '???' : entry.name,
                     style: TextStyle(
                       color: isLocked ? Colors.white24 : Colors.white,
-                      fontSize: 15 * s,
+                      fontSize: 18 * s,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -289,7 +289,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                         SizedBox(width: 6 * s),
                         Text(
                           '처치: $kills',
-                          style: TextStyle(color: Colors.white38, fontSize: 10 * s),
+                          style: TextStyle(color: Colors.white38, fontSize: 13 * s),
                         ),
                       ],
                     ],
@@ -303,7 +303,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
             ? [
                 Text(
                   '이 존재를 처음 만나면 해금됩니다...',
-                  style: TextStyle(color: Colors.white24, fontStyle: FontStyle.italic, fontSize: 12 * s),
+                  style: TextStyle(color: Colors.white24, fontStyle: FontStyle.italic, fontSize: 14 * s),
                 ),
               ]
             : _buildLoreContent(context, ref, state, entry, tier, kills, s),
@@ -366,7 +366,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
         children: [
           Text(
             '다음 단계까지 ${remaining}마리 남음',
-            style: TextStyle(color: Colors.white38, fontSize: 11 * s),
+            style: TextStyle(color: Colors.white38, fontSize: 14 * s),
           ),
           SizedBox(height: 4 * s),
           ClipRRect(
@@ -408,7 +408,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
             children: [
               Text(title, style: TextStyle(
                 color: unlocked ? _tierColor(rewardTier) : Colors.white24,
-                fontSize: 12 * s,
+                fontSize: 15 * s,
                 fontWeight: FontWeight.bold,
               )),
               const Spacer(),
@@ -434,14 +434,14 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                       '💎$gems 수령',
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 10 * s,
+                        fontSize: 13 * s,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 )
               else if (claimed)
-                Text('✅', style: TextStyle(fontSize: 12 * s)),
+                Text('✅', style: TextStyle(fontSize: 16 * s)),
             ],
           ),
           SizedBox(height: 6 * s),
@@ -449,7 +449,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
             text,
             style: TextStyle(
               color: unlocked ? Colors.white70 : Colors.white24,
-              fontSize: 13 * s,
+              fontSize: 16 * s,
               height: 1.5,
               fontStyle: unlocked ? FontStyle.normal : FontStyle.italic,
             ),
@@ -477,7 +477,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
       ),
       child: Text(
         label,
-        style: TextStyle(color: color, fontSize: 9 * s, fontWeight: FontWeight.bold),
+        style: TextStyle(color: color, fontSize: 12 * s, fontWeight: FontWeight.bold),
       ),
     );
   }

@@ -259,8 +259,8 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                   children: [
                     // 날짜 원형
                     Container(
-                      width: 44 * s,
-                      height: 44 * s,
+                      width: 56 * s,
+                      height: 56 * s,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isClaimed
@@ -287,7 +287,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                       child: Center(
                         child: Text(
                           isClaimed ? '✅' : reward.emoji,
-                          style: TextStyle(fontSize: 18 * s),
+                          style: TextStyle(fontSize: 24 * s),
                         ),
                       ),
                     ),
@@ -297,7 +297,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                       '${reward.day}일',
                       style: TextStyle(
                         color: isReached ? Colors.white : Colors.white38,
-                        fontSize: 12 * s,
+                        fontSize: 14 * s,
                         fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
@@ -316,7 +316,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
       title,
       style: TextStyle(
         color: AppColors.lavender,
-        fontSize: 18 * s,
+        fontSize: 20 * s,
         fontWeight: FontWeight.bold,
         letterSpacing: 1,
       ),
@@ -363,7 +363,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
           Row(
             children: [
               // 아이콘
-              Text(quest.type.emoji, style: TextStyle(fontSize: 28 * s)),
+              Text(quest.type.emoji, style: TextStyle(fontSize: 34 * s)),
               SizedBox(width: 10 * s),
               Expanded(
                 child: Column(
@@ -393,7 +393,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                             quest.description,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16 * s,
+                              fontSize: 18 * s,
                               fontWeight: FontWeight.w600,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -532,7 +532,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
       ),
       child: Text(
         text,
-        style: TextStyle(color: color, fontSize: 13 * s, fontWeight: FontWeight.bold),
+        style: TextStyle(color: color, fontSize: 15 * s, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -711,19 +711,19 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (isClaimed)
-                        Icon(Icons.check_circle, color: Colors.green, size: 18 * s)
+                        Icon(Icons.check_circle, color: Colors.green, size: 28 * s)
                       else
                         Text(
                           reward.isSpecial ? '🎁' : reward.emoji,
                           style: TextStyle(
-                            fontSize: reward.isSpecial ? 16 * s : 14 * s,
+                            fontSize: reward.isSpecial ? 28 * s : 24 * s,
                           ),
                         ),
                       Text(
                         '$day',
                         style: TextStyle(
                           color: isLocked ? Colors.white24 : Colors.white70,
-                          fontSize: 11 * s,
+                          fontSize: 13 * s,
                           fontWeight: reward.isSpecial ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),

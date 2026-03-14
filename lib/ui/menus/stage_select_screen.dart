@@ -1,4 +1,4 @@
-// 해원의 문 - 스테이지 선택 화면 (3챕터 탭 지원)
+﻿// 해원의 문 - 스테이지 선택 화면 (3챕터 탭 지원)
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -140,7 +140,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                           Text(
                             'Chapter ${meta.chapterNumber}: ${meta.subtitle}',
                             style: TextStyle(
-                              fontSize: Responsive.fontSize(context, 12),
+                              fontSize: Responsive.fontSize(context, 15),
                               color: const Color(0xFF8866AA),
                               letterSpacing: 1,
                             ),
@@ -445,7 +445,7 @@ class _StageCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: Responsive.fontSize(context, 11),
+                    fontSize: Responsive.fontSize(context, 14),
                     color: Color(0xFFAA99BB),
                     height: 1.1,
                   ),
@@ -458,7 +458,7 @@ class _StageCard extends StatelessWidget {
             Text(
               '🌊 ${level.waves.length}',
               style: TextStyle(
-                fontSize: Responsive.fontSize(context, 10),
+                fontSize: Responsive.fontSize(context, 13),
                 color: const Color(0xFF8877AA),
               ),
             ),
@@ -469,7 +469,7 @@ class _StageCard extends StatelessWidget {
                 padding: EdgeInsets.only(top: 2),
                 child: Text('💀 BOSS',
                     style: TextStyle(
-                      fontSize: Responsive.fontSize(context, 10),
+                      fontSize: Responsive.fontSize(context, 13),
                       color: Color(0xFFFF6644),
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,

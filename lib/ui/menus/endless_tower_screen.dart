@@ -1,4 +1,4 @@
-// 해원의 문 - 무한의 탑 + 일일 도전 UI 화면
+﻿// 해원의 문 - 무한의 탑 + 일일 도전 UI 화면
 // 탑 진행도, 층 미리보기, 일일 도전 탭
 
 import 'dart:ui';
@@ -237,7 +237,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                   '최고 기록: ${state.highestFloor}층 | 보석: ${state.totalGemsEarned}💎',
                   style: TextStyle(
                     color: Colors.white60,
-                    fontSize: Responsive.fontSize(context, 12),
+                    fontSize: Responsive.fontSize(context, 15),
                   ),
                 ),
               ],
@@ -257,7 +257,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               '⚔️ ${state.totalFloorsCleared}층 클리어',
               style: TextStyle(
                 color: Colors.amber,
-                fontSize: Responsive.fontSize(context, 12),
+                fontSize: Responsive.fontSize(context, 15),
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -307,7 +307,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                   '활성 버프: ${state.activeBuffs.map((b) => b.name).join(', ')} (${state.buffRemainingFloors}층 남음)',
                   style: TextStyle(
                     color: Colors.greenAccent,
-                    fontSize: Responsive.fontSize(context, 12),
+                    fontSize: Responsive.fontSize(context, 15),
                   ),
                 ),
               ],
@@ -404,7 +404,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                   '📅 오늘의 도전',
                   style: TextStyle(
                     color: Colors.white70,
-                    fontSize: Responsive.fontSize(context, 12),
+                    fontSize: Responsive.fontSize(context, 15),
                   ),
                 ),
                 SizedBox(height: Responsive.spacing(context, 4)),
@@ -449,7 +449,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                               mod.description,
                               style: TextStyle(
                                 color: Colors.white54,
-                                fontSize: Responsive.fontSize(context, 11),
+                                fontSize: Responsive.fontSize(context, 14),
                               ),
                             ),
                           ],
@@ -537,7 +537,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
         )),
         Text(label, style: TextStyle(
           color: Colors.white54,
-          fontSize: Responsive.fontSize(context, 10),
+          fontSize: Responsive.fontSize(context, 13),
         )),
       ],
     );
@@ -555,7 +555,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
         )),
         Text(label, style: TextStyle(
           color: Colors.white54,
-          fontSize: Responsive.fontSize(context, 11),
+          fontSize: Responsive.fontSize(context, 14),
         )),
       ],
     );
@@ -665,7 +665,7 @@ class _TowerFloorCard extends StatelessWidget {
                             : '웨이브: ${floor.waveCount} | 난이도: ×${floor.difficultyScale.toStringAsFixed(1)}',
                         style: TextStyle(
                           color: Colors.white38,
-                          fontSize: Responsive.fontSize(context, 11),
+                          fontSize: Responsive.fontSize(context, 14),
                         ),
                       ),
                     ],
@@ -686,7 +686,7 @@ class _TowerFloorCard extends StatelessWidget {
                       '💎${floor.bonusGems}',
                       style: TextStyle(
                         color: Colors.amber,
-                        fontSize: Responsive.fontSize(context, 11),
+                        fontSize: Responsive.fontSize(context, 14),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -756,7 +756,7 @@ class _RestRewardButton extends StatelessWidget {
                       reward.description,
                       style: TextStyle(
                         color: Colors.white54,
-                        fontSize: Responsive.fontSize(context, 11),
+                        fontSize: Responsive.fontSize(context, 14),
                       ),
                     ),
                   ],

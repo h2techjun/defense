@@ -1,4 +1,4 @@
-// 해원의 문 - 스킨 상점 화면
+﻿// 해원의 문 - 스킨 상점 화면
 // 영웅별 스킨 목록 표시, 구매/장착 기능
 
 
@@ -514,7 +514,7 @@ class _SkinCard extends StatelessWidget {
                       skin.rarity.displayName,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: Responsive.fontSize(context, 9),
+                        fontSize: Responsive.fontSize(context, 12),
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
                         shadows: [
@@ -584,7 +584,7 @@ class _SkinCard extends StatelessWidget {
                         skin.name,
                         style: TextStyle(
                           color: owned ? Colors.white : Colors.white60,
-                          fontSize: Responsive.fontSize(context, 11),
+                          fontSize: Responsive.fontSize(context, 14),
                           fontWeight: FontWeight.bold,
                           shadows: [
                             Shadow(color: Colors.black, blurRadius: 6),
@@ -600,7 +600,7 @@ class _SkinCard extends StatelessWidget {
                           '장착 중 ✨',
                           style: TextStyle(
                             color: AppColors.sinmyeongGold,
-                            fontSize: Responsive.fontSize(context, 9),
+                            fontSize: Responsive.fontSize(context, 12),
                             fontWeight: FontWeight.bold,
                           ),
                         )
@@ -614,7 +614,7 @@ class _SkinCard extends StatelessWidget {
                               '${skin.price}',
                               style: TextStyle(
                                 color: AppColors.skyBlue,
-                                fontSize: Responsive.fontSize(context, 11),
+                                fontSize: Responsive.fontSize(context, 14),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -625,7 +625,7 @@ class _SkinCard extends StatelessWidget {
                           '보유 중',
                           style: TextStyle(
                             color: Colors.white38,
-                            fontSize: Responsive.fontSize(context, 9),
+                            fontSize: Responsive.fontSize(context, 12),
                           ),
                         ),
                     ],
@@ -702,7 +702,7 @@ class _AdRewardButtonState extends State<_AdRewardButton> {
                 '+30',
                 style: TextStyle(
                   color: canWatch ? Colors.white : Colors.grey,
-                  fontSize: Responsive.fontSize(context, 11),
+                  fontSize: Responsive.fontSize(context, 14),
                   fontWeight: FontWeight.bold,
                 ),
               ),

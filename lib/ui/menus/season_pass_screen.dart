@@ -1,4 +1,4 @@
-// 해원의 문 - 시즌 패스 UI 화면
+﻿// 해원의 문 - 시즌 패스 UI 화면
 // 무료/프리미엄 트랙, VIP 정보, 상점
 
 import 'dart:ui';
@@ -115,7 +115,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                       'D-${season.daysRemaining} | Lv.${state.currentLevel}/${season.maxLevel}',
                       style: TextStyle(
                         color: season.daysRemaining <= 7 ? Colors.redAccent : Colors.white60,
-                        fontSize: Responsive.fontSize(context, 12),
+                        fontSize: Responsive.fontSize(context, 15),
                         fontWeight: season.daysRemaining <= 7 ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
@@ -157,7 +157,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                     '✨ PREMIUM',
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: Responsive.fontSize(context, 10),
+                      fontSize: Responsive.fontSize(context, 13),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -182,14 +182,14 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
               'XP: ${state.currentXp} / ${season1.xpForLevel(state.currentLevel)}',
               style: TextStyle(
                 color: Colors.white54,
-                fontSize: Responsive.fontSize(context, 11),
+                fontSize: Responsive.fontSize(context, 14),
               ),
             ),
             Text(
               '다음 레벨까지 ${state.xpToNextLevel} XP',
               style: TextStyle(
                 color: Colors.amber,
-                fontSize: Responsive.fontSize(context, 11),
+                fontSize: Responsive.fontSize(context, 14),
               ),
             ),
           ],
@@ -253,7 +253,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                     'XP 부스트 (💎10 → +50XP)',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: Responsive.fontSize(context, 11),
+                      fontSize: Responsive.fontSize(context, 14),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -506,7 +506,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white54,
-                  fontSize: Responsive.fontSize(context, 12),
+                  fontSize: Responsive.fontSize(context, 15),
                 ),
               ),
             ),
@@ -539,7 +539,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
         )),
         Text(label, style: TextStyle(
           color: Colors.white54,
-          fontSize: Responsive.fontSize(context, 10),
+          fontSize: Responsive.fontSize(context, 13),
         )),
       ],
     );
@@ -615,7 +615,7 @@ class _PassLevelRow extends StatelessWidget {
                   '$level',
                   style: TextStyle(
                     color: isUnlocked ? Colors.amber : Colors.white38,
-                    fontSize: Responsive.fontSize(context, 12),
+                    fontSize: Responsive.fontSize(context, 15),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -726,7 +726,7 @@ class _RewardChip extends StatelessWidget {
           children: [
             Text(
               isClaimed ? '✅' : (isPremiumLocked ? '🔒' : reward.emoji),
-              style: TextStyle(fontSize: Responsive.fontSize(context, 12)),
+              style: TextStyle(fontSize: Responsive.fontSize(context, 15)),
             ),
             SizedBox(width: Responsive.spacing(context, 3)),
             Flexible(
@@ -738,7 +738,7 @@ class _RewardChip extends StatelessWidget {
                       : isUnlocked
                           ? Colors.white
                           : Colors.white38,
-                  fontSize: Responsive.fontSize(context, 10),
+                  fontSize: Responsive.fontSize(context, 13),
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -803,7 +803,7 @@ class _ShopPackageCard extends StatelessWidget {
                             '추천',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: Responsive.fontSize(context, 9),
+                              fontSize: Responsive.fontSize(context, 12),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -815,7 +815,7 @@ class _ShopPackageCard extends StatelessWidget {
                     package.description,
                     style: TextStyle(
                       color: Colors.white54,
-                      fontSize: Responsive.fontSize(context, 11),
+                      fontSize: Responsive.fontSize(context, 14),
                     ),
                   ),
                 ],
@@ -890,7 +890,7 @@ class _VipTierRow extends StatelessWidget {
                     '₩${tier.requiredSpend}+ | 보석 ${tier.dailyGemBonus}/일 | XP ×${tier.xpMultiplier}',
                     style: TextStyle(
                       color: Colors.white38,
-                      fontSize: Responsive.fontSize(context, 10),
+                      fontSize: Responsive.fontSize(context, 13),
                     ),
                   ),
                 ],

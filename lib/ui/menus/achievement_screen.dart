@@ -1,4 +1,4 @@
-// 해원의 문 - 업적 + 랭킹 UI 화면
+﻿// 해원의 문 - 업적 + 랭킹 UI 화면
 // 업적 목록, 진행도, 랭킹 보드
 
 import 'dart:ui';
@@ -111,7 +111,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                   '달성: ${state.completed.length}/${allAchievements.length} (${(state.completionRate * 100).toStringAsFixed(0)}%)',
                   style: TextStyle(
                     color: Colors.white60,
-                    fontSize: Responsive.fontSize(context, 12),
+                    fontSize: Responsive.fontSize(context, 15),
                   ),
                 ),
               ],
@@ -131,7 +131,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                 '${state.unclaimedCount} 미수령',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: Responsive.fontSize(context, 11),
+                  fontSize: Responsive.fontSize(context, 14),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -194,7 +194,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                     '${categoryAchievements.where((a) => state.completed.contains(a.id)).length}/${categoryAchievements.length}',
                     style: TextStyle(
                       color: Colors.white38,
-                      fontSize: Responsive.fontSize(context, 12),
+                      fontSize: Responsive.fontSize(context, 15),
                     ),
                   ),
                 ],
@@ -323,7 +323,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                       '$floor층 ✅',
                       style: TextStyle(
                         color: Colors.amber,
-                        fontSize: Responsive.fontSize(context, 12),
+                        fontSize: Responsive.fontSize(context, 15),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -369,7 +369,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
         )),
         Text(label, style: TextStyle(
           color: Colors.white54,
-          fontSize: Responsive.fontSize(context, 11),
+          fontSize: Responsive.fontSize(context, 14),
         )),
       ],
     );
@@ -482,7 +482,7 @@ class _AchievementCard extends StatelessWidget {
                     isHidden ? '???' : achievement.description,
                     style: TextStyle(
                       color: Colors.white38,
-                      fontSize: Responsive.fontSize(context, 10),
+                      fontSize: Responsive.fontSize(context, 13),
                     ),
                   ),
                   if (!isHidden && !isCompleted) ...[
@@ -503,7 +503,7 @@ class _AchievementCard extends StatelessWidget {
                       '$progress / ${achievement.targetValue}',
                       style: TextStyle(
                         color: Colors.white30,
-                        fontSize: Responsive.fontSize(context, 9),
+                        fontSize: Responsive.fontSize(context, 12),
                       ),
                     ),
                   ],
@@ -526,7 +526,7 @@ class _AchievementCard extends StatelessWidget {
                     '💎${achievement.rewardGems}',
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: Responsive.fontSize(context, 11),
+                      fontSize: Responsive.fontSize(context, 14),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
