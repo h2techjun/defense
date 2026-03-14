@@ -112,7 +112,7 @@ class TowerManageScreen extends ConsumerWidget {
                               } : null,
                               child: Container(
                                 margin: EdgeInsets.symmetric(horizontal: 2 * s),
-                                height: 50 * s,
+                                height: 70 * s,
                                 decoration: BoxDecoration(
                                   color: isHovering
                                       ? const Color(0x44CC88FF)
@@ -134,7 +134,7 @@ class TowerManageScreen extends ConsumerWidget {
                                           children: [
                                             Image.asset(
                                               'assets/images/towers/${meta?['image'] as String? ?? 'tower_archer_t1'}.png',
-                                              width: 24 * s, height: 24 * s, fit: BoxFit.contain,
+                                              width: 36 * s, height: 36 * s, fit: BoxFit.contain,
                                               errorBuilder: (_, __, ___) => Text(meta?['icon'] as String? ?? '?', style: TextStyle(fontSize: Responsive.fontSize(context, 18))),
                                             ),
                                             Text(
@@ -163,11 +163,13 @@ class TowerManageScreen extends ConsumerWidget {
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   // 카드 너비를 화면에 맞게 계산
-                  final cardWidth = Responsive.value<double>(context,
-                    phone: (constraints.maxWidth - 36 * s) / 2,
-                    tablet: (constraints.maxWidth - 48 * s) / 3,
-                    desktop: (constraints.maxWidth - 60 * s) / 4,
+                  // 5열 표시 (phone 기준)
+                  final columns = Responsive.value<int>(context,
+                    phone: 5,
+                    tablet: 5,
+                    desktop: 5,
                   );
+                  final cardWidth = (constraints.maxWidth - (columns + 1) * 8 * s) / columns;
 
                   return SingleChildScrollView(
                     padding: EdgeInsets.symmetric(horizontal: 12 * s),
@@ -282,8 +284,8 @@ class TowerManageScreen extends ConsumerWidget {
           Row(
             children: [
               Container(
-                width: 28 * s,
-                height: 28 * s,
+                width: 40 * s,
+                height: 40 * s,
                 decoration: BoxDecoration(
                   color: color.withAlpha(40),
                   borderRadius: BorderRadius.circular(6),
@@ -292,7 +294,7 @@ class TowerManageScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(6),
                   child: Image.asset(
                     'assets/images/towers/${meta['image'] as String}.png',
-                    width: 28 * s, height: 28 * s, fit: BoxFit.contain,
+                    width: 40 * s, height: 40 * s, fit: BoxFit.contain,
                     errorBuilder: (_, __, ___) => Center(
                       child: Text(meta['icon'] as String, style: TextStyle(fontSize: Responsive.fontSize(context, 16))),
                     ),

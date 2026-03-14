@@ -341,7 +341,7 @@ class PackageShopScreen extends ConsumerWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: Responsive.isLandscape(context) ? 4 : 3,
+        crossAxisCount: Responsive.isLandscape(context) ? 5 : 4,
         childAspectRatio: 0.85,
         crossAxisSpacing: 12 * s,
         mainAxisSpacing: 12 * s,

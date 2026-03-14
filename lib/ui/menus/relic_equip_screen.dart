@@ -235,7 +235,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
   }
 
   Widget _buildRelicGrid(RelicState relicState, double s) {
-    final cols = Responsive.value<int>(context, phone: 2, tablet: 3, desktop: 4);
+    final cols = Responsive.value<int>(context, phone: 3, tablet: 4, desktop: 5);
 
     return GridView.builder(
       padding: EdgeInsets.all(14 * s),

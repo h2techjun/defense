@@ -101,7 +101,7 @@ class Responsive {
   static int gridColumns(BuildContext context) {
     switch (deviceType(context)) {
       case DeviceType.phone:
-        return 2;
+        return 3;
       case DeviceType.tablet:
         return 3;
       case DeviceType.desktop:
