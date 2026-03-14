@@ -116,15 +116,15 @@ class TowerManageScreen extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   color: isHovering
                                       ? const Color(0x44CC88FF)
-                                      : hasSlot
-                                          ? (meta?['color'] as Color?)?.withAlpha(150) ?? const Color(0x88FFFFFF)
-                                          : const Color(0x11FFFFFF),
+                                      : const Color(0xCC1A1530),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
                                     color: isHovering
                                         ? const Color(0xFFCC88FF)
-                                        : hasSlot ? const Color(0x66FFFFFF) : const Color(0x22FFFFFF),
-                                    width: isHovering ? 2 : 1,
+                                        : hasSlot
+                                            ? (meta?['color'] as Color?)?.withAlpha(200) ?? const Color(0x66FFFFFF)
+                                            : const Color(0x22FFFFFF),
+                                    width: hasSlot ? 2 : 1,
                                   ),
                                 ),
                                 child: Center(
