@@ -156,25 +156,30 @@ class SkinShopScreen extends ConsumerWidget {
     // 등급 순 정렬
     skins.sort((a, b) => a.rarity.index.compareTo(b.rarity.index));
 
-    return GridView.builder(
+    final s = Responsive.scale(context);
+    final cardHeight = Responsive.value<double>(context, phone: 220, tablet: 280, desktop: 340);
+    final cardWidth = cardHeight * 0.65;
+
+    return ListView.builder(
       padding: Responsive.paddingAll(context, 16),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: Responsive.gridColumns(context),
-        childAspectRatio: 0.6,
-        crossAxisSpacing: 12 * Responsive.scale(context),
-        mainAxisSpacing: 12 * Responsive.scale(context),
-      ),
+      scrollDirection: Axis.horizontal,
       itemCount: skins.length,
       itemBuilder: (context, index) {
         final skin = skins[index];
         final owned = skinState.ownedSkins.contains(skin.id);
         final equipped = skinState.equippedSkins[heroId] == skin.id;
 
-        return _SkinCard(
-          skin: skin,
-          owned: owned,
-          equipped: equipped,
-          onTap: () => _onSkinTap(context, ref, skin, owned, equipped),
+        return Padding(
+          padding: EdgeInsets.only(right: 12 * s),
+          child: SizedBox(
+            width: cardWidth * s,
+            child: _SkinCard(
+              skin: skin,
+              owned: owned,
+              equipped: equipped,
+              onTap: () => _onSkinTap(context, ref, skin, owned, equipped),
+            ),
+          ),
         );
       },
     );
@@ -421,21 +426,15 @@ class _SkinCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // 배경 그라디언트
+              // 배경 그라디언트 (색상 없이 깔끔한 검정 배경)
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: owned
-                        ? [
-                            skin.primaryColor.withAlpha(80),
-                            Colors.black.withAlpha(180),
-                            skin.secondaryColor.withAlpha(60),
-                          ]
-                        : [
+                    colors: [
                             Colors.black.withAlpha(160),
-                            Colors.black.withAlpha(200),
+                            Colors.black.withAlpha(220),
                           ],
                   ),
                 ),

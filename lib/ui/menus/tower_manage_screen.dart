@@ -112,7 +112,7 @@ class TowerManageScreen extends ConsumerWidget {
                               } : null,
                               child: Container(
                                 margin: EdgeInsets.symmetric(horizontal: 2 * s),
-                                height: 100 * s,
+                                height: 120 * s,
                                 decoration: BoxDecoration(
                                   color: isHovering
                                       ? const Color(0x44CC88FF)
@@ -134,7 +134,7 @@ class TowerManageScreen extends ConsumerWidget {
                                           children: [
                                             Image.asset(
                                               'assets/images/towers/${meta?['image'] as String? ?? 'tower_archer_t1'}.png',
-                                              width: 56 * s, height: 56 * s, fit: BoxFit.contain,
+                                              width: 80 * s, height: 80 * s, fit: BoxFit.contain,
                                               errorBuilder: (_, __, ___) => Text(meta?['icon'] as String? ?? '?', style: TextStyle(fontSize: Responsive.fontSize(context, 18))),
                                             ),
                                             Text(
@@ -164,18 +164,18 @@ class TowerManageScreen extends ConsumerWidget {
                 builder: (context, constraints) {
                   // 카드 너비를 화면에 맞게 계산
                   // 5열 표시 (phone 기준)
-                  final columns = Responsive.value<int>(context,
-                    phone: 5,
-                    tablet: 5,
-                    desktop: 5,
+                  // Removed columns and cardWidth calculation for grid layout
+                  final cardWidth = Responsive.value<double>(context,
+                    phone: 120, // Example fixed width for cards in horizontal scroll
+                    tablet: 140,
+                    desktop: 160,
                   );
-                  final cardWidth = (constraints.maxWidth - (columns + 1) * 8 * s) / columns;
 
                   return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
                     padding: EdgeInsets.symmetric(horizontal: 12 * s),
-                    child: Wrap(
-                      spacing: 8 * s,
-                      runSpacing: 8 * s,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: allTypes.map((type) {
                         final data = towers[type]!;
                         final meta = _meta[type] ?? {'icon': '❓', 'color': Colors.grey, 'desc': ''};
@@ -202,43 +202,46 @@ class TowerManageScreen extends ConsumerWidget {
                         final baseRange = data.baseRange;
                         final baseSpeed = data.baseFireRate;
 
-                        return Draggable<TowerType>(
-                          data: type,
-                          dragAnchorStrategy: (_, __, ___) => Offset(30 * s, 30 * s),
-                          feedback: Material(
-                            color: Colors.transparent,
-                            child: Container(
-                              width: 60 * s,
-                              height: 60 * s,
-                              decoration: BoxDecoration(
-                                color: color.withAlpha(180),
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [BoxShadow(color: color.withAlpha(100), blurRadius: 12)],
-                              ),
-                              child: Center(
-                                child: Image.asset(
-                                  'assets/images/towers/${meta['image'] as String}.png',
-                                  width: 40 * s, height: 40 * s, fit: BoxFit.contain,
-                                  errorBuilder: (_, __, ___) => Text(meta['icon'] as String, style: TextStyle(fontSize: Responsive.fontSize(context, 24))),
+                        return Padding(
+                          padding: EdgeInsets.only(right: 8 * s),
+                          child: Draggable<TowerType>(
+                            data: type,
+                            dragAnchorStrategy: (_, __, ___) => Offset(30 * s, 30 * s),
+                            feedback: Material(
+                              color: Colors.transparent,
+                              child: Container(
+                                width: 60 * s,
+                                height: 60 * s,
+                                decoration: BoxDecoration(
+                                  color: color.withAlpha(180),
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [BoxShadow(color: color.withAlpha(100), blurRadius: 12)],
+                                ),
+                                child: Center(
+                                  child: Image.asset(
+                                    'assets/images/towers/${meta['image'] as String}.png',
+                                    width: 40 * s, height: 40 * s, fit: BoxFit.contain,
+                                    errorBuilder: (_, __, ___) => Text(meta['icon'] as String, style: TextStyle(fontSize: Responsive.fontSize(context, 24))),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          childWhenDragging: Opacity(
-                            opacity: 0.3,
-                            child: _buildTowerCard(context, s, cardWidth, data, meta, color, level, xp, maxLv, xpNeeded, isInLoadout,
-                                baseDmg, baseRange, baseSpeed, curDmg, curRange, curSpeed, nxtDmg, nxtRange, nxtSpeed),
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              if (isInLoadout) {
-                                ref.read(towerLoadoutProvider.notifier).removeFromLoadout(type);
-                              } else if (loadoutState.loadout.length < TowerLoadoutNotifier.maxLoadoutSlots) {
-                                ref.read(towerLoadoutProvider.notifier).addToLoadout(type);
-                              }
-                            },
-                            child: _buildTowerCard(context, s, cardWidth, data, meta, color, level, xp, maxLv, xpNeeded, isInLoadout,
-                                baseDmg, baseRange, baseSpeed, curDmg, curRange, curSpeed, nxtDmg, nxtRange, nxtSpeed),
+                            childWhenDragging: Opacity(
+                              opacity: 0.3,
+                              child: _buildTowerCard(context, s, cardWidth, data, meta, color, level, xp, maxLv, xpNeeded, isInLoadout,
+                                  baseDmg, baseRange, baseSpeed, curDmg, curRange, curSpeed, nxtDmg, nxtRange, nxtSpeed),
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (isInLoadout) {
+                                  ref.read(towerLoadoutProvider.notifier).removeFromLoadout(type);
+                                } else if (loadoutState.loadout.length < TowerLoadoutNotifier.maxLoadoutSlots) {
+                                  ref.read(towerLoadoutProvider.notifier).addToLoadout(type);
+                                }
+                              },
+                              child: _buildTowerCard(context, s, cardWidth, data, meta, color, level, xp, maxLv, xpNeeded, isInLoadout,
+                                  baseDmg, baseRange, baseSpeed, curDmg, curRange, curSpeed, nxtDmg, nxtRange, nxtSpeed),
+                            ),
                           ),
                         );
                         
