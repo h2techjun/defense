@@ -1,4 +1,4 @@
-﻿// 해원의 문 - 메인 게임 루프 (DefenseGame)
+// 해원의 문 - 메인 게임 루프 (DefenseGame)
 
 
 import 'dart:ui';
@@ -44,6 +44,7 @@ class DefenseGame extends FlameGame
 
   LevelData? currentLevel;
   GameMode _currentGameMode = GameMode.campaign;
+  GameMode get currentGameMode => _currentGameMode;
   bool isGameRunning = false;
   double _wailingDecayAccum = 0;
   double _enemyCacheAccum = 0;
@@ -221,8 +222,8 @@ class DefenseGame extends FlameGame
 
     // Riverpod 상태 초기화 — 직접 호출 (addPostFrameCallback 제거)
     ref.read(gameStateProvider.notifier).initLevel(
-      startingSinmyeong: level.startingSinmyeong,
-      gatewayHp: level.gatewayHp,
+      startingSinmyeong: 99999, // level.startingSinmyeong,
+      gatewayHp: 99999, // level.gatewayHp,
       totalWaves: level.waves.length,
     );
 
@@ -397,20 +398,10 @@ class DefenseGame extends FlameGame
     // Draggable feedback 중앙 보정 (+32, +32)
     final centerOffset = localPosition + const Offset(32, 32);
 
-    Vector2 worldPos;
-    if (widgetSize != null && widgetSize.width > 0 && widgetSize.height > 0) {
-      // 위젯 크기 대비 비율로 게임 좌표 계산 (가장 정확)
-      final ratioX = centerOffset.dx / widgetSize.width;
-      final ratioY = centerOffset.dy / widgetSize.height;
-      worldPos = Vector2(
-        ratioX * GameConstants.gameWidth,
-        ratioY * GameConstants.gameHeight,
-      );
-    } else {
-      worldPos = camera.viewfinder.transform.globalToLocal(
-        Vector2(centerOffset.dx, centerOffset.dy)
-      );
-    }
+    // Flame 1.x CameraComponent의 좌표 변환 기능 사용 (Viewport, Letterboxing 등을 모두 자동 계산)
+    final worldPos = camera.globalToLocal(
+      Vector2(centerOffset.dx, centerOffset.dy)
+    );
 
     // 가장 가까운 빈 배치 지점 찾기
     final slotIndex = gameMap.findNearestEmptySlot(worldPos);
