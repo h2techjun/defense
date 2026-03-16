@@ -1,6 +1,6 @@
 # 🏯 Gateway of Regrets — 프로젝트 현황 문서
 
-> **최종 업데이트**: 2026-03-11
+> **최종 업데이트**: 2026-03-16
 > **기술 스택**: Flutter + Flame Engine (Dart) + Riverpod + Supabase
 > **핵심 문서**: `game_design_bible.md` (루트 디렉토리)
 
@@ -121,9 +121,8 @@ d:\00_Project\05_Defense\
 
 ## 📋 알려진 이슈
 
-1. **defense_game.dart 937줄** — 서브매니저 분리 필요
-2. **game_hud.dart 859줄** — 위젯별 파일 분리 필요
-3. **test/ 디렉토리 비어있음** — 테스트 코드 미작성
+1. **에뮬레이터 환경 모바일 소형 화면 UI/HUD 비율 문제** — 최적화 시인성 개선 필요
+2. **test/ 디렉토리 비어있음** — 테스트 코드 미작성
 
 ---
 
