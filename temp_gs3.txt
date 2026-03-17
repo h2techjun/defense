@@ -1,0 +1,71 @@
+﻿                      Builder(
+                        builder: (context) {
+                          final screenSize = MediaQuery.of(context).size;
+                          final s = Responsive.uiScale(context);
+                          final popupWidth = 320.0 * s; 
+                          final bottomPadding = 90.0 * s; // 하단 아이콘 Row 영역만 보호
+                          final topPadding = 60.0 * s; // 상단 UI 보호
+                          // 좌우 위치: 타워 우측에 배치 시도, 여의치 않으면 좌측
+                          double left = _tappedTowerScreenPos.dx + (_tappedTowerHeight / 2) + (8 * s);
+                          if (left + popupWidth > screenSize.width - 8) {
+                            left = _tappedTowerScreenPos.dx - (_tappedTowerHeight / 2) - popupWidth - (8 * s);
+                          }
+                          left = left.clamp(8.0, screenSize.width - popupWidth - 8);
+
+                          // ── 세로 위치 계산 ──
+                          // 다이얼로그 예상 높이(2열 레이아웃 약 200px)
+                          final estimatedDialogH = 200.0 * s;
+                          double top = _tappedTowerScreenPos.dy - 40 * s;
+                          top = top.clamp(
+                            topPadding,
+                            screenSize.height - bottomPadding - estimatedDialogH,
+                          );
+                          
+                          // maxHeight = top부터 하단 패널 시작점까지
+                          final maxH = screenSize.height - top - bottomPadding;
+
+                          return Positioned(
+                            left: left,
+                            top: top,
+                            child: GestureDetector(
+                              onTap: () {}, // 팝업 내부 클릭 시 닫기 방지
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: popupWidth,
+                                    maxHeight: maxH.clamp(0, 999),
+                                  ),
+                                  child: Consumer(
+                                    builder: (_, consumerRef, __) {
+                                      final state = consumerRef.watch(gameStateProvider);
+                                      final tower = _tappedTower!;
+                                      final displayLevel = tower.upgradeLevel + 1;
+                                      return TowerUpgradeDialog(
+                                        towerType: tower.data.type,
+                                        currentLevel: displayLevel,
+                                        sellRefund: tower.sellRefund,
+                                        currentSinmyeong: state.sinmyeong,
+                                        selectedBranch: tower.selectedBranch,
+                                        onAction: (action) {
+                                          _dismissTowerPopup();
+                                          _handleTowerAction(tower, action);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            // ── 웨이브 안내 & 쿨다운 ──
+            Consumer(
+              builder: (_, consumerRef, __) {
+                final state = consumerRef.watch(gameStateProvider);

@@ -10,7 +10,7 @@
       "Ultimate: 도깨비 왕의 감투를 전수받았다. 은신한 적의 목덜미를 낚아채는 전설적인 수호자가 된다."
     ],
     "baseHp": 500,
-    "baseAttack": 60,
+    "baseAttack": 150,
     "baseSpeed": 60,
     "baseRange": 120,
     "damageType": "physical",
@@ -63,7 +63,7 @@
       "Ultimate: 마침내 구미호의 자격에 도달했다. 9개의 꼬리가 춤출 때마다 원혼들은 해방되어 승천한다."
     ],
     "baseHp": 250,
-    "baseAttack": 120,
+    "baseAttack": 300,
     "baseSpeed": 70,
     "baseRange": 180,
     "damageType": "magical",
@@ -115,7 +115,7 @@
       "Ultimate: 염라대왕의 대행자로 임명되었다. 그가 호명하는 순간, 어떤 악귀도 심판의 낫을 피할 수 없다."
     ],
     "baseHp": 200,
-    "baseAttack": 150,
+    "baseAttack": 400,
     "baseSpeed": 50,
     "baseRange": 250,
     "damageType": "purification",
@@ -166,7 +166,7 @@
       "Ultimate: 대해수의 정령으로 거듭났다. 거대한 물기둥을 일으켜 침입자들을 영원한 심해의 입구로 되돌려 보낸다."
     ],
     "baseHp": 300,
-    "baseAttack": 35,
+    "baseAttack": 100,
     "baseSpeed": 65,
     "baseRange": 160,
     "damageType": "magical",
@@ -217,7 +217,7 @@
       "Ultimate: 생명꽃의 주인, 강신 상태에 도달한다. 전장의 모든 아군에게 신의 가호를 내려 죽음조차 거부하는 무적의 영역을 만든다."
     ],
     "baseHp": 280,
-    "baseAttack": 15,
+    "baseAttack": 50,
     "baseSpeed": 55,
     "baseRange": 180,
     "damageType": "purification",

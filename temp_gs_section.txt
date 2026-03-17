@@ -1,0 +1,61 @@
+﻿                        builder: (context) {
+                          final screenSize = MediaQuery.of(context).size;
+                          final s = Responsive.uiScale(context);
+                          final popupWidth = 320.0 * s; 
+                          final bottomPadding = 110.0 * s; // 하단 UI 보호 넉넉히
+                          final topPadding = 60.0 * s; // 상단 UI 보호
+                          // 좌우 위치: 타워 우측에 배치 시도, 여의치 않으면 좌측
+                          double left = _tappedTowerScreenPos.dx + (_tappedTowerHeight / 2) + (8 * s);
+                          if (left + popupWidth > screenSize.width - 8) {
+                            left = _tappedTowerScreenPos.dx - (_tappedTowerHeight / 2) - popupWidth - (8 * s);
+                          }
+                          left = left.clamp(8.0, screenSize.width - popupWidth - 8);
+
+                          // ── 세로 위치 계산 (간단하게) ──
+                          // 팝업의 top을 타워 중심 근처에 놓되,
+                          // 상단 HUD와 하단 타워패널 사이에 반드시 들어오게 clamp
+                          double top = _tappedTowerScreenPos.dy - 40 * s;
+                          // top 최소값: HUD 바로 아래
+                          // top 최대값: 하단 패널 위에서 최소 150px 보이게
+                          top = top.clamp(topPadding, screenSize.height - bottomPadding - 150 * s);
+                          
+                          // maxHeight = top부터 하단 패널 시작점까지
+                          final maxH = screenSize.height - top - bottomPadding;
+
+                          return Positioned(
+                            left: left,
+                            top: top,
+                            child: GestureDetector(
+                              onTap: () {}, // 팝업 내부 클릭 시 닫기 방지
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: popupWidth,
+                                  maxHeight: maxH,
+                                ),
+                                child: Consumer(
+                                  builder: (_, consumerRef, __) {
+                                    final state = consumerRef.watch(gameStateProvider);
+                                    final tower = _tappedTower!;
+                                    final displayLevel = tower.upgradeLevel + 1;
+                                    return TowerUpgradeDialog(
+                                      towerType: tower.data.type,
+                                      currentLevel: displayLevel,
+                                      sellRefund: tower.sellRefund,
+                                      currentSinmyeong: state.sinmyeong,
+                                      selectedBranch: tower.selectedBranch,
+                                      onAction: (action) {
+                                        _dismissTowerPopup();
+                                        _handleTowerAction(tower, action);
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),

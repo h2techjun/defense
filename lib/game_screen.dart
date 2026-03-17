@@ -4,8 +4,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
+import 'package:flame/components.dart';
 
 import 'common/enums.dart';
+import 'common/constants.dart';
 import 'ui/theme/app_colors.dart';
 import 'data/game_data_loader.dart';
 import 'data/models/wave_data.dart';
@@ -63,7 +65,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   TowerType? _selectedTower;
 
   bool _showTutorial = false; // 튜토리얼 표시 여부
-  final _gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<DefenseGame>>();
+  GlobalKey<RiverpodAwareGameWidgetState<DefenseGame>> _gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<DefenseGame>>();
 
   // 툴팁 상태
   GameTooltipData? _tooltipData;
@@ -124,6 +126,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         description: info['description'] as String?,
         color: _getTowerColor(info['towerType'] as TowerType),
         icon: _getTowerIcon(info['towerType'] as TowerType),
+        imagePath: info['imagePath'] as String?,
         stats: [
           TooltipStat('공격력', '${(info['damage'] as double).toStringAsFixed(0)}'),
           TooltipStat('사거리', '${(info['range'] as double).toStringAsFixed(0)}'),
@@ -149,6 +152,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         description: '🎯 ${info['skillName']}\n${info['skillDesc']}\n⏱ 쿨타임: ${info['skillCooldown']}초',
         color: Color(colorInt),
         icon: info['emoji'] as String? ?? '⚔️',
+        imagePath: info['imagePath'] as String?,
         stats: [
           TooltipStat('HP', '${info['hp']} / ${info['maxHp']}',
             highlight: isDead),
@@ -258,10 +262,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   void _returnToMenu() {
     setState(() {
-      _currentScreen = 'stageSelect';
+      if (_game.currentGameMode == GameMode.endlessTower || _game.currentGameMode == GameMode.dailyChallenge) {
+        _currentScreen = 'endlessTower';
+      } else {
+        _currentScreen = 'stageSelect';
+      }
       _selectedTower = null;
     });
     _game = DefenseGame();
+    _gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<DefenseGame>>();
     _setupGameCallbacks();
     ref.read(gameStateProvider.notifier).setPhase(GamePhase.mainMenu);
     SoundManager.instance.stopBgm();
@@ -273,6 +282,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     _game.overlays.remove('GameOverOverlay');
     _game.overlays.remove('VictoryOverlay');
     _game = DefenseGame();
+    _gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<DefenseGame>>();
     _setupGameCallbacks();
     setState(() {
       _selectedTower = null;
@@ -282,8 +292,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     });
   }
 
-  void _goToNextStage() {
+  void _goToNextStage() async {
     if (_currentLevel == null) return;
+
+    // 전면 광고 (3판마다)
+    AdManager.instance.recordStageComplete();
+    if (AdManager.instance.shouldShowInterstitial) {
+      await AdManager.instance.showInterstitialAd();
+    }
+
     final levels = GameDataLoader.getAllLevels();
     final currentIndex = levels.indexWhere(
       (l) => l.levelNumber == _currentLevel!.levelNumber,
@@ -292,6 +309,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       final nextLevel = levels[currentIndex + 1];
       _game.overlays.remove('VictoryOverlay');
       _game = DefenseGame();
+      _gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<DefenseGame>>();
       _setupGameCallbacks();
       setState(() {
         _selectedTower = null;
@@ -417,32 +435,22 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final gameWidgetBox = _gameWidgetKey.currentContext?.findRenderObject() as RenderBox?;
     if (gameWidgetBox == null) return;
 
-    final gameWidgetSize = gameWidgetBox.size;
-    final gameSize = _game.size;
+    // Flame 카메라를 이용하여 월드 좌표를 게임 위젯(Canvas) 기준 로컬 좌표로 변환
+    // BaseTower는 Anchor.center를 사용하므로 position이 이미 중심을 의미합니다.
+    final Vector2 centerWorldPos = tower.position;
+    final Vector2 canvasPos = _game.camera.localToGlobal(centerWorldPos);
 
-    // 게임 좌표를 화면 비율로 변환
-    final scaleX = gameWidgetSize.width / gameSize.x;
-    final scaleY = gameWidgetSize.height / gameSize.y;
-    final scale = scaleX < scaleY ? scaleX : scaleY;
+    // 타워 크기도 화면 배율에 맞게 조정 (카메라 줌 적용)
+    // GameWidget이 꽉 채워지지 않고 letterbox가 생겼을 수 있으므로 그 부분도 고려됩니다.
+    final towerHeight = tower.size.y * _game.camera.viewfinder.zoom;
 
-    // 게임이 화면 중앙에 위치할 때의 오프셋
-    final offsetX = (gameWidgetSize.width - gameSize.x * scale) / 2;
-    final offsetY = (gameWidgetSize.height - gameSize.y * scale) / 2;
-
-    // 타워 중심 화면 좌표
-    final centerX = tower.position.x * scale + offsetX;
-    final centerY = tower.position.y * scale + offsetY;
-    final towerHeight = tower.size.y * scale;
-
-    // GameWidget의 글로벌 위치 추가
-    final globalPos = gameWidgetBox.localToGlobal(Offset.zero);
+    // GameWidget 기준 로컬 좌표가 곧 Stack 내의 좌상단 기준 좌표와 동일합니다.
+    // (Positioned.fill 내부에 GameWidget이 있기 때문)
+    final localPos = Offset(canvasPos.x, canvasPos.y);
 
     setState(() {
       _tappedTower = tower;
-      _tappedTowerScreenPos = Offset(
-        centerX + globalPos.dx,
-        centerY + globalPos.dy,
-      );
+      _tappedTowerScreenPos = localPos;
       _tappedTowerHeight = towerHeight;
     });
   }
@@ -915,10 +923,21 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   // RenderBox를 통해 게임 위젯 기준 로컬 좌표 획득
                   final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
                   if (renderBox != null) {
-                    final localPos = renderBox.globalToLocal(details.offset);
+                    final s = Responsive.scale(context);
+                    // DragTarget accepts details.offset which is the local touch position.
+                    // We must reverse the Responsive UI scale factor before passing to Flame's native resolution.
+                    final centerPos = details.offset; //Offset(details.offset.dx / s, details.offset.dy / s);
+                    final localPos = renderBox.globalToLocal(centerPos);
+                    
+                    debugPrint('[DRAG DEBUG] Raw details.offset: ${details.offset}');
+                    debugPrint('[DRAG DEBUG] Reverse S: $s => centerPos: $centerPos');
+                    debugPrint('[DRAG DEBUG] renderBox.globalToLocal => $localPos');
+                    
                     _game.handleDragDrop(localPos, details.data, renderBox.size);
                   } else {
-                    _game.handleDragDrop(details.offset, details.data, null);
+                    final s = Responsive.scale(context);
+                    final centerPos = Offset(details.offset.dx / s, details.offset.dy / s);
+                    _game.handleDragDrop(centerPos, details.data, null);
                   }
                   // 드래그 후 선택 상태 초기화 (UI 업데이트)
                   setState(() {
@@ -957,26 +976,39 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             ),
 
             // ── HUD 오버레이 ──
-            GameHud(
-              isSpeedLocked: !ref.watch(userStateProvider).hasSpeedPass,
-              onPause: () {
-                _dismissTowerPopup();
-                _game.togglePause();
-                setState(() {}); // UI 갱신
-              },
-              onSpeedToggle: () {
-                if (!ref.read(userStateProvider).hasSpeedPass) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('🔒 상점에서 아무 상품을 구매하면 2배속이 해금됩니다!'),
-                      backgroundColor: Color(0xFF6633AA),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                  return;
-                }
-                _game.cycleGameSpeed();
-                ref.read(gameStateProvider.notifier).setGameSpeed(_game.gameSpeed);
+            Builder(
+              builder: (context) {
+                // 광고 사이드 마진 계산 (AdSideBanners와 동일 공식)
+                final screenW = MediaQuery.of(context).size.width;
+                final screenH = MediaQuery.of(context).size.height;
+                final visibleH = GameConstants.gameHeight + 120;
+                final tileW = screenH * (GameConstants.gameWidth / visibleH);
+                final adMargin = ((screenW - tileW) / 2).clamp(0.0, 300.0);
+                final effectiveMargin = adMargin >= 60 ? adMargin : 0.0;
+
+                return GameHud(
+                  horizontalPadding: effectiveMargin,
+                  isSpeedLocked: !ref.watch(userStateProvider).hasSpeedPass,
+                  onPause: () {
+                    _dismissTowerPopup();
+                    _game.togglePause();
+                    setState(() {}); // UI 갱신
+                  },
+                  onSpeedToggle: () {
+                    if (!ref.read(userStateProvider).hasSpeedPass) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('🔒 상점에서 아무 상품을 구매하면 2배속이 해금됩니다!'),
+                          backgroundColor: Color(0xFF6633AA),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      return;
+                    }
+                    _game.cycleGameSpeed();
+                    ref.read(gameStateProvider.notifier).setGameSpeed(_game.gameSpeed);
+                  },
+                );
               },
             ),
 
@@ -992,23 +1024,28 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         builder: (context) {
                           final screenSize = MediaQuery.of(context).size;
                           final s = Responsive.uiScale(context);
-                          final popupWidth = 240.0 * s;
-                          final popupHeight = 200.0 * s;
-                          const gap = 8.0;
-                          final bottomPadding = 100.0 * s;
-                          final topPadding = 50.0 * s;
+                          // 팝업 너비: 화면의 42% 이하, 최대 300px
+                          final popupWidth = (screenSize.width * 0.42).clamp(220.0, 300.0);
+                          // 하단/상단 보호 영역 (타워패널, HUD)
+                          final bottomPadding = 80.0;
+                          final topPadding = 50.0;
 
-                          // 좌우 위치: 타워 중심 기준
-                          final left = (_tappedTowerScreenPos.dx - popupWidth / 2)
-                              .clamp(8.0, screenSize.width - popupWidth - 8);
+                          // 좌우 위치
+                          double left = _tappedTowerScreenPos.dx + (_tappedTowerHeight / 2) + 8;
+                          if (left + popupWidth > screenSize.width - 8) {
+                            left = _tappedTowerScreenPos.dx - (_tappedTowerHeight / 2) - popupWidth - 8;
+                          }
+                          left = left.clamp(8.0, screenSize.width - popupWidth - 8);
 
-                          // 상하 위치: 화면 하단 55% 이하면 위에 표시
-                          final bool showAbove = _tappedTowerScreenPos.dy > screenSize.height * 0.55;
-                          final top = showAbove
-                              ? (_tappedTowerScreenPos.dy - _tappedTowerHeight / 2 - popupHeight - gap)
-                                  .clamp(topPadding, screenSize.height - popupHeight - bottomPadding)
-                              : (_tappedTowerScreenPos.dy + _tappedTowerHeight / 2 + gap)
-                                  .clamp(topPadding, screenSize.height - popupHeight - bottomPadding);
+                          // 세로 위치: 화면 중간~하단 사이에 위치
+                          double top = _tappedTowerScreenPos.dy - 40;
+                          final maxH = screenSize.height - top - bottomPadding;
+                          // maxH가 너무 작으면 위로 올려서 최소 180px 확보
+                          if (maxH < 180) {
+                            top = screenSize.height - bottomPadding - 180;
+                          }
+                          top = top.clamp(topPadding, screenSize.height - bottomPadding - 160);
+                          final finalMaxH = screenSize.height - top - bottomPadding;
 
                           return Positioned(
                             left: left,
@@ -1017,23 +1054,28 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                               onTap: () {}, // 팝업 내부 클릭 시 닫기 방지
                               child: SizedBox(
                                 width: popupWidth,
-                                child: Consumer(
-                                  builder: (_, consumerRef, __) {
-                                    final state = consumerRef.watch(gameStateProvider);
-                                    final tower = _tappedTower!;
-                                    final displayLevel = tower.upgradeLevel + 1;
-                                    return TowerUpgradeDialog(
-                                      towerType: tower.data.type,
-                                      currentLevel: displayLevel,
-                                      sellRefund: tower.sellRefund,
-                                      currentSinmyeong: state.sinmyeong,
-                                      selectedBranch: tower.selectedBranch,
-                                      onAction: (action) {
-                                        _dismissTowerPopup();
-                                        _handleTowerAction(tower, action);
-                                      },
-                                    );
-                                  },
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxHeight: finalMaxH.clamp(120, 220),
+                                  ),
+                                  child: Consumer(
+                                    builder: (_, consumerRef, __) {
+                                      final state = consumerRef.watch(gameStateProvider);
+                                      final tower = _tappedTower!;
+                                      final displayLevel = tower.upgradeLevel + 1;
+                                      return TowerUpgradeDialog(
+                                        towerType: tower.data.type,
+                                        currentLevel: displayLevel,
+                                        sellRefund: tower.sellRefund,
+                                        currentSinmyeong: state.sinmyeong,
+                                        selectedBranch: tower.selectedBranch,
+                                        onAction: (action) {
+                                          _dismissTowerPopup();
+                                          _handleTowerAction(tower, action);
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
@@ -1082,6 +1124,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                             totalWaves: state.totalWaves,
                             narrative: wm.currentNarrative,
                             isBossWave: isBoss,
+                            enemyEntries: () {
+                              final counts = <String, int>{};
+                              for (final id in state.nextWaveEnemyIds) {
+                                counts[id] = (counts[id] ?? 0) + 1;
+                              }
+                              return counts.entries.toList();
+                            }(),
                           ),
                         ),
                       );
@@ -1254,19 +1303,34 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 child: TutorialOverlay(
                   steps: const [
                     TutorialStep(
-                      title: '환영합니다, 마스터!',
-                      content: '해원의 문에 오신 것을 환영합니다.\n먼저, 전장 우측 하단의 [타워 아이콘]을 클릭하거나 드래그하여 배치 영역에 놓아보세요.',
-                      tooltipOffset: Offset(100, 100),
+                      emoji: '🏯',
+                      title: '해원의 문에 오신 것을 환영합니다!',
+                      content: '이곳은 이승과 저승 사이의 해원문입니다.\n마스터가 되어 원한의 악귀들을 정화하고\n영혼을 승천시키세요!',
                     ),
                     TutorialStep(
-                      title: '원혼의 접근',
-                      content: '밤이 되면 영혼형 몬스터가 출몰합니다.\n영혼형 몬스터는 [정화] 속성 타워(솟대 등) 혹은 [마법] 속성 타워에 약합니다.',
-                      tooltipOffset: Offset(100, 100),
+                      emoji: '🗼',
+                      title: '타워 배치하기',
+                      content: '하단의 타워 아이콘을 길게 누른 뒤\n초록색 배치 슬롯 위에 드래그하세요.\n\n타워는 신명(⚡) 자원으로 건설합니다.\n좋은 위치에 배치하면 전투가 유리해져요!',
                     ),
                     TutorialStep(
-                      title: '영웅의 힘',
-                      content: '배치된 영웅은 강력한 스킬을 보유하고 있습니다.\n쿨타임이 차면 우측 하단의 스킬 아이콘을 눌러 전황을 뒤집으세요!',
-                      tooltipOffset: Offset(100, 100),
+                      emoji: '🔥',
+                      title: '타워의 속성 (오행)',
+                      content: '🔥 화(火) 봉화대 — 범위 공격\n💧 수(水) 선녀천 — 감속/디버프\n🌿 목(木) 당산목 — 다중 타격\n⚔️ 금(金) 종루 — 단일 강타\n🪨 토(土) 서낭당 — 병사 소환\n\n속성 조합이 전략의 핵심입니다!',
+                    ),
+                    TutorialStep(
+                      emoji: '🌙',
+                      title: '낮과 밤의 순환',
+                      content: '☀️ 낮에는 화·목 타워가 강해집니다.\n🌙 밤에는 수·금 타워가 강해지고\n  스텔스 적이 출몰합니다.\n⏳ 전환기에는 토 타워가 강화됩니다.\n\n시간대에 맞춰 타워를 배치하세요!',
+                    ),
+                    TutorialStep(
+                      emoji: '👻',
+                      title: '원혼 정화 시스템',
+                      content: '적을 처치하면 원혼이 떨어지고\n자동으로 정화되어 신명(자원)을 획득!\n\n⚠️ 정화가 밀리면 \"곡소리\" 게이지가\n올라가 타워가 약해지고, 100%가 되면\n모든 적이 광폭화합니다!',
+                    ),
+                    TutorialStep(
+                      emoji: '⚔️',
+                      title: '영웅의 전투',
+                      content: '영웅은 범위 내 적을 자동으로 공격하고\n스킬도 쿨타임이 차면 자동 발동됩니다.\n\n💡 영웅을 터치하면 즉시 스킬 발동!\n드래그하면 위치를 옮길 수 있어요.\n\n준비 되셨나요? 전투를 시작합니다!',
                     ),
                   ],
                   onFinish: () {

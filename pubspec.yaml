@@ -44,4 +44,4 @@ flutter:
     - assets/images/effects/
     - assets/images/ui/
     - assets/images/soldiers/
-
+    - .env

@@ -1,4 +1,4 @@
-﻿// 해원의 문 - 시즌 패스 UI 화면
+// 해원의 문 - 시즌 패스 UI 화면
 // 무료/프리미엄 트랙 (광고 기반 해금)
 
 import 'dart:ui';
@@ -7,7 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/responsive.dart';
 import '../../data/models/season_pass_data.dart';
 import '../../state/season_pass_provider.dart';
+import '../../state/season_pass_provider.dart';
 import '../../state/user_state.dart';
+import '../../services/ad_manager.dart';
 import '../theme/app_colors.dart';
 
 class SeasonPassScreen extends ConsumerStatefulWidget {
@@ -371,15 +373,20 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
               width: double.infinity,
               height: Responsive.spacing(context, 48),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // 광고 시청으로 프리미엄 패스 해금
-                  ref.read(seasonPassProvider.notifier).purchasePremium();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('✨ 프리미엄 패스가 활성화되었습니다!'),
-                      backgroundColor: Colors.purple,
-                    ),
+                  final reward = await AdManager.instance.showRewardedAd(
+                    purpose: RewardedAdPurpose.seasonPremium,
                   );
+                  if (reward != null && context.mounted) {
+                    ref.read(seasonPassProvider.notifier).purchasePremium();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('✨ 프리미엄 패스가 활성화되었습니다!'),
+                        backgroundColor: Colors.purple,
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.amber,
@@ -435,7 +442,6 @@ class _PassLevelRow extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(bottom: Responsive.spacing(context, 6)),
-      child: Container(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(
@@ -457,8 +463,8 @@ class _PassLevelRow extends StatelessWidget {
                   ? [BoxShadow(color: Colors.amber.withAlpha(20), blurRadius: 8, spreadRadius: 1)]
                   : null,
             ),
-        child: Row(
-          children: [
+            child: Row(
+              children: [
             // 레벨 번호
             Container(
               width: Responsive.spacing(context, 32),
@@ -519,23 +525,20 @@ class _PassLevelRow extends StatelessWidget {
                         final locked = !isPremiumPass;
                         return _RewardChip(
                           reward: r,
-                            isUnlocked: isUnlocked && !locked,
-                            isClaimed: claimed,
-                            isPremiumLocked: locked,
-                            onTap: isUnlocked && !locked && !claimed
-                                ? () => onClaim(r)
-                                : null,
-                          );
-                        }).toList(),
-                      ),
-              ),
-            ],
-          ),
-        ),
+                          isUnlocked: isUnlocked && !locked,
+                          isClaimed: claimed,
+                          isPremiumLocked: locked,
+                          onTap: isUnlocked && !locked && !claimed
+                              ? () => onClaim(r)
+                              : null,
+                        );
+                      }).toList(),
+                    ),
+            ),
+          ],
         ),
       ),
-      ),
-    );
+    )));
   }
 }
 

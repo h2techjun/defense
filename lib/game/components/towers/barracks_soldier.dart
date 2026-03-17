@@ -62,7 +62,7 @@ class BarracksSoldier extends PositionComponent
     this.goldBonusRatio = 0,
   })  : maxHp = hp,
         super(
-          size: Vector2(32, 32),
+          size: Vector2(80, 80), // 적과 동일한 크기 (2.5배 확대)
           anchor: Anchor.center,
           priority: 10,
         );
@@ -126,7 +126,7 @@ class BarracksSoldier extends PositionComponent
     final idx = siblings.indexOf(this);
     final total = siblings.length.clamp(1, 6);
     final angle = (idx / total) * 2 * math.pi;
-    final spreadRadius = 25.0;
+    final spreadRadius = 15.0; // 랠리포인트 근처에 모이도록 좁게
     position = rallyPoint + Vector2(math.cos(angle) * spreadRadius, math.sin(angle) * spreadRadius);
     _clampToRange();
   }
@@ -269,10 +269,12 @@ class BarracksSoldier extends PositionComponent
 
   /// 병사가 피격됨 (적의 반격)
   void takeDamage(double amount) {
+    if (isDead) return;
     // 제압 모드: 반격 데미지 50% 감소
     final effectiveAmount = isGrappler ? amount * 0.5 : amount;
     hp -= effectiveAmount;
     _hitFlashTimer = 0.1;
+
     if (hp <= 0) {
       hp = 0;
       _onDeath();
@@ -282,20 +284,8 @@ class BarracksSoldier extends PositionComponent
   /// 사망 처리
   void _onDeath() {
     _releaseBlockedEnemy();
+    // 부활은 타워(BaseTower)가 전담하므로 이 개체는 완전히 제거됨
     removeFromParent();
-  }
-
-  /// 부활 (타워 업그레이드 시 등)
-  void respawn() {
-    hp = maxHp;
-    _blockedEnemy = null;
-    _attackTimer = 0;
-    final offset = Vector2(
-      (_random.nextDouble() - 0.5) * 40,
-      (_random.nextDouble() - 0.5) * 40,
-    );
-    position = rallyPoint + offset;
-    _clampToRange();
   }
 
   @override

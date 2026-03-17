@@ -15,6 +15,7 @@ import '../../services/ad_manager.dart';
 import '../../state/unclaimed_rewards_provider.dart';
 import '../../state/user_state.dart';
 import '../widgets/notification_badge.dart';
+import '../widgets/banner_ad_widget.dart';
 
 /// 메인 메뉴 화면
 class MainMenu extends ConsumerWidget {
@@ -94,6 +95,7 @@ class MainMenu extends ConsumerWidget {
                         _buildButtonSection(context, ref, lang, s, isLandscape: false),
                         SizedBox(height: 24 * s),
                         _buildFooter(context, lang, s),
+                        const BannerAdWidget(),
                       ],
                     ),
                   ),
@@ -246,7 +248,7 @@ class MainMenu extends ConsumerWidget {
           final btnWidth = (availableWidth - spacing) / 2;
 
           return Padding(
-            padding: EdgeInsets.only(top: 28 * s, bottom: 8 * s, left: 16 * s, right: 16 * s),
+            padding: EdgeInsets.only(top: 72 * s, bottom: 8 * s, left: 16 * s, right: 16 * s),
             child: Column(
               children: [
                 // 나머지 2열 그리드

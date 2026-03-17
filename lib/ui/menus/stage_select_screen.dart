@@ -1,4 +1,4 @@
-﻿// 해원의 문 - 스테이지 선택 화면 (3챕터 탭 지원)
+// 해원의 문 - 스테이지 선택 화면 (3챕터 탭 지원)
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -13,6 +13,7 @@ import '../../state/user_state.dart';
 import '../theme/app_colors.dart';
 import '../theme/themed_scaffold.dart';
 import '../widgets/touch_button.dart';
+import '../widgets/banner_ad_widget.dart';
 
 /// 챕터 메타데이터
 class _ChapterMeta {
@@ -297,6 +298,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                   ),
                 ),
               ),
+              const BannerAdWidget(),
             ],
           ),
     );

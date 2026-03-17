@@ -1,0 +1,20 @@
+﻿Analyzing tower_upgrade_dialog.dart...
+
+  error - tower_upgrade_dialog.dart:232:5 - Expected to find ';'. - expected_token
+  error - tower_upgrade_dialog.dart:232:6 - Expected an identifier. - missing_identifier
+  error - tower_upgrade_dialog.dart:232:6 - Expected to find ';'. - expected_token
+  error - tower_upgrade_dialog.dart:232:6 - Unexpected text ';'. Try removing the text. - unexpected_token
+  error - tower_upgrade_dialog.dart:233:5 - Expected an identifier. - missing_identifier
+  error - tower_upgrade_dialog.dart:233:5 - Unexpected text ';'. Try removing the text. - unexpected_token
+warning - tower_upgrade_dialog.dart:232:6 - Dead code. Try removing the code, or fixing the code before it so that it can be reached. - dead_code
+warning - tower_upgrade_dialog.dart:434:7 - The declaration '_ActionButton' isn't referenced. Try removing the declaration of '_ActionButton'. - unused_element
+   info - tower_upgrade_dialog.dart:18:3 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:30:3 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:42:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:233:6 - Unnecessary empty statement. Try removing the empty statement or restructuring the code. - empty_statements
+   info - tower_upgrade_dialog.dart:317:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:362:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:441:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:516:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+
+16 issues found.

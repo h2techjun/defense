@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'save_manager.dart';
 
 /// 광고 유형
 enum AdType {
@@ -154,6 +155,26 @@ class AdManager {
   /// 초기화
   Future<void> init() async {
     if (_initialized) return;
+    
+    // 세이브 데이터 로드
+    final adData = await SaveManager.instance.loadAdData();
+    if (adData != null) {
+      if (adData['lastRewardedAdTime'] != null) {
+        _lastRewardedAdTime = DateTime.tryParse(adData['lastRewardedAdTime']);
+      }
+      _dailyRewardedCount = adData['dailyRewardedCount'] ?? 0;
+      
+      if (adData['lastFreeGemsTime'] != null) {
+        _lastFreeGemsTime = DateTime.tryParse(adData['lastFreeGemsTime']);
+      }
+      _dailyFreeGemsCount = adData['dailyFreeGemsCount'] ?? 0;
+      
+      if (adData['dailyResetDate'] != null) {
+        _dailyResetDate = DateTime.tryParse(adData['dailyResetDate']) ?? DateTime.now();
+      }
+      if (kDebugMode) debugPrint('[AD] 광고 시청 데이터 로드 완료');
+    }
+
     if (kIsWeb) {
       if (kDebugMode) debugPrint('📺 AdManager 초기화 (웹 시뮬레이션)');
     } else {
@@ -219,6 +240,8 @@ class AdManager {
         _dailyFreeGemsCount++;
       }
 
+      await _saveData();
+
       if (kDebugMode) {
         debugPrint('📺 보상형 광고 완료: ${reward.description} (오늘 $_dailyRewardedCount/$_maxDailyRewarded)');
       }
@@ -264,6 +287,18 @@ class AdManager {
       _dailyRewardedCount = 0;
       _dailyFreeGemsCount = 0;
       _dailyResetDate = now;
+      _saveData(); // 초기화 시 바로 자동 저장 방시
     }
+  }
+
+  /// 내부 데이터 저장 훅
+  Future<void> _saveData() async {
+    await SaveManager.instance.saveAdData({
+      'lastRewardedAdTime': _lastRewardedAdTime?.toIso8601String(),
+      'dailyRewardedCount': _dailyRewardedCount,
+      'lastFreeGemsTime': _lastFreeGemsTime?.toIso8601String(),
+      'dailyFreeGemsCount': _dailyFreeGemsCount,
+      'dailyResetDate': _dailyResetDate.toIso8601String(),
+    });
   }
 }

@@ -67,6 +67,7 @@ class BaseHero extends PositionComponent
   RectangleComponent? _border;
   late RectangleComponent _hpBar;
   late RectangleComponent _xpBar;
+  late RectangleComponent _skillBar; // 기술 차지 바
   late TextComponent _levelText;
   late CircleComponent _rangeIndicator;
 
@@ -295,6 +296,21 @@ class BaseHero extends PositionComponent
       paint: Paint()..color = const Color(0xFF44FF44),
     );
     add(_hpBar);
+
+    // 기술 차지 바 배경 (HP 바 위)
+    add(RectangleComponent(
+      size: Vector2(size.x + 2, 4),
+      position: Vector2(-1, -18),
+      paint: Paint()..color = const Color(0x44000000),
+    ));
+
+    // 기술 차지 바 (시안색 → 차면 금색)
+    _skillBar = RectangleComponent(
+      size: Vector2(size.x, 3),
+      position: Vector2(0, -17),
+      paint: Paint()..color = const Color(0xFF00CCFF),
+    );
+    add(_skillBar);
 
     // XP 바 배경
     add(RectangleComponent(
@@ -526,6 +542,13 @@ class BaseHero extends PositionComponent
         _skillReady = true;
       }
     }
+
+    // 기술 차지 바 업데이트
+    final chargeRatio = _skillReady ? 1.0 : (1.0 - skillCooldownRatio).clamp(0.0, 1.0);
+    _skillBar.size.x = size.x * chargeRatio;
+    _skillBar.paint.color = _skillReady
+        ? const Color(0xFFFFD700) // 금색 — 스킬 준비됨
+        : const Color(0xFF00CCFF); // 시안 — 충전 중
 
     // 은신 적 감지 (영웅 범위 내 은신 적 자동 reveal)
     _detectStealthEnemies();
@@ -981,6 +1004,7 @@ class BaseHero extends PositionComponent
       'name': data.name,
       'title': data.title,
       'emoji': _getHeroEmoji(data.id),
+      'imagePath': 'assets/images/heroes/${_getHeroFileName(data.id)}_tier${_getSkinTierNumber()}_sprites.png',
       'hp': _hp.toStringAsFixed(0),
       'maxHp': _maxHp.toStringAsFixed(0),
       'attack': effectiveAttack.toStringAsFixed(0),
@@ -1002,6 +1026,35 @@ class BaseHero extends PositionComponent
 
   @override
   void onTapDown(TapDownEvent event) {
-    useSkill();
+    if (_isDead) return;
+
+    if (_skillReady) {
+      // 스킬 발동 + 금색 글로우 이펙트
+      useSkill();
+      _showSkillActivateGlow();
+    } else {
+      // 쿨다운 중 — 빨간 깜빡임으로 피드백
+      _showCooldownFlash();
+    }
+  }
+
+  /// 스킬 발동 시 금색 글로우 이펙트
+  void _showSkillActivateGlow() {
+    _dragGlow.paint.color = const Color(0x88FFD700);
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (isMounted) {
+        _dragGlow.paint.color = const Color(0x00000000);
+      }
+    });
+  }
+
+  /// 쿨다운 중 탭 시 빨간 깜빡임
+  void _showCooldownFlash() {
+    _dragGlow.paint.color = const Color(0x66FF4444);
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (isMounted) {
+        _dragGlow.paint.color = const Color(0x00000000);
+      }
+    });
   }
 }

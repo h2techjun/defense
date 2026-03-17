@@ -12,6 +12,7 @@ class GameTooltipData {
   final String? description;
   final Color color;
   final String? icon;
+  final String? imagePath;
   final List<TooltipStat> stats;
 
   const GameTooltipData({
@@ -20,6 +21,7 @@ class GameTooltipData {
     this.description,
     this.color = AppColors.textSecondary,
     this.icon,
+    this.imagePath,
     this.stats = const [],
   });
 }
@@ -100,7 +102,18 @@ class GameTooltip extends StatelessWidget {
                 // 헤더: 아이콘 + 타이틀
                 Row(
                   children: [
-                    if (data.icon != null) ...[
+                    if (data.imagePath != null) ...[
+                      Image.asset(
+                        data.imagePath!,
+                        width: 24,
+                        height: 24,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => data.icon != null
+                            ? Text(data.icon!, style: const TextStyle(fontSize: 18))
+                            : const SizedBox.shrink(),
+                      ),
+                      const SizedBox(width: 6),
+                    ] else if (data.icon != null) ...[
                       Text(data.icon!, style: const TextStyle(fontSize: 18)),
                       const SizedBox(width: 6),
                     ],

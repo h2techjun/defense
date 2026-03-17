@@ -344,7 +344,7 @@ class BaseTower extends PositionComponent
     ));
   }
 
-  /// 솟대 수호결계 오라 초기화
+  /// 솟대 수호결계 오라 초기화 — 연한 금색으로 범위만 정적 표시
   void _initWardAura() {
     final wardRange = GameConstants.sotdaeWardRange;
 
@@ -352,13 +352,14 @@ class BaseTower extends PositionComponent
     Color auraColor;
     final bd = branchData;
     if (bd != null && bd.branch == TowerBranch.phoenixTotem) {
-      auraColor = const Color(0x22FFD700); // 수호신단 — 금색
+      auraColor = const Color(0x30FFD700); // 수호신단 — 금색
     } else if (bd != null && bd.branch == TowerBranch.earthSpiritAltar) {
-      auraColor = const Color(0x2288CC44); // 지신제단 — 녹색
+      auraColor = const Color(0x2888CC44); // 지신제단 — 녹색
     } else {
-      auraColor = const Color(0x18FFD700); // 기본 — 연한 금색
+      auraColor = const Color(0x22FFD700); // 기본 — 연한 금색
     }
 
+    // 범위 전체를 연한 금색으로 채워서 표시 (정적)
     _wardAura = CircleComponent(
       radius: wardRange,
       position: size / 2,
@@ -366,18 +367,20 @@ class BaseTower extends PositionComponent
       priority: -2,
       paint: Paint()
         ..color = auraColor
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.0,
+        ..style = PaintingStyle.fill,
     );
     add(_wardAura!);
 
-    // 내부 희미한 원형 채우기
+    // 테두리 선 (얇은 금색)
     add(CircleComponent(
-      radius: wardRange * 0.7,
+      radius: wardRange,
       position: size / 2,
       anchor: Anchor.center,
       priority: -2,
-      paint: Paint()..color = auraColor.withValues(alpha: 0.06),
+      paint: Paint()
+        ..color = auraColor.withValues(alpha: 0.4)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0,
     ));
   }
 
@@ -478,6 +481,9 @@ class BaseTower extends PositionComponent
       'description': data.description,
       'specialAbility': currentUpgradeData?.specialAbility,
       'position': Vector2(position.x, position.y),
+      'imagePath': selectedBranch != null
+          ? 'assets/images/towers/tower_${selectedBranch!.name}.png'
+          : 'assets/images/towers/tower_${data.type.name}_${upgradeLevel.clamp(1, 3)}.png',
     };
   }
 
@@ -865,9 +871,6 @@ class BaseTower extends PositionComponent
       _buffTimer = 0;
       _applySotdaeBuff();
     }
-
-    // 수호결계 오라 맥동 애니메이션
-    _updateWardAuraPulse(dt);
   }
 
   /// 수호결계 — 범위 내 한(恨) 억제 + 디버프 내성
@@ -918,9 +921,6 @@ class BaseTower extends PositionComponent
     // 추가 기믹: 정화의 파동 (한 게이지를 %가 아닌 수치로 직접 감소)
     final purificationAmount = (bd != null && bd.branch == TowerBranch.phoenixTotem) ? 5.0 : 3.0; // 봉황 솟대는 더 높은 정화력
     game.addPendingWailing(-purificationAmount);
-    
-    // 정화 파동 시각 효과 트리거
-    _triggerPurificationPulse(wardRange);
   }
 
   /// 솟대 정화 파동 (시각 이펙트)
@@ -1120,8 +1120,8 @@ class BaseTower extends PositionComponent
 
   /// 병영 업데이트 — 사망한 병사 재소환 관리
   void _updateBarracks(double dt) {
-    // 사망/제거된 병사 정리
-    _soldiers.removeWhere((s) => !s.isMounted || s.isDead);
+    // 제거된 병사만 정리 (사망한 병사는 스스로 부활하므로 리스트 유지)
+    _soldiers.removeWhere((s) => !s.isMounted);
 
     // 병사 부족 시 재소환 타이머
     if (_soldiers.length < _maxSoldiers) {

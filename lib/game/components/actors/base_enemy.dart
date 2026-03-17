@@ -108,7 +108,7 @@ class BaseEnemy extends PositionComponent
     double hpMultiplier = 1.0,
     double speedMultiplier = 1.0,
   }) : super(
-    size: Vector2(data.isBoss ? 64 : 40, data.isBoss ? 64 : 40),
+    size: Vector2(data.isBoss ? 160 : 100, data.isBoss ? 160 : 100), // 2.5배 확대
     anchor: Anchor.center,
   ) {
     _waypoints = waypoints;

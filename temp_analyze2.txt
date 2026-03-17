@@ -1,0 +1,12 @@
+﻿Analyzing tower_upgrade_dialog.dart...
+
+warning - tower_upgrade_dialog.dart:433:7 - The declaration '_ActionButton' isn't referenced. Try removing the declaration of '_ActionButton'. - unused_element
+   info - tower_upgrade_dialog.dart:18:3 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:30:3 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:42:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:316:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:361:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:440:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - tower_upgrade_dialog.dart:515:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+
+8 issues found.

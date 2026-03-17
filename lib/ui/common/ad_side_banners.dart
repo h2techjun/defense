@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import '../../common/responsive.dart';
+import '../../common/constants.dart';
 import '../theme/app_colors.dart';
 
 /// 가로 모드에서 좌우 여백에 광고를 표시하는 래퍼 위젯
@@ -30,28 +31,41 @@ class AdSideBanners extends StatelessWidget {
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
         
-        // 16:9 기준 콘텐츠 영역 계산
-        final contentWidth = screenHeight * (16 / 9);
-        final sideMargin = (screenWidth - contentWidth) / 2;
+        // 실제 타일 영역 너비 계산 (카메라가 화면 전체를 채우므로)
+        // 타일은 960px 게임 단위, 화면 높이 기준으로 스케일
+        final visibleH = GameConstants.gameHeight + 120; // defense_game.dart와 동일
+        final tileWidthOnScreen = screenHeight * (GameConstants.gameWidth / visibleH);
+        final sideMargin = (screenWidth - tileWidthOnScreen) / 2;
 
         // 여백이 최소 광고 너비보다 작으면 광고 없이 표시
         if (sideMargin < minAdWidth) {
           return child;
         }
 
-        return Row(
+        // Stack으로 겹쳐서 게임 화면은 풀 너비, 광고는 좌우 여백 위에 오버레이
+        return Stack(
           children: [
-            // 왼쪽 광고 슬롯
-            SizedBox(
+            // 중앙 콘텐츠 (풀 너비 — 화면이 좁아지지 않음)
+            child,
+            // 왼쪽 광고 슬롯 (여백 위에 오버레이 — 터치 투과)
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
               width: sideMargin,
-              child: _AdSlot(width: sideMargin, height: screenHeight, side: 'left'),
+              child: IgnorePointer(
+                child: _AdSlot(width: sideMargin, height: screenHeight, side: 'left'),
+              ),
             ),
-            // 중앙 콘텐츠
-            Expanded(child: child),
-            // 오른쪽 광고 슬롯
-            SizedBox(
+            // 오른쪽 광고 슬롯 (여백 위에 오버레이 — 터치 투과)
+            Positioned(
+              right: 0,
+              top: 0,
+              bottom: 0,
               width: sideMargin,
-              child: _AdSlot(width: sideMargin, height: screenHeight, side: 'right'),
+              child: IgnorePointer(
+                child: _AdSlot(width: sideMargin, height: screenHeight, side: 'right'),
+              ),
             ),
           ],
         );

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../state/game_state.dart';
 import '../../l10n/app_strings.dart';
 import '../../services/ad_manager.dart';
+import '../../common/responsive.dart';
 import '../theme/app_colors.dart';
 import '../theme/glass_panel.dart';
 
@@ -29,16 +30,17 @@ class VictoryOverlay extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(gameStateProvider);
     final lang = ref.watch(gameLanguageProvider);
+    final s = Responsive.uiScale(context);
 
     final screenSize = MediaQuery.of(context).size;
-    final dialogWidth = (screenSize.width * 0.30).clamp(180.0, 260.0);
+    final dialogWidth = (screenSize.width * 0.35).clamp(240.0, 320.0);
 
     return Container(
       color: const Color(0xBB000000),
       child: Center(
         child: SingleChildScrollView(
           child: GlassPanel(
-          borderRadius: 20,
+          borderRadius: 20 * s,
           blurAmount: 12,
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
@@ -47,7 +49,7 @@ class VictoryOverlay extends ConsumerWidget {
           ),
           borderColor: AppColors.sinmyeongGold,
           borderWidth: 2,
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12 * s),
           boxShadow: [
             BoxShadow(
               color: AppColors.sinmyeongGold.withAlpha(68),
@@ -60,74 +62,75 @@ class VictoryOverlay extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('🌸', style: TextStyle(fontSize: 32)),
-                const SizedBox(height: 8),
+                Text('🌸', style: TextStyle(fontSize: Responsive.fontSize(context, 26))),
+                SizedBox(height: 6 * s),
                 ShaderMask(
                   shaderCallback: (bounds) => const LinearGradient(
                     colors: [AppColors.sinmyeongGold, AppColors.peachCoral],
                   ).createShader(bounds),
                   child: Text(
                     AppStrings.get(lang, 'victory_title'),
-                    style: const TextStyle(
-                      fontSize: 20,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 18),
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 4 * s),
                 Text(
                   AppStrings.get(lang, 'victory_quote'),
-                  style: const TextStyle(
-                    fontSize: 10,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 10),
                     color: AppColors.lavender,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
 
                 // ── 별 평가 ──
-                const SizedBox(height: 16),
+                SizedBox(height: 10 * s),
                 _StarRating(stars: state.starRating),
-                const SizedBox(height: 16),
+                SizedBox(height: 10 * s),
 
                 // ── 통계 ──
-                _StatRow(AppStrings.get(lang, 'stat_kills'), '${state.enemiesKilled}'),
-                _StatRow(AppStrings.get(lang, 'stat_hp'), '${state.gatewayHp}/${state.maxGatewayHp}'),
-                _StatRow(AppStrings.get(lang, 'stat_score'), '${state.score}'),
-                const SizedBox(height: 16),
+                _StatRow(AppStrings.get(lang, 'stat_kills'), '${state.enemiesKilled}', s),
+                _StatRow(AppStrings.get(lang, 'stat_hp'), '${state.gatewayHp}/${state.maxGatewayHp}', s),
+                _StatRow(AppStrings.get(lang, 'stat_score'), '${state.score}', s),
+                SizedBox(height: 12 * s),
 
                 // ── 광고 보상 2배 버튼 ──
                 if (onDoubleReward != null && AdManager.instance.canShowRewardedAd)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
+                    padding: EdgeInsets.only(bottom: 12 * s),
                     child: GestureDetector(
                       onTap: onDoubleReward,
                       child: Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: EdgeInsets.symmetric(vertical: 10 * s),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [Color(0xFFFF8C00), Color(0xFFFFD700)],
                           ),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10 * s),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.amber.withAlpha(80),
-                              blurRadius: 12,
-                              spreadRadius: 2,
+                              blurRadius: 8,
+                              spreadRadius: 1,
                             ),
                           ],
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('📺', style: TextStyle(fontSize: 20)),
-                            SizedBox(width: 8),
+                            Text('📺', style: TextStyle(fontSize: Responsive.fontSize(context, 16))),
+                            SizedBox(width: 8 * s),
                             Text(
                               '광고 보고 보상 2배!',
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 15,
+                                fontSize: Responsive.fontSize(context, 13),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -146,25 +149,29 @@ class VictoryOverlay extends ConsumerWidget {
                         label: AppStrings.get(lang, 'return_menu'),
                         icon: Icons.exit_to_app,
                         onTap: onMenu,
+                        s: s,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 6 * s),
                     // 다시 하기
                     Expanded(
                       child: _DialogButton(
                         label: AppStrings.get(lang, 'replay'),
                         icon: Icons.replay,
                         onTap: onReplay,
+                        s: s,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 6 * s),
                     // 다음 스테이지
                     Expanded(
+                      flex: 1,
                       child: _DialogButton(
                         label: AppStrings.get(lang, 'next_stage'),
                         icon: Icons.arrow_forward,
                         onTap: onNextStage,
                         isPrimary: true,
+                        s: s,
                       ),
                     ),
                   ],
@@ -196,16 +203,17 @@ class DefeatOverlay extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(gameStateProvider);
     final lang = ref.watch(gameLanguageProvider);
-
+    final s = Responsive.uiScale(context);
+    
     final screenSize = MediaQuery.of(context).size;
-    final dialogWidth = (screenSize.width * 0.30).clamp(180.0, 240.0);
+    final dialogWidth = (screenSize.width * 0.35).clamp(240.0, 320.0);
 
     return Container(
       color: const Color(0xBB000000),
       child: Center(
         child: SingleChildScrollView(
           child: GlassPanel(
-          borderRadius: 20,
+          borderRadius: 20 * s,
           blurAmount: 12,
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
@@ -214,7 +222,7 @@ class DefeatOverlay extends ConsumerWidget {
           ),
           borderColor: AppColors.berserkRed,
           borderWidth: 2,
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12 * s),
           boxShadow: [
             BoxShadow(
               color: AppColors.berserkRed.withAlpha(68),
@@ -227,90 +235,90 @@ class DefeatOverlay extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('💀', style: TextStyle(fontSize: 32)),
-                const SizedBox(height: 8),
+                Text('💀', style: TextStyle(fontSize: Responsive.fontSize(context, 26))),
+                SizedBox(height: 6 * s),
                 ShaderMask(
                   shaderCallback: (bounds) => const LinearGradient(
                     colors: [AppColors.berserkRed, AppColors.peachCoral],
                   ).createShader(bounds),
                   child: Text(
                     AppStrings.get(lang, 'defeat_title'),
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 18),
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 4 * s),
                 Text(
                   AppStrings.get(lang, 'defeat_quote'),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF886666),
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 10),
+                    color: const Color(0xFF886666),
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 12 * s),
 
                 // ── 팁 ──
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: EdgeInsets.all(8 * s),
                   decoration: BoxDecoration(
                     color: AppColors.sinmyeongGold.withAlpha(34),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8 * s),
                     border: Border.all(color: AppColors.sinmyeongGold.withAlpha(68)),
                   ),
                   child: Row(
                     children: [
-                      const Text('💡', style: TextStyle(fontSize: 16)),
-                      const SizedBox(width: 8),
+                      Text('💡', style: TextStyle(fontSize: Responsive.fontSize(context, 14))),
+                      SizedBox(width: 8 * s),
                       Expanded(
                         child: Text(
                           AppStrings.get(lang, 'defeat_tip'),
                           style: TextStyle(
                             color: AppColors.sinmyeongGold,
-                            fontSize: 11,
+                            fontSize: Responsive.fontSize(context, 10),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 12 * s),
 
                 // ── 광고 부활 버튼 ──
                 if (onRevive != null && AdManager.instance.canShowRewardedAd)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
+                    padding: EdgeInsets.only(bottom: 12 * s),
                     child: GestureDetector(
                       onTap: onRevive,
                       child: Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: EdgeInsets.symmetric(vertical: 10 * s),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [Color(0xFF22BB22), Color(0xFF44DD44)],
                           ),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10 * s),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.green.withAlpha(80),
-                              blurRadius: 12,
-                              spreadRadius: 2,
+                              blurRadius: 8,
+                              spreadRadius: 1,
                             ),
                           ],
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('📺', style: TextStyle(fontSize: 20)),
-                            SizedBox(width: 8),
+                            Text('📺', style: TextStyle(fontSize: Responsive.fontSize(context, 16))),
+                            SizedBox(width: 8 * s),
                             Text(
                               '광고 보고 부활! (HP 50%)',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 15,
+                                fontSize: Responsive.fontSize(context, 13),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -328,9 +336,10 @@ class DefeatOverlay extends ConsumerWidget {
                         label: AppStrings.get(lang, 'return_menu'),
                         icon: Icons.exit_to_app,
                         onTap: onMenu,
+                        s: s,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 8 * s),
                     Expanded(
                       flex: 2,
                       child: _DialogButton(
@@ -338,6 +347,7 @@ class DefeatOverlay extends ConsumerWidget {
                         icon: Icons.replay,
                         onTap: onRetry,
                         isPrimary: true,
+                        s: s,
                       ),
                     ),
                   ],
@@ -456,18 +466,19 @@ class _StarRatingState extends State<_StarRating>
 class _StatRow extends StatelessWidget {
   final String label;
   final String value;
+  final double s;
 
-  const _StatRow(this.label, this.value);
+  const _StatRow(this.label, this.value, this.s);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
+      padding: EdgeInsets.symmetric(vertical: 3 * s),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: AppColors.lavender, fontSize: 13)),
-          Text(value, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+          Text(label, style: TextStyle(color: AppColors.lavender, fontSize: Responsive.fontSize(context, 11))),
+          Text(value, style: TextStyle(color: Colors.white, fontSize: Responsive.fontSize(context, 11), fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -479,10 +490,12 @@ class _DialogButton extends StatelessWidget {
   final IconData? icon;
   final VoidCallback onTap;
   final bool isPrimary;
+  final double s;
 
   const _DialogButton({
     required this.label,
     required this.onTap,
+    required this.s,
     this.icon,
     this.isPrimary = false,
   });
@@ -492,7 +505,7 @@ class _DialogButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: EdgeInsets.symmetric(vertical: 10 * s),
         decoration: BoxDecoration(
           gradient: isPrimary
               ? const LinearGradient(
@@ -500,7 +513,7 @@ class _DialogButton extends StatelessWidget {
                 )
               : null,
           color: isPrimary ? null : const Color(0x22FFFFFF),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10 * s),
           border: Border.all(
             color: isPrimary
                 ? AppColors.lavender
@@ -512,9 +525,9 @@ class _DialogButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 16,
+              Icon(icon, size: Responsive.fontSize(context, 14),
                 color: isPrimary ? Colors.white : const Color(0xFFBB99DD)),
-              const SizedBox(width: 4),
+              SizedBox(width: 4 * s),
             ],
             Flexible(
               child: Text(
@@ -524,7 +537,7 @@ class _DialogButton extends StatelessWidget {
                 style: TextStyle(
                   color: isPrimary ? Colors.white : AppColors.lavender,
                   fontWeight: isPrimary ? FontWeight.bold : FontWeight.normal,
-                  fontSize: 13,
+                  fontSize: Responsive.fontSize(context, 11),
                 ),
               ),
             ),

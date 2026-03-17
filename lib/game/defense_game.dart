@@ -175,14 +175,14 @@ class DefenseGame extends FlameGame
   Future<void> onLoad() async {
     await super.onLoad();
 
-    // 카메라 설정
+    // 카메라 설정 — 고정 뷰포트
     camera.viewfinder.visibleGameSize = Vector2(
-      GameConstants.gameWidth,
-      GameConstants.gameHeight,
+      GameConstants.gameWidth, // 960
+      GameConstants.gameHeight + 120, // 696
     );
     camera.viewfinder.position = Vector2(
       GameConstants.gameWidth / 2,
-      GameConstants.gameHeight / 2,
+      GameConstants.gameHeight / 2 + 40, // 288 + 40 = 328
     );
 
     // 맵 & 시스템을 월드에 추가 (이미 선언 시점에 생성됨)
@@ -193,9 +193,6 @@ class DefenseGame extends FlameGame
     world.add(waveManager);
 
     if (kDebugMode) debugPrint('DefenseGame.onLoad complete');
-
-    // 사운드 초기화 (잠시 비활성화 - 디버깅용)
-    // SoundManager.instance.init();
 
     // onLoad 완료 전에 startLevel이 호출되었다면 지금 실행
     if (_pendingLevel != null) {
@@ -222,8 +219,8 @@ class DefenseGame extends FlameGame
 
     // Riverpod 상태 초기화 — 직접 호출 (addPostFrameCallback 제거)
     ref.read(gameStateProvider.notifier).initLevel(
-      startingSinmyeong: 99999, // level.startingSinmyeong,
-      gatewayHp: 99999, // level.gatewayHp,
+      startingSinmyeong: level.startingSinmyeong,
+      gatewayHp: level.gatewayHp,
       totalWaves: level.waves.length,
     );
 
@@ -372,10 +369,8 @@ class DefenseGame extends FlameGame
     if (!isGameRunning) return;
     if (selectedTowerType == null) return;
 
-    // 화면 좌표 → 월드 좌표 변환
-    final worldPos = camera.viewfinder.transform.globalToLocal(
-      event.devicePosition,
-    );
+    // 화면 좌표(캔버스 기준) -> 월드 좌표 변환 (Viewport letterbox 고려)
+    final worldPos = camera.globalToLocal(event.canvasPosition);
 
     // 가장 가까운 빈 배치 지점 찾기
     final slotIndex = gameMap.findNearestEmptySlot(worldPos);
@@ -395,16 +390,21 @@ class DefenseGame extends FlameGame
     // 드롭된 타워 타입 설정
     selectedTowerType = towerType;
 
-    // Draggable feedback 중앙 보정 (+32, +32)
-    final centerOffset = localPosition + const Offset(32, 32);
+    // 상단 UI(game_screen)에서 이미 스케일이 반영된 정확한 커서 중심을 넘겨줍니다.
 
-    // Flame 1.x CameraComponent의 좌표 변환 기능 사용 (Viewport, Letterboxing 등을 모두 자동 계산)
+    // Flame 1.x CameraComponent의 좌표 변환 기능 사용 (GameWidget 내 로컬좌표 -> 월드좌표)
+    // game_screen.dart에서 전달한 localPosition은 이미 GameWidget(Viewport) 기준 로컬 좌표입니다.
+    // 여기서 viewfinder.transform.globalToLocal 대신 camera.globalToLocal을 사용해야 레터박스와 스케일링이 정확히 반영 계산됩니다.
     final worldPos = camera.globalToLocal(
-      Vector2(centerOffset.dx, centerOffset.dy)
+      Vector2(localPosition.dx, localPosition.dy)
     );
+    
+    debugPrint('[DRAG DEBUG] FLAME worldPos => $worldPos');
 
     // 가장 가까운 빈 배치 지점 찾기
     final slotIndex = gameMap.findNearestEmptySlot(worldPos);
+    
+    debugPrint('[DRAG DEBUG] findNearestEmptySlot => $slotIndex');
 
     if (slotIndex != null) {
       _placeTowerAtSlot(slotIndex);

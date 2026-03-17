@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../../common/constants.dart';
 
 /// 튜토리얼 단계 정의
 class TutorialStep {
   final String title;
   final String content;
+  final String emoji;
   final Rect? highlightRect;
-  final Offset? tooltipOffset;
 
   const TutorialStep({
     required this.title,
     required this.content,
+    this.emoji = '🦉',
     this.highlightRect,
-    this.tooltipOffset,
   });
 }
 
@@ -30,12 +31,34 @@ class TutorialOverlay extends StatefulWidget {
   State<TutorialOverlay> createState() => _TutorialOverlayState();
 }
 
-class _TutorialOverlayState extends State<TutorialOverlay> {
+class _TutorialOverlayState extends State<TutorialOverlay>
+    with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
+  late AnimationController _animController;
+  late Animation<double> _fadeAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
+    _animController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
 
   void _nextStep() {
     if (_currentIndex < widget.steps.length - 1) {
+      _animController.reset();
       setState(() => _currentIndex++);
+      _animController.forward();
     } else {
       widget.onFinish();
     }
@@ -45,102 +68,175 @@ class _TutorialOverlayState extends State<TutorialOverlay> {
   Widget build(BuildContext context) {
     if (widget.steps.isEmpty) return const SizedBox.shrink();
     final step = widget.steps[_currentIndex];
+    final screenW = MediaQuery.of(context).size.width;
+    final screenH = MediaQuery.of(context).size.height;
 
-    // 페이드 인 전환을 위해 AnimatedSwitcher 사용
+    // 게임 영역 위치 계산 (AdSideBanners와 동일 공식)
+    final visibleH = GameConstants.gameHeight + 120;
+    final tileWidthOnScreen = screenH * (GameConstants.gameWidth / visibleH);
+    final sideMargin = ((screenW - tileWidthOnScreen) / 2).clamp(0.0, 300.0);
+
+    // 툴팁 너비: 게임 영역의 50% 이하, 최소 220, 최대 340
+    final gameAreaW = screenW - sideMargin * 2;
+    final tooltipW = (gameAreaW * 0.55).clamp(220.0, 340.0);
+
     return Material(
       color: Colors.transparent,
       child: Stack(
         children: [
-          // 1. 하이라이트 영역만 투명하게 뚫린 Dim 배경 (터치 이벤트 스틸용 애니메이션 처리)
-          AnimatedBuilder(
-            animation: AlwaysStoppedAnimation(1.0), // 정적 애니메이션 대신 Tween 처리 가능
-            builder: (ctx, child) {
-              return CustomPaint(
-                size: Size.infinite,
-                painter: _HighlightPainter(
-                  highlightRect: step.highlightRect,
-                  backgroundColor: Colors.black.withAlpha(180),
-                ),
-              );
-            },
-          ),
-
-          // 2. 전체 화면 제스처 영역 (아무데나 누르면 다음으로 넘어가도록)
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: _nextStep,
-            child: Container(color: Colors.transparent),
-          ),
-
-          // 3. 툴팁 UI
-          if (step.tooltipOffset != null)
-            Positioned(
-              left: step.tooltipOffset!.dx,
-              top: step.tooltipOffset!.dy,
-              child: _buildTooltipBox(step),
-            )
-          else
-            // 중앙 배치 폴백
-            Align(
-              alignment: Alignment.center,
-              child: _buildTooltipBox(step),
+          // 1. Dim 배경 + 하이라이트
+          CustomPaint(
+            size: Size.infinite,
+            painter: _HighlightPainter(
+              highlightRect: step.highlightRect,
+              backgroundColor: Colors.black.withAlpha(180),
             ),
+          ),
+
+          // 2. 툴팁 — 게임 영역 중앙에 배치
+          Positioned(
+            left: sideMargin + (gameAreaW - tooltipW) / 2,
+            top: screenH * 0.2,
+            child: FadeTransition(
+              opacity: _fadeAnim,
+              child: _buildTooltipBox(step, tooltipW),
+            ),
+          ),
+
+          // 3. 하단 진행 표시 바
+          Positioned(
+            bottom: 20,
+            left: sideMargin + 16,
+            right: sideMargin + 16,
+            child: _buildProgressBar(),
+          ),
+
+          // 4. 전체 화면 제스처 영역 (가장 위에 배치하여 모든 터치 감지)
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: _nextStep,
+              child: Container(color: Colors.transparent),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTooltipBox(TutorialStep step) {
+  Widget _buildTooltipBox(TutorialStep step, double width) {
     return Container(
-      width: 300,
-      padding: const EdgeInsets.all(16),
+      width: width,
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surfaceDark.withAlpha(240),
+        color: const Color(0xF01A1A2E),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.sinmyeongGold),
-        boxShadow: const [
-          BoxShadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 4))
+        border: Border.all(color: AppColors.sinmyeongGold, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.sinmyeongGold.withAlpha(60),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+          const BoxShadow(
+            color: Colors.black54,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          // 제목 행
           Row(
             children: [
-              const Text('🦉', style: TextStyle(fontSize: 24)),
-              const SizedBox(width: 8),
+              Text(step.emoji, style: const TextStyle(fontSize: 28)),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   step.title,
                   style: const TextStyle(
                     color: AppColors.sinmyeongGold,
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: FontWeight.bold,
+                    height: 1.3,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
+          // 본문
           Text(
             step.content,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 14,
-              height: 1.5,
+              fontSize: 13,
+              height: 1.6,
             ),
           ),
-          const SizedBox(height: 16),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Text(
-              '화면을 터치하여 계속 (${_currentIndex + 1}/${widget.steps.length})',
-              style: const TextStyle(color: Colors.white54, fontSize: 12),
-            ),
-          )
+          const SizedBox(height: 18),
+          // 하단 안내 + 페이지
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${_currentIndex + 1} / ${widget.steps.length}',
+                style: const TextStyle(
+                  color: AppColors.sinmyeongGold,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _currentIndex < widget.steps.length - 1
+                        ? '터치하여 다음 →'
+                        : '터치하여 시작! 🎮',
+                    style: TextStyle(
+                      color: _currentIndex < widget.steps.length - 1
+                          ? Colors.white54
+                          : AppColors.sinmyeongGold,
+                      fontSize: 12,
+                      fontWeight: _currentIndex < widget.steps.length - 1
+                          ? FontWeight.normal
+                          : FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProgressBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(widget.steps.length, (i) {
+        final isActive = i == _currentIndex;
+        final isDone = i < _currentIndex;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          width: isActive ? 24 : 10,
+          height: 6,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(3),
+            color: isActive
+                ? AppColors.sinmyeongGold
+                : isDone
+                    ? AppColors.sinmyeongGold.withAlpha(120)
+                    : Colors.white24,
+          ),
+        );
+      }),
     );
   }
 }
@@ -158,13 +254,10 @@ class _HighlightPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..color = backgroundColor;
-    
-    // 전체 화면 경로
-    final bgPath = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
+    final bgPath = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     Path finalPath = bgPath;
 
-    // 하이라이트 영역 빼기 (구멍 뚫기)
     if (highlightRect != null) {
       final holePath = Path()
         ..addRRect(RRect.fromRectAndRadius(highlightRect!, const Radius.circular(8)));

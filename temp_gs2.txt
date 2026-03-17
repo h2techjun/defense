@@ -1,0 +1,71 @@
+﻿                          _buildPauseMenuButton(
+                            icon: Icons.home_rounded,
+                            label: '메뉴로 나가기',
+                            color: const Color(0xFFEF4444),
+                            onTap: () {
+                              _showConfirmDialog(
+                                title: '나가기',
+                                message: '메뉴로 돌아가시겠습니까?\n현재 진행 상황은 사라집니다.',
+                                onConfirm: () {
+                                  _game.togglePause();
+                                  _returnToMenu();
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+            // ── 타워 선택 패널 ──
+            TowerSelectPanel(
+              selectedTower: _selectedTower,
+              onTowerSelected: _onTowerSelected,
+            ),
+
+            // ── 영웅 스킬 패널 (우측 하단) ──
+            _buildHeroSkillPanel(),
+
+            // ── 호버 툴팁 (타워 업그레이드 팝업 열려있으면 숨김) ──
+            if (_tooltipData != null && !_showTutorial && _tappedTower == null)
+              GameTooltip(
+                data: _tooltipData!,
+                position: _mousePosition,
+              ),
+
+            // ── 튜토리얼 오버레이 ──
+            if (_showTutorial)
+              Positioned.fill(
+                child: TutorialOverlay(
+                  steps: const [
+                    TutorialStep(
+                      title: '환영합니다, 마스터!',
+                      content: '해원의 문에 오신 것을 환영합니다.\n먼저, 전장 우측 하단의 [타워 아이콘]을 클릭하거나 드래그하여 배치 영역에 놓아보세요.',
+                      tooltipOffset: Offset(100, 100),
+                    ),
+                    TutorialStep(
+                      title: '원혼의 접근',
+                      content: '밤이 되면 영혼형 몬스터가 출몰합니다.\n영혼형 몬스터는 [정화] 속성 타워(솟대 등) 혹은 [마법] 속성 타워에 약합니다.',
+                      tooltipOffset: Offset(100, 100),
+                    ),
+                    TutorialStep(
+                      title: '영웅의 힘',
+                      content: '배치된 영웅은 강력한 스킬을 보유하고 있습니다.\n쿨타임이 차면 우측 하단의 스킬 아이콘을 눌러 전황을 뒤집으세요!',
+                      tooltipOffset: Offset(100, 100),
+                    ),
+                  ],
+                  onFinish: () {
+                    setState(() {
+                      _showTutorial = false;
+                    });
+                    ref.read(userStateProvider.notifier).completeTutorial();
+                    _game.resumeEngine(); // 게임 재개
+                  },
+                ),
+              ),
+          ],
+        ),
+      ),

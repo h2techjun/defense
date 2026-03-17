@@ -1,0 +1,16 @@
+﻿Analyzing ad_side_banners.dart, game_screen.dart...
+
+  error - lib\game_screen.dart:983:36 - Undefined name 'GameConstants'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\game_screen.dart:983:63 - Undefined name 'GameConstants'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+warning - lib\game_screen.dart:726:11 - Catch clause should use 'on' to specify the type of exception being caught. Try adding an 'on' clause before the 'catch'. - avoid_catches_without_on_clauses
+warning - lib\game_screen.dart:1025:33 - The value of the local variable 's' isn't used. Try removing the variable or using it. - unused_local_variable
+   info - lib\game_screen.dart:130:30 - Unnecessary use of string interpolation. Try replacing the string literal with the variable name. - unnecessary_string_interpolations
+   info - lib\game_screen.dart:131:30 - Unnecessary use of string interpolation. Try replacing the string literal with the variable name. - unnecessary_string_interpolations
+   info - lib\game_screen.dart:163:13 - Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation. - prefer_const_constructors
+   info - lib\game_screen.dart:1029:27 - Use 'const' for final variables initialized to a constant value. Try replacing 'final' with 'const'. - prefer_const_declarations
+   info - lib\game_screen.dart:1030:27 - Use 'const' for final variables initialized to a constant value. Try replacing 'final' with 'const'. - prefer_const_declarations
+   info - lib\ui\common\ad_side_banners.dart:16:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+   info - lib\ui\common\ad_side_banners.dart:35:9 - Use 'const' for final variables initialized to a constant value. Try replacing 'final' with 'const'. - prefer_const_declarations
+   info - lib\ui\common\ad_side_banners.dart:78:9 - Constructor declarations should be before non-constructor declarations. Try moving the constructor declaration before all other members. - sort_constructors_first
+
+12 issues found.

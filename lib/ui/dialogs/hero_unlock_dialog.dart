@@ -54,11 +54,15 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                 spreadRadius: 5,
               ),
             ],
-            child: SizedBox(
+            child: Container(
               width: 320,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.85,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                   // 타이틀
                   ShaderMask(
                     shaderCallback: (bounds) => LinearGradient(
@@ -192,6 +196,7 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                   ),
                 ],
               ),
+            ),
             ),
           ),
         ),

@@ -61,7 +61,7 @@ class GameConstants {
 
   // ── 자원 ──
   /// 시작 신명 (자원)
-  static const int startingSinmyeong = 200;
+  static const int startingSinmyeong = 250;
 
   /// 게이트웨이(해원문) 최대 HP
   static const int gatewayMaxHp = 20;

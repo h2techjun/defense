@@ -46,48 +46,62 @@ class TowerSelectPanel extends ConsumerWidget {
       bottom: 0,
       left: 0,
       right: 0,
-      child: IgnorePointer(
-        ignoring: false,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8 * Responsive.scale(context), vertical: 8 * Responsive.scale(context)),
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [Color(0xCC000000), Color(0x00000000)],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 그라데이션 배경 (터치 투과 — 타일 터치 허용)
+          IgnorePointer(
+            ignoring: true,
+            child: Container(
+              height: 20 * Responsive.scale(context),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [Color(0x88000000), Color(0x00000000)],
+                ),
+              ),
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: loadout.map((type) {
-              final data = towers[type];
-              if (data == null) return const SizedBox.shrink();
-              final meta = towerMeta[type] ?? {'icon': '❓', 'color': Colors.grey, 'tooltip': ''};
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 6 * Responsive.scale(context)),
-                child: _TowerButton(
-                  type: type,
-                  name: data.name,
-                  cost: data.baseCost,
-                  color: meta['color'] as Color,
-                  icon: meta['icon'] as String,
-                  imageName: meta['image'] as String,
-                  tooltip: meta['tooltip'] as String,
-                  canAfford: state.sinmyeong >= data.baseCost,
-                  isSelected: selectedTower == type,
-                  onTap: () {
-                    if (state.sinmyeong >= data.baseCost) {
-                      SoundManager.instance.playSfx(SfxType.uiClick);
-                      onTowerSelected?.call(type);
-                    } else {
-                      SoundManager.instance.playSfx(SfxType.uiError);
-                    }
-                  },
-                ),
-              );
-            }).toList(),
+          // 타워 아이콘 Row (터치 흡수)
+          Container(
+            color: const Color(0xCC000000),
+            padding: EdgeInsets.symmetric(
+              horizontal: 8 * Responsive.scale(context),
+              vertical: 8 * Responsive.scale(context),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: loadout.map((type) {
+                final data = towers[type];
+                if (data == null) return const SizedBox.shrink();
+                final meta = towerMeta[type] ?? {'icon': '❓', 'color': Colors.grey, 'tooltip': ''};
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6 * Responsive.scale(context)),
+                  child: _TowerButton(
+                    type: type,
+                    name: data.name,
+                    cost: data.baseCost,
+                    color: meta['color'] as Color,
+                    icon: meta['icon'] as String,
+                    imageName: meta['image'] as String,
+                    tooltip: meta['tooltip'] as String,
+                    canAfford: state.sinmyeong >= data.baseCost,
+                    isSelected: selectedTower == type,
+                    onTap: () {
+                      if (state.sinmyeong >= data.baseCost) {
+                        SoundManager.instance.playSfx(SfxType.uiClick);
+                        onTowerSelected?.call(type);
+                      } else {
+                        SoundManager.instance.playSfx(SfxType.uiError);
+                      }
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -172,30 +186,43 @@ class _TowerButtonState extends State<_TowerButton> {
       ),
     );
 
-    // 선택 시 가격 정보 팝업을 위에 표시
-    final contentWithInfo = Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (widget.isSelected)
-          Container(
-            margin: EdgeInsets.only(bottom: 4 * s),
-            padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 3 * s),
-            decoration: BoxDecoration(
-              color: Colors.black.withAlpha(200),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: widget.color.withAlpha(120)),
-            ),
-            child: Text(
-              '✨${widget.cost}',
-              style: TextStyle(
-                color: AppColors.sinmyeongGold,
-                fontSize: Responsive.fontSize(context, 10),
-                fontWeight: FontWeight.bold,
+    // 선택 시 가격 정보를 아이콘 위에 떠있게 (패널 높이 증가 방지)
+    final contentWithInfo = SizedBox(
+      width: 52 * s,
+      height: 52 * s,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          content,
+          if (widget.isSelected)
+            Positioned(
+              bottom: 52 * s + 4 * s, // 아이콘 위에 배치
+              left: -4 * s,
+              right: -4 * s,
+              child: IgnorePointer(
+                ignoring: true,
+                child: Center(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 3 * s),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withAlpha(200),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: widget.color.withAlpha(120)),
+                    ),
+                    child: Text(
+                      '✨${widget.cost}',
+                      style: TextStyle(
+                        color: AppColors.sinmyeongGold,
+                        fontSize: Responsive.fontSize(context, 10),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        content,
-      ],
+        ],
+      ),
     );
 
     if (!widget.canAfford) {
@@ -215,26 +242,23 @@ class _TowerButtonState extends State<_TowerButton> {
       Draggable<TowerType>(
         data: widget.type,
         dragAnchorStrategy: pointerDragAnchorStrategy,
-        feedback: Transform.translate(
-          offset: const Offset(-32, -32),
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              width: 64 * Responsive.scale(context),
-              height: 64 * Responsive.scale(context),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: widget.color.withOpacity(0.5),
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
-              ),
-              child: Image.asset(
-                'assets/images/towers/${widget.imageName}.png',
-                width: 48 * Responsive.scale(context),
-                height: 48 * Responsive.scale(context),
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => Text(widget.icon, style: TextStyle(fontSize: Responsive.fontSize(context, 32), decoration: TextDecoration.none)),
-              ),
+        feedback: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: 64 * Responsive.scale(context),
+            height: 64 * Responsive.scale(context),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: widget.color.withOpacity(0.5),
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+            ),
+            child: Image.asset(
+              'assets/images/towers/${widget.imageName}.png',
+              width: 48 * Responsive.scale(context),
+              height: 48 * Responsive.scale(context),
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) => Text(widget.icon, style: TextStyle(fontSize: Responsive.fontSize(context, 32), decoration: TextDecoration.none)),
             ),
           ),
         ),

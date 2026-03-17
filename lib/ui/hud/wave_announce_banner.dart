@@ -12,6 +12,7 @@ class WaveAnnounceBanner extends StatefulWidget {
   final int totalWaves;
   final String? narrative;
   final bool isBossWave;
+  final List<MapEntry<String, int>> enemyEntries; // 적 타입별 수량
 
   const WaveAnnounceBanner({
     super.key,
@@ -19,6 +20,7 @@ class WaveAnnounceBanner extends StatefulWidget {
     required this.totalWaves,
     this.narrative,
     this.isBossWave = false,
+    this.enemyEntries = const [],
   });
 
   @override
@@ -179,11 +181,58 @@ class _WaveAnnounceBannerState extends State<WaveAnnounceBanner>
                   textAlign: TextAlign.center,
                 ),
               ],
+              // 적 구성 표시
+              if (widget.enemyEntries.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  alignment: WrapAlignment.center,
+                  children: widget.enemyEntries.map((entry) {
+                    final emoji = _getEnemyEmoji(entry.key);
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.black26,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white24),
+                      ),
+                      child: Text(
+                        '$emoji \u00d7${entry.value}',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
             ],
           ),
         ),
       ),
     );
+  }
+
+  /// 적 ID → 이모지 매핑
+  String _getEnemyEmoji(String enemyId) {
+    const map = {
+      'hungryGhost': '👻',
+      'eggGhost': '🥚',
+      'dokkaebi': '👹',
+      'gumiho': '🦊',
+      'cheonan': '🐍',
+      'bulgasari': '🔥',
+      'haetae': '🦁',
+      'cheolma': '🐴',
+      'imugi': '🐉',
+      'chollima': '🦅',
+      'samjokgu': '🐕',
+      'gwisin': '👤',
+    };
+    return map[enemyId] ?? '👾';
   }
 }
 

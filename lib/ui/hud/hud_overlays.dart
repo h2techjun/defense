@@ -310,7 +310,7 @@ class HudNextWavePreview extends StatelessWidget {
     final sc = Responsive.scale(context);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8 * sc, vertical: 6 * sc),
-      constraints: BoxConstraints(maxWidth: 160 * sc),
+      constraints: BoxConstraints(maxWidth: 200 * sc),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(8 * sc),

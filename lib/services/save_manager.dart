@@ -19,6 +19,7 @@ class SaveManager {
   static const String _keyHeroLevels = 'haewon_hero_levels';
   static const String _keyRelicData = 'haewon_relic_data';
   static const String _keySkinData = 'haewon_skin_data';
+  static const String _keyAdData = 'haewon_ad_data';
   static const int _currentVersion = 1;
 
   /// 사용자 데이터 저장
@@ -136,6 +137,7 @@ class SaveManager {
     await prefs.remove(_keyHeroLevels);
     await prefs.remove(_keyRelicData);
     await prefs.remove(_keySkinData);
+    await prefs.remove(_keyAdData);
   }
 
   /// 세이브 데이터 존재 여부
@@ -519,6 +521,27 @@ class SaveManager {
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
       debugPrint('[SAVE] 설화도감 로드 오류: $e');
+      return null;
+    }
+  }
+
+  // ─── 광고 데이터 ───
+
+  /// 광고 시청 기록 저장
+  Future<void> saveAdData(Map<String, dynamic> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyAdData, jsonEncode(data));
+  }
+
+  /// 광고 시청 기록 로드
+  Future<Map<String, dynamic>?> loadAdData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_keyAdData);
+      if (raw == null) return null;
+      return jsonDecode(raw) as Map<String, dynamic>;
+    } catch (e) {
+      debugPrint('[SAVE] 광고 데이터 로드 오류: $e');
       return null;
     }
   }
