@@ -59,7 +59,7 @@ class ArtillerySplashStrategy extends TowerAttackStrategy {
       visualType: ProjectileVisual.cannonball,
       onHit: () {
         final enemies = tower.game.gridSystem
-            .getEnemiesInRange(target.position, splashRadius);
+            .getEnemiesNear(target.position, splashRadius);
         for (final enemy in enemies) {
           enemy.takeDamage(tower.currentDamage, damageType);
         }
@@ -90,7 +90,7 @@ class ShamanMagicStrategy extends TowerAttackStrategy {
     );
 
     // 슬로우 디버프 후 타격
-    target.applySlowDebuff(slowAura);
+    target.applySpeedDebuff(slowAura, 1.5);
     target.takeDamage(tower.currentDamage, damageType);
 
     // 발사체 (영혼 구슬) 추가

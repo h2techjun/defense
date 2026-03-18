@@ -1,0 +1,63 @@
+Line 355: [   +8 ms]   [   +8 ms] C:\flutter\bin\cache\dart-sdk\bin\dartaotruntime.exe C:\flutter\bin\cache\dart-sdk\bin\snapshots\frontend_server_aot.dart.snapshot --sdk-root C:\flutter\bin\cache\artifacts\engine\common\flutter_patched_sdk_product/ --target=flutter --no-print-incremental-dependencies -DFLUTTER_VERSION=3.41.2 -DFLUTTER_CHANNEL=stable -DFLUTTER_GIT_URL=https://github.com/flutter/flutter.git -DFLUTTER_FRAMEWORK_REVISION=90673a4eef -DFLUTTER_ENGINE_REVISION=6c0baaebf7 -DFLUTTER_DART_VERSION=3.11.0 -Ddart.vm.profile=false -Ddart.vm.product=true --delete-tostring-package-uri=dart:ui --delete-tostring-package-uri=package:flutter --aot --tfa --target-os windows --packages D:\00_Project\05_Defense\.dart_tool\package_config.json --output-dill D:\00_Project\05_Defense\.dart_tool\flutter_build\05d4f9ded643d7960e1b18361d0ba0ca\app.dill --depfile D:\00_Project\05_Defense\.dart_tool\flutter_build\05d4f9ded643d7960e1b18361d0ba0ca\kernel_snapshot_program.d --source file:///D:/00_Project/05_Defense/.dart_tool/flutter_build/dart_plugin_registrant.dart --source package:flutter/src/dart_plugin_registrant.dart -Dflutter.dart_plugin_registrant=file:///D:/00_Project/05_Defense/.dart_tool/flutter_build/dart_plugin_registrant.dart --verbosity=error package:gateway_of_regrets/main.dart
+  352: [   +1 ms]   [   +1 ms] unpack_windows: Starting due to {InvalidatedReasonKind.inputChanged: The following inputs have updated contents: D:\00_Project\05_Defense\windows\flutter\ephemeral\flutter_windows.dll,D:\00_Project\05_Defense\windows\flutter\ephemeral\flutter_windows.dll.exp,D:\00_Project\05_Defense\windows\flutter\ephemeral\flutter_windows.dll.pdb}
+  353: [ +741 ms]   [ +741 ms] unpack_windows: Complete
+  354: [+1397 ms]   [+1397 ms] kernel_snapshot_program: Starting due to {InvalidatedReasonKind.outputSetAddition: The following outputs were added to the output set: D:\00_Project\05_Defense\.dart_tool\flutter_build\05d4f9ded643d7960e1b18361d0ba0ca\app.dill, InvalidatedReasonKind.inputChanged: The following inputs have updated contents: D:\00_Project\05_Defense\lib\game\components\towers\projectile.dart}
+  355: [   +8 ms]   [   +8 ms] C:\flutter\bin\cache\dart-sdk\bin\dartaotruntime.exe C:\flutter\bin\cache\dart-sdk\bin\snapshots\frontend_server_aot.dart.snapshot --sdk-root C:\flutter\bin\cache\artifacts\engine\common\flutter_patched_sdk_product/ --target=flutter --no-print-incremental-dependencies -DFLUTTER_VERSION=3.41.2 -DFLUTTER_CHANNEL=stable -DFLUTTER_GIT_URL=https://github.com/flutter/flutter.git -DFLUTTER_FRAMEWORK_REVISION=90673a4eef -DFLUTTER_ENGINE_REVISION=6c0baaebf7 -DFLUTTER_DART_VERSION=3.11.0 -Ddart.vm.profile=false -Ddart.vm.product=true --delete-tostring-package-uri=dart:ui --delete-tostring-package-uri=package:flutter --aot --tfa --target-os windows --packages D:\00_Project\05_Defense\.dart_tool\package_config.json --output-dill D:\00_Project\05_Defense\.dart_tool\flutter_build\05d4f9ded643d7960e1b18361d0ba0ca\app.dill --depfile D:\00_Project\05_Defense\.dart_tool\flutter_build\05d4f9ded643d7960e1b18361d0ba0ca\kernel_snapshot_program.d --source file:///D:/00_Project/05_Defense/.dart_tool/flutter_build/dart_plugin_registrant.dart --source package:flutter/src/dart_plugin_registrant.dart -Dflutter.dart_plugin_registrant=file:///D:/00_Project/05_Defense/.dart_tool/flutter_build/dart_plugin_registrant.dart --verbosity=error package:gateway_of_regrets/main.dart
+  356: flutter : [+3475 ms] [+3474 ms] li
+  357: b/game/components/towers/strategie
+  358: s/tower_attack_strategy.dart(62,14
+--------------------------------------------------
+Line 359: ): error GE5CFE876: The method 'ge
+  356: flutter : [+3475 ms] [+3474 ms] li
+  357: b/game/components/towers/strategie
+  358: s/tower_attack_strategy.dart(62,14
+  359: ): error GE5CFE876: The method 'ge
+  360: tEnemiesInRange' isn't defined for
+  361: the type 'GridSystem'. [D:\00_Pro
+  362: ject\05_Defense\build\windows\x64\
+--------------------------------------------------
+Line 382: tack_strategy.dart(93,12): error G
+  379: [        ]   [        ]              ^^^^^^^^^^^^^^^^^
+  380: [        ] [        ] lib/game/com
+  381: ponents/towers/strategies/tower_at
+  382: tack_strategy.dart(93,12): error G
+  383: E5CFE876: The method 'applySlowDeb
+  384: uff' isn't defined for the type 'B
+  385: aseEnemy'. [D:\00_Project\05_Defen
+--------------------------------------------------
+Line 467: error MSB8066: 'D:\00_Project\05_D
+  464: Microsoft Visual Studio\2022\Build
+  465: Tools\MSBuild\Microsoft\VC\v170\Mi
+  466: crosoft.CppCommon.targets(254,5):
+  467: error MSB8066: 'D:\00_Project\05_D
+  468: efense\build\windows\x64\CMakeFile
+  469: s\9eddc4db5df60eb107ba326c7b2334c1
+  470: \flutter_windows.dll.rule;D:\00_Pr
+--------------------------------------------------
+Line 490: attack_strategy.dart(62,14): error
+  487: [        ] (CustomBuild 대상) ->
+  488: [        ]   [+3474 ms] lib/game/c
+  489: omponents/towers/strategies/tower_
+  490: attack_strategy.dart(62,14): error
+  491: GE5CFE876: The method 'getEnemies
+  492: InRange' isn't defined for the typ
+  493: e 'GridSystem'. [D:\00_Project\05_
+--------------------------------------------------
+Line 498: attack_strategy.dart(93,12): error
+  495: flutter_assemble.vcxproj]
+  496: [        ]   [        ] lib/game/c
+  497: omponents/towers/strategies/tower_
+  498: attack_strategy.dart(93,12): error
+  499: GE5CFE876: The method 'applySlowD
+  500: ebuff' isn't defined for the type
+  501: 'BaseEnemy'. [D:\00_Project\05_Def
+--------------------------------------------------
+Line 508: : error MSB8066: 'D:\00_Project\05
+  505: )\Microsoft Visual Studio\2022\Bui
+  506: ldTools\MSBuild\Microsoft\VC\v170\
+  507: Microsoft.CppCommon.targets(254,5)
+  508: : error MSB8066: 'D:\00_Project\05
+  509: _Defense\build\windows\x64\CMakeFi
+  510: les\9eddc4db5df60eb107ba326c7b2334
+  511: c1\flutter_windows.dll.rule;D:\00_
+--------------------------------------------------
