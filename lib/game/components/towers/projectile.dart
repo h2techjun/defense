@@ -1,4 +1,4 @@
-﻿// ?�원??�?- ?�사�?컴포?�트
+// ?�원??�?- ?�사�?컴포?�트
 // ?��????�기?�기 ?��?????빛나???�사�?+ ?�레??
 
 import 'dart:ui';
@@ -32,6 +32,7 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
   /// 최�? ?�거�?(관?????�거 조건)
   final double? maxRange;
 
+  final ProjectileVisual? visualType;
   bool _hitTarget = false;
   double _trailTimer = 0;
   double _traveledDistance = 0;
@@ -52,11 +53,11 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
     this.maxRange,
     this.visualType,
   }) : super(
-    size: Vector2(10, 10),
-    position: startPosition,
-    anchor: Anchor.center,
-    priority: 15,
-  );
+          size: Vector2(10, 10),
+          position: startPosition,
+          anchor: Anchor.center,
+          priority: 15,
+        );
 
   @override
   Future<void> onLoad() async {
@@ -94,15 +95,26 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
 
     if (visualType == ProjectileVisual.cannonball) {
       canvas.drawCircle(center, 6, Paint()..color = const Color(0xFF333333));
-      canvas.drawCircle(center + const Offset(-1.5, -1.5), 2.5, Paint()..color = const Color(0xFF777777));
-      canvas.drawCircle(center, 7, Paint()..color = const Color(0xAAFF3300)..style = PaintingStyle.stroke..strokeWidth = 1.0);
+      canvas.drawCircle(center + const Offset(-1.5, -1.5), 2.5,
+          Paint()..color = const Color(0xFF777777));
+      canvas.drawCircle(
+          center,
+          7,
+          Paint()
+            ..color = const Color(0xAAFF3300)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.0);
       return;
     } else if (visualType == ProjectileVisual.shamanOrb) {
       canvas.drawCircle(center, 5, Paint()..color = const Color(0x7700E5FF));
       canvas.drawCircle(center, 3, Paint()..color = const Color(0xFFB2EBF2));
-      final tPaint = Paint()..color = const Color(0xFFFFD54F)..strokeWidth = 1.2;
-      canvas.drawLine(center + const Offset(-2, -2), center + const Offset(2, 2), tPaint);
-      canvas.drawLine(center + const Offset(-2, 2), center + const Offset(2, -2), tPaint);
+      final tPaint = Paint()
+        ..color = const Color(0xFFFFD54F)
+        ..strokeWidth = 1.2;
+      canvas.drawLine(
+          center + const Offset(-2, -2), center + const Offset(2, 2), tPaint);
+      canvas.drawLine(
+          center + const Offset(-2, 2), center + const Offset(2, -2), tPaint);
       return;
     }
 
@@ -114,8 +126,12 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
         canvas.rotate(_angle + math.pi / 2); // ?�쪽??기본 ???�동방향 보정
 
         // 글로우 ?�레??
-        canvas.drawCircle(const Offset(0, 4), 4,
-          Paint()..color = Color.fromARGB(30, glowColor.red, glowColor.green, glowColor.blue));
+        canvas.drawCircle(
+            const Offset(0, 4),
+            4,
+            Paint()
+              ..color = Color.fromARGB(
+                  30, glowColor.red, glowColor.green, glowColor.blue));
 
         // ?�살?� (몸통)
         final shaftPaint = Paint()
@@ -126,23 +142,27 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
 
         // ?�살�?(?�각??
         final headPath = Path()
-          ..moveTo(0, -10)   // ?�쪽 ??
+          ..moveTo(0, -10) // ?�쪽 ??
           ..lineTo(-3, -5)
           ..lineTo(3, -5)
           ..close();
         canvas.drawPath(headPath, Paint()..color = color);
-        canvas.drawPath(headPath, Paint()
-          ..color = const Color(0xFFFFE0B2)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 0.6);
+        canvas.drawPath(
+            headPath,
+            Paint()
+              ..color = const Color(0xFFFFE0B2)
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 0.6);
 
         // 깃털 (?�쪽)
         final featherPaint = Paint()
           ..color = const Color(0xFFCC4444)
           ..strokeWidth = 1.2
           ..strokeCap = StrokeCap.round;
-        canvas.drawLine(const Offset(0, 8), const Offset(-2.5, 11), featherPaint);
-        canvas.drawLine(const Offset(0, 8), const Offset(2.5, 11), featherPaint);
+        canvas.drawLine(
+            const Offset(0, 8), const Offset(-2.5, 11), featherPaint);
+        canvas.drawLine(
+            const Offset(0, 8), const Offset(2.5, 11), featherPaint);
 
         canvas.restore();
         break;
@@ -150,25 +170,32 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
       case DamageType.magical:
         // 마법 ?�브 ??빛나????+ ?�곽 �?
         // ?�곽 글로우
-        canvas.drawCircle(center, 7,
-          Paint()..color = Color.fromARGB(35, glowColor.red, glowColor.green, glowColor.blue));
+        canvas.drawCircle(
+            center,
+            7,
+            Paint()
+              ..color = Color.fromARGB(
+                  35, glowColor.red, glowColor.green, glowColor.blue));
         // 코어
         canvas.drawCircle(center, 4, Paint()..color = color);
         // ?�이?�이??
         canvas.drawCircle(center + const Offset(-1, -1), 1.5,
-          Paint()..color = const Color(0x88FFFFFF));
+            Paint()..color = const Color(0x88FFFFFF));
         // ?�곽 �?
-        canvas.drawCircle(center, 5, Paint()
-          ..color = Color.fromARGB(80, glowColor.red, glowColor.green, glowColor.blue)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1);
+        canvas.drawCircle(
+            center,
+            5,
+            Paint()
+              ..color = Color.fromARGB(
+                  80, glowColor.red, glowColor.green, glowColor.blue)
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 1);
         break;
 
       case DamageType.purification:
         // ?�화 ??빛나????��가 + ?�광
         // ?�광
-        canvas.drawCircle(center, 6,
-          Paint()..color = const Color(0x22FFD700));
+        canvas.drawCircle(center, 6, Paint()..color = const Color(0x22FFD700));
         // ??�� (?�근 ??
         final crossPaint = Paint()
           ..color = color
@@ -177,7 +204,8 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
         canvas.drawLine(const Offset(5, 1), const Offset(5, 9), crossPaint);
         canvas.drawLine(const Offset(1, 5), const Offset(9, 5), crossPaint);
         // 중심 �?
-        canvas.drawCircle(center, 1.5, Paint()..color = const Color(0xFFFFD700));
+        canvas.drawCircle(
+            center, 1.5, Paint()..color = const Color(0xFFFFD700));
         break;
     }
   }
@@ -214,7 +242,10 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
       _checkPiercingCollisions();
 
       // ?�면 �??�거 체크 (간단???�치�?
-      if (position.x < -100 || position.x > 2000 || position.y < -100 || position.y > 2000) {
+      if (position.x < -100 ||
+          position.x > 2000 ||
+          position.y < -100 ||
+          position.y > 2000) {
         removeFromParent();
       }
     } else {
@@ -248,7 +279,8 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
 
       // 충돌 ?�정 (거리 ?�곱 ?�산?�로 sqrt 부???�거, 반경 20?��? ?�내)
       final distSq = position.distanceToSquared(enemy.position);
-      if (distSq < 400) { // 20 * 20
+      if (distSq < 400) {
+        // 20 * 20
         _applyHit(enemy);
       }
     }
@@ -258,7 +290,7 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
   void _applyHit(BaseEnemy hitEnemy) {
     _hitEnemies.add(hitEnemy);
     hitEnemy.takeDamage(damage, damageType);
-    
+
     // �??��??�중 ?�에�?onHit ?�출 (?�플?�시 ?�과 겹치지 ?�게 주의)
     if (hitEnemy == target && !_hitTarget) {
       _hitTarget = true;
@@ -270,12 +302,14 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
       final hitColor = _getColorForDamage(damageType);
       if (damageType == DamageType.magical) {
         parent?.add(ParticleEffect.magic(position: position, color: hitColor));
-        parent?.add(SpriteEffect(type: SpriteEffectType.lightning, position: position));
+        parent?.add(
+            SpriteEffect(type: SpriteEffectType.lightning, position: position));
       } else if (damageType == DamageType.purification) {
         parent?.add(ParticleEffect.heal(position: position, color: hitColor));
       } else {
         parent?.add(ParticleEffect.hit(position: position, color: hitColor));
-        parent?.add(SpriteEffect(type: SpriteEffectType.hit, position: position));
+        parent
+            ?.add(SpriteEffect(type: SpriteEffectType.hit, position: position));
       }
     }
 
@@ -298,7 +332,3 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
     SoundManager.instance.playSfx(SfxType.enemyHit);
   }
 }
-
-
-
-
