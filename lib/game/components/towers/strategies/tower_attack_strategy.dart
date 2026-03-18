@@ -107,38 +107,28 @@ class ShamanMagicStrategy extends TowerAttackStrategy {
 }
 
 /// 마법?탑 공격 ???Canvas drawLine 기반
-class ShamanBeam extends PositionComponent {
+import \'package:flame/effects.dart\';
+
+class ShamanBeam extends PositionComponent with HasPaint {
   final Vector2 start;
   final Vector2 end;
-  final Paint _beamPaint;
-  double _lifeTime = 0.25;
 
-  ShamanBeam({required this.start, required this.end})
-      : _beamPaint = Paint()
-          ..color = const Color(0xCC9955FF)
-          ..strokeWidth = 3.5
-          ..style = PaintingStyle.stroke,
-        super(priority: 100);
+  ShamanBeam({required this.start, required this.end}) : super(priority: 100) {
+    paint.color = const Color(0xCC9955FF);
+    paint.strokeWidth = 4.0;
+    paint.style = PaintingStyle.stroke;
+  }
 
   @override
-  void update(double dt) {
-    super.update(dt);
-    _lifeTime -= dt;
-    if (_lifeTime <= 0) {
-      removeFromParent();
-    } else {
-      final alpha = ((_lifeTime / 0.25) * 204).toInt().clamp(0, 255);
-      _beamPaint.color = _beamPaint.color.withAlpha(alpha);
-    }
+  Future<void> onLoad() async {
+    await super.onLoad();
+    add(OpacityEffect.fadeOut(EffectController(duration: 0.25)));
+    add(RemoveEffect(delay: 0.25));
   }
 
   @override
   void render(Canvas canvas) {
-    canvas.drawLine(
-      Offset(start.x, start.y),
-      Offset(end.x, end.y),
-      _beamPaint,
-    );
+    canvas.drawLine(start, end, paint);
   }
 }
 

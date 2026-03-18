@@ -1287,8 +1287,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               onTowerSelected: _onTowerSelected,
             ),
 
-            // ── 영웅 스킬 패널 (우측 하단) ──
-            _buildHeroSkillPanel(),
+            
 
             // ── 호버 툴팁 (타워 업그레이드 팝업 열려있으면 숨김) ──
             if (_tooltipData != null && !_showTutorial && _tappedTower == null)
