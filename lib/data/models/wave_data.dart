@@ -1,4 +1,4 @@
-// 해원의 문 - 웨이브 데이터 모델
+﻿// 해원의 문 - 웨이브 데이터 모델
 
 import '../../common/enums.dart';
 import 'map_object_data.dart';
@@ -106,10 +106,22 @@ class LevelData {
       gatewayHp: json['gatewayHp'] as int,
       waves: const [], // 런타임에 WaveBuilder가 채움
       path: (json['path'] as List<dynamic>)
-          .map((p) => (p as List<dynamic>).map((v) => v as int).toList())
+          .map((p) {
+            final list = (p as List<dynamic>).map((v) => v as int).toList();
+            return [list[0] + 1, list[1]];
+          })
           .toList(),
       mapObjects: (json['mapObjects'] as List<dynamic>?)
-          ?.map((m) => MapObjectData.fromJson(m as Map<String, dynamic>))
+          ?.map((m) {
+            final mod = MapObjectData.fromJson(m as Map<String, dynamic>);
+            return MapObjectData(
+              type: mod.type,
+              gridX: mod.gridX + 1,
+              gridY: mod.gridY,
+              cost: mod.cost,
+              effectRadius: mod.effectRadius,
+            );
+          })
           .toList() ?? const [],
     );
   }

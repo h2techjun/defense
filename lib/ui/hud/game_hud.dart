@@ -1,4 +1,4 @@
-// 해원의 문 - 게임 HUD (인게임 UI 오버레이)
+﻿// 해원의 문 - 게임 HUD (인게임 UI 오버레이)
 
 
 import 'hud_widgets.dart';
@@ -29,6 +29,7 @@ class GameHud extends ConsumerWidget {
     final lang = ref.watch(gameLanguageProvider);
     final s = Responsive.uiScale(context);
     final isPhone = Responsive.deviceType(context) == DeviceType.phone;
+    final isCompact = isPhone || MediaQuery.of(context).size.width < 750;
     final gap = isPhone ? 6.0 * s : 16.0 * s;
     final smallGap = isPhone ? 4.0 * s : 8.0 * s;
 
@@ -118,13 +119,13 @@ class GameHud extends ConsumerWidget {
                     const Spacer(),
 
                     // 현재 시각 (폰에서 숨김)
-                    if (!isPhone) ...[
+                    if (!isCompact) ...[
                       HudCurrentTimeBadge(),
                       SizedBox(width: 12 * s),
                     ],
 
                     // 게임 경과 시간 (폰에서 숨김)
-                    if (!isPhone) ...[
+                    if (!isCompact) ...[
                       HudElapsedTimeBadge(elapsedSeconds: state.elapsedSeconds),
                       SizedBox(width: 12 * s),
                     ],
@@ -183,7 +184,7 @@ class GameHud extends ConsumerWidget {
                     ),
 
                     // SFX/BGM 토글 (폰에서 숨김 — 일시정지 메뉴에서 접근)
-                    if (!isPhone) ...[
+                    if (!isCompact) ...[
                       SizedBox(width: 4 * s),
                       HudSoundToggleBtn(
                         icon: SoundManager.instance.sfxEnabled

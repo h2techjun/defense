@@ -14,6 +14,7 @@ import '../data/models/wave_data.dart';
 import '../state/game_state.dart';
 import '../state/tower_loadout_provider.dart';
 import 'systems/wave_manager.dart';
+import 'systems/grid_system.dart';
 import 'systems/resentment_system.dart';
 import 'world/day_night_system.dart';
 import 'world/game_map.dart';
@@ -41,6 +42,7 @@ class DefenseGame extends FlameGame
   DayNightSystem dayNightSystem = DayNightSystem();
   ResentmentSystem resentmentSystem = ResentmentSystem();
   GameMap gameMap = GameMap();
+  GridSystem gridSystem = GridSystem(cellSize: 80.0);
 
   LevelData? currentLevel;
   GameMode _currentGameMode = GameMode.campaign;
@@ -651,6 +653,10 @@ class DefenseGame extends FlameGame
       debugPrint('🚨 [UPDATE-ERROR] $e');
       debugPrint('$st');
     }
+
+    // ── 공간 분할(Grid) 업데이트 ──
+    // cachedAliveEnemies 리스트 자체는 0.2초 갱신이지만, 객체 내부 position은 최신 프레임입니다.
+    gridSystem.updateGrid(cachedAliveEnemies);
 
     // 대기 중인 레벨 처리 (onLoad 후 첫 프레임에서 실행)
     if (_pendingLevel != null && isLoaded) {

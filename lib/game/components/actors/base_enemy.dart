@@ -402,14 +402,6 @@ class BaseEnemy extends PositionComponent
     // 방패 상태 체크
     _updateShield();
 
-    // 디버프 오라 적용 (0.5초 주기 — 매 프레임 타워 순회 방지)
-    if (data.debuffSlowAura > 0) {
-      _debuffAuraTimer += dt;
-      if (_debuffAuraTimer >= 0.5) {
-        _debuffAuraTimer = 0;
-        _applyDebuffAura();
-      }
-    }
 
     // HP 바 업데이트
     _updateHpBar();
@@ -543,16 +535,6 @@ class BaseEnemy extends PositionComponent
     }
   }
 
-  /// 디버프 오라: 범위 내 타워 공격속도 감소
-  void _applyDebuffAura() {
-    final towers = game.cachedTowers;
-    for (final tower in towers) {
-      final dist = position.distanceTo(tower.position);
-      if (dist <= data.debuffRange) {
-        tower.applySlowDebuff(data.debuffSlowAura);
-      }
-    }
-  }
 
   /// HP 바 업데이트
   void _updateHpBar() {

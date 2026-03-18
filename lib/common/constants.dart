@@ -9,7 +9,7 @@ class GameConstants {
 
   // ── 화면/맵 ──
   static const double tileSize = 64.0;
-  static const int mapColumns = 15;
+  static const int mapColumns = 17;
   static const int mapRows = 9;
   static const double gameWidth = tileSize * mapColumns; // 960
   static const double gameHeight = tileSize * mapRows; // 576

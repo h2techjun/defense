@@ -51,7 +51,7 @@ class GameTooltip extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     
     // 툴팁 위치 계산 (화면 밖으로 나가지 않게)
-    const tooltipWidth = 220.0;
+    const tooltipWidth = 160.0;
     const tooltipHeight = 180.0;
     
     double left = position.dx + 16;

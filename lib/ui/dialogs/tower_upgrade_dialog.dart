@@ -86,7 +86,7 @@ class TowerUpgradeDialog extends StatelessWidget {
         ),
       ],
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 140),
+        constraints: const BoxConstraints(maxWidth: 125),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -24,6 +24,7 @@ import 'rally_flag_component.dart';
 import '../effects/particle_effect.dart';
 import '../effects/sprite_effect.dart';
 import '../../../audio/sound_manager.dart';
+import 'strategies/tower_attack_strategy.dart';
 
 /// 타워 기본 컴포넌트
 class BaseTower extends PositionComponent
@@ -168,7 +169,7 @@ class BaseTower extends PositionComponent
       position: size / 2,
       anchor: Anchor.center,
       paint: Paint()
-        ..color = rangeColor.withAlpha(0)
+        ..color = rangeColor.withOpacity(0)
         ..style = PaintingStyle.fill,
     );
     add(_rangeFill);
@@ -178,7 +179,7 @@ class BaseTower extends PositionComponent
       position: size / 2,
       anchor: Anchor.center,
       paint: Paint()
-        ..color = rangeColor.withAlpha(0)
+        ..color = rangeColor.withOpacity(0)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5,
     );
@@ -195,6 +196,45 @@ class BaseTower extends PositionComponent
     // 솟대 타워: 수호결계 오라
     if (data.type == TowerType.sotdae) {
       _initWardAura();
+    }
+
+    _initStrategy();
+  }
+
+  TowerAttackStrategy? _attackStrategy;
+
+  void _initStrategy() {
+    if (selectedBranch != null && branchData != null) {
+      final bd = branchData!;
+      switch (selectedBranch!) {
+        case TowerBranch.spiritHunter:
+          _attackStrategy = PiercingAttackStrategy(damageType: bd.overrideDamageType ?? DamageType.purification);
+          break;
+        case TowerBranch.rocketBattery:
+          _attackStrategy = ArtillerySplashStrategy(splashRadius: bd.splashRadius, damageType: bd.overrideDamageType ?? data.damageType);
+          break;
+        case TowerBranch.grimReaperOffice:
+          _attackStrategy = ReaperAttackStrategy(instantKillThreshold: bd.instantKillThreshold, damageType: bd.overrideDamageType ?? DamageType.purification);
+          break;
+        case TowerBranch.shamanTemple:
+          _attackStrategy = ShamanMagicStrategy(slowAura: bd.slowAuraRatio, damageType: bd.overrideDamageType ?? data.damageType);
+          break;
+        default:
+          final splash = bd.splashRadius > 0 ? bd.splashRadius : (data.type == TowerType.artillery ? GameConstants.artillerySplashRadius : 0.0);
+          if (splash > 0) {
+            _attackStrategy = ArtillerySplashStrategy(splashRadius: splash, damageType: bd.overrideDamageType ?? data.damageType);
+          } else {
+            _attackStrategy = BasicAttackStrategy(defaultDamageType: bd.overrideDamageType ?? data.damageType);
+          }
+      }
+    } else {
+      if (data.type == TowerType.artillery) {
+        _attackStrategy = ArtillerySplashStrategy(splashRadius: GameConstants.artillerySplashRadius, damageType: data.damageType);
+      } else if (data.type == TowerType.shaman) {
+        _attackStrategy = ShamanMagicStrategy(slowAura: 0, damageType: data.damageType);
+      } else {
+        _attackStrategy = BasicAttackStrategy(defaultDamageType: data.damageType);
+      }
     }
   }
 
@@ -378,7 +418,7 @@ class BaseTower extends PositionComponent
       anchor: Anchor.center,
       priority: -2,
       paint: Paint()
-        ..color = auraColor.withValues(alpha: 0.4)
+        ..color = auraColor.withOpacity(0.4)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.0,
     ));
@@ -438,11 +478,12 @@ class BaseTower extends PositionComponent
   /// 범위 강조 표시
   void showRange() {
     _rangeVisible = true;
-    final color = _getRangeColorForType(data.type);
-    _rangeFill.paint.color = color.withAlpha(25);
+    final color = _getRangeColorForType(data.type);    // 색상 적용 (fill은 연하게, stroke는 진하게)
+    _rangeFill.paint.color = color.withOpacity(25 / 255.0);
     _rangeIndicator.paint
-      ..color = color.withAlpha(180)
-      ..strokeWidth = 2.5;
+      ..color = color.withOpacity(180 / 255.0)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
   }
 
   /// 범위 강조 해제 (기본 얇은 원으로 복귀)
@@ -451,7 +492,7 @@ class BaseTower extends PositionComponent
     _rangeFill.paint.color = const Color(0x00000000);
     final color = _getRangeColorForType(data.type);
     _rangeIndicator.paint
-      ..color = color.withAlpha(0)
+      ..color = color.withOpacity(0)
       ..strokeWidth = 1.5;
   }
 
@@ -612,6 +653,15 @@ class BaseTower extends PositionComponent
     for (final enemy in enemies) {
       if (enemy.isDead) continue;
 
+      // [PULL-BASED DEBUFF AURA] 적의 저주 오라를 타워가 스스로 확인하고 흡수
+      if (enemy.data.debuffSlowAura > 0) {
+        final distSq = position.distanceToSquared(enemy.position);
+        final dr = enemy.data.debuffRange;
+        if (distSq <= dr * dr) {
+          applySlowDebuff(enemy.data.debuffSlowAura);
+        }
+      }
+
       // 비행 면역: 병영은 비행 유닛 타겟 불가
       if (!DamageCalculator.canTarget(
         towerType: data.type,
@@ -636,224 +686,10 @@ class BaseTower extends PositionComponent
     _currentTarget = bestEnemy;
   }
 
-  /// 투사체 발사
+  /// 투사체 발사 (전략 패턴 적용)
   void _fire() {
-    if (_currentTarget == null) return;
-
-    final bd = branchData;
-
-    // 화포탑: 스플래시 데미지 (범위 내 모든 적에게)
-    if (data.type == TowerType.artillery) {
-      _fireArtillery();
-      return;
-    }
-
-    // 서당(무당): 광역 마법 공격 (범위 내 모든 적에게 직접 데미지)
-    if (data.type == TowerType.shaman) {
-      _fireShaman();
-      return;
-    }
-
-    // ── 분기별 특수 발사 ──
-    
-    // 신궁 분기: 관통 사격
-    if (selectedBranch == TowerBranch.spiritHunter && bd != null) {
-      final targetPos = _currentTarget!.position.clone();
-      final fireDir = (targetPos - position).normalized();
-      
-      final projectile = Projectile(
-        target: _currentTarget!,
-        damage: currentDamage,
-        damageType: bd.overrideDamageType ?? DamageType.purification,
-        speed: 500, // 신궁은 좀 더 빠르게
-        startPosition: position.clone(),
-        hasPiercing: true,
-        direction: fireDir,
-        maxRange: currentRange * 1.2, // 사거리보다 조금 더 멀리 날아감
-      );
-      
-      SoundManager.instance.playSfx(SfxType.towerShoot);
-      game.world.add(projectile);
-      return;
-    }
-
-    // 신기전 분기: 스플래시 로켓
-    if (selectedBranch == TowerBranch.rocketBattery && bd != null) {
-      final projectile = Projectile(
-        target: _currentTarget!,
-        damage: currentDamage,
-        damageType: data.damageType,
-        speed: 300,
-        startPosition: position.clone(),
-        onHit: () {
-          // 스플래시 데미지
-          final enemies = game.cachedAliveEnemies;
-          for (final enemy in enemies) {
-            if (enemy.isDead || enemy == _currentTarget) continue;
-            final dist = _currentTarget!.position.distanceTo(enemy.position);
-            if (dist <= bd.splashRadius) {
-              enemy.takeDamage(currentDamage * 0.6, data.damageType);
-            }
-          }
-          if (ParticleEffect.canCreate) {
-            game.world.add(ParticleEffect.explosion(
-              position: _currentTarget!.position,
-              radius: bd.splashRadius,
-            ));
-            game.world.add(SpriteEffect(
-              type: SpriteEffectType.fire,
-              position: _currentTarget!.position,
-              size: Vector2.all(bd.splashRadius * 2), // 폭발 범위에 맞춰 크기 조절
-            ));
-          }
-        },
-      );
-      SoundManager.instance.playSfx(SfxType.towerArtillery);
-      game.world.add(projectile);
-      return;
-    }
-
-    // 저승사자 출장소: 즉사 판정
-    if (selectedBranch == TowerBranch.grimReaperOffice && bd != null) {
-      final target = _currentTarget!;
-      final hpRatio = target.hp / target.maxHp;
-      if (hpRatio <= bd.instantKillThreshold && !target.data.isBoss) {
-        // 즉사!
-        target.takeDamage(target.hp + 1, bd.overrideDamageType ?? DamageType.purification);
-        SoundManager.instance.playSfx(SfxType.towerMagic);
-        if (ParticleEffect.canCreate) {
-          game.world.add(ParticleEffect.magic(
-            position: target.position,
-            color: const Color(0xFF4B0082),
-          ));
-          game.world.add(SpriteEffect(
-            type: SpriteEffectType.lightning,
-            position: target.position,
-            size: Vector2.all(60),
-          ));
-        }
-        return;
-      }
-    }
-
-    // 만신전 분기: 광역 + 감속 오라
-    if (selectedBranch == TowerBranch.shamanTemple && bd != null) {
-      _fireShaman();
-      // 추가: 범위 내 적 감속
-      if (bd.slowAuraRatio > 0) {
-        final enemies = game.cachedAliveEnemies;
-        for (final enemy in enemies) {
-          if (enemy.isDead) continue;
-          final dist = position.distanceTo(enemy.position);
-          if (dist <= currentRange) {
-            enemy.applySpeedDebuff(bd.slowAuraRatio, 2.0);
-          }
-        }
-      }
-      return;
-    }
-
-    // 일반 타워 / 기타 분기: 단일 투사체
-    final dmgType = bd?.overrideDamageType ?? data.damageType;
-    final projectile = Projectile(
-      target: _currentTarget!,
-      damage: currentDamage,
-      damageType: dmgType,
-      speed: 400,
-      startPosition: position.clone(),
-    );
-
-    // 타워 타입별 발사 SFX
-    switch (data.type) {
-      case TowerType.archer:
-        SoundManager.instance.playSfx(SfxType.towerShoot);
-        break;
-      case TowerType.shaman:
-        SoundManager.instance.playSfx(SfxType.towerMagic);
-        break;
-      default:
-        SoundManager.instance.playSfx(SfxType.towerShoot);
-    }
-
-    game.world.add(projectile);
-  }
-
-  /// 화포탑 스플래시 발사
-  void _fireArtillery() {
-    if (_currentTarget == null) return;
-
-    final bd = branchData;
-    // 분기 선택 시 분기 스플래시 반경 우선, 없으면 기본값
-    final splashRadius = bd != null && bd.splashRadius > 0
-        ? bd.splashRadius
-        : GameConstants.artillerySplashRadius;
-    final splashRatio = GameConstants.artillerySplashDamageRatio;
-    final centerDamage = currentDamage;
-    final dmgType = bd?.overrideDamageType ?? data.damageType;
-
-    // 중심 타겟에게 투사체 발사
-    final projectile = Projectile(
-      target: _currentTarget!,
-      damage: centerDamage,
-      damageType: dmgType,
-      speed: 250,
-      startPosition: position.clone(),
-      onHit: () {
-        // 착탄 시 스플래시 데미지
-        final enemies = game.cachedAliveEnemies;
-        for (final enemy in enemies) {
-          if (enemy.isDead || enemy == _currentTarget) continue;
-          final dist = _currentTarget!.position.distanceTo(enemy.position);
-          if (dist <= splashRadius) {
-            enemy.takeDamage(centerDamage * splashRatio, dmgType);
-          }
-        }
-        // 화차 분기: DoT 화상
-        if (bd != null && bd.dotDamage > 0) {
-          for (final enemy in enemies) {
-            if (enemy.isDead) continue;
-            final dist = _currentTarget!.position.distanceTo(enemy.position);
-            if (dist <= splashRadius) {
-              enemy.applyDot(bd.dotDamage, bd.dotDuration, dmgType);
-            }
-          }
-        }
-        // 천벌뢰 분기: 스턴
-        if (bd != null && bd.stunDuration > 0) {
-          _currentTarget!.stun(bd.stunDuration);
-          // 스플래시 범위 적도 스턴 (절반 지속)
-          for (final enemy in enemies) {
-            if (enemy.isDead || enemy == _currentTarget) continue;
-            final dist = _currentTarget!.position.distanceTo(enemy.position);
-            if (dist <= splashRadius) {
-              enemy.stun(bd.stunDuration * 0.5);
-            }
-          }
-        }
-        // 폭발 파티클 이펙트
-        if (ParticleEffect.canCreate) {
-          game.world.add(ParticleEffect.explosion(
-            position: _currentTarget!.position,
-            radius: splashRadius,
-          ));
-          game.world.add(SpriteEffect(
-            type: SpriteEffectType.fire,
-            position: _currentTarget!.position,
-            size: Vector2.all(splashRadius * 2),
-          ));
-        }
-      },
-    );
-
-    // 분기별 공격 사운드
-    if (bd != null && bd.stunDuration > 0) {
-      SoundManager.instance.playSfx(SfxType.branchThunder);
-    } else if (bd != null && bd.dotDamage > 0) {
-      SoundManager.instance.playSfx(SfxType.branchFire);
-    } else {
-      SoundManager.instance.playSfx(SfxType.towerArtillery);
-    }
-    game.world.add(projectile);
+    if (_currentTarget == null || _attackStrategy == null) return;
+    _attackStrategy!.fire(this, _currentTarget!);
   }
 
   /// 솟대 업데이트 (수호결계 + 버프 + 오라 맥동)
@@ -922,46 +758,6 @@ class BaseTower extends PositionComponent
     final purificationAmount = (bd != null && bd.branch == TowerBranch.phoenixTotem) ? 5.0 : 3.0; // 봉황 솟대는 더 높은 정화력
     game.addPendingWailing(-purificationAmount);
   }
-
-  /// 솟대 정화 파동 (시각 이펙트)
-  void _triggerPurificationPulse(double maxRange) {
-    final pulse = CircleComponent(
-      radius: 0,
-      position: size / 2,
-      anchor: Anchor.center,
-      paint: Paint()
-        ..color = const Color(0x66FFFFFF) // 반투명 흰색/푸른색
-        ..style = PaintingStyle.fill,
-    );
-    add(pulse);
-    
-    // 반경이 커지면서 서서히 사라지는 펄스 이펙트
-    pulse.add(
-      SizeEffect.to(
-        Vector2.all(maxRange * 2), // diameter
-        EffectController(duration: 0.8),
-      )
-    );
-    pulse.add(
-      OpacityEffect.to(
-        0.0,
-        EffectController(duration: 0.8),
-      )
-    );
-    
-    // 1초 뒤 컴포넌트 정리 (Flame TimerComponent 사용)
-    add(TimerComponent(
-      period: 1.0,
-      repeat: false,
-      removeOnFinish: true,
-      onTick: () {
-        if (pulse.isMounted) {
-          pulse.removeFromParent();
-        }
-      },
-    ));
-  }
-
   /// 솟대 버프: 범위 내 아군 타워 공격속도 증가
   void _applySotdaeBuff() {
     final buffRange = GameConstants.sotdaeBuffRange *
@@ -998,6 +794,8 @@ class BaseTower extends PositionComponent
   void selectBranch(TowerBranch branch) {
     selectedBranch = branch;
     upgradeLevel = 4; // Tier 4
+
+    _initStrategy();
 
     // 스프라이트 이미지를 분기 이미지로 갱신
     _body.updateVisual(newLevel: upgradeLevel, newBranch: branch);
@@ -1151,110 +949,6 @@ class BaseTower extends PositionComponent
   }
 
   // ══════════════════════════════
-  // 서당(무당) 전용 메서드
-  // ══════════════════════════════
-
-  /// 서당 광역 공격 — 범위 내 모든 적에게 동시 데미지
-void _fireShaman() {
-  final enemies = game.cachedAliveEnemies;
-  final hitEnemies = <BaseEnemy>[];
-
-  for (final enemy in enemies) {
-    if (enemy.isDead) continue;
-    if (enemy.isStealth) continue;
-
-    final dist = position.distanceTo(enemy.position);
-    if (dist <= currentRange) {
-      enemy.takeDamage(currentDamage, data.damageType);
-      hitEnemies.add(enemy);
-    }
-  }
-
-  // ── 시각 이펙트 ──
-
-  // 1) 범위 원 펄스 — 전체 공격 범위 표시 (보라색 원)
-  final rangePulse = CircleComponent(
-    radius: currentRange,
-    position: size / 2,
-    anchor: Anchor.center,
-    paint: Paint()
-      ..color = const Color(0x339944FF)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5,
-  );
-  add(rangePulse);
-
-  // 2) 내부 충격파 (채워진 원, 작은 크기)
-  final innerPulse = CircleComponent(
-    radius: currentRange * 0.15,
-    position: size / 2,
-    anchor: Anchor.center,
-    paint: Paint()
-      ..color = const Color(0x228844FF)
-      ..style = PaintingStyle.fill,
-  );
-  add(innerPulse);
-
-  // 3) 각 타격된 적에게 보라색 광선 + 타격 이펙트
-  for (final enemy in hitEnemies) {
-    // 타워→적 방향 광선 (Canvas drawLine 기반)
-    final beamStart = size / 2;
-    final beamEnd = enemy.position - position + size / 2;
-    final beam = _ShamanBeam(start: beamStart, end: beamEnd);
-    add(beam);
-
-    // 적 위치에 타격 플래시 (밝은 보라색 원)
-    final hitFlash = CircleComponent(
-      radius: 12,
-      position: enemy.position - position + size / 2,
-      anchor: Anchor.center,
-      paint: Paint()
-        ..color = const Color(0x66CC77FF)
-        ..style = PaintingStyle.fill,
-    );
-    add(hitFlash);
-
-    // 0.25초 후 광선/플래시 제거 (Flame TimerComponent 사용)
-    add(TimerComponent(
-      period: 0.25,
-      repeat: false,
-      removeOnFinish: true,
-      onTick: () {
-        if (beam.isMounted) beam.removeFromParent();
-        if (hitFlash.isMounted) hitFlash.removeFromParent();
-      },
-    ));
-  }
-
-  // 마법 파티클 이펙트
-  if (hitEnemies.isNotEmpty && ParticleEffect.canCreate) {
-    game.world.add(ParticleEffect.magic(
-      position: position,
-      color: const Color(0xFFFFB74D),
-    ));
-    game.world.add(SpriteEffect(
-      type: SpriteEffectType.lightning,
-      position: position,
-      size: Vector2.all(80),
-    ));
-  }
-
-  if (hitEnemies.isNotEmpty) {
-    SoundManager.instance.playSfx(SfxType.towerMagic);
-  }
-
-  // 0.4초 후 범위 원 제거 (Flame TimerComponent 사용)
-  add(TimerComponent(
-    period: 0.4,
-    repeat: false,
-    removeOnFinish: true,
-    onTick: () {
-      if (rangePulse.isMounted) rangePulse.removeFromParent();
-      if (innerPulse.isMounted) innerPulse.removeFromParent();
-    },
-  ));
-}
-  // ══════════════════════════════
   // 범위 색상
   // ══════════════════════════════
 
@@ -1272,28 +966,5 @@ void _fireShaman() {
       case TowerType.sotdae:
         return const Color(0x22FFD700); // 금색
     }
-  }
-}
-
-/// 마법서탑 공격 빔 — Canvas drawLine 기반
-class _ShamanBeam extends PositionComponent {
-  final Vector2 start;
-  final Vector2 end;
-  final Paint _beamPaint;
-
-  _ShamanBeam({required this.start, required this.end})
-      : _beamPaint = Paint()
-          ..color = const Color(0xAA9955FF)
-          ..strokeWidth = 2.0
-          ..style = PaintingStyle.stroke,
-        super(priority: 100);
-
-  @override
-  void render(Canvas canvas) {
-    canvas.drawLine(
-      Offset(start.x, start.y),
-      Offset(end.x, end.y),
-      _beamPaint,
-    );
   }
 }
