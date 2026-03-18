@@ -31,40 +31,31 @@ class AdSideBanners extends StatelessWidget {
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
         
-        // 실제 타일 영역 너비 계산 (카메라가 화면 전체를 채우므로)
-        // 타일은 960px 게임 단위, 화면 높이 기준으로 스케일
-        final visibleH = GameConstants.gameHeight + 120; // defense_game.dart와 동일
-        final tileWidthOnScreen = screenHeight * (GameConstants.gameWidth / visibleH);
-        final sideMargin = (screenWidth - tileWidthOnScreen) / 2;
-
-        // 여백이 최소 광고 너비보다 작으면 광고 없이 표시
-        if (sideMargin < minAdWidth) {
-          return child;
-        }
-
-        // Stack으로 겹쳐서 게임 화면은 풀 너비, 광고는 좌우 여백 위에 오버레이
+        // Ad Banners are fixed to a slender width (minAdWidth) so the game can beautifully use the rest of the widescreen.
         return Stack(
           children: [
-            // 중앙 콘텐츠 (풀 너비 — 화면이 좁아지지 않음)
-            child,
-            // 왼쪽 광고 슬롯 (여백 위에 오버레이 — 터치 투과)
+            // 중앙 게임 (플루터엔진이 OnGameResize줌을 통해 모바일 풀 화면으로 늘림)
+            Positioned.fill(
+              child: child,
+            ),
+            // 왼쪽 광고 슬롯
             Positioned(
               left: 0,
               top: 0,
               bottom: 0,
-              width: sideMargin,
+              width: minAdWidth,
               child: IgnorePointer(
-                child: _AdSlot(width: sideMargin, height: screenHeight, side: 'left'),
+                child: _AdSlot(width: minAdWidth, height: screenHeight, side: 'left'),
               ),
             ),
-            // 오른쪽 광고 슬롯 (여백 위에 오버레이 — 터치 투과)
+            // 오른쪽 광고 슬롯
             Positioned(
               right: 0,
               top: 0,
               bottom: 0,
-              width: sideMargin,
+              width: minAdWidth,
               child: IgnorePointer(
-                child: _AdSlot(width: sideMargin, height: screenHeight, side: 'right'),
+                child: _AdSlot(width: minAdWidth, height: screenHeight, side: 'right'),
               ),
             ),
           ],

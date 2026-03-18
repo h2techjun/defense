@@ -240,11 +240,19 @@ class _WaveAnnounceBannerState extends State<WaveAnnounceBanner>
 class WaveCooldownIndicator extends StatelessWidget {
   final double secondsRemaining;
   final int nextWaveNumber;
+  final int totalWaves;
+  final String? narrative;
+  final bool isBossWave;
+  final List<MapEntry<String, int>> enemyEntries;
 
   const WaveCooldownIndicator({
     super.key,
     required this.secondsRemaining,
     required this.nextWaveNumber,
+    this.totalWaves = 0,
+    this.narrative,
+    this.isBossWave = false,
+    this.enemyEntries = const [],
   });
 
   @override
@@ -299,9 +307,66 @@ class WaveCooldownIndicator extends StatelessWidget {
                 fontSize: 11,
               ),
             ),
+            if (narrative != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                narrative!,
+                style: TextStyle(
+                  color: isBossWave ? AppColors.cherryBlossom : AppColors.lavender,
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+            if (enemyEntries.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                alignment: WrapAlignment.center,
+                children: enemyEntries.map((entry) {
+                  final emoji = _getEnemyEmoji(entry.key);
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.black45,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: Text(
+                      '$emoji \u00d7${entry.value}',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  String _getEnemyEmoji(String enemyId) {
+    const map = {
+      'hungryGhost': '👻',
+      'eggGhost': '🥚',
+      'dokkaebi': '👹',
+      'gumiho': '🦊',
+      'cheonan': '🐍',
+      'bulgasari': '🔥',
+      'haetae': '🦁',
+      'cheolma': '🐴',
+      'imugi': '🐉',
+      'chollima': '🦅',
+      'samjokgu': '🐕',
+      'gwisin': '👤',
+    };
+    return map[enemyId] ?? '👾';
   }
 }

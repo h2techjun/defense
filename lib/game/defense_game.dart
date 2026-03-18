@@ -171,21 +171,25 @@ class DefenseGame extends FlameGame
   }
 
   @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    // 높이는 696으로 고정하되, 너비는 모바일 비율에 따라 무한 확장
+    final targetH = GameConstants.gameHeight + 120;
+    camera.viewfinder.zoom = size.y / targetH;
+    camera.viewfinder.position = Vector2(
+      (size.x / camera.viewfinder.zoom) / 2,
+      targetH / 2 + 40,
+    );
+  }
+
+  @override
   Color backgroundColor() => const Color(0xFF1a0f29); // 어두운 보라색 배경
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
 
-    // 카메라 설정 — 고정 뷰포트
-    camera.viewfinder.visibleGameSize = Vector2(
-      GameConstants.gameWidth, // 960
-      GameConstants.gameHeight + 120, // 696
-    );
-    camera.viewfinder.position = Vector2(
-      GameConstants.gameWidth / 2,
-      GameConstants.gameHeight / 2 + 40, // 288 + 40 = 328
-    );
+    // 카메라 설정: 높이를 고정(696)하고, 너비는 화면 비율에 맞춰 동적으로 확장(onGameResize에서 처리)
 
     // 맵 & 시스템을 월드에 추가 (이미 선언 시점에 생성됨)
     world.add(gameMap);

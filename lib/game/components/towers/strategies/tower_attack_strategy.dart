@@ -106,18 +106,31 @@ class ShamanMagicStrategy extends TowerAttackStrategy {
   }
 }
 
-/// 마법?�탑 공격 �???Canvas drawLine 기반
+/// 마법?탑 공격 ???Canvas drawLine 기반
 class ShamanBeam extends PositionComponent {
   final Vector2 start;
   final Vector2 end;
   final Paint _beamPaint;
+  double _lifeTime = 0.25;
 
   ShamanBeam({required this.start, required this.end})
       : _beamPaint = Paint()
-          ..color = const Color(0xAA9955FF)
-          ..strokeWidth = 2.0
+          ..color = const Color(0xCC9955FF)
+          ..strokeWidth = 3.5
           ..style = PaintingStyle.stroke,
         super(priority: 100);
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    _lifeTime -= dt;
+    if (_lifeTime <= 0) {
+      removeFromParent();
+    } else {
+      final alpha = ((_lifeTime / 0.25) * 204).toInt().clamp(0, 255);
+      _beamPaint.color = _beamPaint.color.withAlpha(alpha);
+    }
+  }
 
   @override
   void render(Canvas canvas) {
@@ -129,7 +142,7 @@ class ShamanBeam extends PositionComponent {
   }
 }
 
-/// ?�궁 관??발사 ?�략
+/// ?궁 관??발사 ?략
 class PiercingAttackStrategy extends TowerAttackStrategy {
   final DamageType damageType;
 

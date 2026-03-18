@@ -65,8 +65,11 @@ class GameMap extends Component {
   // ──────────────────────────────────────────────
 
   /// 배경 타일을 Canvas에 직접 그리고 Image로 래스터화
-  void _renderBackgroundToImage() {
-    final w = GameConstants.gameWidth;
+  void _renderBackgroundToImage() async {
+    // 모바일 울트라와이드 대응: 양옆으로 -800 ~ +2000 픽셀까지 잔디를 채워 타일 경계 너머 블랙홀 방지
+    final startX = -800.0;
+    final endX = 2000.0;
+    final w = endX - startX;
     final h = GameConstants.gameHeight;
     final ts = GameConstants.tileSize;
     final rng = math.Random(42); // 고정 시드로 일관된 패턴
@@ -81,8 +84,8 @@ class GameMap extends Component {
     );
 
     // 2) 타일별 색상 그리기
-    int col = 0;
-    for (double x = 0; x < w; x += ts) {
+    int col = (startX / ts).floor();
+    for (double x = startX; x < endX; x += ts) {
       int row = 0;
       for (double y = 0; y < h; y += ts) {
         final noise = rng.nextDouble();
@@ -151,17 +154,21 @@ class GameMap extends Component {
       Rect.fromLTWH(0, h - 30, w, 30),
       Paint()..color = const Color(0x33000000),
     );
+    // 렌더링된 이미지를 저장
+    _cachedBackgroundImage = await recorder.endRecording().toImage(
+      w.toInt(),
+      h.toInt(),
+    );
 
-    final picture = recorder.endRecording();
-    picture.toImage(w.toInt(), h.toInt()).then((image) {
-      add(SpriteComponent(
-        sprite: Sprite(image),
-        position: Vector2.zero(),
-        size: Vector2(w, h),
-        priority: -1,
-      ));
-      if (kDebugMode) debugPrint('GameMap: Background rasterized to single image');
-    });
+    // 캐시된 이미지를 렌더링할 SpriteComponent
+    _bgComponent = SpriteComponent(
+      sprite: Sprite(_cachedBackgroundImage),
+      size: Vector2(w, h),
+      position: Vector2(startX, 0), // -800 위치부터 시작
+      priority: -1,
+    );
+    add(_bgComponent);
+    if (kDebugMode) debugPrint('GameMap: Background rasterized to single image');
   }
 
   // ──────────────────────────────────────────────

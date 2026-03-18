@@ -137,28 +137,28 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
         // ? ?살 ???동 방향?로 ?전?는 리얼 ?살
         canvas.save();
         canvas.translate(center.dx, center.dy);
-        canvas.rotate(_angle + math.pi / 2); // ?�쪽??기본 ???�동방향 보정
+        canvas.rotate(_angle + math.pi / 2); // ?쪽??기본 ???동방향 보정
 
-        // 글로우 ?�레??
+        // 글로우 광원 (더 크게)
         canvas.drawCircle(
-            const Offset(0, 4),
-            4,
+            const Offset(0, 5),
+            8,
             Paint()
               ..color = Color.fromARGB(
-                  30, glowColor.red, glowColor.green, glowColor.blue));
+                  40, glowColor.red, glowColor.green, glowColor.blue));
 
-        // ?�살?� (몸통)
+        // 화살대 (몸통, 두껍고 길게)
         final shaftPaint = Paint()
-          ..color = const Color(0xFF8B6914) // ?�무??
-          ..strokeWidth = 1.8
+          ..color = const Color(0xFF8B6914) 
+          ..strokeWidth = 2.5
           ..strokeCap = StrokeCap.round;
-        canvas.drawLine(const Offset(0, -6), const Offset(0, 8), shaftPaint);
+        canvas.drawLine(const Offset(0, -9), const Offset(0, 12), shaftPaint);
 
-        // ?�살�?(?�각??
+        // 화살촉 (더 크게)
         final headPath = Path()
-          ..moveTo(0, -10) // ?�쪽 ??
-          ..lineTo(-3, -5)
-          ..lineTo(3, -5)
+          ..moveTo(0, -15) // 뾰족한 끝
+          ..lineTo(-5, -6)
+          ..lineTo(5, -6)
           ..close();
         canvas.drawPath(headPath, Paint()..color = color);
         canvas.drawPath(
@@ -168,21 +168,20 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
               ..style = PaintingStyle.stroke
               ..strokeWidth = 0.6);
 
-        // 깃털 (?�쪽)
+        // 깃털 (더 풍성하게)
         final featherPaint = Paint()
           ..color = const Color(0xFFCC4444)
-          ..strokeWidth = 1.2
+          ..strokeWidth = 1.8
           ..strokeCap = StrokeCap.round;
         canvas.drawLine(
-            const Offset(0, 8), const Offset(-2.5, 11), featherPaint);
+            const Offset(0, 10), const Offset(-4, 15), featherPaint);
         canvas.drawLine(
-            const Offset(0, 8), const Offset(2.5, 11), featherPaint);
+            const Offset(0, 10), const Offset(4, 15), featherPaint);
 
         canvas.restore();
         break;
 
       case DamageType.magical:
-        // 마법 ?�브 ??빛나????+ ?�곽 �?
         // ?�곽 글로우
         canvas.drawCircle(
             center,
