@@ -94,7 +94,7 @@ class _AdSlot extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      color: Colors.black,
+      color: Colors.black.withAlpha(150),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

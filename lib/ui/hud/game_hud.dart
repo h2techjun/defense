@@ -1,4 +1,4 @@
-﻿// 해원의 문 - 게임 HUD (인게임 UI 오버레이)
+// 해원의 문 - 게임 HUD (인게임 UI 오버레이)
 
 
 import 'hud_widgets.dart';
@@ -118,17 +118,13 @@ class GameHud extends ConsumerWidget {
 
                     const Spacer(),
 
-                    // 현재 시각 (폰에서 숨김)
-                    if (!isCompact) ...[
-                      HudCurrentTimeBadge(),
-                      SizedBox(width: 12 * s),
-                    ],
+                    // 현재 시각
+                    HudCurrentTimeBadge(),
+                    SizedBox(width: smallGap),
 
-                    // 게임 경과 시간 (폰에서 숨김)
-                    if (!isCompact) ...[
-                      HudElapsedTimeBadge(elapsedSeconds: state.elapsedSeconds),
-                      SizedBox(width: 12 * s),
-                    ],
+                    // 게임 경과 시간
+                    HudElapsedTimeBadge(elapsedSeconds: state.elapsedSeconds),
+                    SizedBox(width: smallGap),
 
                     // 처치 수
                     Text(

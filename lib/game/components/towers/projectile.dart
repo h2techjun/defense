@@ -103,33 +103,38 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
     final center = Offset(size.x / 2, size.y / 2);
 
     if (visualType == ProjectileVisual.cannonball) {
-      canvas.drawCircle(center, 6, Paint()..color = const Color(0xFF333333));
-      canvas.drawCircle(center + const Offset(-1.5, -1.5), 2.5,
-          Paint()..color = const Color(0xFF777777));
+      // 거대한 화포 폭탄 (반경 12)
+      canvas.drawCircle(center, 12, Paint()..color = const Color(0xFF222222));
+      canvas.drawCircle(center + const Offset(-3, -3), 4,
+          Paint()..color = const Color(0xFF666666));
+      // 불타는 가장자리 효과
       canvas.drawCircle(
           center,
-          7,
+          14,
           Paint()
-            ..color = const Color(0xAAFF3300)
+            ..color = const Color(0xFFFF4500)
             ..style = PaintingStyle.stroke
-            ..strokeWidth = 1.0);
+            ..strokeWidth = 2.0);
       return;
     } else if (visualType == ProjectileVisual.shamanOrb) {
-      canvas.drawCircle(center, 5, Paint()..color = const Color(0x7700E5FF));
-      canvas.drawCircle(center, 3, Paint()..color = const Color(0xFFB2EBF2));
+      // 빛나는 크리스탈 영혼 구슬 (반경 11)
+      canvas.drawCircle(center, 11, Paint()..color = const Color(0x9900E5FF));
+      canvas.drawCircle(center, 6, Paint()..color = const Color(0xFFB2EBF2));
+      // 거대한 금빛 부적 십자(X) 패턴
       final tPaint = Paint()
         ..color = const Color(0xFFFFD54F)
-        ..strokeWidth = 1.2;
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5;
       canvas.drawLine(
-          center + const Offset(-2, -2), center + const Offset(2, 2), tPaint);
+          center + const Offset(-5, -5), center + const Offset(5, 5), tPaint);
       canvas.drawLine(
-          center + const Offset(-2, 2), center + const Offset(2, -2), tPaint);
+          center + const Offset(-5, 5), center + const Offset(5, -5), tPaint);
       return;
     }
 
     switch (damageType) {
       case DamageType.physical:
-        // ?�� ?�살 ???�동 방향?�로 ?�전?�는 리얼 ?�살
+        // ? ?살 ???동 방향?로 ?전?는 리얼 ?살
         canvas.save();
         canvas.translate(center.dx, center.dy);
         canvas.rotate(_angle + math.pi / 2); // ?�쪽??기본 ???�동방향 보정
