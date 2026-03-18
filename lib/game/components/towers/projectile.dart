@@ -14,6 +14,15 @@ import '../effects/sprite_effect.dart';
 import '../effects/sprite_hit_effect.dart';
 
 /// ?�사�?컴포?�트 - ?�?�에??발사?�어 ?�에�??��?지�?줍니??
+
+enum ProjectileVisual {
+  arrow,
+  orb,
+  cross,
+  cannonball,
+  shamanOrb,
+}
+
 class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
   final BaseEnemy target;
   final double damage;
