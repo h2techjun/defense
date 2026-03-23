@@ -1,5 +1,5 @@
 // 해원의 문 - 다중언어 지원 시스템
-// 20개 언어 지원
+// 4개 언어 지원: 한국어, English, 日本語, 简体中文
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -11,23 +11,7 @@ enum GameLanguage {
   ko('한국어', '🇰🇷'),
   en('English', '🇺🇸'),
   ja('日本語', '🇯🇵'),
-  zhCn('简体中文', '🇨🇳'),
-  zhTw('繁體中文', '🇹🇼'),
-  es('Español', '🇪🇸'),
-  fr('Français', '🇫🇷'),
-  de('Deutsch', '🇩🇪'),
-  pt('Português', '🇧🇷'),
-  ru('Русский', '🇷🇺'),
-  ar('العربية', '🇸🇦'),
-  hi('हिन्दी', '🇮🇳'),
-  th('ไทย', '🇹🇭'),
-  vi('Tiếng Việt', '🇻🇳'),
-  id('Bahasa Indonesia', '🇮🇩'),
-  tr('Türkçe', '🇹🇷'),
-  it('Italiano', '🇮🇹'),
-  pl('Polski', '🇵🇱'),
-  nl('Nederlands', '🇳🇱'),
-  sv('Svenska', '🇸🇪');
+  zhCn('简体中文', '🇨🇳');
 
   final String displayName;
   final String flag;

@@ -96,13 +96,13 @@ class LoginStreakReward {
 
 /// 7일 연속 출석 보상 테이블
 const List<LoginStreakReward> loginStreakRewards = [
-  LoginStreakReward(day: 1, gold: 500,   displayName: '골드 500',         emoji: '🪙'),
-  LoginStreakReward(day: 2, gold: 800,   displayName: '골드 800',         emoji: '🪙'),
-  LoginStreakReward(day: 3, gems: 3,     displayName: '보석 3개',         emoji: '💎'),
-  LoginStreakReward(day: 4, gold: 1200,  displayName: '골드 1,200',       emoji: '🪙'),
-  LoginStreakReward(day: 5, summonTickets: 1, displayName: '소환권 1장',  emoji: '🎫'),
-  LoginStreakReward(day: 6, gems: 5,     displayName: '보석 5개',         emoji: '💎'),
-  LoginStreakReward(day: 7, gems: 10, summonTickets: 1, displayName: '보석 10 + 소환권', emoji: '🎁'),
+  LoginStreakReward(day: 1, gold: 500,   displayName: 'login_streak_1',   emoji: '🪙'),
+  LoginStreakReward(day: 2, gold: 800,   displayName: 'login_streak_2',   emoji: '🪙'),
+  LoginStreakReward(day: 3, gems: 3,     displayName: 'login_streak_3',   emoji: '💎'),
+  LoginStreakReward(day: 4, gold: 1200,  displayName: 'login_streak_4',   emoji: '🪙'),
+  LoginStreakReward(day: 5, summonTickets: 1, displayName: 'login_streak_5',  emoji: '🎫'),
+  LoginStreakReward(day: 6, gems: 5,     displayName: 'login_streak_6',   emoji: '💎'),
+  LoginStreakReward(day: 7, gems: 10, summonTickets: 1, displayName: 'login_streak_7', emoji: '🎁'),
 ];
 
 /// 월간 출석 보상 (28일, 7/14/21/28일 특별 보너스)
@@ -130,64 +130,64 @@ class MonthlyLoginReward {
 
 /// 28일 월간 출석 보상 테이블
 const List<MonthlyLoginReward> monthlyLoginRewards = [
-  MonthlyLoginReward(day: 1,  gold: 500,  displayName: '골드 500',  emoji: '🪙'),
-  MonthlyLoginReward(day: 2,  gold: 600,  displayName: '골드 600',  emoji: '🪙'),
-  MonthlyLoginReward(day: 3,  gold: 700,  displayName: '골드 700',  emoji: '🪙'),
-  MonthlyLoginReward(day: 4,  gold: 800,  displayName: '골드 800',  emoji: '🪙'),
-  MonthlyLoginReward(day: 5,  gold: 900,  displayName: '골드 900',  emoji: '🪙'),
-  MonthlyLoginReward(day: 6,  gold: 1000, displayName: '골드 1,000', emoji: '🪙'),
-  MonthlyLoginReward(day: 7,  gems: 30, summonTickets: 1, displayName: '🌟 보석 30 + 소환권', emoji: '🎁', isSpecial: true),
-  MonthlyLoginReward(day: 8,  gold: 1000, displayName: '골드 1,000', emoji: '🪙'),
-  MonthlyLoginReward(day: 9,  gold: 1100, displayName: '골드 1,100', emoji: '🪙'),
-  MonthlyLoginReward(day: 10, gold: 1200, displayName: '골드 1,200', emoji: '🪙'),
-  MonthlyLoginReward(day: 11, gold: 1300, displayName: '골드 1,300', emoji: '🪙'),
-  MonthlyLoginReward(day: 12, gold: 1400, displayName: '골드 1,400', emoji: '🪙'),
-  MonthlyLoginReward(day: 13, gold: 1500, displayName: '골드 1,500', emoji: '🪙'),
-  MonthlyLoginReward(day: 14, gems: 50, passXp: 200, displayName: '🌟 보석 50 + 패스XP 200', emoji: '🎁', isSpecial: true),
-  MonthlyLoginReward(day: 15, gold: 1500, displayName: '골드 1,500', emoji: '🪙'),
-  MonthlyLoginReward(day: 16, gold: 1600, displayName: '골드 1,600', emoji: '🪙'),
-  MonthlyLoginReward(day: 17, gold: 1700, displayName: '골드 1,700', emoji: '🪙'),
-  MonthlyLoginReward(day: 18, gold: 1800, displayName: '골드 1,800', emoji: '🪙'),
-  MonthlyLoginReward(day: 19, gold: 1900, displayName: '골드 1,900', emoji: '🪙'),
-  MonthlyLoginReward(day: 20, gold: 2000, displayName: '골드 2,000', emoji: '🪙'),
-  MonthlyLoginReward(day: 21, gems: 80, summonTickets: 2, displayName: '🌟 보석 80 + 소환권 2장', emoji: '🎁', isSpecial: true),
-  MonthlyLoginReward(day: 22, gold: 2000, displayName: '골드 2,000', emoji: '🪙'),
-  MonthlyLoginReward(day: 23, gold: 2100, displayName: '골드 2,100', emoji: '🪙'),
-  MonthlyLoginReward(day: 24, gold: 2200, displayName: '골드 2,200', emoji: '🪙'),
-  MonthlyLoginReward(day: 25, gold: 2300, displayName: '골드 2,300', emoji: '🪙'),
-  MonthlyLoginReward(day: 26, gold: 2400, displayName: '골드 2,400', emoji: '🪙'),
-  MonthlyLoginReward(day: 27, gold: 2500, displayName: '골드 2,500', emoji: '🪙'),
-  MonthlyLoginReward(day: 28, gems: 150, summonTickets: 3, passXp: 500, displayName: '🌟 보석 150 + 소환권 3장 + XP 500', emoji: '👑', isSpecial: true),
+  MonthlyLoginReward(day: 1,  gold: 500,  displayName: 'monthly_login_1',  emoji: '🪙'),
+  MonthlyLoginReward(day: 2,  gold: 600,  displayName: 'monthly_login_2',  emoji: '🪙'),
+  MonthlyLoginReward(day: 3,  gold: 700,  displayName: 'monthly_login_3',  emoji: '🪙'),
+  MonthlyLoginReward(day: 4,  gold: 800,  displayName: 'monthly_login_4',  emoji: '🪙'),
+  MonthlyLoginReward(day: 5,  gold: 900,  displayName: 'monthly_login_5',  emoji: '🪙'),
+  MonthlyLoginReward(day: 6,  gold: 1000, displayName: 'monthly_login_6', emoji: '🪙'),
+  MonthlyLoginReward(day: 7,  gems: 30, summonTickets: 1, displayName: 'monthly_login_7', emoji: '🎁', isSpecial: true),
+  MonthlyLoginReward(day: 8,  gold: 1000, displayName: 'monthly_login_8', emoji: '🪙'),
+  MonthlyLoginReward(day: 9,  gold: 1100, displayName: 'monthly_login_9', emoji: '🪙'),
+  MonthlyLoginReward(day: 10, gold: 1200, displayName: 'monthly_login_10', emoji: '🪙'),
+  MonthlyLoginReward(day: 11, gold: 1300, displayName: 'monthly_login_11', emoji: '🪙'),
+  MonthlyLoginReward(day: 12, gold: 1400, displayName: 'monthly_login_12', emoji: '🪙'),
+  MonthlyLoginReward(day: 13, gold: 1500, displayName: 'monthly_login_13', emoji: '🪙'),
+  MonthlyLoginReward(day: 14, gems: 50, passXp: 200, displayName: 'monthly_login_14', emoji: '🎁', isSpecial: true),
+  MonthlyLoginReward(day: 15, gold: 1500, displayName: 'monthly_login_15', emoji: '🪙'),
+  MonthlyLoginReward(day: 16, gold: 1600, displayName: 'monthly_login_16', emoji: '🪙'),
+  MonthlyLoginReward(day: 17, gold: 1700, displayName: 'monthly_login_17', emoji: '🪙'),
+  MonthlyLoginReward(day: 18, gold: 1800, displayName: 'monthly_login_18', emoji: '🪙'),
+  MonthlyLoginReward(day: 19, gold: 1900, displayName: 'monthly_login_19', emoji: '🪙'),
+  MonthlyLoginReward(day: 20, gold: 2000, displayName: 'monthly_login_20', emoji: '🪙'),
+  MonthlyLoginReward(day: 21, gems: 80, summonTickets: 2, displayName: 'monthly_login_21', emoji: '🎁', isSpecial: true),
+  MonthlyLoginReward(day: 22, gold: 2000, displayName: 'monthly_login_22', emoji: '🪙'),
+  MonthlyLoginReward(day: 23, gold: 2100, displayName: 'monthly_login_23', emoji: '🪙'),
+  MonthlyLoginReward(day: 24, gold: 2200, displayName: 'monthly_login_24', emoji: '🪙'),
+  MonthlyLoginReward(day: 25, gold: 2300, displayName: 'monthly_login_25', emoji: '🪙'),
+  MonthlyLoginReward(day: 26, gold: 2400, displayName: 'monthly_login_26', emoji: '🪙'),
+  MonthlyLoginReward(day: 27, gold: 2500, displayName: 'monthly_login_27', emoji: '🪙'),
+  MonthlyLoginReward(day: 28, gems: 150, summonTickets: 3, passXp: 500, displayName: 'monthly_login_28', emoji: '👑', isSpecial: true),
 ];
 
 /// 일일 미션 풀 (여기서 랜덤 3 + 보너스 1을 뽑음)
 const List<DailyQuest> _questPool = [
   // ── 쉬운 미션 (필수 포함 가능) ──
-  DailyQuest(id: 'q_kill_30',    type: QuestType.killEnemies,      description: '적 30마리 처치',        targetValue: 30,  rewardPassXp: 20, rewardGold: 300),
-  DailyQuest(id: 'q_kill_60',    type: QuestType.killEnemies,      description: '적 60마리 처치',        targetValue: 60,  rewardPassXp: 25, rewardGold: 500),
-  DailyQuest(id: 'q_clear_1',    type: QuestType.clearAnyStage,    description: '스테이지 1회 클리어',    targetValue: 1,   rewardPassXp: 15, rewardGold: 200),
-  DailyQuest(id: 'q_clear_3',    type: QuestType.clearAnyStage,    description: '스테이지 3회 클리어',    targetValue: 3,   rewardPassXp: 25, rewardGold: 500),
-  DailyQuest(id: 'q_build_5',    type: QuestType.buildTowers,      description: '타워 5개 건설',          targetValue: 5,   rewardPassXp: 15, rewardGold: 200),
-  DailyQuest(id: 'q_build_10',   type: QuestType.buildTowers,      description: '타워 10개 건설',         targetValue: 10,  rewardPassXp: 20, rewardGold: 400),
-  DailyQuest(id: 'q_skill_3',    type: QuestType.useHeroSkill,     description: '영웅 스킬 3회 사용',     targetValue: 3,   rewardPassXp: 15, rewardGold: 200),
-  DailyQuest(id: 'q_skill_5',    type: QuestType.useHeroSkill,     description: '영웅 스킬 5회 사용',     targetValue: 5,   rewardPassXp: 20, rewardGold: 400),
-  DailyQuest(id: 'q_gold_2000',  type: QuestType.spendGold,        description: '골드 2,000 사용',        targetValue: 2000, rewardPassXp: 15, rewardGold: 500),
-  DailyQuest(id: 'q_hero_lv',    type: QuestType.upgradeHero,      description: '영웅 레벨업 1회',        targetValue: 1,   rewardPassXp: 20, rewardGold: 300),
-  DailyQuest(id: 'q_watch_ad',   type: QuestType.watchAd,          description: '무료 보석 광고 시청',    targetValue: 1,   rewardPassXp: 30, rewardGems: 1), // 신규 추가
+  DailyQuest(id: 'q_kill_30',    type: QuestType.killEnemies,      description: 'quest_q_kill_30',        targetValue: 30,  rewardPassXp: 20, rewardGold: 300),
+  DailyQuest(id: 'q_kill_60',    type: QuestType.killEnemies,      description: 'quest_q_kill_60',        targetValue: 60,  rewardPassXp: 25, rewardGold: 500),
+  DailyQuest(id: 'q_clear_1',    type: QuestType.clearAnyStage,    description: 'quest_q_clear_1',    targetValue: 1,   rewardPassXp: 15, rewardGold: 200),
+  DailyQuest(id: 'q_clear_3',    type: QuestType.clearAnyStage,    description: 'quest_q_clear_3',    targetValue: 3,   rewardPassXp: 25, rewardGold: 500),
+  DailyQuest(id: 'q_build_5',    type: QuestType.buildTowers,      description: 'quest_q_build_5',          targetValue: 5,   rewardPassXp: 15, rewardGold: 200),
+  DailyQuest(id: 'q_build_10',   type: QuestType.buildTowers,      description: 'quest_q_build_10',         targetValue: 10,  rewardPassXp: 20, rewardGold: 400),
+  DailyQuest(id: 'q_skill_3',    type: QuestType.useHeroSkill,     description: 'quest_q_skill_3',     targetValue: 3,   rewardPassXp: 15, rewardGold: 200),
+  DailyQuest(id: 'q_skill_5',    type: QuestType.useHeroSkill,     description: 'quest_q_skill_5',     targetValue: 5,   rewardPassXp: 20, rewardGold: 400),
+  DailyQuest(id: 'q_gold_2000',  type: QuestType.spendGold,        description: 'quest_q_gold_2000',        targetValue: 2000, rewardPassXp: 15, rewardGold: 500),
+  DailyQuest(id: 'q_hero_lv',    type: QuestType.upgradeHero,      description: 'quest_q_hero_lv',        targetValue: 1,   rewardPassXp: 20, rewardGold: 300),
+  DailyQuest(id: 'q_watch_ad',   type: QuestType.watchAd,          description: 'quest_q_watch_ad',    targetValue: 1,   rewardPassXp: 30, rewardGems: 1), // 신규 추가
 
   // ── 중간 난이도 ──
-  DailyQuest(id: 'q_star3_1',    type: QuestType.clearStageStars3, description: '별 3개로 클리어 1회',    targetValue: 1,   rewardPassXp: 25, rewardGold: 500, rewardGems: 1),
-  DailyQuest(id: 'q_star3_2',    type: QuestType.clearStageStars3, description: '별 3개로 클리어 2회',    targetValue: 2,   rewardPassXp: 30, rewardGold: 700, rewardGems: 2),
-  DailyQuest(id: 'q_relic',      type: QuestType.equipRelic,       description: '유물 장착 변경',         targetValue: 1,   rewardPassXp: 15, rewardGold: 300),
-  DailyQuest(id: 'q_tower_f3',   type: QuestType.endlessTowerFloor,description: '무한의 탑 3층 도달',     targetValue: 3,   rewardPassXp: 25, rewardGold: 500, rewardGems: 1),
-  DailyQuest(id: 'q_read_lore',  type: QuestType.readLore,         description: '도감에서 정보 읽기',     targetValue: 1,   rewardPassXp: 15, rewardGold: 200), // 신규 추가
-  DailyQuest(id: 'q_kill_boss1', type: QuestType.killBoss,         description: '보스 몬스터 1마리 처치',   targetValue: 1,   rewardPassXp: 30, rewardGold: 500, rewardGems: 1), // 신규 추가
+  DailyQuest(id: 'q_star3_1',    type: QuestType.clearStageStars3, description: 'quest_q_star3_1',    targetValue: 1,   rewardPassXp: 25, rewardGold: 500, rewardGems: 1),
+  DailyQuest(id: 'q_star3_2',    type: QuestType.clearStageStars3, description: 'quest_q_star3_2',    targetValue: 2,   rewardPassXp: 30, rewardGold: 700, rewardGems: 2),
+  DailyQuest(id: 'q_relic',      type: QuestType.equipRelic,       description: 'quest_q_relic',         targetValue: 1,   rewardPassXp: 15, rewardGold: 300),
+  DailyQuest(id: 'q_tower_f3',   type: QuestType.endlessTowerFloor,description: 'quest_q_tower_f3',     targetValue: 3,   rewardPassXp: 25, rewardGold: 500, rewardGems: 1),
+  DailyQuest(id: 'q_read_lore',  type: QuestType.readLore,         description: 'quest_q_read_lore',     targetValue: 1,   rewardPassXp: 15, rewardGold: 200), // 신규 추가
+  DailyQuest(id: 'q_kill_boss1', type: QuestType.killBoss,         description: 'quest_q_kill_boss1',   targetValue: 1,   rewardPassXp: 30, rewardGold: 500, rewardGems: 1), // 신규 추가
 
   // ── 어려운 미션 (보너스 전용) ──
-  DailyQuest(id: 'q_nodmg',      type: QuestType.clearNoDamage,    description: '피해 0으로 스테이지 클리어', targetValue: 1, rewardPassXp: 40, rewardGold: 1000, rewardGems: 3),
-  DailyQuest(id: 'q_kill_100',   type: QuestType.killEnemies,      description: '적 100마리 처치',        targetValue: 100, rewardPassXp: 35, rewardGold: 800, rewardGems: 2),
-  DailyQuest(id: 'q_tower_f5',   type: QuestType.endlessTowerFloor,description: '무한의 탑 5층 도달',     targetValue: 5,   rewardPassXp: 35, rewardGold: 800, rewardGems: 2),
-  DailyQuest(id: 'q_kill_boss3', type: QuestType.killBoss,         description: '보스 몬스터 3마리 처치',   targetValue: 3,   rewardPassXp: 45, rewardGold: 1200, rewardGems: 2), // 신규 추가
+  DailyQuest(id: 'q_nodmg',      type: QuestType.clearNoDamage,    description: 'quest_q_nodmg', targetValue: 1, rewardPassXp: 40, rewardGold: 1000, rewardGems: 3),
+  DailyQuest(id: 'q_kill_100',   type: QuestType.killEnemies,      description: 'quest_q_kill_100',        targetValue: 100, rewardPassXp: 35, rewardGold: 800, rewardGems: 2),
+  DailyQuest(id: 'q_tower_f5',   type: QuestType.endlessTowerFloor,description: 'quest_q_tower_f5',     targetValue: 5,   rewardPassXp: 35, rewardGold: 800, rewardGems: 2),
+  DailyQuest(id: 'q_kill_boss3', type: QuestType.killBoss,         description: 'quest_q_kill_boss3',   targetValue: 3,   rewardPassXp: 45, rewardGold: 1200, rewardGems: 2), // 신규 추가
 ];
 
 /// 올클리어 보너스 보상 (8개 전부 완료 시)

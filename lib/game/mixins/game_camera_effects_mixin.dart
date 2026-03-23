@@ -38,21 +38,22 @@ mixin GameCameraEffectsMixin on FlameGame {
 
   /// update에서 호출: Screen Shake 처리
   void updateScreenShake(double dt) {
+    // 카메라 기본 위치 (onLoad에서 설정한 값과 동일해야 함)
+    final basePosX = GameConstants.gameWidth / 2;
+    final basePosY = (GameConstants.gameHeight / 2) + 50;
+
     if (_shakeTimer > 0) {
       _shakeTimer -= dt;
       final rng = math.Random();
       final offsetX = (rng.nextDouble() - 0.5) * 2 * _shakeIntensity;
       final offsetY = (rng.nextDouble() - 0.5) * 2 * _shakeIntensity;
       camera.viewfinder.position = Vector2(
-        GameConstants.gameWidth / 2 + offsetX,
-        GameConstants.gameHeight / 2 + offsetY,
+        basePosX + offsetX,
+        basePosY + offsetY,
       );
     } else if (_shakeIntensity > 0) {
       _shakeIntensity = 0;
-      camera.viewfinder.position = Vector2(
-        GameConstants.gameWidth / 2,
-        GameConstants.gameHeight / 2,
-      );
+      camera.viewfinder.position = Vector2(basePosX, basePosY);
     }
   }
 

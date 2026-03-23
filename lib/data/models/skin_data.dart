@@ -78,10 +78,10 @@ class SkinData {
 extension SkinRarityExt on SkinRarity {
   String get displayName {
     switch (this) {
-      case SkinRarity.common:    return '기본';
-      case SkinRarity.rare:      return '정제';
-      case SkinRarity.epic:      return '명작';
-      case SkinRarity.legendary: return '전설';
+      case SkinRarity.common:    return 'skin_rarity_common';
+      case SkinRarity.rare:      return 'skin_rarity_rare';
+      case SkinRarity.epic:      return 'skin_rarity_epic';
+      case SkinRarity.legendary: return 'skin_rarity_legendary';
     }
   }
 
@@ -115,118 +115,118 @@ final Map<SkinId, SkinData> allSkins = {
   // ═══ 깨비 ═══
   SkinId.kkaebiDefault: const SkinData(
     id: SkinId.kkaebiDefault, heroId: HeroId.kkaebi,
-    name: '도깨비', rarity: SkinRarity.common,
+    name: 'skin_kkaebiDefault', rarity: SkinRarity.common,
     primaryColor: Color(0xFF4CAF50), secondaryColor: Color(0xFF388E3C),
   ),
   SkinId.kkaebiJade: const SkinData(
     id: SkinId.kkaebiJade, heroId: HeroId.kkaebi,
-    name: '비취 도깨비', rarity: SkinRarity.rare,
+    name: 'skin_kkaebiJade', rarity: SkinRarity.rare,
     primaryColor: Color(0xFF00BFA5), secondaryColor: Color(0xFFB0BEC5),
     price: 200,
   ),
   SkinId.kkaebiInferno: const SkinData(
     id: SkinId.kkaebiInferno, heroId: HeroId.kkaebi,
-    name: '화염 도깨비', rarity: SkinRarity.epic,
+    name: 'skin_kkaebiInferno', rarity: SkinRarity.epic,
     primaryColor: Color(0xFFFF5722), secondaryColor: Color(0xFFFFD700),
     glowColor: Color(0x44FF5722),
     price: 500,
-    effectDescription: '공격 시 화염 파티클 효과',
-    lore: '지하 세계의 화염을 다스리는 도깨비. 그의 방망이는 적을 재로 만든다.',
+    effectDescription: 'skin_kkaebiInferno_eff',
+    lore: 'skin_kkaebiInferno_lore',
   ),
   SkinId.kkaebiGoldhorn: const SkinData(
     id: SkinId.kkaebiGoldhorn, heroId: HeroId.kkaebi,
-    name: '금각 도깨비', rarity: SkinRarity.legendary,
+    name: 'skin_kkaebiGoldhorn', rarity: SkinRarity.legendary,
     primaryColor: Color(0xFFFFD700), secondaryColor: Color(0xFFFF8F00),
     glowColor: Color(0x66FFD700), hasParticle: false,
     price: 1000,
-    effectDescription: '황금 오라 + 흘나는 검기',
-    lore: '천년을 수련한 도깨비의 왕. 그의 황금 뻔은 적의 의지를 꼬부라뜨린다.',
+    effectDescription: 'skin_kkaebiGoldhorn_eff',
+    lore: 'skin_kkaebiGoldhorn_lore', // '천년을 수련한 도깨비의 왕. 그의 황금 뻔은 적의 의지를 꼬부라뜨린다.',
   ),
 
   // ═══ 미호 ═══
   SkinId.mihoDefault: const SkinData(
     id: SkinId.mihoDefault, heroId: HeroId.miho,
-    name: '구미호', rarity: SkinRarity.common,
+    name: 'skin_mihoDefault', rarity: SkinRarity.common,
     primaryColor: Color(0xFFE91E63), secondaryColor: Color(0xFFC2185B),
   ),
   SkinId.mihoMoonlight: const SkinData(
     id: SkinId.mihoMoonlight, heroId: HeroId.miho,
-    name: '달빛 미호', rarity: SkinRarity.rare,
+    name: 'skin_mihoMoonlight', rarity: SkinRarity.rare,
     primaryColor: Color(0xFFCE93D8), secondaryColor: Color(0xFF8E24AA),
     price: 100,
   ),
   SkinId.mihoCrimson: const SkinData(
     id: SkinId.mihoCrimson, heroId: HeroId.miho,
-    name: '핏빛 미호', rarity: SkinRarity.epic,
+    name: 'skin_mihoCrimson', rarity: SkinRarity.epic,
     primaryColor: Color(0xFFB71C1C), secondaryColor: Color(0xFFFFD700),
     glowColor: Color(0x44B71C1C),
     price: 500,
-    effectDescription: '공격 시 한기 게이지 증가량 +5%',
-    lore: '피에 굴주린 미호. 그녀의 여우 방울은 적의 피를 먹고 강해진다.',
+    effectDescription: 'skin_mihoCrimson_eff',
+    lore: 'skin_mihoCrimson_lore', // '피에 굴주린 미호. 그녀의 여우 방울은 적의 피를 먹고 강해진다.',
   ),
   SkinId.mihoNine: const SkinData(
     id: SkinId.mihoNine, heroId: HeroId.miho,
-    name: '구미선녀', rarity: SkinRarity.legendary,
+    name: 'skin_mihoNine', rarity: SkinRarity.legendary,
     primaryColor: Color(0xFFE1BEE7), secondaryColor: Color(0xFFAB47BC),
     glowColor: Color(0x66E040FB), hasParticle: true,
     price: 2000,
-    effectDescription: '스킬 범위 +10% + 달빛 오라',
-    lore: '아홉 꼽리가 모두 피어난 구미선녀. 한달의 정수를 담은 미호는 영혼을 다스릴 수 있다.',
+    effectDescription: 'skin_mihoNine_eff',
+    lore: 'skin_mihoNine_lore', // '아홉 꼽리가 모두 피어난 구미선녀. 한달의 정수를 담은 미호는 영혼을 다스릴 수 있다.',
   ),
 
   // ═══ 강림 ═══
   SkinId.gangrimDefault: const SkinData(
     id: SkinId.gangrimDefault, heroId: HeroId.gangrim,
-    name: '저승차사', rarity: SkinRarity.common,
+    name: 'skin_gangrimDefault', rarity: SkinRarity.common,
     primaryColor: Color(0xFF212121), secondaryColor: Color(0xFF424242),
   ),
   SkinId.gangrimSilver: const SkinData(
     id: SkinId.gangrimSilver, heroId: HeroId.gangrim,
-    name: '은월 차사', rarity: SkinRarity.rare,
+    name: 'skin_gangrimSilver', rarity: SkinRarity.rare,
     primaryColor: Color(0xFF607D8B), secondaryColor: Color(0xFFB0BEC5),
     price: 200,
   ),
   SkinId.gangrimBlood: const SkinData(
     id: SkinId.gangrimBlood, heroId: HeroId.gangrim,
-    name: '혈염 차사', rarity: SkinRarity.epic,
+    name: 'skin_gangrimBlood', rarity: SkinRarity.epic,
     primaryColor: Color(0xFF4A0000), secondaryColor: Color(0xFFFF1744),
     glowColor: Color(0x66FF1744),
     price: 1000,
-    effectDescription: '적 처치 시 취약점 표시 효과',
-    lore: '저승의 혈흐른 강을 건넌 차사. 그의 낫이 닿는 곳에는 좽음만이 남는다.',
+    effectDescription: 'skin_gangrimBlood_eff',
+    lore: 'skin_gangrimBlood_lore', // '저승의 혈흐른 강을 건넌 차사. 그의 낫이 닿는 곳에는 좽음만이 남는다.',
   ),
   SkinId.gangrimReaper: const SkinData(
     id: SkinId.gangrimReaper, heroId: HeroId.gangrim,
-    name: '대차사', rarity: SkinRarity.legendary,
+    name: 'skin_gangrimReaper', rarity: SkinRarity.legendary,
     primaryColor: Color(0xFF1A237E), secondaryColor: Color(0xFFFFD700),
     glowColor: Color(0x88FFD700), hasParticle: true,
     price: 5000,
-    effectDescription: '황금 파티클 + 적 처치 시 보석 0.5% 드랍',
-    lore: '저승의 왕. 염라대왕의 침묵을 받은 기사단장. 그의 등장에 원령들이 묶이는다.',
+    effectDescription: 'skin_gangrimReaper_eff',
+    lore: 'skin_gangrimReaper_lore', // '저승의 왕. 염라대왕의 침묵을 받은 기사단장. 그의 등장에 원령들이 묶이는다.',
   ),
 
   // ═══ 수아 ═══
   SkinId.suaDefault: const SkinData(
     id: SkinId.suaDefault, heroId: HeroId.sua,
-    name: '물의 정령', rarity: SkinRarity.common,
+    name: 'skin_suaDefault', rarity: SkinRarity.common,
     primaryColor: Color(0xFF2196F3), secondaryColor: Color(0xFF1565C0),
   ),
   SkinId.suaCoral: const SkinData(
     id: SkinId.suaCoral, heroId: HeroId.sua,
-    name: '산호빛 수아', rarity: SkinRarity.rare,
+    name: 'skin_suaCoral', rarity: SkinRarity.rare,
     primaryColor: Color(0xFFFF7043), secondaryColor: Color(0xFFE64A19),
     price: 100,
   ),
   SkinId.suaFrost: const SkinData(
     id: SkinId.suaFrost, heroId: HeroId.sua,
-    name: '빙결 수아', rarity: SkinRarity.epic,
+    name: 'skin_suaFrost', rarity: SkinRarity.epic,
     primaryColor: Color(0xFF80DEEA), secondaryColor: Color(0xFF00BCD4),
     glowColor: Color(0x4480DEEA),
     price: 500,
   ),
   SkinId.suaTide: const SkinData(
     id: SkinId.suaTide, heroId: HeroId.sua,
-    name: '조류 수아', rarity: SkinRarity.legendary,
+    name: 'skin_suaTide', rarity: SkinRarity.legendary,
     primaryColor: Color(0xFF0D47A1), secondaryColor: Color(0xFF00E5FF),
     glowColor: Color(0x6600E5FF), hasParticle: true,
     price: 2000,
@@ -235,25 +235,25 @@ final Map<SkinId, SkinData> allSkins = {
   // ═══ 바리 ═══
   SkinId.bariDefault: const SkinData(
     id: SkinId.bariDefault, heroId: HeroId.bari,
-    name: '바리공주', rarity: SkinRarity.common,
+    name: 'skin_bariDefault', rarity: SkinRarity.common,
     primaryColor: Color(0xFFFFEB3B), secondaryColor: Color(0xFFF9A825),
   ),
   SkinId.bariCherry: const SkinData(
     id: SkinId.bariCherry, heroId: HeroId.bari,
-    name: '벚꽃 바리', rarity: SkinRarity.rare,
+    name: 'skin_bariCherry', rarity: SkinRarity.rare,
     primaryColor: Color(0xFFF48FB1), secondaryColor: Color(0xFFEC407A),
     price: 200,
   ),
   SkinId.bariAurora: const SkinData(
     id: SkinId.bariAurora, heroId: HeroId.bari,
-    name: '여명 바리', rarity: SkinRarity.epic,
+    name: 'skin_bariAurora', rarity: SkinRarity.epic,
     primaryColor: Color(0xFFFFCC80), secondaryColor: Color(0xFFFF6F00),
     glowColor: Color(0x66FFCC80),
     price: 1000,
   ),
   SkinId.bariDivine: const SkinData(
     id: SkinId.bariDivine, heroId: HeroId.bari,
-    name: '신녀 바리', rarity: SkinRarity.legendary,
+    name: 'skin_bariDivine', rarity: SkinRarity.legendary,
     primaryColor: Color(0xFFFFFFFF), secondaryColor: Color(0xFFFFD700),
     glowColor: Color(0x88FFFFFF), hasParticle: true,
     price: 5000,
@@ -309,35 +309,35 @@ class SetBonus {
 const List<SetBonus> skinSetBonuses = [
   // ── 정제(Rare) 세트 ──
   SetBonus(rarity: SkinRarity.rare, requiredCount: 2,
-    name: '정제 2세트', description: '골드 획득 +5%',
+    name: 'set_rare_2_name', description: 'set_rare_2_desc',
     emoji: '🔵', goldBonus: 0.05),
   SetBonus(rarity: SkinRarity.rare, requiredCount: 3,
-    name: '정제 3세트', description: '공격력 +3%, 골드 +5%',
+    name: 'set_rare_3_name', description: 'set_rare_3_desc',
     emoji: '🔵', atkBonus: 0.03, goldBonus: 0.05),
   SetBonus(rarity: SkinRarity.rare, requiredCount: 5,
-    name: '정제 풀세트', description: '공격력 +5%, 체력 +5%, 골드 +10%',
+    name: 'set_rare_5_name', description: 'set_rare_5_desc',
     emoji: '🔵', atkBonus: 0.05, hpBonus: 0.05, goldBonus: 0.10),
 
   // ── 명작(Epic) 세트 ──
   SetBonus(rarity: SkinRarity.epic, requiredCount: 2,
-    name: '명작 2세트', description: '공격력 +5%, XP +5%',
+    name: 'set_epic_2_name', description: 'set_epic_2_desc',
     emoji: '🟣', atkBonus: 0.05, xpBonus: 0.05),
   SetBonus(rarity: SkinRarity.epic, requiredCount: 3,
-    name: '명작 3세트', description: '공격력 +8%, 체력 +5%, XP +10%',
+    name: 'set_epic_3_name', description: 'set_epic_3_desc',
     emoji: '🟣', atkBonus: 0.08, hpBonus: 0.05, xpBonus: 0.10),
   SetBonus(rarity: SkinRarity.epic, requiredCount: 5,
-    name: '명작 풀세트', description: '공격력 +12%, 체력 +10%, XP +15%, 골드 +10%',
+    name: 'set_epic_5_name', description: 'set_epic_5_desc',
     emoji: '🟣', atkBonus: 0.12, hpBonus: 0.10, xpBonus: 0.15, goldBonus: 0.10),
 
   // ── 전설(Legendary) 세트 ──
   SetBonus(rarity: SkinRarity.legendary, requiredCount: 2,
-    name: '전설 2세트', description: '공격력 +10%, XP +10%',
+    name: 'set_leg_2_name', description: 'set_leg_2_desc',
     emoji: '🌟', atkBonus: 0.10, xpBonus: 0.10),
   SetBonus(rarity: SkinRarity.legendary, requiredCount: 3,
-    name: '전설 3세트', description: '공격력 +15%, 체력 +10%, XP +15%, 골드 +10%',
+    name: 'set_leg_3_name', description: 'set_leg_3_desc',
     emoji: '🌟', atkBonus: 0.15, hpBonus: 0.10, xpBonus: 0.15, goldBonus: 0.10),
   SetBonus(rarity: SkinRarity.legendary, requiredCount: 5,
-    name: '전설 풀세트', description: '공격력 +25%, 체력 +20%, XP +25%, 골드 +20%',
+    name: 'set_leg_5_name', description: 'set_leg_5_desc',
     emoji: '🌟', atkBonus: 0.25, hpBonus: 0.20, xpBonus: 0.25, goldBonus: 0.20),
 ];
 

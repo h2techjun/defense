@@ -2,6 +2,7 @@
 
 import 'dart:math' as math;
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -122,7 +123,7 @@ class BaseTower extends PositionComponent
   final List<BarracksSoldier> _soldiers = [];
   static const int _maxSoldiers = 3;
   double _soldierRespawnTimer = 0;
-  static const double _soldierRespawnDelay = 8.0; // 병사 부활 대기 시간
+  static const double _soldierRespawnDelay = 5.0; // 병사 부활 대기 시간
   RallyFlagComponent? _rallyFlag; // 병사 배치 깃발
 
   BaseTower({
@@ -918,8 +919,13 @@ class BaseTower extends PositionComponent
 
   /// 병영 업데이트 — 사망한 병사 재소환 관리
   void _updateBarracks(double dt) {
-    // 제거된 병사만 정리 (사망한 병사는 스스로 부활하므로 리스트 유지)
-    _soldiers.removeWhere((s) => !s.isMounted);
+    // 사망하고 제거된 병사만 정리 (isDead + unmounted)
+    final beforeCount = _soldiers.length;
+    _soldiers.removeWhere((s) => s.isDead && !s.isMounted);
+    final removed = beforeCount - _soldiers.length;
+    if (removed > 0) {
+      debugPrint('🗡️ [Barracks] $removed soldiers died, ${_soldiers.length}/$_maxSoldiers remaining');
+    }
 
     // 병사 부족 시 재소환 타이머
     if (_soldiers.length < _maxSoldiers) {
@@ -942,6 +948,7 @@ class BaseTower extends PositionComponent
         );
         _soldiers.add(soldier);
         game.world.add(soldier);
+        debugPrint('🗡️ [Barracks] Respawned soldier at ${rallyPos}, now ${_soldiers.length}/$_maxSoldiers');
       }
     } else {
       _soldierRespawnTimer = 0;

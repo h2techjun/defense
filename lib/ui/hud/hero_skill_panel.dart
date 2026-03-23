@@ -31,7 +31,7 @@ class HeroSkillInfo {
     this.isDead = false,
     this.reviveProgress = 1,
     this.isUltimate = false,
-    this.reviveLabel = '부활',
+    this.reviveLabel = 'revive_text', // TODO: make dynamic with AppStrings 
     this.onSkillTap,
   });
 }

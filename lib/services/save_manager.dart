@@ -20,6 +20,7 @@ class SaveManager {
   static const String _keyRelicData = 'haewon_relic_data';
   static const String _keySkinData = 'haewon_skin_data';
   static const String _keyAdData = 'haewon_ad_data';
+  static const String _keyLastSaveTimestamp = 'haewon_last_save_ts';
   static const int _currentVersion = 1;
 
   /// 사용자 데이터 저장
@@ -39,6 +40,14 @@ class SaveManager {
 
     await prefs.setString(_keyUserData, jsonEncode(data));
     await prefs.setInt(_keySaveVersion, _currentVersion);
+    await prefs.setString(_keyLastSaveTimestamp, DateTime.now().toIso8601String());
+  }
+
+  /// 마지막 로컬 저장 타임스탬프 조회 (클라우드 동기화 충돌 해결용)
+  Future<DateTime?> getLastSaveTimestamp() async {
+    final prefs = await SharedPreferences.getInstance();
+    final ts = prefs.getString(_keyLastSaveTimestamp);
+    return ts != null ? DateTime.tryParse(ts) : null;
   }
 
   /// 사용자 데이터 로드

@@ -57,7 +57,7 @@ class MainMenu extends ConsumerWidget {
 
     return ThemedScaffold(
       // 웹 전용: 전체화면 토글 FAB
-      floatingActionButton: kIsWeb ? _buildFullscreenFab(s) : null,
+      floatingActionButton: kIsWeb ? _buildFullscreenFab(lang, s) : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       backgroundAsset: 'assets/images/bg/bg_main_menu.png',
       body: LayoutBuilder(
@@ -215,27 +215,27 @@ class MainMenu extends ConsumerWidget {
       _ButtonData(AppStrings.get(lang, 'menu_battle'), onStageSelect, true),
       _ButtonData(AppStrings.get(lang, 'menu_heroes'), onHeroManage, false),
       _ButtonData(AppStrings.get(lang, 'menu_towers'), onTowerManage, false),
-      _ButtonData('📋 일일 미션', onDailyQuest, false, showBadge: unclaimed.hasDailyQuest),
-      _ButtonData('📜 설화도감', onLoreCollection, false),
-      _ButtonData('🎨 스킨 상점', onSkinShop, false),
+      _ButtonData(AppStrings.get(lang, 'menu_daily_quest'), onDailyQuest, false, showBadge: unclaimed.hasDailyQuest),
+      _ButtonData(AppStrings.get(lang, 'menu_lore'), onLoreCollection, false),
+      _ButtonData(AppStrings.get(lang, 'menu_skin_shop'), onSkinShop, false),
       // 무료 보석 버튼 (쿨다운 중에도 남은 시간 표시)
       if (AdManager.instance.remainingDailyFreeGems > 0)
         AdManager.instance.canShowFreeGemsAd
           ? _ButtonData(
-              '📺 무료 보석 ${AdManager.instance.currentFreeGemsRound}/5',
+              '${AppStrings.get(lang, 'menu_free_gems')} ${AdManager.instance.currentFreeGemsRound}/5',
               () => _showFreeGemsAd(context, ref),
               false,
               showBadge: true,
             )
           : _ButtonData(
-              '⏳ ${AdManager.instance.freeGemsCooldownFormatted} (${AdManager.instance.currentFreeGemsRound}/5)',
+              '${AppStrings.get(lang, 'menu_free_gems_cooldown').replaceAll('{time}', AdManager.instance.freeGemsCooldownFormatted)} (${AdManager.instance.currentFreeGemsRound}/5)',
               () {},
               false,
             ),
 
-      _ButtonData('🗼 무한의 탑', onEndlessTower, false),
-      _ButtonData('🌸 시즌 패스', onSeasonPass, false, showBadge: unclaimed.hasSeasonPass),
-      _ButtonData('🏆 업적 & 랭킹', onAchievement, false, showBadge: unclaimed.hasAchievements),
+      _ButtonData(AppStrings.get(lang, 'menu_endless_tower'), onEndlessTower, false),
+      _ButtonData(AppStrings.get(lang, 'menu_season_pass'), onSeasonPass, false, showBadge: unclaimed.hasSeasonPass),
+      _ButtonData(AppStrings.get(lang, 'menu_achievement'), onAchievement, false, showBadge: unclaimed.hasAchievements),
       _ButtonData(AppStrings.get(lang, 'menu_settings'), () => _showSettingsDialog(context, ref), false),
     ];
 
@@ -308,7 +308,7 @@ class MainMenu extends ConsumerWidget {
   }
 
   /// 전체화면 토글 FAB (웹 전용)
-  Widget _buildFullscreenFab(double s) {
+  Widget _buildFullscreenFab(GameLanguage lang, double s) {
     return StatefulBuilder(
       builder: (context, setState) {
         final fs = FullscreenService.instance;
@@ -321,7 +321,7 @@ class MainMenu extends ConsumerWidget {
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(color: Colors.white.withAlpha(76)),
           ),
-          tooltip: fs.isFullscreen ? '전체화면 해제' : '전체화면',
+          tooltip: fs.isFullscreen ? AppStrings.get(lang, 'settings_fullscreen_exit') : AppStrings.get(lang, 'settings_fullscreen'),
           onPressed: () async {
             await fs.toggle();
             setState(() {});
@@ -500,7 +500,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                     SizedBox(height: 20 * s),
 
                     // ── 효과음 (SFX) ──
-                    _sectionLabel('🔊', '효과음 (SFX)', s),
+                    _sectionLabel('🔊', AppStrings.get(currentLang, 'settings_sfx'), s),
                     SizedBox(height: 8 * s),
                     _audioRow(
                       enabled: _sfxOn,
@@ -519,7 +519,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                     SizedBox(height: 16 * s),
 
                     // ── 배경음악 (BGM) ──
-                    _sectionLabel('🎵', '배경음악 (BGM)', s),
+                    _sectionLabel('🎵', AppStrings.get(currentLang, 'settings_bgm'), s),
                     SizedBox(height: 8 * s),
                     _audioRow(
                       enabled: _bgmOn,

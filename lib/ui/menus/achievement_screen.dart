@@ -100,7 +100,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '🏆 업적 & 랭킹',
+                  'ach_ranking_title',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: Responsive.fontSize(context, 22),
@@ -154,8 +154,8 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
           fontWeight: FontWeight.bold,
         ),
         tabs: const [
-          Tab(text: '🏅 업적'),
-          Tab(text: '🏆 랭킹'),
+          Tab(text: '🏅 업적'), // TODO: i18n via tr(ref, 'ach_tab_achievements')
+          Tab(text: '🏆 랭킹'), // TODO: i18n via tr(ref, 'ach_tab_ranking')
         ],
       ),
     );
@@ -471,7 +471,7 @@ class _AchievementCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isHidden ? '히든 업적' : achievement.name,
+                    isHidden ? 'ach_hidden' : achievement.name,
                     style: TextStyle(
                       color: isCompleted ? Colors.white : Colors.white70,
                       fontSize: Responsive.fontSize(context, 13),

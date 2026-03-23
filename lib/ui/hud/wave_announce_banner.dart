@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../common/responsive.dart';
+import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 
 /// 웨이브 안내 배너 — HUD 위에 오버레이
@@ -129,13 +130,13 @@ class _WaveAnnounceBannerState extends State<WaveAnnounceBanner>
                   ],
                   Text(
                     isBoss
-                        ? '보스 웨이브!'
-                        : '웨이브 ${widget.waveNumber}',
+                        ? AppStrings.get(GameLanguage.ko, 'wave_boss')
+                        : AppStrings.get(GameLanguage.ko, 'wave_number').replaceAll('{n}', '${widget.waveNumber}'),
                     style: TextStyle(
                       color: isBoss
                           ? AppColors.peachCoral
                           : AppColors.lavender,
-                      fontSize: isBoss ? 28 : 24,
+                      fontSize: Responsive.fontSize(context, isBoss ? 28 : 24),
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
                       shadows: [
@@ -280,7 +281,7 @@ class WaveCooldownIndicator extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '다음 웨이브 $nextWaveNumber',
+              AppStrings.get(GameLanguage.ko, 'wave_next').replaceAll('{n}', '$nextWaveNumber'),
               style: const TextStyle(
                 color: AppColors.lavender,
                 fontSize: 13,
@@ -301,7 +302,7 @@ class WaveCooldownIndicator extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '타워를 배치하세요!',
+              AppStrings.get(GameLanguage.ko, 'wave_place_towers'),
               style: TextStyle(
                 color: Colors.white.withAlpha(150),
                 fontSize: 11,

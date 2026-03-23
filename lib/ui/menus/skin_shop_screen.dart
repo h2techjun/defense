@@ -1,4 +1,4 @@
-﻿// 해원의 문 - 스킨 상점 화면
+// 해원의 문 - 스킨 상점 화면
 // 영웅별 스킨 목록 표시, 구매/장착 기능
 
 
@@ -10,6 +10,7 @@ import '../../state/skin_provider.dart';
 import '../../state/user_state.dart';
 import '../../services/ad_manager.dart';
 import '../../common/responsive.dart';
+import '../../l10n/app_strings.dart';
 import '../../services/game_event_bridge.dart';
 import '../theme/app_colors.dart';
 import '../common/hero_sprite_viewer.dart';
@@ -105,7 +106,7 @@ class SkinShopScreen extends ConsumerWidget {
           ),
           SizedBox(width: 8 * s),
           Text(
-            '🎨 스킨 상점',
+            'skin_shop_title',
             style: TextStyle(
               color: Colors.white,
               fontSize: Responsive.fontSize(context, 20),
@@ -311,7 +312,7 @@ class SkinShopScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('취소', style: TextStyle(color: Colors.grey)),
+            child: Text(AppStrings.get(GameLanguage.ko, 'cancel'), style: const TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -324,10 +325,10 @@ class SkinShopScreen extends ConsumerWidget {
               if (!success) {
                 Navigator.of(ctx).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('보석이 부족합니다! 광고를 시청하여 보석을 획득하세요.'),
-                    backgroundColor: Color(0xFFE53935),
-                    duration: Duration(seconds: 2),
+                  SnackBar(
+                    content: Text(AppStrings.get(GameLanguage.ko, 'skin_gems_insufficient')),
+                    backgroundColor: const Color(0xFFE53935),
+                    duration: const Duration(seconds: 2),
                   ),
                 );
                 return;
@@ -344,7 +345,7 @@ class SkinShopScreen extends ConsumerWidget {
                 ),
               );
             },
-            child: const Text('구매'),
+            child: Text(AppStrings.get(GameLanguage.ko, 'purchase')),
           ),
         ],
       ),
@@ -353,11 +354,11 @@ class SkinShopScreen extends ConsumerWidget {
 
   String _getHeroName(HeroId id) {
     switch (id) {
-      case HeroId.kkaebi:  return '깨비';
-      case HeroId.miho:    return '미호';
-      case HeroId.gangrim: return '강림';
-      case HeroId.sua:     return '수아';
-      case HeroId.bari:    return '바리';
+      case HeroId.kkaebi:  return AppStrings.get(GameLanguage.ko, 'hero_kkaebi');
+      case HeroId.miho:    return AppStrings.get(GameLanguage.ko, 'hero_miho');
+      case HeroId.gangrim: return AppStrings.get(GameLanguage.ko, 'hero_gangrim');
+      case HeroId.sua:     return AppStrings.get(GameLanguage.ko, 'hero_sua');
+      case HeroId.bari:    return AppStrings.get(GameLanguage.ko, 'hero_bari');
     }
   }
 }
@@ -597,7 +598,7 @@ class _SkinCard extends StatelessWidget {
                       SizedBox(height: 3 * s),
                       if (equipped)
                         Text(
-                          '장착 중 ✨',
+                          AppStrings.get(GameLanguage.ko, 'equipped'),
                           style: TextStyle(
                             color: AppColors.sinmyeongGold,
                             fontSize: Responsive.fontSize(context, 12),
@@ -622,7 +623,7 @@ class _SkinCard extends StatelessWidget {
                         )
                       else
                         Text(
-                          '보유 중',
+                          AppStrings.get(GameLanguage.ko, 'owned'),
                           style: TextStyle(
                             color: Colors.white38,
                             fontSize: Responsive.fontSize(context, 12),
@@ -769,7 +770,7 @@ Widget _buildSetBonusBanner(BuildContext context, SkinState skinState) {
           SizedBox(width: 6 * s),
           Expanded(
             child: Text(
-              '같은 등급 스킨을 장착하면 세트 보너스!',
+              AppStrings.get(GameLanguage.ko, 'skin_set_bonus'),
               style: TextStyle(color: Colors.white38, fontSize: 11 * s),
             ),
           ),
@@ -789,7 +790,7 @@ Widget _buildSetBonusBanner(BuildContext context, SkinState skinState) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('👗 세트 보너스 활성!', style: TextStyle(
+        Text('skin_set_bonus_active', style: TextStyle(
           color: Colors.amber, fontSize: 12 * s, fontWeight: FontWeight.bold,
         )),
         SizedBox(height: 4 * s),

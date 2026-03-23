@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../data/models/story_data.dart';
 import '../../audio/sound_manager.dart';
+import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
+
 
 class StoryCutsceneDialog extends StatefulWidget {
   final List<StoryScene> scenes;
@@ -216,7 +218,7 @@ class _StoryCutsceneDialogState extends State<StoryCutsceneDialog>
               child: TextButton.icon(
                 onPressed: widget.onFinish,
                 icon: const Icon(Icons.skip_next, color: Colors.white70),
-                label: const Text('건너뛰기', style: TextStyle(color: Colors.white70)),
+                label: Text(AppStrings.get(GameLanguage.ko, 'story_skip'), style: const TextStyle(color: Colors.white70)),
               ),
             ),
           ],

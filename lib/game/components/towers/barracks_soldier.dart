@@ -1,4 +1,4 @@
-﻿// ?댁썝??臾?- 蹂묒쁺 蹂묒궗 (BarracksSoldier) 而댄룷?뚰듃
+// ?댁썝??臾?- 蹂묒쁺 蹂묒궗 (BarracksSoldier) 而댄룷?뚰듃
 // 蹂묒쁺 ??뚯뿉???뚰솚?섎ŉ, 洹쇱쿂 ?곸쓣 釉붾줈???대룞 以묒?)?섍퀬 洹쇱젒 怨듦꺽
 
 import 'dart:math' as math;
@@ -55,7 +55,7 @@ class BarracksSoldier extends PositionComponent
     required this.rallyPoint,
     required this.hp,
     required this.attackDamage,
-    this.operationRange = 80,
+    this.operationRange = 45,
     this.attackCooldown = 1.0,
     this.moveSpeed = 130,
     this.isGrappler = false,
@@ -131,9 +131,10 @@ class BarracksSoldier extends PositionComponent
     final siblings = parent?.children.whereType<BarracksSoldier>().toList() ?? [];
     final idx = siblings.indexOf(this);
     if (idx < 0) return rallyPoint;
-    final total = siblings.length.clamp(1, 6);
-    final angle = (idx / total) * 2 * math.pi;
-    const spreadRadius = 15.0; // 랠리포인트 근처에 모이도록 좁게
+    // 3방향 고정 배치 (120도 간격: 위, 좌하, 우하)
+    const angles = [-1.5708, 2.618, 0.5236];
+    final angle = angles[idx % 3];
+    const spreadRadius = 18.0; // 병사 3명이 서 있을 정도
     return rallyPoint + Vector2(math.cos(angle) * spreadRadius, math.sin(angle) * spreadRadius);
   }
 
@@ -202,10 +203,10 @@ class BarracksSoldier extends PositionComponent
 
       if (_blockedEnemy == null) {
         // ?곸씠 ?놁쑝硫??좊━ ?ъ씤?몃줈 蹂듦?
-        final toRally = rallyPoint - position;
+        final toRally = assignedPosition - position;
         if (toRally.length > 5) {
           toRally.normalize();
-          position += toRally * moveSpeed * 0.5 * dt;
+          position += toRally * moveSpeed * dt;
         }
       }
     }
@@ -271,6 +272,13 @@ class BarracksSoldier extends PositionComponent
   void _releaseBlockedEnemy() {
     _blockedEnemy?.clearBlockedBy();
     _blockedEnemy = null;
+  }
+
+  /// 깃발 이동 시 호출: 교전 해제 + 즉시 새 랠리포인트로 이동 시작
+  void forceFollowRally(Vector2 newRallyPoint) {
+    rallyPoint = newRallyPoint.clone();
+    _releaseBlockedEnemy(); // 적 추적 해제
+    _attackTimer = 0;
   }
 
   /// 蹂묒궗媛 ?쇨꺽??(?곸쓽 諛섍꺽)

@@ -66,32 +66,32 @@ class RestReward {
 const List<RestReward> allRestRewards = [
   RestReward(
     type: RestRewardType.healGateway,
-    name: '해원문 수리',
-    description: '해원문 HP 30% 회복',
+    name: 'et_rest_heal_name',
+    description: 'et_rest_heal_desc',
     emoji: '💚',
   ),
   RestReward(
     type: RestRewardType.extraSinmyeong,
-    name: '신명 축적',
-    description: '다음 층 시작 신명 +100',
+    name: 'et_rest_sinm_name',
+    description: 'et_rest_sinm_desc',
     emoji: '✨',
   ),
   RestReward(
     type: RestRewardType.towerDiscount,
-    name: '장인의 축복',
-    description: '다음 3층간 타워 비용 -20%',
+    name: 'et_rest_disc_name',
+    description: 'et_rest_disc_desc',
     emoji: '🔨',
   ),
   RestReward(
     type: RestRewardType.heroBoost,
-    name: '영웅 강화',
-    description: '다음 3층간 영웅 공격력 +15%',
+    name: 'et_rest_boost_name',
+    description: 'et_rest_boost_desc',
     emoji: '⚔️',
   ),
   RestReward(
     type: RestRewardType.gemBonus,
-    name: '보물 발견',
-    description: '즉시 50 보석 획득',
+    name: 'et_rest_gem_name',
+    description: 'et_rest_gem_desc',
     emoji: '💎',
   ),
 ];
@@ -225,10 +225,10 @@ class TowerFloorGenerator {
     };
 
     final typeName = switch (type) {
-      TowerFloorType.normal => '전투',
-      TowerFloorType.elite  => '엘리트 전투',
-      TowerFloorType.boss   => '보스',
-      TowerFloorType.rest   => '휴식',
+      TowerFloorType.normal => 'et_type_normal',
+      TowerFloorType.elite  => 'et_type_elite',
+      TowerFloorType.boss   => 'et_type_boss',
+      TowerFloorType.rest   => 'et_type_rest',
     };
 
     return TowerFloorData(
@@ -242,9 +242,9 @@ class TowerFloorGenerator {
       waveCount: waveCount,
       floorTitle: '$typeEmoji $floor층 — $typeName',
       narrative: type == TowerFloorType.boss
-          ? '"탑의 주인이 기다리고 있다..."'
+          ? 'et_narr_boss'
           : (type == TowerFloorType.elite
-              ? '"강력한 적이 길을 막고 있다."'
+              ? 'et_narr_elite'
               : null),
     );
   }

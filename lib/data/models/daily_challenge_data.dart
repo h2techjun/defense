@@ -19,25 +19,25 @@ enum ChallengeModifier {
 /// modifier 표시 정보
 extension ChallengeModifierExt on ChallengeModifier {
   String get displayName => switch (this) {
-    ChallengeModifier.nightOnly     => '영원한 밤',
-    ChallengeModifier.noHeal        => '회복 불가',
-    ChallengeModifier.doubleDamage  => '극한 공격',
-    ChallengeModifier.limitedTowers => '제한된 병과',
-    ChallengeModifier.speedUp       => '쇄도',
-    ChallengeModifier.eliteOnly     => '정예 물결',
-    ChallengeModifier.noSotdae      => '금단의 솟대',
-    ChallengeModifier.poorStart     => '빈곤한 시작',
+    ChallengeModifier.nightOnly     => 'challenge_mod_nightOnly',
+    ChallengeModifier.noHeal        => 'challenge_mod_noHeal',
+    ChallengeModifier.doubleDamage  => 'challenge_mod_doubleDamage',
+    ChallengeModifier.limitedTowers => 'challenge_mod_limitedTowers',
+    ChallengeModifier.speedUp       => 'challenge_mod_speedUp',
+    ChallengeModifier.eliteOnly     => 'challenge_mod_eliteOnly',
+    ChallengeModifier.noSotdae      => 'challenge_mod_noSotdae',
+    ChallengeModifier.poorStart     => 'challenge_mod_poorStart',
   };
 
   String get description => switch (this) {
-    ChallengeModifier.nightOnly     => '모든 웨이브가 밤입니다',
-    ChallengeModifier.noHeal        => '해원문 HP 회복이 차단됩니다',
-    ChallengeModifier.doubleDamage  => '적 공격력이 2배입니다',
-    ChallengeModifier.limitedTowers => '타워 3종만 배치 가능합니다',
-    ChallengeModifier.speedUp       => '적 이동 속도가 50% 증가합니다',
-    ChallengeModifier.eliteOnly     => '모든 적이 엘리트입니다',
-    ChallengeModifier.noSotdae      => '솟대 타워를 배치할 수 없습니다',
-    ChallengeModifier.poorStart     => '시작 신명이 절반입니다',
+    ChallengeModifier.nightOnly     => 'challenge_desc_nightOnly',
+    ChallengeModifier.noHeal        => 'challenge_desc_noHeal',
+    ChallengeModifier.doubleDamage  => 'challenge_desc_doubleDamage',
+    ChallengeModifier.limitedTowers => 'challenge_desc_limitedTowers',
+    ChallengeModifier.speedUp       => 'challenge_desc_speedUp',
+    ChallengeModifier.eliteOnly     => 'challenge_desc_eliteOnly',
+    ChallengeModifier.noSotdae      => 'challenge_desc_noSotdae',
+    ChallengeModifier.poorStart     => 'challenge_desc_poorStart',
   };
 
   String get emoji => switch (this) {
@@ -96,11 +96,11 @@ class DailyChallengeGenerator {
 
   /// 도전 테마 제목들
   static const _titles = [
-    '굶주린 밤', '혼령의 행진', '불타는 숲',
-    '얼어붙은 전장', '피의 달', '원혼의 물결',
-    '저승의 안개', '도깨비불 축제', '만신의 시련',
-    '왕궁의 그림자', '영원한 망각', '여명의 전투',
-    '통곡의 노래', '마지막 방어선', '혼돈의 밤',
+    'challenge_title_0', 'challenge_title_1', 'challenge_title_2',
+    'challenge_title_3', 'challenge_title_4', 'challenge_title_5',
+    'challenge_title_6', 'challenge_title_7', 'challenge_title_8',
+    'challenge_title_9', 'challenge_title_10', 'challenge_title_11',
+    'challenge_title_12', 'challenge_title_13', 'challenge_title_14',
   ];
 
   /// 날짜 → 시드
@@ -178,7 +178,7 @@ class DailyChallengeGenerator {
       reward: DailyChallengeReward(
         gems: gemReward,
         exp: expReward,
-        title: '일일 수호자',
+        title: 'challenge_reward_title',
       ),
     );
   }

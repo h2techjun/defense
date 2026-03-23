@@ -35,35 +35,35 @@ class _ChapterMeta {
 const _chapters = <_ChapterMeta>[
   _ChapterMeta(
     chapter: Chapter.marketOfHunger,
-    title: '굶주린 시장',
+    title: 'chapter_1_title',
     subtitle: 'Market of Hunger',
     gradientColors: [AppColors.lavender, Color(0xFFFFAA44)],
     chapterNumber: 1,
   ),
   _ChapterMeta(
     chapter: Chapter.wailingWoods,
-    title: '통곡하는 숲',
+    title: 'chapter_2_title',
     subtitle: 'Wailing Woods',
     gradientColors: [Color(0xFF44CC88), Color(0xFF88DDAA)],
     chapterNumber: 2,
   ),
   _ChapterMeta(
     chapter: Chapter.facelessForest,
-    title: '얼굴 없는 숲',
+    title: 'chapter_3_title',
     subtitle: 'Faceless Forest',
     gradientColors: [Color(0xFFFF6666), Color(0xFFDD88FF)],
     chapterNumber: 3,
   ),
   _ChapterMeta(
     chapter: Chapter.shadowPalace,
-    title: '왕궁의 그림자',
+    title: 'chapter_4_title',
     subtitle: 'Shadow Palace',
     gradientColors: [Color(0xFF6644AA), Color(0xFF221144)],
     chapterNumber: 4,
   ),
   _ChapterMeta(
     chapter: Chapter.thresholdOfDeath,
-    title: '저승의 문턱',
+    title: 'chapter_5_title',
     subtitle: 'Threshold of Death',
     gradientColors: [Color(0xFF111111), Color(0xFF660000)],
     chapterNumber: 5,
@@ -290,7 +290,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
               Padding(
                 padding: EdgeInsets.all(12 * Responsive.scale(context)),
                 child: Text(
-                  '"해원문을 지키는 자, 원한을 꽃으로 바꾸리라."',
+                  '"${AppStrings.get(lang, 'stage_quote')}"',
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 13),
                     color: Color(0xFF665588),

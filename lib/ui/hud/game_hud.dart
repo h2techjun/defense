@@ -215,7 +215,7 @@ class GameHud extends ConsumerWidget {
                       icon: Icon(Icons.pause_circle_outline,
                           color: Colors.white70, size: Responsive.iconSize(context, isPhone ? 24 : 28)),
                       padding: EdgeInsets.zero,
-                      constraints: isPhone ? const BoxConstraints(minWidth: 32, minHeight: 32) : null,
+                      constraints: isPhone ? const BoxConstraints(minWidth: 48, minHeight: 48) : null,
                     ),
                   ],
                 ),

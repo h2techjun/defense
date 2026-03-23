@@ -93,7 +93,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       bonusExp: challenge.reward.exp,
       waveCount: challenge.targetWaves,
       floorTitle: '📅 ${challenge.title}',
-      narrative: '"오늘의 시련이 시작된다..."',
+      narrative: 'et_narr_start',
     );
 
     final waves = WaveBuilder.buildEndlessTowerFloor(floorData);
@@ -238,7 +238,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '🗼 무한의 탑',
+                  'et_title',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: Responsive.fontSize(context, 22),
@@ -292,8 +292,8 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
           fontWeight: FontWeight.bold,
         ),
         tabs: const [
-          Tab(text: '🗼 무한의 탑'),
-          Tab(text: '📅 일일 도전'),
+          Tab(text: '🗼 무한의 塔'), // TODO: et_tab_tower
+          Tab(text: '📅 일일 도전'), // TODO: et_tab_daily
         ],
       ),
     );
@@ -429,7 +429,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                 SizedBox(height: Responsive.spacing(context, 16)),
 
                 Text(
-                  '특수 규칙',
+                  'et_special_rules',
                   style: TextStyle(
                     color: Colors.amber,
                     fontSize: Responsive.fontSize(context, 14),

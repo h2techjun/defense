@@ -21,12 +21,12 @@ enum AchievementCategory {
 
 extension AchievementCategoryExt on AchievementCategory {
   String get displayName => switch (this) {
-    AchievementCategory.combat     => '전투',
-    AchievementCategory.tower      => '타워',
-    AchievementCategory.hero       => '영웅',
-    AchievementCategory.collection => '수집',
-    AchievementCategory.challenge  => '도전',
-    AchievementCategory.story      => '스토리',
+    AchievementCategory.combat     => 'ach_cat_combat',
+    AchievementCategory.tower      => 'ach_cat_tower',
+    AchievementCategory.hero       => 'ach_cat_hero',
+    AchievementCategory.collection => 'ach_cat_collection',
+    AchievementCategory.challenge  => 'ach_cat_challenge',
+    AchievementCategory.story      => 'ach_cat_story',
   };
 
   String get emoji => switch (this) {
@@ -81,45 +81,45 @@ class AchievementData {
 const List<AchievementData> allAchievements = [
   // ═══ 전투 (총 130💎) ═══
   AchievementData(
-    id: 'kill_100', name: '원혼 사냥꾼', description: '적 100마리 처치',
+    id: 'kill_100', name: 'ach_kill_100_name', description: 'ach_kill_100_desc',
     emoji: '⚔️', category: AchievementCategory.combat,
     targetValue: 100, rewardGems: 5, rewardPassXp: 30,
   ),
   AchievementData(
-    id: 'kill_1000', name: '원혼 대사냥꾼', description: '적 1,000마리 처치',
+    id: 'kill_1000', name: 'ach_kill_1000_name', description: 'ach_kill_1000_desc',
     emoji: '⚔️', category: AchievementCategory.combat,
     targetValue: 1000, rewardGems: 20, rewardPassXp: 50,
   ),
   AchievementData(
-    id: 'kill_10000', name: '원혼 멸살자', description: '적 10,000마리 처치',
+    id: 'kill_10000', name: 'ach_kill_10000_name', description: 'ach_kill_10000_desc',
     emoji: '💀', category: AchievementCategory.combat,
     targetValue: 10000, rewardGems: 50, rewardPassXp: 80,
     rewardTitle: 'title_soul_slayer', // 전용 칭호
   ),
   AchievementData(
-    id: 'boss_kill_10', name: '보스 사냥꾼', description: '보스 10마리 처치',
+    id: 'boss_kill_10', name: 'ach_boss_kill_10_name', description: 'ach_boss_kill_10_desc',
     emoji: '👹', category: AchievementCategory.combat,
     targetValue: 10, rewardGems: 15, rewardPassXp: 40,
   ),
   AchievementData(
-    id: 'no_damage_clear', name: '완벽한 수비', description: '해원문 피해 0으로 스테이지 클리어',
+    id: 'no_damage_clear', name: 'ach_no_damage_clear_name', description: 'ach_no_damage_clear_desc',
     emoji: '🛡️', category: AchievementCategory.combat,
     targetValue: 1, rewardGems: 40, rewardPassXp: 50, isHidden: true,
   ),
 
   // ═══ 타워 (총 60💎) ═══
   AchievementData(
-    id: 'build_50', name: '건축가', description: '타워 50개 건설',
+    id: 'build_50', name: 'ach_build_50_name', description: 'ach_build_50_desc',
     emoji: '🏗️', category: AchievementCategory.tower,
     targetValue: 50, rewardGems: 5, rewardPassXp: 30,
   ),
   AchievementData(
-    id: 'tier3_tower', name: '전설의 방어탑', description: '타워 Tier 3 달성',
+    id: 'tier3_tower', name: 'ach_tier3_tower_name', description: 'ach_tier3_tower_desc',
     emoji: '🏯', category: AchievementCategory.tower,
     targetValue: 1, rewardGems: 15, rewardPassXp: 50,
   ),
   AchievementData(
-    id: 'all_tower_tier3', name: '만능 건축가', description: '모든 타워 종류 Tier 3 달성',
+    id: 'all_tower_tier3', name: 'ach_all_tower_tier3_name', description: 'ach_all_tower_tier3_desc',
     emoji: '👷', category: AchievementCategory.tower,
     targetValue: 5, rewardGems: 40, rewardPassXp: 70,
     rewardFrame: 'frame_master_builder', // 전용 프레임
@@ -127,40 +127,40 @@ const List<AchievementData> allAchievements = [
 
   // ═══ 영웅 (총 80💎) ═══
   AchievementData(
-    id: 'hero_lv10', name: '숙련된 영웅', description: '영웅 레벨 10 달성',
+    id: 'hero_lv10', name: 'ach_hero_lv10_name', description: 'ach_hero_lv10_desc',
     emoji: '⭐', category: AchievementCategory.hero,
     targetValue: 10, rewardGems: 10, rewardPassXp: 30,
   ),
   AchievementData(
-    id: 'hero_lv30', name: '전설 영웅', description: '영웅 레벨 30 달성',
+    id: 'hero_lv30', name: 'ach_hero_lv30_name', description: 'ach_hero_lv30_desc',
     emoji: '🌟', category: AchievementCategory.hero,
     targetValue: 30, rewardGems: 30, rewardPassXp: 80,
     rewardFrame: 'frame_legend_hero', // 전용 프레임
   ),
   AchievementData(
-    id: 'all_heroes', name: '다섯 영웅 집결', description: '모든 영웅 사용',
+    id: 'all_heroes', name: 'ach_all_heroes_name', description: 'ach_all_heroes_desc',
     emoji: '🦊', category: AchievementCategory.hero,
     targetValue: 5, rewardGems: 20, rewardPassXp: 50,
   ),
   AchievementData(
-    id: 'skill_100', name: '스킬 마스터', description: '영웅 스킬 100회 사용',
+    id: 'skill_100', name: 'ach_skill_100_name', description: 'ach_skill_100_desc',
     emoji: '🔥', category: AchievementCategory.hero,
     targetValue: 100, rewardGems: 20, rewardPassXp: 40,
   ),
 
   // ═══ 수집 (총 80💎) ═══
   AchievementData(
-    id: 'skins_5', name: '패셔니스타', description: '스킨 5종 수집',
+    id: 'skins_5', name: 'ach_skins_5_name', description: 'ach_skins_5_desc',
     emoji: '👗', category: AchievementCategory.collection,
     targetValue: 5, rewardGems: 15, rewardPassXp: 40,
   ),
   AchievementData(
-    id: 'relics_5', name: '유물 수집가', description: '유물 5종 수집',
+    id: 'relics_5', name: 'ach_relics_5_name', description: 'ach_relics_5_desc',
     emoji: '🏺', category: AchievementCategory.collection,
     targetValue: 5, rewardGems: 15, rewardPassXp: 40,
   ),
   AchievementData(
-    id: 'all_relics', name: '전설의 고고학자', description: '모든 유물 수집',
+    id: 'all_relics', name: 'ach_all_relics_name', description: 'ach_all_relics_desc',
     emoji: '🗿', category: AchievementCategory.collection,
     targetValue: 25, rewardGems: 50, rewardPassXp: 80, isHidden: true,
     rewardTitle: 'title_archaeologist', // 전용 칭호
@@ -168,61 +168,61 @@ const List<AchievementData> allAchievements = [
 
   // ═══ 도전 (총 280💎) ═══
   AchievementData(
-    id: 'tower_floor_10', name: '탑 탐험가', description: '무한의 탑 10층 도달',
+    id: 'tower_floor_10', name: 'ach_tower_floor_10_name', description: 'ach_tower_floor_10_desc',
     emoji: '🗼', category: AchievementCategory.challenge,
     targetValue: 10, rewardGems: 10, rewardPassXp: 30,
   ),
   AchievementData(
-    id: 'tower_floor_50', name: '탑 정복자', description: '무한의 탑 50층 도달',
+    id: 'tower_floor_50', name: 'ach_tower_floor_50_name', description: 'ach_tower_floor_50_desc',
     emoji: '🏔️', category: AchievementCategory.challenge,
     targetValue: 50, rewardGems: 40, rewardPassXp: 80,
   ),
   AchievementData(
-    id: 'tower_floor_100', name: '탑의 전설', description: '무한의 탑 100층 도달',
+    id: 'tower_floor_100', name: 'ach_tower_floor_100_name', description: 'ach_tower_floor_100_desc',
     emoji: '👑', category: AchievementCategory.challenge,
     targetValue: 100, rewardGems: 100, rewardPassXp: 100, isHidden: true,
     rewardFrame: 'frame_tower_legend', // 전용 프레임
     rewardTitle: 'title_tower_legend', // 전용 칭호
   ),
   AchievementData(
-    id: 'daily_streak_7', name: '꾸준한 수호자', description: '일일 도전 7일 연속 참여',
+    id: 'daily_streak_7', name: 'ach_daily_streak_7_name', description: 'ach_daily_streak_7_desc',
     emoji: '🔥', category: AchievementCategory.challenge,
     targetValue: 7, rewardGems: 30, rewardPassXp: 50,
   ),
   AchievementData(
-    id: 'daily_streak_30', name: '월간 수호자', description: '일일 도전 30일 연속 참여',
+    id: 'daily_streak_30', name: 'ach_daily_streak_30_name', description: 'ach_daily_streak_30_desc',
     emoji: '🏅', category: AchievementCategory.challenge,
     targetValue: 30, rewardGems: 100, rewardPassXp: 80,
   ),
 
   // ═══ 스토리 (총 400💎) ═══
   AchievementData(
-    id: 'clear_ep1', name: '장터의 해방', description: '에피소드 1 클리어',
+    id: 'clear_ep1', name: 'ach_clear_ep1_name', description: 'ach_clear_ep1_desc',
     emoji: '📖', category: AchievementCategory.story,
     targetValue: 1, rewardGems: 30, rewardPassXp: 50,
   ),
   AchievementData(
-    id: 'clear_ep2', name: '숲의 정화', description: '에피소드 2 클리어',
+    id: 'clear_ep2', name: 'ach_clear_ep2_name', description: 'ach_clear_ep2_desc',
     emoji: '📖', category: AchievementCategory.story,
     targetValue: 1, rewardGems: 30, rewardPassXp: 50,
   ),
   AchievementData(
-    id: 'clear_ep3', name: '얼굴 찾기', description: '에피소드 3 클리어',
+    id: 'clear_ep3', name: 'ach_clear_ep3_name', description: 'ach_clear_ep3_desc',
     emoji: '📖', category: AchievementCategory.story,
     targetValue: 1, rewardGems: 30, rewardPassXp: 50,
   ),
   AchievementData(
-    id: 'clear_ep4', name: '왕궁의 진실', description: '에피소드 4 클리어',
+    id: 'clear_ep4', name: 'ach_clear_ep4_name', description: 'ach_clear_ep4_desc',
     emoji: '📖', category: AchievementCategory.story,
     targetValue: 1, rewardGems: 30, rewardPassXp: 50,
   ),
   AchievementData(
-    id: 'clear_ep5', name: '저승의 문 봉인', description: '에피소드 5 클리어 (시즌 1 완결)',
+    id: 'clear_ep5', name: 'ach_clear_ep5_name', description: 'ach_clear_ep5_desc',
     emoji: '📖', category: AchievementCategory.story,
     targetValue: 1, rewardGems: 100, rewardPassXp: 80,
   ),
   AchievementData(
-    id: 'all_stars', name: '완전 정복', description: '모든 스테이지 별 3개 달성',
+    id: 'all_stars', name: 'ach_all_stars_name', description: 'ach_all_stars_desc',
     emoji: '⭐', category: AchievementCategory.story,
     targetValue: 1, rewardGems: 180, rewardPassXp: 100, isHidden: true,
     rewardTitle: 'title_perfect_conqueror', // 전용 칭호
@@ -263,7 +263,7 @@ class RankingEntry {
   };
 
   factory RankingEntry.fromJson(Map<String, dynamic> json) => RankingEntry(
-    playerName: json['playerName'] as String? ?? '무명',
+    playerName: json['playerName'] as String? ?? 'default_player_name',
     score: json['score'] as int? ?? 0,
     achievedAt: DateTime.tryParse(json['achievedAt'] as String? ?? '') ?? DateTime.now(),
     usedHero: json['usedHero'] != null

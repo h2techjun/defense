@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/enums.dart';
 import '../../common/responsive.dart';
 import '../../data/models/relic_data.dart';
+import '../../l10n/app_strings.dart';
 import '../../state/relic_provider.dart';
 import '../theme/app_colors.dart';
 
@@ -22,11 +23,11 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
   HeroId _selectedHero = HeroId.kkaebi;
 
   static const _heroNames = {
-    HeroId.kkaebi: '깨비',
-    HeroId.miho: '미호',
-    HeroId.gangrim: '강림',
-    HeroId.sua: '수아',
-    HeroId.bari: '바리',
+    HeroId.kkaebi: 'hero_kkaebi',
+    HeroId.miho: 'hero_miho',
+    HeroId.gangrim: 'hero_gangrim',
+    HeroId.sua: 'hero_sua',
+    HeroId.bari: 'hero_bari',
   };
 
   static const _heroEmojis = {
@@ -47,7 +48,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF1A0E2E),
       appBar: AppBar(
-        title: Text('유물 장착', style: TextStyle(
+        title: Text(AppStrings.get(GameLanguage.ko, 'relic_title'), style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: Responsive.fontSize(context, 18),
         )),
@@ -200,7 +201,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  relic?.nameKo ?? '슬롯 비어있음',
+                  relic?.nameKo ?? AppStrings.get(GameLanguage.ko, 'relic_slot_empty'),
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 14),
                     fontWeight: FontWeight.bold,
@@ -211,7 +212,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                 ),
                 SizedBox(height: 3 * s),
                 Text(
-                  relic?.description ?? '유물을 장착해주세요',
+                  relic?.description ?? AppStrings.get(GameLanguage.ko, 'relic_equip_prompt'),
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 10),
                     color: relic != null ? Colors.white70 : Colors.white30,
@@ -310,7 +311,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                 if (equippedByOther) ...[
                   SizedBox(height: 2 * s),
                   Text(
-                    '(다른 영웅 장착 중)',
+                    'relic_other_equipped',
                     style: TextStyle(
                       fontSize: Responsive.fontSize(context, 7),
                       color: Colors.orangeAccent,

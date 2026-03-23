@@ -130,6 +130,7 @@ class RallyFlagComponent extends PositionComponent
     _flagBody.paint.color = const Color(0xFFFF4444);
 
     // 모든 병사의 랠리 포인트 업데이트
+    print('🚩 Flag drag ended, updating \ soldiers');
     _updateSoldiersRallyPoint();
   }
 
@@ -141,12 +142,14 @@ class RallyFlagComponent extends PositionComponent
     _flagBody.paint.color = const Color(0xFFFF4444);
   }
 
-  /// 모든 병사의 랠리 포인트를 깃발 위치로 업데이트
+  /// 모든 병사의 랠리 포인트를 깃발 위치로 업데이트 + 교전 해제
   void _updateSoldiersRallyPoint() {
     for (final soldier in soldiers) {
       if (soldier.isMounted) {
-        // 부활 중이든 살아있든 모두 랠리포인트 업데이트
-        soldier.rallyPoint = position.clone();
+        // 교전 해제 + 즉시 새 위치로 이동 시작
+        soldier.forceFollowRally(position);
+        // DEBUG
+        print('🚩 Soldier rallyPoint updated: mounted=\ pos=\ -> rally=');
       }
     }
   }

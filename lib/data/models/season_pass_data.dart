@@ -93,8 +93,8 @@ class SeasonInfo {
 /// 시즌 1 데이터 (50레벨, 3개월)
 final SeasonInfo season1 = SeasonInfo(
   seasonNumber: 1,
-  title: '시즌 1: 원혼의 봄',
-  theme: '벚꽃이 지는 한양, 해원의 문이 열리다',
+  title: 'season_1_title',
+  theme: 'season_1_theme',
   startDate: DateTime(2026, 3, 1),
   endDate: DateTime(2026, 5, 31),
   rewards: _buildSeason1Rewards(),
@@ -110,7 +110,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(PassReward(
         level: lv,
         type: PassRewardType.gems,
-        name: '보석 5개',
+        name: 'pass_gems_5',
         emoji: '💎',
         amount: 5,
       ));
@@ -119,7 +119,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(PassReward(
         level: lv,
         type: PassRewardType.gold,
-        name: '골드 500',
+        name: 'pass_gold_500',
         emoji: '🪙',
         amount: 500,
       ));
@@ -128,7 +128,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(PassReward(
         level: lv,
         type: PassRewardType.heroXp,
-        name: '영웅 경험치 50',
+        name: 'pass_hero_xp_50',
         emoji: '⭐',
         amount: 50,
       ));
@@ -140,7 +140,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(const PassReward(
         level: 1,
         type: PassRewardType.frame,
-        name: '시즌 1 프레임',
+        name: 'pass_frame_s1',
         emoji: '🖼️',
         isPremium: true,
         unlockId: 'frame_season1',
@@ -149,7 +149,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(const PassReward(
         level: 5,
         type: PassRewardType.summonTicket,
-        name: '소환권 1장',
+        name: 'pass_ticket_1',
         emoji: '🎫',
         amount: 1,
         isPremium: true,
@@ -158,7 +158,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(const PassReward(
         level: 10,
         type: PassRewardType.skin,
-        name: '벚꽃 깨비 스킨',
+        name: 'pass_skin_cherry_kkaebi',
         emoji: '🌸',
         isPremium: true,
         unlockId: 'kkaebiCherry',
@@ -167,7 +167,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(const PassReward(
         level: 15,
         type: PassRewardType.summonTicket,
-        name: '소환권 2장',
+        name: 'pass_ticket_2',
         emoji: '🎫',
         amount: 2,
         isPremium: true,
@@ -176,7 +176,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(const PassReward(
         level: 20,
         type: PassRewardType.relic,
-        name: '봄바람 노리개',
+        name: 'pass_relic_spring',
         emoji: '🎐',
         isPremium: true,
         unlockId: 'relic_spring_norigae',
@@ -185,7 +185,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(const PassReward(
         level: 25,
         type: PassRewardType.gems,
-        name: '보석 15개',
+        name: 'pass_gems_15',
         emoji: '💎',
         amount: 15,
         isPremium: true,
@@ -194,7 +194,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(const PassReward(
         level: 30,
         type: PassRewardType.skin,
-        name: '달빛 미호 스킨',
+        name: 'pass_skin_moonlight_miho',
         emoji: '🌙',
         isPremium: true,
         unlockId: 'mihoMoonlight',
@@ -203,7 +203,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(const PassReward(
         level: 35,
         type: PassRewardType.summonTicket,
-        name: '소환권 3장',
+        name: 'pass_ticket_3',
         emoji: '🎫',
         amount: 3,
         isPremium: true,
@@ -212,7 +212,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(const PassReward(
         level: 40,
         type: PassRewardType.title,
-        name: '원혼 해방자 칭호',
+        name: 'pass_title_liberator',
         emoji: '👑',
         isPremium: true,
         unlockId: 'title_soul_liberator',
@@ -221,7 +221,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(const PassReward(
         level: 45,
         type: PassRewardType.gems,
-        name: '보석 20개',
+        name: 'pass_gems_20',
         emoji: '💎',
         amount: 20,
         isPremium: true,
@@ -230,7 +230,7 @@ List<PassReward> _buildSeason1Rewards() {
       rewards.add(const PassReward(
         level: 50,
         type: PassRewardType.skin,
-        name: '신녀 바리 스킨 (한정)',
+        name: 'pass_skin_divine_bari',
         emoji: '✨',
         isPremium: true,
         unlockId: 'bariDivine',

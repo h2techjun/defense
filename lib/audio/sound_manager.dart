@@ -72,26 +72,26 @@ class SoundManager {
   bool _useFileBgm = false;  // 파일 BGM 사용 여부
   final Random _rng = Random();
 
-  /// AI 생성 BGM 트랙 목록 (Lyria RealTime 10곡)
+  /// K-Poker 고품질 BGM 트랙 목록 (10곡, mp3)
   static const List<String> _bgmTracks = [
-    'bgm/joseon_kpop_battle.wav',
-    'bgm/spirit_realm_ambience.wav',
-    'bgm/tower_defense_hype.wav',
-    'bgm/moonlit_strategy.wav',
-    'bgm/boss_wave_fury.wav',
-    'bgm/folk_village_peace.wav',
-    'bgm/neon_hanbok_groove.wav',
-    'bgm/dark_shaman_ritual.wav',
-    'bgm/victory_celebration.wav',
-    'bgm/ancient_gateway_epic.wav',
+    'bgm/bgm_1.mp3',   // 0: 차분한 분위기
+    'bgm/bgm_2.mp3',   // 1: 서정적/몽환
+    'bgm/bgm_3.mp3',   // 2: 긴장감 상승
+    'bgm/bgm_4.mp3',   // 3: 전투 활기
+    'bgm/bgm_5.mp3',   // 4: 전략적/침착
+    'bgm/bgm_6.mp3',   // 5: 다이나믹 전투
+    'bgm/bgm_7.mp3',   // 6: 어두운 분위기
+    'bgm/bgm_8.mp3',   // 7: 강렬/보스급
+    'bgm/bgm_9.mp3',   // 8: 장엄/에픽
+    'bgm/bgm_10.mp3',  // 9: 승리/축제
   ];
 
   /// BgmType별 추천 트랙 인덱스 (분위기 매칭)
   static const Map<BgmType, List<int>> _bgmTypePreferred = {
-    BgmType.menu: [5, 1, 9, 3],       // 평화로운/서사적
-    BgmType.dayBgm: [0, 2, 6, 8],     // 활기찬/전투
-    BgmType.nightBgm: [1, 3, 7, 9],   // 어둡고/몽환적
-    BgmType.boss: [4, 0, 7, 2],       // 격렬한/긴박
+    BgmType.menu: [0, 1, 4],          // 차분/서정/전략
+    BgmType.dayBgm: [3, 4, 5, 9],     // 활기찬/전투/다이나믹
+    BgmType.nightBgm: [1, 2, 6, 8],   // 서정/긴장/어두운/장엄
+    BgmType.boss: [7, 5, 2, 8],       // 강렬/다이나믹/긴장/에픽
   };
 
   /// 최근 재생한 트랙 인덱스 (중복 방지)
@@ -194,7 +194,7 @@ class SoundManager {
             'sfx/branch_thunder.wav',
             'sfx/branch_fire.wav',
             'sfx/branch_grapple.wav',
-            // BGM (AI 생성 10곡)
+            // BGM (K-Poker 고품질 10곡)
             ..._bgmTracks,
           ]);
           _useFileBgm = true;
@@ -258,7 +258,9 @@ class SoundManager {
       try {
         // FlameAudio.play()는 Future를 반환 — 비동기 에러를 반드시 catch해야 함!
         // 안 그러면 Zone으로 전파되어 "Invalid argument" 에러 화면 유발
-        FlameAudio.play(sfxFile, volume: _sfxVolume).catchError((e) {
+        FlameAudio.play(sfxFile, volume: _sfxVolume).then((_) {
+          // 성공 — 이 블록 비어 있어도 OK
+        }).catchError((Object e) {
           // 오디오 재생 실패 무시 (게임 진행에 영향 없음)
           if (kDebugMode) debugPrint('⚠️ SFX 재생 실패[$type]: $e');
         });

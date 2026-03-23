@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'save_manager.dart';
+import '../l10n/app_strings.dart';
 
 /// 광고 유형
 enum AdType {
@@ -115,7 +116,7 @@ class AdManager {
   /// 남은 시간 포맷 ("2시간 30분" / "45분" / "즉시 가능")
   String get freeGemsCooldownFormatted {
     final secs = freeGemsCooldownSeconds;
-    if (secs <= 0) return '즉시 가능';
+    if (secs <= 0) return AppStrings.get(GameLanguage.ko, 'ad_cooldown_ready');
     final hours = secs ~/ 3600;
     final mins = (secs % 3600) ~/ 60;
     if (hours > 0) {
@@ -124,8 +125,8 @@ class AdManager {
     return '${mins}분';
   }
 
-  /// 현재 회차 번호 (1~5)
-  int get currentFreeGemsRound => _dailyFreeGemsCount + 1;
+  /// 오늘 수집한 무료 보석 횟수 (0~5)
+  int get currentFreeGemsRound => _dailyFreeGemsCount;
 
   /// 다음 보상형 광고까지 남은 시간 (초)
   int get rewardedAdCooldownSeconds {

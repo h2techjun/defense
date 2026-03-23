@@ -9,6 +9,7 @@ import '../../common/responsive.dart';
 import '../../data/models/daily_quest_data.dart';
 import '../../state/daily_quest_provider.dart';
 import '../../audio/sound_manager.dart';
+import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 
 class DailyQuestScreen extends ConsumerStatefulWidget {
@@ -53,6 +54,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
   @override
   Widget build(BuildContext context) {
     final questState = ref.watch(dailyQuestProvider);
+    final lang = ref.watch(gameLanguageProvider);
     final s = Responsive.scale(context);
 
     return Scaffold(
@@ -73,40 +75,40 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
           SafeArea(
             child: Column(
               children: [
-                _buildHeader(context, questState, s),
+                _buildHeader(context, questState, lang, s),
                 Expanded(
                   child: ListView(
                     padding: EdgeInsets.all(16 * s),
                     children: [
                       // ── 연속 출석 캘린더 ──
-                      _buildStreakCalendar(context, ref, questState, s),
+                      _buildStreakCalendar(context, ref, questState, lang, s),
                       SizedBox(height: 16 * s),
 
                       // ── 월간 출석 캘린더 (28일) ──
-                      _buildMonthlyCalendar(context, ref, questState, s),
+                      _buildMonthlyCalendar(context, ref, questState, lang, s),
                       SizedBox(height: 20 * s),
 
                       // ── 일일 미션 카드 ──
-                      _buildSectionTitle('📋 오늘의 미션', s),
+                      _buildSectionTitle(AppStrings.get(lang, 'daily_quest_section_today'), s),
                       SizedBox(height: 8 * s),
                       ...questState.mainQuests.map(
-                        (q) => _buildQuestCard(context, ref, questState, q, false, s),
+                        (q) => _buildQuestCard(context, ref, questState, q, false, lang, s),
                       ),
 
                       SizedBox(height: 16 * s),
 
                       // ── 보너스 미션 ──
                       if (questState.bonusQuests.isNotEmpty) ...[
-                        _buildSectionTitle('⭐ 보너스 미션', s),
+                        _buildSectionTitle(AppStrings.get(lang, 'daily_quest_section_bonus'), s),
                         SizedBox(height: 8 * s),
                         ...questState.bonusQuests.map(
-                          (q) => _buildQuestCard(context, ref, questState, q, true, s),
+                          (q) => _buildQuestCard(context, ref, questState, q, true, lang, s),
                         ),
                         SizedBox(height: 16 * s),
                       ],
 
                       // ── 올클리어 보너스 ──
-                      _buildAllClearBonus(context, ref, questState, s),
+                      _buildAllClearBonus(context, ref, questState, lang, s),
                       SizedBox(height: 40 * s),
                     ],
                   ),
@@ -119,7 +121,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, DailyQuestState state, double s) {
+  Widget _buildHeader(BuildContext context, DailyQuestState state, GameLanguage lang, double s) {
     final completed = state.quests.where((q) => state.isCompleted(q.id)).length;
     final total = state.quests.length;
 
@@ -143,7 +145,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '📋 일일 미션',
+                  AppStrings.get(lang, 'daily_quest_title'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: Responsive.fontSize(context, 22),
@@ -151,7 +153,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                   ),
                 ),
                 Text(
-                  '완료: $completed / $total | 🔥 연속 ${state.loginStreak}일차',
+                  AppStrings.get(lang, 'daily_quest_progress').replaceAll('{completed}', '$completed').replaceAll('{total}', '$total').replaceAll('{streak}', '${state.loginStreak}'),
                   style: TextStyle(
                     color: Colors.white60,
                     fontSize: Responsive.fontSize(context, 12),
@@ -164,7 +166,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                     Icon(Icons.timer, color: Colors.amber, size: 14 * s),
                     SizedBox(width: 4 * s),
                     Text(
-                      '초기화까지 ${_getRemainingTime()}',
+                      AppStrings.get(lang, 'daily_quest_reset_timer').replaceAll('{time}', _getRemainingTime()),
                       style: TextStyle(
                         color: _now.hour >= 23 ? Colors.redAccent : Colors.amber,
                         fontSize: Responsive.fontSize(context, 11),
@@ -191,7 +193,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                 Text('🔥', style: TextStyle(fontSize: 16 * s)),
                 SizedBox(width: 4 * s),
                 Text(
-                  '${state.loginStreak}일',
+                  '${state.loginStreak}${AppStrings.get(lang, 'daily_quest_streak_day').replaceAll('{day}', '')}',
                   style: const TextStyle(
                     color: Colors.white, fontWeight: FontWeight.bold,
                   ),
@@ -204,7 +206,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
     );
   }
 
-  Widget _buildStreakCalendar(BuildContext context, WidgetRef ref, DailyQuestState state, double s) {
+  Widget _buildStreakCalendar(BuildContext context, WidgetRef ref, DailyQuestState state, GameLanguage lang, double s) {
     return Container(
       padding: EdgeInsets.all(16 * s),
       decoration: BoxDecoration(
@@ -224,7 +226,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '📅 연속 출석 보상',
+            AppStrings.get(lang, 'daily_quest_streak_reward'),
             style: TextStyle(
               color: Colors.white,
               fontSize: Responsive.fontSize(context, 16),
@@ -294,7 +296,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                     SizedBox(height: 4 * s),
                     // 일차
                     Text(
-                      '${reward.day}일',
+                      AppStrings.get(lang, 'daily_quest_streak_day').replaceAll('{day}', '${reward.day}'),
                       style: TextStyle(
                         color: isReached ? Colors.white : Colors.white38,
                         fontSize: 14 * s,
@@ -325,7 +327,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
 
   Widget _buildQuestCard(
     BuildContext context, WidgetRef ref, DailyQuestState state,
-    DailyQuest quest, bool isBonus, double s,
+    DailyQuest quest, bool isBonus, GameLanguage lang, double s,
   ) {
     final progress = state.progress[quest.id] ?? 0;
     final isCompleted = progress >= quest.targetValue;
@@ -380,7 +382,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
-                              '보너스',
+                              AppStrings.get(lang, 'daily_quest_bonus_badge'),
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 11 * s,
@@ -456,7 +458,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                       SoundManager.instance.playSfx(SfxType.uiUpgrade);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('${quest.type.emoji} 보상 획득!'),
+                          content: Text(AppStrings.get(lang, 'daily_quest_reward_claimed').replaceAll('{emoji}', quest.type.emoji)),
                           backgroundColor: Colors.green.shade700,
                         ),
                       );
@@ -468,7 +470,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 8 * s),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: Text('수령', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * s)),
+                  child: Text(AppStrings.get(lang, 'daily_quest_claim_button'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13 * s)),
                 )
               else if (quest.type.routePath != null)
                 // 바로가기 버튼 추가
@@ -477,14 +479,14 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                     widget.onBack();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('해당 메뉴 탭을 선택해주세요! 🚀'),
+                        content: Text(AppStrings.get(lang, 'daily_quest_go_menu')),
                         backgroundColor: Colors.cyan.shade700,
                         duration: const Duration(seconds: 2),
                       ),
                     );
                   },
                   icon: Icon(Icons.flight_takeoff, size: 14 * s, color: Colors.cyan),
-                  label: Text('이동', style: TextStyle(color: Colors.cyan, fontSize: 13 * s, fontWeight: FontWeight.bold)),
+                  label: Text(AppStrings.get(lang, 'daily_quest_go_button'), style: TextStyle(color: Colors.cyan, fontSize: 13 * s, fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: Colors.cyan.withAlpha(100)),
                     padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 4 * s),
@@ -537,7 +539,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
     );
   }
 
-  Widget _buildAllClearBonus(BuildContext context, WidgetRef ref, DailyQuestState state, double s) {
+  Widget _buildAllClearBonus(BuildContext context, WidgetRef ref, DailyQuestState state, GameLanguage lang, double s) {
     final isReady = state.isAllMainCompleted;
     final isClaimed = state.allClearClaimed;
 
@@ -547,8 +549,8 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
               final success = ref.read(dailyQuestProvider.notifier).claimAllClearBonus();
               if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('🎁 올클리어 보너스 획득!'),
+                  SnackBar(
+                    content: Text(AppStrings.get(lang, 'daily_quest_all_clear_bonus')),
                     backgroundColor: Colors.purple,
                   ),
                 );
@@ -590,7 +592,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
             ),
             SizedBox(height: 8 * s),
             Text(
-              '올클리어 보너스',
+              AppStrings.get(lang, 'daily_quest_all_clear'),
               style: TextStyle(
                 color: isClaimed ? Colors.green : Colors.white,
                 fontSize: 16 * s,
@@ -600,10 +602,10 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
             SizedBox(height: 4 * s),
             Text(
               isClaimed
-                  ? '수령 완료!'
+                  ? AppStrings.get(lang, 'daily_quest_all_clear_done')
                   : isReady
-                      ? '탭하여 수령하세요!'
-                      : '메인 미션 6개를 모두 완료하세요',
+                      ? AppStrings.get(lang, 'daily_quest_all_clear_ready')
+                      : AppStrings.get(lang, 'daily_quest_all_clear_locked'),
               style: TextStyle(
                 color: isClaimed ? Colors.green.shade300 : Colors.white60,
                 fontSize: 12 * s,
@@ -626,7 +628,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
 
   /// ── 28일 월간 출석 캘린더 ──
   Widget _buildMonthlyCalendar(
-    BuildContext context, WidgetRef ref, DailyQuestState state, double s,
+    BuildContext context, WidgetRef ref, DailyQuestState state, GameLanguage lang, double s,
   ) {
     return Container(
       padding: EdgeInsets.all(12 * s),
@@ -642,7 +644,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
         children: [
           Row(
             children: [
-              Text('📅 월간 출석 보상', style: TextStyle(
+              Text(AppStrings.get(lang, 'daily_quest_monthly_title'), style: TextStyle(
                 color: Colors.white,
                 fontSize: 15 * s,
                 fontWeight: FontWeight.bold,
@@ -654,7 +656,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                   color: Colors.amber.withAlpha(30),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text('${state.monthlyLoginCount}/28일', style: TextStyle(
+                child: Text(AppStrings.get(lang, 'daily_quest_monthly_count').replaceAll('{count}', '${state.monthlyLoginCount}'), style: TextStyle(
                   color: Colors.amber,
                   fontSize: 11 * s,
                   fontWeight: FontWeight.bold,

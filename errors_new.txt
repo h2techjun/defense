@@ -1,0 +1,2 @@
+error - lib\game\world\game_map.dart:167:22 - The argument type 'Image?' can't be assigned to the parameter type 'Image'.  - argument_type_not_assignable
+error - lib\game\world\game_map.dart:172:9 - The argument type 'SpriteComponent?' can't be assigned to the parameter type 'Component'.  - argument_type_not_assignable

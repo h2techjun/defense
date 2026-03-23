@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../common/enums.dart';
 import '../../data/game_data_loader.dart';
+import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../theme/glass_panel.dart';
 
@@ -69,7 +70,7 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                       colors: [color, Colors.white, color],
                     ).createShader(bounds),
                     child: const Text(
-                      '✨ 새 영웅 해금! ✨',
+                      'hero_new_unlock',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -184,8 +185,8 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                           ),
                         ],
                       ),
-                      child: const Text(
-                        '출전 준비! 🎩',
+                      child: Text(
+                        AppStrings.get(GameLanguage.ko, 'hero_ready'),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

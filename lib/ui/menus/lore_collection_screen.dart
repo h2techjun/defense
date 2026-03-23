@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/responsive.dart';
 import '../../data/models/lore_collection_data.dart';
+import '../../l10n/app_strings.dart';
 import '../../state/lore_collection_provider.dart';
 import '../theme/app_colors.dart';
 
@@ -101,7 +102,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '📜 설화도감',
+                  'lore_title',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: Responsive.fontSize(context, 22),
@@ -221,7 +222,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
   Widget _buildEntryList(BuildContext context, WidgetRef ref,
       LoreCollectionState state, List<LoreEntry> entries, double s) {
     if (entries.isEmpty) {
-      return const Center(child: Text('아직 항목이 없습니다', style: TextStyle(color: Colors.white38)));
+      return Center(child: Text(AppStrings.get(GameLanguage.ko, 'lore_empty'), style: const TextStyle(color: Colors.white38)));
     }
 
     return ListView.builder(
@@ -302,7 +303,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
         children: isLocked
             ? [
                 Text(
-                  '이 존재를 처음 만나면 해금됩니다...',
+                  AppStrings.get(GameLanguage.ko, 'lore_locked_hint'),
                   style: TextStyle(color: Colors.white24, fontStyle: FontStyle.italic, fontSize: 14 * s),
                 ),
               ]
@@ -320,7 +321,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
 
     // 기본 설명 (encountered 이상)
     widgets.add(_loreSection(
-      '📋 기본 정보',
+      'lore_basic_label',
       tier.index >= LoreUnlockTier.basic.index
           ? entry.basicDescription
           : '${entry.basicKills}마리 처치 시 해금 (${kills}/${entry.basicKills})',
@@ -331,7 +332,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
     // 비밀 설화 (100킬)
     widgets.add(SizedBox(height: 8 * s));
     widgets.add(_loreSection(
-      '🔮 비밀 설화',
+      'lore_secret_label',
       tier.index >= LoreUnlockTier.secretLore.index
           ? entry.secretDescription
           : '${entry.secretKills}마리 처치 시 해금 (${kills}/${entry.secretKills})',
@@ -342,7 +343,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
     // 숨겨진 이야기 (1000킬)
     widgets.add(SizedBox(height: 8 * s));
     widgets.add(_loreSection(
-      '👑 숨겨진 이야기',
+      'lore_hidden_label',
       tier.index >= LoreUnlockTier.hiddenStory.index
           ? entry.hiddenDescription
           : '${entry.hiddenKills}마리 처치 시 해금 (${kills}/${entry.hiddenKills})',
@@ -461,11 +462,11 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
 
   Widget _tierBadge(LoreUnlockTier tier, double s) {
     final (label, color) = switch (tier) {
-      LoreUnlockTier.locked      => ('미발견', Colors.grey),
-      LoreUnlockTier.encountered => ('조우',   Colors.blue),
-      LoreUnlockTier.basic       => ('기본',   Colors.green),
-      LoreUnlockTier.secretLore  => ('비밀',   Colors.purple),
-      LoreUnlockTier.hiddenStory => ('전설',   Colors.amber),
+      LoreUnlockTier.locked      => (AppStrings.get(GameLanguage.ko, 'lore_tier_locked'), Colors.grey),
+      LoreUnlockTier.encountered => (AppStrings.get(GameLanguage.ko, 'lore_tier_encountered'),   Colors.blue),
+      LoreUnlockTier.basic       => (AppStrings.get(GameLanguage.ko, 'lore_tier_basic'),   Colors.green),
+      LoreUnlockTier.secretLore  => (AppStrings.get(GameLanguage.ko, 'lore_tier_secret'),   Colors.purple),
+      LoreUnlockTier.hiddenStory => (AppStrings.get(GameLanguage.ko, 'lore_tier_hidden'),   Colors.amber),
     };
 
     return Container(

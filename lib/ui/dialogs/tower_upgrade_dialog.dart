@@ -7,6 +7,7 @@ import '../../audio/sound_manager.dart';
 import '../../common/enums.dart';
 import '../../data/game_data_loader.dart';
 import '../../data/models/tower_data.dart';
+import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../theme/glass_panel.dart';
 
@@ -72,81 +73,92 @@ class TowerUpgradeDialog extends StatelessWidget {
     final showBranch = needsBranch || (currentLevel == 3 && !isMaxLevel);
 
     return GlassPanel(
-      borderRadius: 16,
-      blurAmount: 10,
-      backgroundColor: AppColors.surfaceDark.withAlpha(200),
+      borderRadius: 10,
+      blurAmount: 8,
+      backgroundColor: AppColors.surfaceDark.withAlpha(210),
       borderColor: _getColorForType(towerType).withAlpha(180),
-      borderWidth: 1.5,
-      padding: const EdgeInsets.all(10),
+      borderWidth: 1.0,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       boxShadow: [
         BoxShadow(
-          color: _getColorForType(towerType).withAlpha(40),
-          blurRadius: 20,
-          spreadRadius: 4,
+          color: _getColorForType(towerType).withAlpha(30),
+          blurRadius: 12,
+          spreadRadius: 2,
         ),
       ],
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 125),
+        constraints: const BoxConstraints(maxWidth: 130),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ── 타워 이름 & 아이콘 ──
+            // ── 타워 이름 (한 줄) ──
             Row(
               children: [
                 Image.asset(
                   selectedBranch != null
                       ? 'assets/images/towers/tower_${selectedBranch!.name}.png'
                       : 'assets/images/towers/tower_${towerType.name}_${currentLevel.clamp(1, 3)}.png',
-                  width: 24,
-                  height: 24,
-                  fit: BoxFit.contain,
+                  width: 16, height: 16, fit: BoxFit.contain,
                   errorBuilder: (_, __, ___) => Text(
-                    _getIconForType(towerType),
-                    style: const TextStyle(fontSize: 14),
+                    _getIconForType(towerType), style: const TextStyle(fontSize: 10),
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 4),
                 Expanded(
                   child: Text(
                     '${currentUpgrade.name} Lv.$currentLevel',
                     style: TextStyle(
                       color: _getColorForType(towerType),
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 10, fontWeight: FontWeight.bold,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            // ── 설명 (1줄) ──
+            if (towerData.description.isNotEmpty)
+              Text(
+                towerData.description,
+                style: TextStyle(color: Colors.white.withAlpha(130), fontSize: 8, height: 1.2),
+                maxLines: 1, overflow: TextOverflow.ellipsis,
+              ),
+            const SizedBox(height: 4),
 
-            // ── 액션 버튼 영역 (세로 3단 배치) ──
+            // ── 액션 버튼 ──
             if (showBranch) ...[
-              _buildBranchButton(towerData.branchA, towerData),
-              const SizedBox(height: 4),
-              _buildBranchButton(towerData.branchB, towerData),
+              _MiniButton(
+                label: towerData.branchA != null ? (GameDataLoader.getBranches()[towerData.branchA]?.name ?? AppStrings.get(GameLanguage.ko, 'branch_a')) : AppStrings.get(GameLanguage.ko, 'branch_a'),
+                cost: GameDataLoader.getBranches()[towerData.branchA]?.cost ?? 300,
+                canAfford: currentSinmyeong >= (GameDataLoader.getBranches()[towerData.branchA]?.cost ?? 300),
+                color: AppColors.mintGreen,
+                onTap: () => onAction(TowerBranchResult(towerData.branchA!)),
+              ),
+              const SizedBox(height: 3),
+              _MiniButton(
+                label: towerData.branchB != null ? (GameDataLoader.getBranches()[towerData.branchB]?.name ?? AppStrings.get(GameLanguage.ko, 'branch_b')) : AppStrings.get(GameLanguage.ko, 'branch_b'),
+                cost: GameDataLoader.getBranches()[towerData.branchB]?.cost ?? 300,
+                canAfford: currentSinmyeong >= (GameDataLoader.getBranches()[towerData.branchB]?.cost ?? 300),
+                color: AppColors.peachCoral,
+                onTap: () => onAction(TowerBranchResult(towerData.branchB!)),
+              ),
             ] else if (!isMaxLevel && nextUpgrade != null) ...[
-              // 1단: 업그레이드 버튼
-              _CompactActionButton(
+              _MiniButton(
                 label: '⬆ Lv.${currentLevel + 1}',
                 cost: nextUpgrade.cost,
                 canAfford: currentSinmyeong >= nextUpgrade.cost,
                 color: AppColors.mintGreen,
                 onTap: () => onAction(TowerUpgradeResult(currentLevel + 1)),
               ),
-              const SizedBox(height: 4),
-              // 2단: MAX 업그레이드 버튼
               if (currentLevel < 3) ...[
+                const SizedBox(height: 3),
                 Builder(builder: (_) {
                   int totalCost = 0;
-                  for (int i = currentLevel;
-                      i < 3 && i < towerData.upgrades.length;
-                      i++) {
+                  for (int i = currentLevel; i < 3 && i < towerData.upgrades.length; i++) {
                     totalCost += towerData.upgrades[i].cost;
                   }
-                  return _CompactActionButton(
+                  return _MiniButton(
                     label: '⚡ MAX',
                     cost: totalCost,
                     canAfford: currentSinmyeong >= totalCost,
@@ -154,29 +166,14 @@ class TowerUpgradeDialog extends StatelessWidget {
                     onTap: () => onAction(TowerMaxUpgradeResult()),
                   );
                 }),
-              ] else ...[
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  alignment: Alignment.center,
-                  child: const Text('✨ MAX', style: TextStyle(color: AppColors.textDisabled, fontSize: 10)),
-                )
               ],
             ] else ...[
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: Text(
-                    '✨ 최대 레벨',
-                    style: TextStyle(
-                        color: _getColorForType(towerType), fontSize: 11),
-                  ),
-                ),
-              ),
+              Center(child: Text('✨ MAX', style: TextStyle(color: _getColorForType(towerType), fontSize: 9))),
             ],
-            const SizedBox(height: 4),
-            // 3단: 판매 버튼
-            _CompactActionButton(
-              label: '🪙 판매 (+$sellRefund)',
+            const SizedBox(height: 3),
+            // 판매
+            _MiniButton(
+              label: AppStrings.get(GameLanguage.ko, 'sell_refund').replaceAll('{amount}', '$sellRefund'),
               cost: -sellRefund,
               canAfford: true,
               color: AppColors.berserkRed,
@@ -206,25 +203,25 @@ class TowerUpgradeDialog extends StatelessWidget {
   String _getBranchName(TowerBranch branch) {
     switch (branch) {
       case TowerBranch.rocketBattery:
-        return '로켓포';
+        return 'branch_rocket';
       case TowerBranch.spiritHunter:
-        return '퇴령';
+        return 'branch_exorcist';
       case TowerBranch.generalTotem:
-        return '천하대장군';
+        return 'branch_general';
       case TowerBranch.goblinRing:
-        return '도깨비 고리';
+        return 'branch_goblin_ring';
       case TowerBranch.shamanTemple:
-        return '만신당';
+        return 'branch_pantheon';
       case TowerBranch.grimReaperOffice:
-        return '저승사자 출장소';
+        return 'branch_reaper_office';
       case TowerBranch.fireDragon:
-        return '화룡';
+        return 'branch_fire_dragon';
       case TowerBranch.heavenlyThunder:
-        return '벼락진천뢰';
+        return 'branch_thunder';
       case TowerBranch.phoenixTotem:
-        return '봉황솟단';
+        return 'branch_phoenix_totem';
       case TowerBranch.earthSpiritAltar:
-        return '지신제단';
+        return 'branch_earth_altar';
     }
   }
 
@@ -538,6 +535,72 @@ class _CompactActionButton extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 초컴팩트 미니 버튼 (한 줄: 라벨 + 비용)
+class _MiniButton extends StatelessWidget {
+  final String label;
+  final int cost;
+  final bool canAfford;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _MiniButton({
+    required this.label,
+    required this.cost,
+    required this.canAfford,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isRefund = cost < 0;
+    return GestureDetector(
+      onTap: () {
+        if (canAfford) {
+          SoundManager.instance.playSfx(SfxType.uiClick);
+          onTap();
+        } else {
+          SoundManager.instance.playSfx(SfxType.uiError);
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        decoration: BoxDecoration(
+          color: canAfford ? color.withAlpha(40) : const Color(0x18333333),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: canAfford ? color.withAlpha(120) : AppColors.borderDefault,
+            width: 0.8,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: canAfford ? Colors.white : AppColors.textDisabled,
+                  fontSize: 9, fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (!isRefund)
+              Text(
+                '$cost✨',
+                style: TextStyle(
+                  color: canAfford ? AppColors.sinmyeongGold : AppColors.berserkRed.withAlpha(150),
+                  fontSize: 9, fontWeight: FontWeight.bold,
+                ),
+              ),
           ],
         ),
       ),

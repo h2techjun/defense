@@ -281,7 +281,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
           fontWeight: FontWeight.bold,
         ),
         tabs: const [
-          Tab(text: '🎫 시즌 패스'),
+          Tab(text: '🎫 시즌패스'), // TODO: sp_tab
         ],
       ),
     );
@@ -352,7 +352,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
         child: Column(
           children: [
             Text(
-              '✨ 프리미엄 패스',
+              'sp_premium_title',
               style: TextStyle(
                 color: Colors.amber,
                 fontSize: Responsive.fontSize(context, 20),
@@ -396,7 +396,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                   ),
                 ),
                 child: Text(
-                  '📺 광고 시청으로 해금',
+                  'sp_ad_unlock',
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 16),
                     fontWeight: FontWeight.bold,

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
+import 'package:flame/effects.dart';
 import 'package:flame/components.dart';
 import '../../../../common/enums.dart';
 import '../../../../audio/sound_manager.dart';
@@ -107,7 +108,7 @@ class ShamanMagicStrategy extends TowerAttackStrategy {
 }
 
 /// 마법?탑 공격 ???Canvas drawLine 기반
-import \'package:flame/effects.dart\';
+
 
 class ShamanBeam extends PositionComponent with HasPaint {
   final Vector2 start;
@@ -128,7 +129,7 @@ class ShamanBeam extends PositionComponent with HasPaint {
 
   @override
   void render(Canvas canvas) {
-    canvas.drawLine(start, end, paint);
+    canvas.drawLine(Offset(start.x, start.y), Offset(end.x, end.y), paint);
   }
 }
 

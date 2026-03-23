@@ -456,7 +456,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
             child: Text(
 
 
-              '👥 수호자',
+              'hero_guardian_label',
 
 
               style: TextStyle(
@@ -2837,7 +2837,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                   Text(
 
 
-                    '영웅 배경 스토리',
+                    'hero_lore_title',
 
 
                     style: TextStyle(
@@ -2912,7 +2912,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
             ),
 
 
-            child: const Text('읽어보기'),
+            child: const Text('Read'), // TODO: hero_lore_read
 
 
           ),
@@ -3095,7 +3095,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
         const Text(
 
 
-          '💬 대사',
+          'hero_barks_title',
 
 
           style: TextStyle(

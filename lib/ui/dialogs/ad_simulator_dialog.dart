@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 
 class AdSimulatorDialog extends StatefulWidget {
@@ -55,13 +56,13 @@ class _AdSimulatorDialogState extends State<AdSimulatorDialog> {
           children: [
             const Icon(Icons.video_library, size: 48, color: AppColors.lavender),
             const SizedBox(height: 16),
-            const Text(
-              '광고 시청 중... (Simulation)',
-              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              AppStrings.get(GameLanguage.ko, 'ad_watching'),
+              style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Text(
-              canClose ? '보상 지급 완료!' : '$_timeLeft초 뒤 연속된 보상이 지급됩니다.',
+              canClose ? AppStrings.get(GameLanguage.ko, 'ad_reward_ready') : AppStrings.get(GameLanguage.ko, 'ad_reward_wait').replaceAll('{seconds}', '$_timeLeft'),
               style: const TextStyle(color: Colors.white70, fontSize: 16),
             ),
             const SizedBox(height: 24),
@@ -71,7 +72,7 @@ class _AdSimulatorDialogState extends State<AdSimulatorDialog> {
                 if (!canClose)
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('닫기 (보상 없음)', style: TextStyle(color: Colors.grey)),
+                    child: Text(AppStrings.get(GameLanguage.ko, 'ad_close_no_reward'), style: const TextStyle(color: Colors.grey)),
                   ),
                 if (canClose)
                   ElevatedButton(
@@ -80,7 +81,7 @@ class _AdSimulatorDialogState extends State<AdSimulatorDialog> {
                       widget.onRewardEarned();
                       Navigator.of(context).pop();
                     },
-                    child: const Text('보상 받기', style: TextStyle(color: AppColors.bgDeepPlum, fontWeight: FontWeight.bold)),
+                    child: Text(AppStrings.get(GameLanguage.ko, 'ad_claim_reward'), style: const TextStyle(color: AppColors.bgDeepPlum, fontWeight: FontWeight.bold)),
                   ),
               ],
             )

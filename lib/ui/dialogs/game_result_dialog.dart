@@ -127,7 +127,7 @@ class VictoryOverlay extends ConsumerWidget {
                             Text('📺', style: TextStyle(fontSize: Responsive.fontSize(context, 16))),
                             SizedBox(width: 8 * s),
                             Text(
-                              '광고 보고 보상 2배!',
+                              AppStrings.get(GameLanguage.ko, 'ad_double_reward'),
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: Responsive.fontSize(context, 13),
@@ -315,7 +315,7 @@ class DefeatOverlay extends ConsumerWidget {
                             Text('📺', style: TextStyle(fontSize: Responsive.fontSize(context, 16))),
                             SizedBox(width: 8 * s),
                             Text(
-                              '광고 보고 부활! (HP 50%)',
+                              AppStrings.get(GameLanguage.ko, 'ad_revive'),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: Responsive.fontSize(context, 13),

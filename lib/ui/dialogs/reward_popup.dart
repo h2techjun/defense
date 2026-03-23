@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../../common/responsive.dart';
+import '../../l10n/app_strings.dart';
 
 /// 보상 아이템 데이터
 class RewardItem {
@@ -246,7 +247,7 @@ class _RewardPopupContentState extends State<_RewardPopupContent>
                           ),
                         ),
                         child: Text(
-                          '확인',
+                          AppStrings.get(GameLanguage.ko, 'confirm'),
                           style: TextStyle(
                             fontSize: Responsive.fontSize(context, 16),
                             fontWeight: FontWeight.bold,

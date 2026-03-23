@@ -1,22 +1,26 @@
 // 해원의 문 - 가로 모드 좌우 광고 배너 래퍼
-// 가로 모드에서 좌우 여백이 있는 化면에 AdMob 배너를 배치할 수 있는 래퍼 위젯
+// Row 기반 자동 레이아웃: 좌배너 | 게임(Expanded) | 우배너
 
 import 'package:flutter/material.dart';
 import '../../common/responsive.dart';
-import '../../common/constants.dart';
 import '../theme/app_colors.dart';
 
 /// 가로 모드에서 좌우 여백에 광고를 표시하는 래퍼 위젯
-/// [child] 를 중앙에 배치하고, 양쪽에 광고 슬롯을 표시
+/// [child] 를 중앙에 배치하고, 양쪽에 광고 슬롯을 자동 크기 조절
 class AdSideBanners extends StatelessWidget {
   final Widget child;
-  /// 광고 최소 너비 (이보다 여백이 좁으면 광고 숨김)
-  final double minAdWidth;
+
+  /// 배너 1개의 기본 너비 (화면에 여유가 있을 때)
+  final double bannerWidth;
+
+  /// 배너를 표시할 최소 화면 여유 너비 (이보다 좁으면 배너 숨김)
+  final double minExtraWidth;
 
   const AdSideBanners({
     super.key,
     required this.child,
-    this.minAdWidth = 60,
+    this.bannerWidth = 60,
+    this.minExtraWidth = 100,
   });
 
   @override
@@ -30,33 +34,33 @@ class AdSideBanners extends StatelessWidget {
       builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
         final screenHeight = constraints.maxHeight;
-        
-        // Ad Banners are fixed to a slender width (minAdWidth) so the game can beautifully use the rest of the widescreen.
-        return Stack(
+
+        // 게임 비율 (카메라 visibleGameSize 기준)
+        const gameAspect = 16 / 9; // 대략적 게임 비율
+        final idealGameWidth = screenHeight * gameAspect;
+        final extraWidth = screenWidth - idealGameWidth;
+
+        // 여유 너비가 최소 기준보다 작으면 배너 없이 표시
+        if (extraWidth < minExtraWidth) {
+          return child;
+        }
+
+        // 배너 너비: 여유 너비의 절반, 최대 bannerWidth까지
+        final actualBannerWidth = (extraWidth / 2).clamp(0.0, bannerWidth);
+
+        return Row(
           children: [
-            // 중앙 게임 (플루터엔진이 OnGameResize줌을 통해 모바일 풀 화면으로 늘림)
-            Positioned.fill(
-              child: child,
+            // 좌측 배너
+            SizedBox(
+              width: actualBannerWidth,
+              child: _AdSlot(side: 'left'),
             ),
-            // 왼쪽 광고 슬롯
-            Positioned(
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: minAdWidth,
-              child: IgnorePointer(
-                child: _AdSlot(width: minAdWidth, height: screenHeight, side: 'left'),
-              ),
-            ),
-            // 오른쪽 광고 슬롯
-            Positioned(
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: minAdWidth,
-              child: IgnorePointer(
-                child: _AdSlot(width: minAdWidth, height: screenHeight, side: 'right'),
-              ),
+            // 중앙 게임 영역 (자동 크기 맞춤)
+            Expanded(child: child),
+            // 우측 배너
+            SizedBox(
+              width: actualBannerWidth,
+              child: _AdSlot(side: 'right'),
             ),
           ],
         );
@@ -67,25 +71,14 @@ class AdSideBanners extends StatelessWidget {
 
 /// 광고 슬롯 위젯 — 현재는 플레이스홀더, 추후 AdMob 배너로 교체
 class _AdSlot extends StatelessWidget {
-  final double width;
-  final double height;
   final String side;
 
-  const _AdSlot({
-    required this.width,
-    required this.height,
-    required this.side,
-  });
+  const _AdSlot({required this.side});
 
   @override
   Widget build(BuildContext context) {
-    // TODO: 실제 AdMob 배너 광고로 교체
-    // BannerAd(size: AdSize(width: width.toInt(), height: height.toInt()))
-    
     return Container(
-      width: width,
-      height: height,
-      color: Colors.black.withAlpha(150),
+      color: Colors.black.withAlpha(180),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -93,14 +86,14 @@ class _AdSlot extends StatelessWidget {
             Icon(
               Icons.ad_units_outlined,
               color: AppColors.lavender.withAlpha(40),
-              size: 24,
+              size: 20,
             ),
             const SizedBox(height: 4),
             Text(
               'AD',
               style: TextStyle(
                 color: AppColors.lavender.withAlpha(30),
-                fontSize: 10,
+                fontSize: 9,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 2,
               ),

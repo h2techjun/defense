@@ -82,6 +82,11 @@ Future<void> main() async {
     debugPrint('⚠️ [main] SystemChrome 설정 실패: $e');
   }
 
+  // 웹: 자동 전체화면 (첫 터치 시 전체화면 전환)
+  if (kIsWeb) {
+    _setupWebFullscreen();
+  }
+
   // JSON 데이터 로드 (실패 시 하드코딩 폴백)
   try {
     await GameDataLoader.initFromJson();
@@ -133,4 +138,12 @@ class GatewayOfRegretsApp extends StatelessWidget {
       home: const GameScreen(),
     );
   }
+}
+
+/// 웹: 첫 터치 시 전체화면 전환 (브라우저 보안 정책상 사용자 제스처 필요)
+void _setupWebFullscreen() {
+  // Flutter web에서는 dart:html 대신 web package를 사용
+  // 앱 시작 시 바로 전체화면은 브라우저가 차단하므로,
+  // GameScreen에서 첫 터치 이벤트에 전체화면 요청을 연동
+  debugPrint('🌐 [main] 웹 전체화면 모드 준비됨 — 첫 터치 시 전환');
 }

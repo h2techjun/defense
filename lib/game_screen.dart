@@ -7,7 +7,6 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flame/components.dart';
 
 import 'common/enums.dart';
-import 'common/constants.dart';
 import 'ui/theme/app_colors.dart';
 import 'data/game_data_loader.dart';
 import 'data/models/wave_data.dart';
@@ -18,6 +17,7 @@ import 'audio/sound_manager.dart';
 import 'state/game_state.dart';
 import 'state/user_state.dart';
 import 'services/ad_manager.dart';
+import 'services/cloud_save_manager.dart';
 import 'ui/menus/main_menu.dart';
 import 'ui/menus/stage_select_screen.dart';
 import 'ui/menus/hero_manage_screen.dart';
@@ -39,7 +39,6 @@ import 'ui/menus/hero_deploy_screen.dart';
 import 'ui/dialogs/game_result_dialog.dart';
 import 'ui/dialogs/tower_upgrade_dialog.dart';
 import 'ui/hud/game_tooltip.dart';
-import 'state/user_state.dart';
 import 'state/achievement_provider.dart';
 import 'data/models/achievement_data.dart';
 
@@ -82,13 +81,26 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     debugPrint('🚀 [GameScreen] initState 시작');
     _game = DefenseGame();
     _setupGameCallbacks();
-    // 세이브 데이터 로드
+    // 세이브 데이터 로드 + 클라우드 동기화
     Future.microtask(() async {
       debugPrint('🚀 [GameScreen] 세이브 데이터 로드 시작');
       await ref.read(userStateProvider.notifier).loadFromSave();
       await ref.read(dailyQuestProvider.notifier).loadFromSave();
       await ref.read(skinProvider.notifier).loadFromSave();
       debugPrint('🚀 [GameScreen] 세이브 데이터 로드 완료');
+
+      // 클라우드 스마트 동기화 (Supabase 초기화 시에만)
+      try {
+        final result = await CloudSaveManager.instance.appStartSync();
+        debugPrint('☁️ [GameScreen] 클라우드 동기화 결과: $result');
+        if (result == CloudSyncResult.success) {
+          // 클라우드에서 최신 데이터를 받았을 수 있으므로 다시 로드
+          await ref.read(userStateProvider.notifier).loadFromSave();
+          debugPrint('☁️ [GameScreen] 클라우드 데이터 반영 완료');
+        }
+      } catch (e) {
+        debugPrint('☁️ [GameScreen] 클라우드 동기화 스킵: $e');
+      }
     });
   }
 
@@ -118,7 +130,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   /// 호버 정보 → 툴팁 데이터 변환
   GameTooltipData _buildTooltipFromInfo(Map<String, dynamic> info) {
-    final type = info['type'] as String;
+    final type = info['type'] as String? ?? 'unknown';
     if (type == 'tower') {
       return GameTooltipData(
         title: info['name'] as String? ?? '타워',
@@ -132,7 +144,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           TooltipStat('사거리', '${(info['range'] as double).toStringAsFixed(0)}'),
           TooltipStat('공격속도', '${(info['fireRate'] as double).toStringAsFixed(2)}/s'),
           if (info['specialAbility'] != null)
-            TooltipStat('특수', info['specialAbility'] as String, highlight: true),
+            TooltipStat('특수', info['specialAbility'] as String? ?? '', highlight: true),
         ],
       );
     } else if (type == 'hero') {
@@ -178,7 +190,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           TooltipStat('속도', info['speed'] as String? ?? ''),
           TooltipStat('보상', '✨${info['reward']}'),
           if ((info['abilities'] as String? ?? '').isNotEmpty)
-            TooltipStat('능력', info['abilities'] as String, highlight: true),
+            TooltipStat('능력', info['abilities'] as String? ?? '', highlight: true),
         ],
       );
     }
@@ -920,24 +932,23 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             Positioned.fill(
               child: DragTarget<TowerType>(
                 onAcceptWithDetails: (details) {
-                  // RenderBox를 통해 게임 위젯 기준 로컬 좌표 획득
-                  final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+                  // GameWidget의 RenderBox를 사용해 정확한 로컬 좌표 획득
+                  // (AdSideBanners 배너 오프셋 영향 제거)
+                  final RenderBox? renderBox = _gameWidgetKey.currentContext?.findRenderObject() as RenderBox?;
                   if (renderBox != null) {
-                    final s = Responsive.scale(context);
-                    // DragTarget accepts details.offset which is the local touch position.
-                    // We must reverse the Responsive UI scale factor before passing to Flame's native resolution.
-                    final centerPos = details.offset; //Offset(details.offset.dx / s, details.offset.dy / s);
-                    final localPos = renderBox.globalToLocal(centerPos);
+                    final localPos = renderBox.globalToLocal(details.offset);
                     
                     debugPrint('[DRAG DEBUG] Raw details.offset: ${details.offset}');
-                    debugPrint('[DRAG DEBUG] Reverse S: $s => centerPos: $centerPos');
-                    debugPrint('[DRAG DEBUG] renderBox.globalToLocal => $localPos');
+                    debugPrint('[DRAG DEBUG] GameWidget.globalToLocal => $localPos');
                     
                     _game.handleDragDrop(localPos, details.data, renderBox.size);
                   } else {
-                    final s = Responsive.scale(context);
-                    final centerPos = Offset(details.offset.dx / s, details.offset.dy / s);
-                    _game.handleDragDrop(centerPos, details.data, null);
+                    // fallback: DragTarget context 사용
+                    final RenderBox? fallbackBox = context.findRenderObject() as RenderBox?;
+                    if (fallbackBox != null) {
+                      final localPos = fallbackBox.globalToLocal(details.offset);
+                      _game.handleDragDrop(localPos, details.data, fallbackBox.size);
+                    }
                   }
                   // 드래그 후 선택 상태 초기화 (UI 업데이트)
                   setState(() {
@@ -976,39 +987,27 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             ),
 
             // ── HUD 오버레이 ──
-            Builder(
-              builder: (context) {
-                // 광고 사이드 마진 계산 (AdSideBanners와 동일 공식)
-                final screenW = MediaQuery.of(context).size.width;
-                final screenH = MediaQuery.of(context).size.height;
-                final visibleH = GameConstants.gameHeight + 120;
-                final tileW = screenH * (GameConstants.gameWidth / visibleH);
-                final adMargin = ((screenW - tileW) / 2).clamp(0.0, 300.0);
-                final effectiveMargin = adMargin >= 60 ? adMargin : 0.0;
-
-                return GameHud(
-                  horizontalPadding: effectiveMargin,
-                  isSpeedLocked: !ref.watch(userStateProvider).hasSpeedPass,
-                  onPause: () {
-                    _dismissTowerPopup();
-                    _game.togglePause();
-                    setState(() {}); // UI 갱신
-                  },
-                  onSpeedToggle: () {
-                    if (!ref.read(userStateProvider).hasSpeedPass) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('🔒 상점에서 아무 상품을 구매하면 2배속이 해금됩니다!'),
-                          backgroundColor: Color(0xFF6633AA),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                      return;
-                    }
-                    _game.cycleGameSpeed();
-                    ref.read(gameStateProvider.notifier).setGameSpeed(_game.gameSpeed);
-                  },
-                );
+            GameHud(
+              horizontalPadding: 0, // Row 기반 배너 레이아웃이 자동 처리
+              isSpeedLocked: !ref.watch(userStateProvider).hasSpeedPass,
+              onPause: () {
+                _dismissTowerPopup();
+                _game.togglePause();
+                setState(() {}); // UI 갱신
+              },
+              onSpeedToggle: () {
+                if (!ref.read(userStateProvider).hasSpeedPass) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('🔒 상점에서 아무 상품을 구매하면 2배속이 해금됩니다!'),
+                      backgroundColor: Color(0xFF6633AA),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
+                _game.cycleGameSpeed();
+                ref.read(gameStateProvider.notifier).setGameSpeed(_game.gameSpeed);
               },
             ),
 
@@ -1024,11 +1023,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         builder: (context) {
                           final screenSize = MediaQuery.of(context).size;
                           final s = Responsive.uiScale(context);
-                          // 팝업 너비: 화면의 42% 이하, 최대 300px
-                          final popupWidth = (screenSize.width * 0.42).clamp(220.0, 300.0);
+                          // 팝업 너비: 화면의 22%, 최대 180px (컴팩트)
+                          final popupWidth = (screenSize.width * 0.22).clamp(140.0, 180.0);
                           // 하단/상단 보호 영역 (타워패널, HUD)
-                          final bottomPadding = 80.0;
-                          final topPadding = 50.0;
+                          const bottomPadding = 80.0;
+                          const topPadding = 50.0;
 
                           // 좌우 위치
                           double left = _tappedTowerScreenPos.dx + (_tappedTowerHeight / 2) + 8;
@@ -1230,6 +1229,51 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                             },
                           ),
                           SizedBox(height: 20 * Responsive.uiScale(context)),
+                          // 클라우드 동기화 버튼
+                          StatefulBuilder(
+                            builder: (ctx, syncSetState) {
+                              return _buildPauseMenuButton(
+                                icon: CloudSaveManager.instance.isSyncing
+                                    ? Icons.sync
+                                    : Icons.cloud_upload_outlined,
+                                label: CloudSaveManager.instance.isSyncing
+                                    ? '동기화 중...'
+                                    : '☁️ 클라우드 저장',
+                                color: const Color(0xFF3B82F6),
+                                onTap: () async {
+                                  syncSetState(() {});
+                                  final result = await CloudSaveManager.instance.appStartSync();
+                                  syncSetState(() {});
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          result == CloudSyncResult.success
+                                              ? '☁️ 클라우드 동기화 완료!'
+                                              : result == CloudSyncResult.notConfigured
+                                                  ? '⚠️ Supabase 미설정 — .env 파일을 확인하세요'
+                                                  : '❌ 동기화 실패',
+                                        ),
+                                        backgroundColor: result == CloudSyncResult.success
+                                            ? Colors.green
+                                            : Colors.orange,
+                                        duration: const Duration(seconds: 2),
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                          SizedBox(height: 8 * Responsive.uiScale(context)),
+                          // 마지막 동기화 시간
+                          Text(
+                            CloudSaveManager.instance.lastSyncTimeFormatted,
+                            style: TextStyle(
+                              color: Colors.white30,
+                              fontSize: Responsive.fontSize(context, 10),
+                            ),
+                          ),
                           // 계속하기 버튼
                           _buildPauseMenuButton(
                             icon: Icons.play_arrow_rounded,

@@ -26,7 +26,7 @@ class WaveBuilder {
 
       String? narrative;
       if (w == 1 && openingNarrative != null) narrative = openingNarrative;
-      if (w == waveCount) narrative = '"마지막 파도가 다가온다..."';
+      if (w == waveCount) narrative = 'narr_last_wave';
 
       // 기본 스폰 수 = 웹 성능 안전 범위 (3~12마리, 동시 30마리 이하)
       final baseCount = (3 + (difficulty * 0.15 + w * 0.5)).round().clamp(3, 12);
@@ -101,7 +101,7 @@ class WaveBuilder {
       waves[waves.length - 1] = WaveData(
         waveNumber: lastNormal.waveNumber,
         dayCycle: DayCycle.night,
-        narrative: '"무언가 거대한 것이 다가온다..."',
+        narrative: 'narr_boss_appear',
         spawnGroups: lastNormal.spawnGroups,
       );
     }
@@ -137,7 +137,7 @@ class WaveBuilder {
     waves.add(WaveData(
       waveNumber: waveCount,
       dayCycle: DayCycle.night,
-      narrative: bossNarrative ?? '"보스가 나타났다!"',
+      narrative: bossNarrative ?? 'narr_boss_generic',
       spawnGroups: bossGroups,
     ));
 

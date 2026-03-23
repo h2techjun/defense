@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 
 import '../../common/responsive.dart';
+import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 
 /// 한(恨) 게이지 위젯
@@ -23,16 +24,16 @@ class HudWailingGauge extends StatelessWidget {
     String label;
     Color labelColor;
     if (isMax) {
-      label = '😱 한(恨) 폭주!';
+      label = 'hud_wailing_max';
       labelColor = const Color(0xFFFF4444);
     } else if (isHigh) {
-      label = '😨 한(恨) 위험!';
+      label = 'hud_wailing_high';
       labelColor = const Color(0xFFFF8844);
     } else if (isMid) {
-      label = '😟 한(恨) 주의';
+      label = 'hud_wailing_mid';
       labelColor = const Color(0xFFFFAA44);
     } else {
-      label = '😢 한(恨)';
+      label = 'hud_wailing_low';
       labelColor = AppColors.cherryBlossom.withAlpha(200);
     }
 
@@ -241,26 +242,27 @@ class HudNextWavePreview extends StatelessWidget {
   final bool isBoss;
   final int nextWaveNum;
 
-  static const Map<String, String> _enemyNames = {
-    'hungryGhost': '아귀',
-    'strawShoeSpirit': '짚신귀신',
-    'burdenedLaborer': '짐꾼귀신',
-    'maidenGhost': '손각시',
-    'eggGhost': '달걀귀신',
-    'bossOgreLord': '두억시니',
-    'tigerSlave': '창귀',
-    'fireDog': '불개',
-    'shadowGolem': '석상귀',
-    'oldFoxWoman': '구미호',
-    'failedDragon': '이무기',
-    'bossMountainLord': '산신령',
-    'changGwiEvolved': '대창귀',
-    'saetani': '새타니',
-    'shadowChild': '그림자아이',
-    'maliciousBird': '태자귀',
-    'faceStealerGhost': '무면귀',
-    'bossGreatEggGhost': '대왕달걀귀신',
+  static const Map<String, String> _enemyNameKeys = {
+    'hungryGhost': 'enemy_hungryGhost',
+    'strawShoeSpirit': 'enemy_strawShoeSpirit',
+    'burdenedLaborer': 'enemy_burdenedLaborer',
+    'maidenGhost': 'enemy_maidenGhost',
+    'eggGhost': 'enemy_eggGhost',
+    'bossOgreLord': 'enemy_bossOgreLord',
+    'tigerSlave': 'enemy_tigerSlave',
+    'fireDog': 'enemy_fireDog',
+    'shadowGolem': 'enemy_shadowGolem',
+    'oldFoxWoman': 'enemy_oldFoxWoman',
+    'failedDragon': 'enemy_failedDragon',
+    'bossMountainLord': 'enemy_bossMountainLord',
+    'changGwiEvolved': 'enemy_changGwiEvolved',
+    'saetani': 'enemy_saetani',
+    'shadowChild': 'enemy_shadowChild',
+    'maliciousBird': 'enemy_maliciousBird',
+    'faceStealerGhost': 'enemy_faceStealerGhost',
+    'bossGreatEggGhost': 'enemy_bossGreatEggGhost',
   };
+
 
   static const Map<String, String> _enemyIcons = {
     'hungryGhost': '👻',
@@ -329,7 +331,7 @@ class HudNextWavePreview extends StatelessWidget {
               ),
               SizedBox(width: 4 * sc),
               Text(
-                '다음 웨이브 $nextWaveNum',
+                AppStrings.get(GameLanguage.ko, 'wave_next').replaceAll('{n}', '$nextWaveNum'),
                 style: TextStyle(
                   color: isBoss ? const Color(0xFFFF6666) : Colors.white70,
                   fontSize: Responsive.fontSize(context, 10),
@@ -340,7 +342,8 @@ class HudNextWavePreview extends StatelessWidget {
           ),
           SizedBox(height: 4 * sc),
           ...parsed.map((entry) {
-            final name = _enemyNames[entry.key] ?? entry.key;
+            final nameKey = _enemyNameKeys[entry.key];
+            final name = nameKey != null ? AppStrings.get(GameLanguage.ko, nameKey) : entry.key;
             final icon = _enemyIcons[entry.key] ?? '👾';
             final isBossEnemy = entry.key.toLowerCase().contains('boss');
             return Padding(

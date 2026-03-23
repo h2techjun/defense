@@ -35,5 +35,25 @@
   <body>
     <script src="flutter_bootstrap.js" async></script>
 
+    <!-- 웹: 첫 터치/클릭 시 가로 전체화면 자동 전환 -->
+    <script>
+      function enterFullscreenLandscape() {
+        var el = document.documentElement;
+        var rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if (rfs) {
+          rfs.call(el).then(function() {
+            // 전체화면 진입 후 가로 방향 잠금 시도
+            if (screen.orientation && screen.orientation.lock) {
+              screen.orientation.lock('landscape').catch(function() {});
+            }
+          }).catch(function() {});
+        }
+        // 한 번만 실행
+        document.removeEventListener('click', enterFullscreenLandscape);
+        document.removeEventListener('touchstart', enterFullscreenLandscape);
+      }
+      document.addEventListener('click', enterFullscreenLandscape, { once: true });
+      document.addEventListener('touchstart', enterFullscreenLandscape, { once: true });
+    </script>
   </body>
 </html>

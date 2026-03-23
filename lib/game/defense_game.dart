@@ -1,8 +1,12 @@
 // 해원의 문 - 메인 게임 루프 (DefenseGame)
 
 
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
+import '../common/debug_log.dart';
+import 'package:flutter/painting.dart' show TextPainter, TextSpan, TextStyle, FontWeight;
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
@@ -25,6 +29,7 @@ import 'components/objects/map_object_component.dart';
 import '../state/hero_party_provider.dart';
 import '../audio/sound_manager.dart';
 import '../services/save_manager.dart';
+import '../services/cloud_save_manager.dart';
 import '../state/relic_provider.dart';
 import '../data/models/relic_data.dart';
 import '../services/game_event_bridge.dart';
@@ -171,25 +176,23 @@ class DefenseGame extends FlameGame
   }
 
   @override
-  void onGameResize(Vector2 size) {
-    super.onGameResize(size);
-    // 높이는 696으로 고정하되, 너비는 모바일 비율에 따라 무한 확장
-    final targetH = GameConstants.gameHeight + 120;
-    camera.viewfinder.zoom = size.y / targetH;
-    camera.viewfinder.position = Vector2(
-      (size.x / camera.viewfinder.zoom) / 2,
-      targetH / 2 + 40,
-    );
-  }
-
-  @override
   Color backgroundColor() => const Color(0xFF1a0f29); // 어두운 보라색 배경
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
 
-    // 카메라 설정: 높이를 고정(696)하고, 너비는 화면 비율에 맞춰 동적으로 확장(onGameResize에서 처리)
+    // 카메라 설정: 맵 타일이 헤더~타워패널 사이에 딱 맞도록 조정
+    // 상단: 헤더(시계/자원) 아래에서 타일 시작
+    // 하단: 타워카드 패널 윗면에서 타일 끝
+    camera.viewfinder.visibleGameSize = Vector2(
+      GameConstants.gameWidth,
+      GameConstants.gameHeight + 100, // 헤더+푸터 여유 공간
+    );
+    camera.viewfinder.position = Vector2(
+      GameConstants.gameWidth / 2,
+      (GameConstants.gameHeight / 2) + 50, // 맵을 위로 올려서 푸터 공간 확보
+    );
 
     // 맵 & 시스템을 월드에 추가 (이미 선언 시점에 생성됨)
     world.add(gameMap);
@@ -232,6 +235,12 @@ class DefenseGame extends FlameGame
 
     // 맵에 경로 설정
     gameMap.setPath(level.path);
+
+    // 해원의 문 게이트웨이 비주얼 (경로 마지막 = 적 출구)
+    if (gameMap.waypoints.isNotEmpty) {
+      final exitPos = gameMap.waypoints.last;
+      world.add(_GatewayVisual(position: exitPos));
+    }
 
     // 웨이브 데이터 설정
     waveManager.loadWaves(level.waves);
@@ -405,12 +414,12 @@ class DefenseGame extends FlameGame
       Vector2(localPosition.dx, localPosition.dy)
     );
     
-    debugPrint('[DRAG DEBUG] FLAME worldPos => $worldPos');
+    dlog('[DRAG DEBUG] FLAME worldPos => $worldPos');
 
     // 가장 가까운 빈 배치 지점 찾기
     final slotIndex = gameMap.findNearestEmptySlot(worldPos);
     
-    debugPrint('[DRAG DEBUG] findNearestEmptySlot => $slotIndex');
+    dlog('[DRAG DEBUG] findNearestEmptySlot => $slotIndex');
 
     if (slotIndex != null) {
       _placeTowerAtSlot(slotIndex);
@@ -606,11 +615,13 @@ class DefenseGame extends FlameGame
     _saveHeroLevels();
   }
 
-  /// 영웅 레벨 저장 (승리/패배 모두)
+  /// 영웅 레벨 저장 (승리/패배 모두) + 클라우드 자동 동기화
   void _saveHeroLevels() {
     for (final hero in activeHeroes) {
       SaveManager.instance.saveHeroLevel(hero.data.id, hero.level, hero.xp);
     }
+    // 클라우드 자동 동기화 (fire-and-forget — deviceId 기반)
+    CloudSaveManager.instance.autoSyncOnStageClear();
   }
 
   // ── 프리즈 진단용 ──
@@ -627,8 +638,8 @@ class DefenseGame extends FlameGame
       renderNightOverlay(canvas);
       renderRedFlash(canvas);
     } catch (e, st) {
-      debugPrint('🚨 [RENDER-ERROR] $e');
-      debugPrint('$st');
+      dlog('🚨 [RENDER-ERROR] $e');
+      dlog('$st');
     }
   }
 
@@ -641,7 +652,7 @@ class DefenseGame extends FlameGame
     // 프리즈 감지: update vs render 카운트 비교 (5초 주기)
     _freezeCheckAccum += dt;
     if (_freezeCheckAccum >= 5.0) {
-      debugPrint('🔍 [FREEZE-CHECK] updates=$_updateFrameCount renders=$_renderFrameCount '
+      dlog('🔍 [FREEZE-CHECK] updates=$_updateFrameCount renders=$_renderFrameCount '
         'ratio=${_renderFrameCount > 0 ? (_updateFrameCount / _renderFrameCount).toStringAsFixed(1) : "NaN"} '
         'children=${world.children.length}');
       _freezeCheckAccum = 0;
@@ -654,8 +665,8 @@ class DefenseGame extends FlameGame
     try {
       super.update(scaledDt);
     } catch (e, st) {
-      debugPrint('🚨 [UPDATE-ERROR] $e');
-      debugPrint('$st');
+      dlog('🚨 [UPDATE-ERROR] $e');
+      dlog('$st');
     }
 
     // ── 공간 분할(Grid) 업데이트 ──
@@ -683,7 +694,7 @@ class DefenseGame extends FlameGame
       final pendingOps = 'sinm=$_pendingSinmyeong kills=$_pendingKills '
         'wail=${_pendingWailing.toStringAsFixed(1)} gwDmg=$_pendingGatewayDmg '
         'flush=$_pendingStateFlush';
-      debugPrint('[GAME] dt=${dt.toStringAsFixed(4)} speed=$_gameSpeed '
+      dlog('[GAME] dt=${dt.toStringAsFixed(4)} speed=$_gameSpeed '
         'children=$totalChildren alive=$aliveCount towers=$towerCount '
         'wave=${wm?.currentWaveIndex ?? -1} paused=$isPaused '
         'pending=[$pendingOps]');
@@ -691,7 +702,7 @@ class DefenseGame extends FlameGame
       // ── 적 위치/상태 덤프 (최대 3마리) ──
       final enemies = cachedAliveEnemies.take(3);
       for (final e in enemies) {
-        debugPrint('  [ALIVE-ENEMY] ${e.data.id.name} '
+        dlog('  [ALIVE-ENEMY] ${e.data.id.name} '
           'pos=(${e.position.x.toInt()},${e.position.y.toInt()}) '
           'state=${e.debugState} speed=${e.debugSpeed.toStringAsFixed(1)} '
           'blocked=${e.debugBlockedBy != null} '
@@ -708,6 +719,13 @@ class DefenseGame extends FlameGame
       cachedEnemies = world.children.whereType<BaseEnemy>().toList();
       cachedAliveEnemies = cachedEnemies.where((e) => !e.isDead && e.isMounted).toList();
       cachedTowers = world.children.whereType<BaseTower>().toList();
+
+      // ── 죽은 적 게임 월드에서 제거 (오브젝트 누적 방지) ──
+      for (final e in cachedEnemies) {
+        if (e.isDead && e.isMounted) {
+          e.removeFromParent();
+        }
+      }
 
       // 유물 신명 보너스 캐시 갱신 (ref.read 호출 최소화)
       double relicBonus = 0;
@@ -743,7 +761,7 @@ class DefenseGame extends FlameGame
       try {
         _eventBridge.flushBatch();
       } catch (e) {
-        debugPrint('[ACHIEVE-FLUSH-ERROR] $e');
+        dlog('[ACHIEVE-FLUSH-ERROR] $e');
       }
     }
 
@@ -781,8 +799,8 @@ class DefenseGame extends FlameGame
           if (state.gatewayHp <= 0) gameOver();
         }
       } catch (e, st) {
-        debugPrint('🚨 [BATCH-UPDATE-ERROR] $e');
-        debugPrint('$st');
+        dlog('🚨 [BATCH-UPDATE-ERROR] $e');
+        dlog('$st');
       }
     }
 
@@ -806,4 +824,106 @@ class DefenseGame extends FlameGame
 
   // Bark 시스템 → GameBarkMixin (game_bark_mixin.dart)
   // Camera 이펙트 → GameCameraEffectsMixin (game_camera_effects_mixin.dart)
+}
+
+/// 해원의 문 — 적이 도착하는 출구 게이트웨이 비주얼
+class _GatewayVisual extends PositionComponent
+    with HasGameReference<DefenseGame> {
+  _GatewayVisual({required Vector2 position})
+      : super(
+          position: position,
+          size: Vector2(72, 72),
+          anchor: Anchor.center,
+          priority: 5,
+        );
+
+  Sprite? _iconSprite;
+  double _glowTimer = 0;
+
+  @override
+  Future<void> onLoad() async {
+    try {
+      final image = await game.images.load('app_icon.png');
+      _iconSprite = Sprite(image);
+    } catch (_) {
+      // 아이콘 로드 실패 시 무시
+    }
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    _glowTimer += dt;
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+    final w = size.x;
+    final h = size.y;
+    final cx = w / 2;
+    final cy = h / 2;
+
+    // 금빛 호흡 맥동 (부드러운 사인파)
+    final pulse = (math.sin(_glowTimer * 1.5) * 0.5 + 0.5);
+    final glowAlpha = (40 + pulse * 60).toInt();
+
+    // 1단계: 넓은 금빛 글로우 (배경 후광)
+    canvas.drawCircle(
+      Offset(cx, cy),
+      w * 0.8,
+      Paint()
+        ..color = Color.fromARGB(glowAlpha ~/ 2, 255, 215, 0)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20),
+    );
+
+    // 2단계: 중간 금빛 글로우
+    canvas.drawCircle(
+      Offset(cx, cy),
+      w * 0.55,
+      Paint()
+        ..color = Color.fromARGB(glowAlpha, 255, 200, 50)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
+    );
+
+    // 3단계: 내부 밝은 글로우
+    canvas.drawCircle(
+      Offset(cx, cy),
+      w * 0.35,
+      Paint()
+        ..color = Color.fromARGB((glowAlpha * 1.2).toInt().clamp(0, 255), 255, 230, 100)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
+
+    // 아이콘 스프라이트 (전체 크기로 표시)
+    if (_iconSprite != null) {
+      _iconSprite!.render(
+        canvas,
+        position: Vector2(4, 4),
+        size: Vector2(w - 8, h - 8),
+      );
+    }
+
+    // "해원의 문" 한글 텍스트
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: 'gateway_name',
+        style: TextStyle(
+          color: const Color(0xFFFFD700),
+          fontSize: 8,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1,
+          shadows: const [
+            Shadow(color: Color(0x88000000), blurRadius: 3, offset: Offset(1, 1)),
+          ],
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      Offset((w - textPainter.width) / 2, h + 2),
+    );
+  }
 }

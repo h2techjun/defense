@@ -12,6 +12,7 @@ import '../../data/models/hero_data.dart';
 import '../../data/models/wave_data.dart';
 import '../../state/hero_party_provider.dart';
 import '../../state/user_state.dart';
+import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../common/hero_sprite_viewer.dart';
 
@@ -77,37 +78,38 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
     final userState = ref.watch(userStateProvider);
     final allHeroes = GameDataLoader.getHeroes().values.toList();
     final s = Responsive.scale(context);
+    final lang = ref.watch(gameLanguageProvider);
     final isLand = Responsive.isLandscape(context);
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
       body: SafeArea(
         child: isLand
-            ? _buildLandscapeLayout(partyState, userState, allHeroes, s)
-            : _buildPortraitLayout(partyState, userState, allHeroes, s),
+            ? _buildLandscapeLayout(partyState, userState, allHeroes, lang, s)
+            : _buildPortraitLayout(partyState, userState, allHeroes, lang, s),
       ),
     );
   }
 
-  Widget _buildPortraitLayout(HeroPartyState partyState, UserState userState, List<HeroData> allHeroes, double s) {
+  Widget _buildPortraitLayout(HeroPartyState partyState, UserState userState, List<HeroData> allHeroes, GameLanguage lang, double s) {
     return Column(
       children: [
-        _buildHeader(s),
+        _buildHeader(lang, s),
         SizedBox(height: 12 * s),
-        _buildStageInfo(s),
+        _buildStageInfo(lang, s),
         SizedBox(height: 16 * s),
         _buildPartySlots(partyState, s),
         SizedBox(height: 12 * s),
         _buildDivider(s),
         SizedBox(height: 12 * s),
         Expanded(child: _buildHeroPool(allHeroes, partyState, userState, s)),
-        _buildDeployButton(partyState, s),
+        _buildDeployButton(partyState, lang, s),
         SizedBox(height: 12 * s),
       ],
     );
   }
 
-  Widget _buildLandscapeLayout(HeroPartyState partyState, UserState userState, List<HeroData> allHeroes, double s) {
+  Widget _buildLandscapeLayout(HeroPartyState partyState, UserState userState, List<HeroData> allHeroes, GameLanguage lang, double s) {
     return Row(
       children: [
         // 좌: 스테이지 정보 + 파티 + 출전 버튼
@@ -115,21 +117,21 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
           width: Responsive.adaptiveWidth(context, 0.35),
           child: Column(
             children: [
-              _buildHeader(s),
+              _buildHeader(lang, s),
               SizedBox(height: 8 * s),
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(horizontal: 12 * s),
                   child: Column(
                     children: [
-                      _buildStageInfo(s),
+                      _buildStageInfo(lang, s),
                       SizedBox(height: 12 * s),
                       _buildPartySlots(partyState, s),
                     ],
                   ),
                 ),
               ),
-              _buildDeployButton(partyState, s),
+              _buildDeployButton(partyState, lang, s),
               SizedBox(height: 8 * s),
             ],
           ),
@@ -139,7 +141,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
           child: Column(
             children: [
               SizedBox(height: 8 * s),
-              _buildDivider(s, label: '영웅 선택'),
+              _buildDivider(s, label: AppStrings.get(lang, 'deploy_hero_select_label')),
               SizedBox(height: 8 * s),
               Expanded(child: _buildHeroPool(allHeroes, partyState, userState, s)),
             ],
@@ -149,7 +151,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
     );
   }
 
-  Widget _buildHeader(double s) {
+  Widget _buildHeader(GameLanguage lang, double s) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12 * s, vertical: 6 * s),
       child: Row(
@@ -160,7 +162,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
             iconSize: 22 * s,
           ),
           Text(
-            '⚔️ 출전 준비',
+            AppStrings.get(lang, 'deploy_title'),
             style: TextStyle(
               color: Colors.white,
               fontSize: Responsive.fontSize(context, 20),
@@ -177,7 +179,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
               border: Border.all(color: const Color(0xFF4444AA)),
             ),
             child: Text(
-              '영웅 1명 선택',
+              AppStrings.get(lang, 'deploy_hero_select_hint'),
               style: TextStyle(
                 color: Colors.white.withAlpha(180),
                 fontSize: Responsive.fontSize(context, 11),
@@ -189,7 +191,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
     );
   }
 
-  Widget _buildStageInfo(double s) {
+  Widget _buildStageInfo(GameLanguage lang, double s) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20 * s),
       padding: EdgeInsets.all(10 * s),
@@ -215,7 +217,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
                   ),
                 ),
                 Text(
-                  '${widget.level.waves.length} 웨이브',
+                  '${widget.level.waves.length} ${AppStrings.get(lang, 'wave')}',
                   style: TextStyle(
                     color: Colors.white.withAlpha(150),
                     fontSize: Responsive.fontSize(context, 11),
@@ -268,7 +270,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
     );
   }
 
-  Widget _buildDivider(double s, {String label = '영웅 선택'}) {
+  Widget _buildDivider(double s, {String label = ''}) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24 * s),
       child: Row(
@@ -328,7 +330,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
     );
   }
 
-  Widget _buildDeployButton(HeroPartyState partyState, double s) {
+  Widget _buildDeployButton(HeroPartyState partyState, GameLanguage lang, double s) {
     final isReady = partyState.party.isNotEmpty;
 
     return Padding(
@@ -367,8 +369,8 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
                     SizedBox(width: 8 * s),
                     Text(
                       isReady
-                          ? '⚔️ 출전! (${partyState.party.length}명)'
-                          : '영웅을 선택하세요',
+                          ? AppStrings.get(lang, 'deploy_button_ready').replaceAll('{count}', '${partyState.party.length}')
+                          : AppStrings.get(lang, 'deploy_button_empty'),
                       style: TextStyle(
                         color: isReady ? Colors.white : Colors.white38,
                         fontSize: Responsive.fontSize(context, 16),
@@ -440,7 +442,7 @@ class _PartySlotWidget extends StatelessWidget {
                       color: Colors.white.withAlpha(60), size: 28 * s),
                   SizedBox(height: 4 * s),
                   Text(
-                    '슬롯 ${slotIndex + 1}',
+                    AppStrings.get(GameLanguage.ko, 'deploy_slot').replaceAll('{n}', '${slotIndex + 1}'),
                     style: TextStyle(
                       color: Colors.white.withAlpha(60),
                       fontSize: Responsive.fontSize(context, 9),
@@ -560,11 +562,10 @@ class _HeroPoolCard extends StatelessWidget {
     final color = _getHeroColor(hero.id);
 
     final tooltipMessage = isLocked
-        ? '🔒 ${hero.name}\nStage $unlockStage 클리어 시 해금'
+        ? AppStrings.get(GameLanguage.ko, 'deploy_tooltip_locked').replaceAll('{name}', hero.name).replaceAll('{stage}', '$unlockStage')
         : '${_getHeroEmoji(hero.id)} ${hero.name} — ${hero.title}\n\n'
-          '✨ 스킬: ${hero.skill.name}\n'
-          '${hero.skill.description}\n\n'
-          '❤️ HP: ${hero.baseHp.toInt()}  ⚔️ ATK: ${hero.baseAttack.toInt()}';
+          '${AppStrings.get(GameLanguage.ko, 'deploy_tooltip_info').replaceAll('{skillName}', hero.skill.name).replaceAll('{skillDesc}', hero.skill.description).replaceAll('{hp}', '${hero.baseHp.toInt()}').replaceAll('{atk}', '${hero.baseAttack.toInt()}')}';
+
 
     return Tooltip(
       message: tooltipMessage,

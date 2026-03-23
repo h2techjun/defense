@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../../common/constants.dart';
+import '../../l10n/app_strings.dart';
 
 /// 튜토리얼 단계 정의
 class TutorialStep {
@@ -195,8 +196,8 @@ class _TutorialOverlayState extends State<TutorialOverlay>
                 children: [
                   Text(
                     _currentIndex < widget.steps.length - 1
-                        ? '터치하여 다음 →'
-                        : '터치하여 시작! 🎮',
+                        ? AppStrings.get(GameLanguage.ko, 'tutorial_tap_next')
+                        : AppStrings.get(GameLanguage.ko, 'tutorial_tap_start'),
                     style: TextStyle(
                       color: _currentIndex < widget.steps.length - 1
                           ? Colors.white54
