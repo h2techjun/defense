@@ -12,6 +12,7 @@ import '../../common/responsive.dart';
 import '../../l10n/app_strings.dart';
 import '../../services/fullscreen_service.dart';
 import '../../services/ad_manager.dart';
+import '../../services/cloud_save_manager.dart';
 import '../../state/unclaimed_rewards_provider.dart';
 import '../../state/user_state.dart';
 import '../widgets/notification_badge.dart';
@@ -397,6 +398,8 @@ class _SettingsDialogState extends State<_SettingsDialog> {
   late double _bgmVol;
   late bool _sfxOn;
   late bool _bgmOn;
+  bool _isSyncing = false;
+  String? _syncMessage;
 
   @override
   void initState() {
@@ -534,6 +537,57 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                         SoundManager.instance.setBgmVolume(val);
                       },
                     ),
+
+                    SizedBox(height: 20 * s),
+
+                    // ── ☁️ 클라우드 동기화 ──
+                    _sectionLabel('☁️', AppStrings.get(currentLang, 'cloud_save'), s),
+                    SizedBox(height: 8 * s),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _cloudButton(
+                            icon: Icons.cloud_upload_outlined,
+                            label: AppStrings.get(currentLang, 'cloud_save'),
+                            color: const Color(0xFF3B82F6),
+                            loading: _isSyncing,
+                            s: s,
+                            onTap: () => _doCloudSync(currentLang),
+                          ),
+                        ),
+                        SizedBox(width: 8 * s),
+                        Expanded(
+                          child: _cloudButton(
+                            icon: Icons.cloud_download_outlined,
+                            label: AppStrings.get(currentLang, 'cloud_load'),
+                            color: const Color(0xFF10B981),
+                            loading: _isSyncing,
+                            s: s,
+                            onTap: () => _doCloudLoad(currentLang),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (_syncMessage != null) ...[
+                      SizedBox(height: 6 * s),
+                      Text(
+                        _syncMessage!,
+                        style: TextStyle(
+                          color: Colors.white60,
+                          fontSize: Responsive.fontSize(context, 11),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                    SizedBox(height: 4 * s),
+                    Text(
+                      CloudSaveManager.instance.lastSyncTimeFormatted,
+                      style: TextStyle(
+                        color: Colors.white30,
+                        fontSize: Responsive.fontSize(context, 10),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
@@ -620,6 +674,79 @@ class _SettingsDialogState extends State<_SettingsDialog> {
         ),
       ],
     );
+  }
+
+  Widget _cloudButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required bool loading,
+    required double s,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: loading ? null : onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 10 * s, horizontal: 8 * s),
+        decoration: BoxDecoration(
+          color: color.withAlpha(30),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: color.withAlpha(80)),
+        ),
+        child: Column(
+          children: [
+            loading
+                ? SizedBox(
+                    width: 20 * s, height: 20 * s,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: color),
+                  )
+                : Icon(icon, color: color, size: 22 * s),
+            SizedBox(height: 4 * s),
+            Text(
+              label,
+              style: TextStyle(color: color, fontSize: Responsive.fontSize(context, 11), fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _doCloudSync(GameLanguage lang) async {
+    setState(() { _isSyncing = true; _syncMessage = null; });
+    try {
+      final csm = CloudSaveManager.instance;
+      final userId = await csm.getDeviceUserId();
+      final ok = await csm.syncToCloud(userId);
+      setState(() {
+        _isSyncing = false;
+        _syncMessage = ok
+            ? AppStrings.get(lang, 'cloud_sync_success')
+            : AppStrings.get(lang, 'cloud_sync_failed');
+      });
+    } catch (e) {
+      setState(() { _isSyncing = false; _syncMessage = AppStrings.get(lang, 'cloud_sync_failed'); });
+    }
+  }
+
+  Future<void> _doCloudLoad(GameLanguage lang) async {
+    setState(() { _isSyncing = true; _syncMessage = null; });
+    try {
+      final csm = CloudSaveManager.instance;
+      final userId = await csm.getDeviceUserId();
+      final ok = await csm.syncFromCloud(userId);
+      setState(() {
+        _isSyncing = false;
+        _syncMessage = ok
+            ? AppStrings.get(lang, 'cloud_load_success')
+            : AppStrings.get(lang, 'cloud_sync_failed');
+      });
+    } catch (e) {
+      setState(() { _isSyncing = false; _syncMessage = AppStrings.get(lang, 'cloud_sync_failed'); });
+    }
   }
 }
 

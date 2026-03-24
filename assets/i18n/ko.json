@@ -814,5 +814,7 @@
   "cloud_save": "☁️ 클라우드 저장",
   "cloud_sync_success": "☁️ 클라우드 동기화 완료!",
   "cloud_sync_not_configured": "⚠️ Supabase 미설정 — .env 파일을 확인하세요",
-  "cloud_sync_failed": "❌ 동기화 실패"
+  "cloud_sync_failed": "❌ 동기화 실패",
+  "cloud_load": "☁️ 불러오기",
+  "cloud_load_success": "☁️ 클라우드 데이터 불러오기 완료!"
 }

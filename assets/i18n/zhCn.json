@@ -814,5 +814,7 @@
   "cloud_save": "☁️ 云存档",
   "cloud_sync_success": "☁️ 云同步完成！",
   "cloud_sync_not_configured": "⚠️ Supabase未配置 — 请检查.env文件",
-  "cloud_sync_failed": "❌ 同步失败"
+  "cloud_sync_failed": "❌ 同步失败",
+  "cloud_load": "☁️ 加载",
+  "cloud_load_success": "☁️ 云数据加载完成！"
 }

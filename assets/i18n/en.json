@@ -814,5 +814,7 @@
   "cloud_save": "☁️ Cloud Save",
   "cloud_sync_success": "☁️ Cloud sync complete!",
   "cloud_sync_not_configured": "⚠️ Supabase not configured — check your .env file",
-  "cloud_sync_failed": "❌ Sync failed"
+  "cloud_sync_failed": "❌ Sync failed",
+  "cloud_load": "☁️ Load",
+  "cloud_load_success": "☁️ Cloud data loaded!"
 }
