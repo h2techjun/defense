@@ -274,7 +274,7 @@ class CloudSaveManager {
 
   /// 마지막 동기화 시간 포맷팅 (UI 표시용)
   String get lastSyncTimeFormatted {
-    if (_lastSyncTime == null) return '동기화 기록 없음';
+    if (_lastSyncTime == null) return 'No sync record';
     final t = _lastSyncTime!;
     return '${t.year}-${t.month.toString().padLeft(2, '0')}-${t.day.toString().padLeft(2, '0')} '
            '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
