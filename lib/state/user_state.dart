@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../common/enums.dart';
 import '../services/save_manager.dart';
+import '../../common/debug_log.dart';
 
 /// 사용자 영구 데이터
 class UserState {
@@ -128,10 +129,10 @@ class UserStateNotifier extends StateNotifier<UserState> {
     final stageStars = await SaveManager.instance.loadStageStars();
     if (savedState != null) {
       state = savedState.copyWith(stageStars: stageStars);
-      debugPrint('[SAVE] 세이브 데이터 로드 완료: level ${state.highestLevel}, stars ${state.totalStars}');
+      dlog('[SAVE] 세이브 데이터 로드 완료: level ${state.highestLevel}, stars ${state.totalStars}');
     } else {
       state = UserState(stageStars: stageStars);
-      debugPrint('[SAVE] 신규 게임 시작');
+      dlog('[SAVE] 신규 게임 시작');
     }
   }
 
@@ -221,7 +222,7 @@ class UserStateNotifier extends StateNotifier<UserState> {
     final endOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
     state = state.copyWith(speedPassExpiresAt: endOfMonth);
     _autoSave();
-    debugPrint('[SPEED] 2배속 해금! 만료: $endOfMonth');
+    dlog('[SPEED] 2배속 해금! 만료: $endOfMonth');
   }
 }
 

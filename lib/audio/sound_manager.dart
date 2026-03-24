@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flame_audio/flame_audio.dart';
+import '../common/debug_log.dart';
 import 'audio_synth_stub.dart'
     if (dart.library.js_interop) 'web_audio_synth.dart';
 
@@ -198,18 +199,18 @@ class SoundManager {
             ..._bgmTracks,
           ]);
           _useFileBgm = true;
-          if (kDebugMode) debugPrint('🎵 오디오 에셋 로드 완료 (BGM ${_bgmTracks.length}곡)');
+          if (kDebugMode) dlog('🎵 오디오 에셋 로드 완료 (BGM ${_bgmTracks.length}곡)');
         } catch (e) {
-          if (kDebugMode) debugPrint('⚠️ mp3 로드 실패 (합성 폴백 사용): $e');
+          if (kDebugMode) dlog('⚠️ mp3 로드 실패 (합성 폴백 사용): $e');
         }
       } else {
-        if (kDebugMode) debugPrint('🌐 웹 환경 — 오디오 프리로드 스킵 (합성 폴백 사용)');
+        if (kDebugMode) dlog('🌐 웹 환경 — 오디오 프리로드 스킵 (합성 폴백 사용)');
       }
 
       _initialized = true;
-      if (kDebugMode) debugPrint('🔊 SoundManager 초기화 완료');
+      if (kDebugMode) dlog('🔊 SoundManager 초기화 완료');
     } catch (e) {
-      if (kDebugMode) debugPrint('⚠️ SoundManager 초기화 실패: $e');
+      if (kDebugMode) dlog('⚠️ SoundManager 초기화 실패: $e');
       _initialized = true; // 실패해도 initialized 마킹 (재호출 방지)
     }
   }
@@ -262,7 +263,7 @@ class SoundManager {
           // 성공 — 이 블록 비어 있어도 OK
         }).catchError((Object e) {
           // 오디오 재생 실패 무시 (게임 진행에 영향 없음)
-          if (kDebugMode) debugPrint('⚠️ SFX 재생 실패[$type]: $e');
+          if (kDebugMode) dlog('⚠️ SFX 재생 실패[$type]: $e');
         });
         return;
       } catch (_) {
@@ -529,15 +530,15 @@ class SoundManager {
     try {
       // FlameAudio.bgm.play()도 비동기 에러 발생 가능 — catchError로 흡수
       FlameAudio.bgm.play(bgmFile, volume: _bgmVolume).catchError((e) {
-        if (kDebugMode) debugPrint('⚠️ BGM 파일 재생 실패: $e');
+        if (kDebugMode) dlog('⚠️ BGM 파일 재생 실패: $e');
         // 폴백: 합성 BGM
         if (_synth != null && _currentBgm != null) {
           _startBgmLoop(_currentBgm!);
         }
       });
-      if (kDebugMode) debugPrint('🎵 BGM 재생: $bgmFile (${_currentBgm?.name})');
+      if (kDebugMode) dlog('🎵 BGM 재생: $bgmFile (${_currentBgm?.name})');
     } catch (e) {
-      if (kDebugMode) debugPrint('⚠️ BGM 파일 재생 실패: $e');
+      if (kDebugMode) dlog('⚠️ BGM 파일 재생 실패: $e');
       // 폴백: 합성 BGM
       if (_synth != null && _currentBgm != null) {
         _startBgmLoop(_currentBgm!);

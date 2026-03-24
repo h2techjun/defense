@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:js_interop';
 import 'package:flutter/foundation.dart';
+import '../common/debug_log.dart';
 
 // ── Web Audio API JS Interop 바인딩 (최소한의 안전한 정의) ──
 
@@ -67,9 +68,9 @@ class WebAudioSynth {
     try {
       _audioCtx = JSAudioContext();
       _initialized = true;
-      if (kDebugMode) debugPrint('🎵 WebAudioSynth 초기화 완료 (Web Audio API)');
+      if (kDebugMode) dlog('🎵 WebAudioSynth 초기화 완료 (Web Audio API)');
     } catch (e) {
-      if (kDebugMode) debugPrint('⚠️ WebAudioSynth 초기화 실패: $e');
+      if (kDebugMode) dlog('⚠️ WebAudioSynth 초기화 실패: $e');
     }
   }
 
@@ -128,7 +129,7 @@ class WebAudioSynth {
 
       _scheduleNodeCleanup(osc, gain, duration);
     } catch (e) {
-      if (kDebugMode) debugPrint('⚠️ playTone 오류: $e');
+      if (kDebugMode) dlog('⚠️ playTone 오류: $e');
     }
   }
 
@@ -165,7 +166,7 @@ class WebAudioSynth {
         _scheduleNodeCleanup(osc, gain, duration);
       }
     } catch (e) {
-      if (kDebugMode) debugPrint('⚠️ playNoise 오류: $e');
+      if (kDebugMode) dlog('⚠️ playNoise 오류: $e');
     }
   }
 
@@ -202,7 +203,7 @@ class WebAudioSynth {
 
       _scheduleNodeCleanup(osc, gain, duration);
     } catch (e) {
-      if (kDebugMode) debugPrint('⚠️ playSweep 오류: $e');
+      if (kDebugMode) dlog('⚠️ playSweep 오류: $e');
     }
   }
 

@@ -49,6 +49,7 @@ import 'data/models/story_data.dart';
 import 'common/responsive.dart';
 import 'ui/common/ad_side_banners.dart';
 import 'l10n/app_strings.dart';
+import 'common/debug_log.dart';
 
 /// 게임 화면 (메인메뉴 ↔ 게임 전환)
 class GameScreen extends ConsumerStatefulWidget {
@@ -79,28 +80,28 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void initState() {
     super.initState();
-    debugPrint('🚀 [GameScreen] initState 시작');
+    dlog('🚀 [GameScreen] initState 시작');
     _game = DefenseGame();
     _setupGameCallbacks();
     // 세이브 데이터 로드 + 클라우드 동기화
     Future.microtask(() async {
-      debugPrint('🚀 [GameScreen] 세이브 데이터 로드 시작');
+      dlog('🚀 [GameScreen] 세이브 데이터 로드 시작');
       await ref.read(userStateProvider.notifier).loadFromSave();
       await ref.read(dailyQuestProvider.notifier).loadFromSave();
       await ref.read(skinProvider.notifier).loadFromSave();
-      debugPrint('🚀 [GameScreen] 세이브 데이터 로드 완료');
+      dlog('🚀 [GameScreen] 세이브 데이터 로드 완료');
 
       // 클라우드 스마트 동기화 (Supabase 초기화 시에만)
       try {
         final result = await CloudSaveManager.instance.appStartSync();
-        debugPrint('☁️ [GameScreen] 클라우드 동기화 결과: $result');
+        dlog('☁️ [GameScreen] 클라우드 동기화 결과: $result');
         if (result == CloudSyncResult.success) {
           // 클라우드에서 최신 데이터를 받았을 수 있으므로 다시 로드
           await ref.read(userStateProvider.notifier).loadFromSave();
-          debugPrint('☁️ [GameScreen] 클라우드 데이터 반영 완료');
+          dlog('☁️ [GameScreen] 클라우드 데이터 반영 완료');
         }
       } catch (e) {
-        debugPrint('☁️ [GameScreen] 클라우드 동기화 스킵: $e');
+        dlog('☁️ [GameScreen] 클라우드 동기화 스킵: $e');
       }
     });
   }
@@ -399,7 +400,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         _currentLevel!.levelNumber,
         gameState.starRating,
       );
-      debugPrint('[SAVE] Ch.$chapter 스테이지 ${_currentLevel!.levelNumber} 클리어! 별: ${gameState.starRating}');
+      dlog('[SAVE] Ch.$chapter 스테이지 ${_currentLevel!.levelNumber} 클리어! 별: ${gameState.starRating}');
 
       // 영웅 해금 체크
       final userState = ref.read(userStateProvider);
@@ -410,7 +411,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             !userState.unlockedHeroes.contains(entry.key)) {
           ref.read(userStateProvider.notifier).unlockHero(entry.key);
           newlyUnlocked.add(entry.key);
-          debugPrint('[UNLOCK] 영웅 해금: ${entry.key.name} (Stage ${entry.value} 조건 충족)');
+          dlog('[UNLOCK] 영웅 해금: ${entry.key.name} (Stage ${entry.value} 조건 충족)');
         }
       }
 
@@ -747,7 +748,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       SoundManager.instance.init().then((_) {
         SoundManager.instance.playBgm(BgmType.menu);
       }).catchError((e) {
-        debugPrint('⚠️ [GameScreen] SoundManager 초기화/BGM 실패: $e');
+        dlog('⚠️ [GameScreen] SoundManager 초기화/BGM 실패: $e');
       });
       return MainMenu(
         onStageSelect: () {
@@ -939,8 +940,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   if (renderBox != null) {
                     final localPos = renderBox.globalToLocal(details.offset);
                     
-                    debugPrint('[DRAG DEBUG] Raw details.offset: ${details.offset}');
-                    debugPrint('[DRAG DEBUG] GameWidget.globalToLocal => $localPos');
+                    dlog('[DRAG DEBUG] Raw details.offset: ${details.offset}');
+                    dlog('[DRAG DEBUG] GameWidget.globalToLocal => $localPos');
                     
                     _game.handleDragDrop(localPos, details.data, renderBox.size);
                   } else {

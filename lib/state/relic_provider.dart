@@ -8,6 +8,7 @@ import '../data/models/relic_data.dart';
 import '../common/enums.dart';
 import '../services/save_manager.dart';
 import 'user_state.dart';
+import '../../common/debug_log.dart';
 
 /// 유물 강화 결과
 enum UpgradeResult {
@@ -144,7 +145,7 @@ class RelicNotifier extends StateNotifier<RelicState> {
       _persist();
 
       if (kDebugMode) {
-        debugPrint('🏺 유물 강화 성공: ${relic.nameKo} Lv$currentLevel → Lv${currentLevel + 1} (비용: ${cost}골)');
+        dlog('🏺 유물 강화 성공: ${relic.nameKo} Lv$currentLevel → Lv${currentLevel + 1} (비용: ${cost}골)');
       }
       return UpgradeResult.success;
     } else {
@@ -152,7 +153,7 @@ class RelicNotifier extends StateNotifier<RelicState> {
       _persist();
 
       if (kDebugMode) {
-        debugPrint('💔 유물 강화 실패: ${relic.nameKo} Lv$currentLevel (확률: $successRate%, 비용: ${cost}골 소비)');
+        dlog('💔 유물 강화 실패: ${relic.nameKo} Lv$currentLevel (확률: $successRate%, 비용: ${cost}골 소비)');
       }
       return UpgradeResult.failed;
     }

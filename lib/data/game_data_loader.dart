@@ -9,6 +9,7 @@ import 'models/enemy_data.dart';
 import 'models/tower_data.dart';
 import 'models/wave_data.dart';
 import 'json_data_loader.dart';
+import '../common/debug_log.dart';
 
 /// 게임 데이터 레지스트리 — JSON 전용
 ///
@@ -25,11 +26,11 @@ class GameDataLoader {
     try {
       await JsonDataLoader.loadAll();
       _initialized = true;
-      debugPrint('[GameDataLoader] ✅ JSON 데이터 로드 완료');
+      dlog('[GameDataLoader] ✅ JSON 데이터 로드 완료');
     } catch (e) {
       // JSON 로드 실패 시 하드코딩 폴백으로 자동 전환 (rethrow 하지 않음)
       _initialized = false;
-      debugPrint('[GameDataLoader] ⚠️ JSON 로드 실패, 폴백 사용: $e');
+      dlog('[GameDataLoader] ⚠️ JSON 로드 실패, 폴백 사용: $e');
     }
   }
 

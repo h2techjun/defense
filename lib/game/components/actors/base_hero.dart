@@ -23,6 +23,7 @@ import '../towers/projectile.dart';
 import '../effects/particle_effect.dart';
 import '../effects/sprite_hit_effect.dart';
 import '../../../audio/sound_manager.dart';
+import '../../../common/debug_log.dart';
 
 /// 영웅 컴포넌트 - 자동 공격 + 액티브 스킬 + 은신 감지
 class BaseHero extends PositionComponent
@@ -165,7 +166,7 @@ class BaseHero extends PositionComponent
         _loadHeroSprite();
       }
 
-      if (kDebugMode) debugPrint('🎉 ${data.id.name} 레벨업! Lv.$level');
+      if (kDebugMode) dlog('🎉 ${data.id.name} 레벨업! Lv.$level');
     }
 
     // 만렙 도달 시 잔여 경험치 초기화
@@ -412,7 +413,7 @@ class BaseHero extends PositionComponent
       add(_spriteComponent!);
       _heroSpriteLoaded = true;
     } catch (e) {
-      if (kDebugMode) debugPrint('Sprite load err: $e');
+      if (kDebugMode) dlog('Sprite load err: $e');
       _heroSpriteLoaded = false;
     }
   }

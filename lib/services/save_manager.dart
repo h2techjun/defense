@@ -5,6 +5,7 @@ import '../common/enums.dart';
 import '../state/user_state.dart';
 import '../data/models/relic_data.dart';
 import '../data/models/skin_data.dart';
+import '../common/debug_log.dart';
 
 /// 세이브 매니저 — 싱글톤 패턴
 class SaveManager {
@@ -94,7 +95,7 @@ class SaveManager {
         isPremium: (data['isPremium'] as bool?) ?? false,
       );
     } catch (e) {
-      debugPrint('[SAVE] 세이브 데이터 파싱 오류: $e');
+      dlog('[SAVE] 세이브 데이터 파싱 오류: $e');
       return null;
     }
   }
@@ -126,7 +127,7 @@ class SaveManager {
       final data = jsonDecode(jsonStr) as Map<String, dynamic>;
       return data.map((k, v) => MapEntry(k, (v as num).toInt()));
     } catch (e) {
-      debugPrint('[SAVE] 스테이지 별 데이터 파싱 오류: $e');
+      dlog('[SAVE] 스테이지 별 데이터 파싱 오류: $e');
       return {};
     }
   }
@@ -333,7 +334,7 @@ class SaveManager {
         'levels': levels,
       };
     } catch (e) {
-      debugPrint('[SAVE] 유물 데이터 파싱 오류: $e');
+      dlog('[SAVE] 유물 데이터 파싱 오류: $e');
       return null;
     }
   }
@@ -378,7 +379,7 @@ class SaveManager {
 
       return {'owned': owned, 'equipped': equipped};
     } catch (e) {
-      debugPrint('[SAVE] 스킨 데이터 파싱 오류: $e');
+      dlog('[SAVE] 스킨 데이터 파싱 오류: $e');
       return null;
     }
   }
@@ -389,7 +390,7 @@ class SaveManager {
   Future<void> saveEndlessTower(Map<String, dynamic> data) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('endless_tower', jsonEncode(data));
-    debugPrint('[SAVE] 무한의 탑 저장: floor=${data['currentFloor']}, highest=${data['highestFloor']}');
+    dlog('[SAVE] 무한의 탑 저장: floor=${data['currentFloor']}, highest=${data['highestFloor']}');
   }
 
   /// 무한의 탑 상태 로드
@@ -400,7 +401,7 @@ class SaveManager {
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
-      debugPrint('[SAVE] 무한의 탑 로드 오류: $e');
+      dlog('[SAVE] 무한의 탑 로드 오류: $e');
       return null;
     }
   }
@@ -411,7 +412,7 @@ class SaveManager {
   Future<void> saveDailyChallenge(Map<String, dynamic> data) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('daily_challenge', jsonEncode(data));
-    debugPrint('[SAVE] 일일 도전 저장: completed=${data['lastCompletedDate']}, streak=${data['streak']}');
+    dlog('[SAVE] 일일 도전 저장: completed=${data['lastCompletedDate']}, streak=${data['streak']}');
   }
 
   /// 일일 도전 상태 로드
@@ -422,7 +423,7 @@ class SaveManager {
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
-      debugPrint('[SAVE] 일일 도전 로드 오류: $e');
+      dlog('[SAVE] 일일 도전 로드 오류: $e');
       return null;
     }
   }
@@ -443,7 +444,7 @@ class SaveManager {
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
-      debugPrint('[SAVE] 시즌 패스 로드 오류: $e');
+      dlog('[SAVE] 시즌 패스 로드 오류: $e');
       return null;
     }
   }
@@ -466,7 +467,7 @@ class SaveManager {
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
-      debugPrint('[SAVE] 업적 로드 오류: $e');
+      dlog('[SAVE] 업적 로드 오류: $e');
       return null;
     }
   }
@@ -487,7 +488,7 @@ class SaveManager {
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
-      debugPrint('[SAVE] 랭킹 로드 오류: $e');
+      dlog('[SAVE] 랭킹 로드 오류: $e');
       return null;
     }
   }
@@ -508,7 +509,7 @@ class SaveManager {
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
-      debugPrint('[SAVE] 일일 미션 로드 오류: $e');
+      dlog('[SAVE] 일일 미션 로드 오류: $e');
       return null;
     }
   }
@@ -529,7 +530,7 @@ class SaveManager {
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
-      debugPrint('[SAVE] 설화도감 로드 오류: $e');
+      dlog('[SAVE] 설화도감 로드 오류: $e');
       return null;
     }
   }
@@ -550,7 +551,7 @@ class SaveManager {
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
-      debugPrint('[SAVE] 광고 데이터 로드 오류: $e');
+      dlog('[SAVE] 광고 데이터 로드 오류: $e');
       return null;
     }
   }
@@ -571,7 +572,7 @@ class SaveManager {
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
     } catch (e) {
-      debugPrint('[SAVE] 커스텀 데이터 로드 오류 ($key): $e');
+      dlog('[SAVE] 커스텀 데이터 로드 오류 ($key): $e');
       return null;
     }
   }

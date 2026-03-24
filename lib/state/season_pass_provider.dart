@@ -12,6 +12,7 @@ import 'summon_provider.dart';
 import 'skin_provider.dart';
 import 'relic_provider.dart';
 import 'hero_party_provider.dart';
+import '../../common/debug_log.dart';
 
 // ═══════════════════════════════════════════
 // 시즌 패스 상태
@@ -193,7 +194,7 @@ class SeasonPassNotifier extends StateNotifier<SeasonPassState> {
             final skinId = SkinId.values.firstWhere((s) => s.name == reward.unlockId);
             _ref.read(skinProvider.notifier).unlockSkin(skinId);
           } catch (_) {
-            debugPrint('[SeasonPass] Unknown SkinId: ${reward.unlockId}');
+            dlog('[SeasonPass] Unknown SkinId: ${reward.unlockId}');
           }
         }
         break;
@@ -203,16 +204,16 @@ class SeasonPassNotifier extends StateNotifier<SeasonPassState> {
             final relicId = RelicId.values.firstWhere((r) => r.name == reward.unlockId);
             _ref.read(relicProvider.notifier).unlockRelic(relicId);
           } catch (_) {
-            debugPrint('[SeasonPass] Unknown RelicId: ${reward.unlockId}');
+            dlog('[SeasonPass] Unknown RelicId: ${reward.unlockId}');
           }
         }
         break;
       case PassRewardType.summonTicket:
         _ref.read(summonProvider.notifier).addTickets('summonTicket', reward.amount);
-        debugPrint('[SeasonPass] 소환권 보상 획득: ${reward.amount}');
+        dlog('[SeasonPass] 소환권 보상 획득: ${reward.amount}');
         break;
       default:
-        debugPrint('[SeasonPass] 기타 보상 획득: ${reward.name}');
+        dlog('[SeasonPass] 기타 보상 획득: ${reward.name}');
         break;
     }
   }

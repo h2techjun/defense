@@ -20,6 +20,7 @@ import '../../defense_game.dart';
 import '../items/spirit_component.dart';
 import '../towers/base_tower.dart';
 import '../towers/barracks_soldier.dart';
+import '../../../common/debug_log.dart';
 
 /// 적 기본 컴포넌트
 class BaseEnemy extends PositionComponent
@@ -328,7 +329,7 @@ class BaseEnemy extends PositionComponent
       _debugTimer += dt;
       if (_debugTimer >= 3.0) {
         _debugTimer = 0;
-        debugPrint('[ENEMY#$_debugSlot] id=${data.id.name} '
+        dlog('[ENEMY#$_debugSlot] id=${data.id.name} '
           'state=$_state pos=(${position.x.toInt()},${position.y.toInt()}) '
           'wpIdx=$_currentWaypointIndex/${_waypoints.length} '
           'speed=${_getEffectiveSpeed().toStringAsFixed(1)} '

@@ -201,13 +201,13 @@ class DefenseGame extends FlameGame
     _waveManager ??= WaveManager(game: this);
     world.add(waveManager);
 
-    if (kDebugMode) debugPrint('DefenseGame.onLoad complete');
+    if (kDebugMode) dlog('DefenseGame.onLoad complete');
 
     // onLoad 완료 전에 startLevel이 호출되었다면 지금 실행
     if (_pendingLevel != null) {
       final level = _pendingLevel!;
       _pendingLevel = null;
-      if (kDebugMode) debugPrint('Processing pending level: ${level.name}');
+      if (kDebugMode) dlog('Processing pending level: ${level.name}');
       startLevel(level);
     }
   }
@@ -217,11 +217,11 @@ class DefenseGame extends FlameGame
   /// 레벨 시작
   void startLevel(LevelData level, {GameMode mode = GameMode.campaign}) {
     if (!isLoaded) {
-      if (kDebugMode) debugPrint('Game not loaded yet, storing pending level: ${level.name}');
+      if (kDebugMode) dlog('Game not loaded yet, storing pending level: ${level.name}');
       _pendingLevel = level;
       return;
     }
-    if (kDebugMode) debugPrint('startLevel: ${level.name} (mode: $mode) — path: ${level.path.length} points');
+    if (kDebugMode) dlog('startLevel: ${level.name} (mode: $mode) — path: ${level.path.length} points');
     currentLevel = level;
     _currentGameMode = mode;
     isGameRunning = true;
@@ -351,7 +351,7 @@ class DefenseGame extends FlameGame
       activeMapObjects.add(component);
     }
 
-    if (kDebugMode) debugPrint('🏔️ 맵 오브젝트 ${level.mapObjects.length}개 스폰');
+    if (kDebugMode) dlog('🏔️ 맵 오브젝트 ${level.mapObjects.length}개 스폰');
   }
 
   /// 맵 오브젝트 플래그 설정 (우물 정화, 횡불 점화 등)
@@ -389,7 +389,7 @@ class DefenseGame extends FlameGame
 
     // 가장 가까운 빈 배치 지점 찾기
     final slotIndex = gameMap.findNearestEmptySlot(worldPos);
-    if (kDebugMode) debugPrint('Tap worldPos=$worldPos, slotIndex=$slotIndex, slots=${gameMap.towerSlots.length}');
+    if (kDebugMode) dlog('Tap worldPos=$worldPos, slotIndex=$slotIndex, slots=${gameMap.towerSlots.length}');
 
     if (slotIndex != null) {
       _placeTowerAtSlot(slotIndex);
@@ -400,7 +400,7 @@ class DefenseGame extends FlameGame
   void handleDragDrop(Offset localPosition, TowerType towerType, Size? widgetSize) {
     if (!isGameRunning) return;
 
-    if (kDebugMode) debugPrint('DragDrop local=$localPosition widget=$widgetSize type=$towerType');
+    if (kDebugMode) dlog('DragDrop local=$localPosition widget=$widgetSize type=$towerType');
 
     // 드롭된 타워 타입 설정
     selectedTowerType = towerType;
@@ -425,7 +425,7 @@ class DefenseGame extends FlameGame
       _placeTowerAtSlot(slotIndex);
       selectedTowerType = null;
     } else {
-      if (kDebugMode) debugPrint('No valid slot found near $worldPos');
+      if (kDebugMode) dlog('No valid slot found near $worldPos');
     }
   }
 
@@ -677,7 +677,7 @@ class DefenseGame extends FlameGame
     if (_pendingLevel != null && isLoaded) {
       final level = _pendingLevel!;
       _pendingLevel = null;
-      if (kDebugMode) debugPrint('Processing pending level in update: ${level.name}');
+      if (kDebugMode) dlog('Processing pending level in update: ${level.name}');
       startLevel(level);
     }
 

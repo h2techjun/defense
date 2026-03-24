@@ -8,6 +8,7 @@ import '../common/enums.dart';
 import '../services/save_manager.dart';
 import 'user_state.dart';
 import 'season_pass_provider.dart';
+import '../../common/debug_log.dart';
 
 // ═══════════════════════════════════════════
 // 업적 상태
@@ -172,7 +173,7 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
     // 업적 달성 알림
     if (justAchieved) {
       _ref.read(lastAchievedIdProvider.notifier).state = achievementId;
-      debugPrint('[🏆 ACHIEVEMENT] 업적 달성: $achievementId');
+      dlog('[🏆 ACHIEVEMENT] 업적 달성: $achievementId');
     }
   }
 

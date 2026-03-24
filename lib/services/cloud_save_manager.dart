@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../state/user_state.dart';
 import 'save_manager.dart';
+import '../common/debug_log.dart';
 
 /// 동기화 결과 상태
 enum CloudSyncResult {
@@ -46,7 +47,7 @@ class CloudSaveManager {
       final rng = Random.secure();
       id = '${_hex(rng, 8)}-${_hex(rng, 4)}-4${_hex(rng, 3)}-${_hex(rng, 4)}-${_hex(rng, 12)}';
       await prefs.setString('haewon_device_id', id);
-      debugPrint('☁️ [CloudSave] 새 디바이스 ID 생성: $id');
+      dlog('☁️ [CloudSave] 새 디바이스 ID 생성: $id');
     }
     _deviceId = id;
     return id;
@@ -140,7 +141,7 @@ class CloudSaveManager {
         return uploaded ? CloudSyncResult.success : CloudSyncResult.error;
       }
     } catch (e) {
-      debugPrint('☁️ [CloudSave] 스마트 동기화 실패: $e');
+      dlog('☁️ [CloudSave] 스마트 동기화 실패: $e');
       return CloudSyncResult.error;
     } finally {
       _isSyncing = false;
@@ -156,7 +157,7 @@ class CloudSaveManager {
           .eq('user_id', userId)
           .maybeSingle();
     } catch (e) {
-      debugPrint('☁️ [CloudSave] 클라우드 데이터 조회 실패: $e');
+      dlog('☁️ [CloudSave] 클라우드 데이터 조회 실패: $e');
       return null;
     }
   }
@@ -165,16 +166,16 @@ class CloudSaveManager {
   Future<bool> syncToCloud(String userId) async {
     try {
       if (!_isConfigured) {
-        debugPrint('☁️ [CloudSave] Supabase가 아직 초기화되지 않았습니다. (.env 확인)');
+        dlog('☁️ [CloudSave] Supabase가 아직 초기화되지 않았습니다. (.env 확인)');
         return false;
       }
       
-      debugPrint('☁️ [CloudSave] Supabase DB 동기화 시작... (User ID: $userId)');
+      dlog('☁️ [CloudSave] Supabase DB 동기화 시작... (User ID: $userId)');
 
       // 로컬 데이터 수집
       final prefsData = await SaveManager.instance.loadUserState();
       if (prefsData == null) {
-        debugPrint('☁️ [CloudSave] 업로드할 로컬 데이터가 없습니다.');
+        dlog('☁️ [CloudSave] 업로드할 로컬 데이터가 없습니다.');
         return false;
       }
 
@@ -191,10 +192,10 @@ class CloudSaveManager {
           .upsert(payload);
           
       _lastSyncTime = now;
-      debugPrint('☁️ [CloudSave] 클라우드 동기화 100% 완료! ${payload['updated_at']}');
+      dlog('☁️ [CloudSave] 클라우드 동기화 100% 완료! ${payload['updated_at']}');
       return true;
     } catch (e) {
-      debugPrint('☁️ [CloudSave] 클라우드 동기화 실패: $e');
+      dlog('☁️ [CloudSave] 클라우드 동기화 실패: $e');
       return false;
     }
   }
@@ -203,11 +204,11 @@ class CloudSaveManager {
   Future<bool> syncFromCloud(String userId) async {
     try {
       if (!_isConfigured) {
-        debugPrint('☁️ [CloudSave] Supabase가 아직 초기화되지 않았습니다. (.env 확인)');
+        dlog('☁️ [CloudSave] Supabase가 아직 초기화되지 않았습니다. (.env 확인)');
         return false;
       }
 
-      debugPrint('☁️ [CloudSave] 클라우드 데이터 다운로드 조회 중... (User ID: $userId)');
+      dlog('☁️ [CloudSave] 클라우드 데이터 다운로드 조회 중... (User ID: $userId)');
 
       // user_id 기준 단건 조회 (RLS 정책에 의해 본인 데이터만 Fetch 가능)
       final response = await Supabase.instance.client
@@ -217,13 +218,13 @@ class CloudSaveManager {
           .maybeSingle();
 
       if (response == null) {
-        debugPrint('☁️ [CloudSave] 클라우드에 백업된 데이터가 없습니다.');
+        dlog('☁️ [CloudSave] 클라우드에 백업된 데이터가 없습니다.');
         return false;
       }
 
       // 2중 방어 검증
       if (response['user_id'] != userId) {
-        debugPrint('🚨 [Security] RLS 위반 의심 우회 트래픽!');
+        dlog('🚨 [Security] RLS 위반 의심 우회 트래픽!');
         return false;
       }
 
@@ -234,10 +235,10 @@ class CloudSaveManager {
       await SaveManager.instance.saveUserState(parsedState);
 
       _lastSyncTime = DateTime.now();
-      debugPrint('☁️ [CloudSave] 클라우드 데이터 로컬 이식 완료!');
+      dlog('☁️ [CloudSave] 클라우드 데이터 로컬 이식 완료!');
       return true;
     } catch (e) {
-      debugPrint('☁️ [CloudSave] 클라우드 데이터 다운로드 실패: $e');
+      dlog('☁️ [CloudSave] 클라우드 데이터 다운로드 실패: $e');
       return false;
     }
   }
@@ -254,7 +255,7 @@ class CloudSaveManager {
         final id = await getDeviceUserId();
         await syncToCloud(id);
       } catch (e) {
-        debugPrint('☁️ [CloudSave] 자동 동기화 실패 (무시): $e');
+        dlog('☁️ [CloudSave] 자동 동기화 실패 (무시): $e');
       }
     });
   }
@@ -266,7 +267,7 @@ class CloudSaveManager {
       final id = await getDeviceUserId();
       return await syncSmartly(id);
     } catch (e) {
-      debugPrint('☁️ [CloudSave] 앱 시작 동기화 실패: $e');
+      dlog('☁️ [CloudSave] 앱 시작 동기화 실패: $e');
       return CloudSyncResult.error;
     }
   }
