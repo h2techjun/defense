@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'common/debug_log.dart';
+
 import 'ui/theme/app_colors.dart';
 import 'data/game_data_loader.dart';
 
@@ -17,7 +19,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
-  debugPrint('🚀 [main] Flutter app starting...');
+  dlog('🚀 [main] Flutter app starting...');
   WidgetsFlutterBinding.ensureInitialized();
 
   // Zone mismatch 경고는 무해 (ensureInitialized: 루트 Zone, runApp: guarded Zone)
@@ -45,10 +47,10 @@ Future<void> main() async {
       await dotenv.load(fileName: '.env');
     // ignore: avoid_catches_without_on_clauses — FileNotFoundError는 Error 타입
     } catch (e) {
-      debugPrint('⚠️ [main] .env 파일 로드 실패 (무시): $e');
+      dlog('⚠️ [main] .env 파일 로드 실패 (무시): $e');
     }
   } else {
-    debugPrint('🌐 [main] 웹 환경 — .env 로드 스킵');
+    dlog('🌐 [main] 웹 환경 — .env 로드 스킵');
   }
 
   // Supabase 초기화 (웹에서는 .env 없으므로 스킵)
@@ -61,14 +63,14 @@ Future<void> main() async {
           url: supabaseUrl,
           anonKey: supabaseAnonKey,
         );
-        debugPrint('✅ [main] Supabase 초기화 완료');
+        dlog('✅ [main] Supabase 초기화 완료');
       }
     // ignore: avoid_catches_without_on_clauses
     } catch (e) {
-      debugPrint('⚠️ [main] Supabase 초기화 실패: $e');
+      dlog('⚠️ [main] Supabase 초기화 실패: $e');
     }
   } else {
-    debugPrint('🌐 [main] 웹 환경 — Supabase 초기화 스킵');
+    dlog('🌐 [main] 웹 환경 — Supabase 초기화 스킵');
   }
 
   // 가로 모드 고정
@@ -79,7 +81,7 @@ Future<void> main() async {
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   } on Exception catch (e) {
-    debugPrint('⚠️ [main] SystemChrome 설정 실패: $e');
+    dlog('⚠️ [main] SystemChrome 설정 실패: $e');
   }
 
   // 웹: 자동 전체화면 (첫 터치 시 전체화면 전환)
@@ -90,22 +92,22 @@ Future<void> main() async {
   // JSON 데이터 로드 (실패 시 하드코딩 폴백)
   try {
     await GameDataLoader.initFromJson();
-    debugPrint('✅ [main] GameDataLoader 초기화 완료');
+    dlog('✅ [main] GameDataLoader 초기화 완료');
   // ignore: avoid_catches_without_on_clauses
   } catch (e) {
-    debugPrint('⚠️ [main] GameDataLoader 초기화 실패, 폴백 사용: $e');
+    dlog('⚠️ [main] GameDataLoader 초기화 실패, 폴백 사용: $e');
   }
 
   // 다국어 초기화
   try {
     await AppStrings.init(GameLanguage.ko);
-    debugPrint('✅ [main] AppStrings 초기화 완료');
+    dlog('✅ [main] AppStrings 초기화 완료');
   // ignore: avoid_catches_without_on_clauses
   } catch (e) {
-    debugPrint('⚠️ [main] AppStrings 초기화 실패: $e');
+    dlog('⚠️ [main] AppStrings 초기화 실패: $e');
   }
 
-  debugPrint('🎮 [main] runApp() 시작');
+  dlog('🎮 [main] runApp() 시작');
   runZonedGuarded(() {
     runApp(
       const ProviderScope(
@@ -145,5 +147,5 @@ void _setupWebFullscreen() {
   // Flutter web에서는 dart:html 대신 web package를 사용
   // 앱 시작 시 바로 전체화면은 브라우저가 차단하므로,
   // GameScreen에서 첫 터치 이벤트에 전체화면 요청을 연동
-  debugPrint('🌐 [main] 웹 전체화면 모드 준비됨 — 첫 터치 시 전환');
+  dlog('🌐 [main] 웹 전체화면 모드 준비됨 — 첫 터치 시 전환');
 }

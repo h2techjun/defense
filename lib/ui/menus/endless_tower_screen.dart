@@ -4,6 +4,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../common/debug_log.dart';
 import '../../common/enums.dart';
 import '../../common/responsive.dart';
 import '../../data/models/endless_tower_data.dart';
@@ -67,7 +68,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
 
       widget.onStartLevel(levelData, GameMode.endlessTower);
     } catch (e, st) {
-      debugPrint('Endless Tower Error: $e\n$st');
+      dlog('Endless Tower Error: $e\n$st');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

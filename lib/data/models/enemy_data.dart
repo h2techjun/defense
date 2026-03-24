@@ -19,8 +19,8 @@ class EnemyAbility {
   /// JSON → EnemyAbility
   factory EnemyAbility.fromJson(Map<String, dynamic> json) {
     return EnemyAbility(
-      name: json['name'] as String,
-      description: json['description'] as String,
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
       value: (json['value'] as num?)?.toDouble() ?? 0,
       duration: (json['duration'] as num?)?.toDouble() ?? 0,
     );
@@ -93,8 +93,8 @@ class EnemyData {
   factory EnemyData.fromJson(Map<String, dynamic> json) {
     return EnemyData(
       id: EnemyId.values.firstWhere((e) => e.name == json['id']),
-      name: json['name'] as String,
-      description: json['description'] as String,
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
       chapter: Chapter.values.firstWhere((e) => e.name == json['chapter']),
       hp: (json['hp'] as num).toDouble(),
       speed: (json['speed'] as num).toDouble(),

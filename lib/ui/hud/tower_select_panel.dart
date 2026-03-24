@@ -83,9 +83,9 @@ class TowerSelectPanel extends ConsumerWidget {
                     name: data.name,
                     cost: data.baseCost,
                     color: meta['color'] as Color,
-                    icon: meta['icon'] as String,
-                    imageName: meta['image'] as String,
-                    tooltip: meta['tooltip'] as String,
+                    icon: meta['icon'] as String? ?? '❓',
+                    imageName: meta['image'] as String? ?? '',
+                    tooltip: meta['tooltip'] as String? ?? '',
                     canAfford: state.sinmyeong >= data.baseCost,
                     isSelected: selectedTower == type,
                     onTap: () {

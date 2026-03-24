@@ -227,9 +227,9 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                                         ),
                                         child: Center(
                                           child: Image.asset(
-                                            'assets/images/towers/${meta['image'] as String}.png',
+                                            'assets/images/towers/${meta['image'] as String? ?? 'tower_archer_1'}.png',
                                             width: 40 * s, height: 40 * s, fit: BoxFit.contain,
-                                            errorBuilder: (_, __, ___) => Text(meta['icon'] as String, style: TextStyle(fontSize: Responsive.fontSize(context, 24))),
+                                            errorBuilder: (_, __, ___) => Text(meta['icon'] as String? ?? '❓', style: TextStyle(fontSize: Responsive.fontSize(context, 24))),
                                           ),
                                         ),
                                       ),
@@ -375,10 +375,10 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(6),
                       child: Image.asset(
-                        'assets/images/towers/${meta['image'] as String}.png',
+                        'assets/images/towers/${meta['image'] as String? ?? 'tower_archer_1'}.png',
                         width: 36 * s, height: 36 * s, fit: BoxFit.contain,
                         errorBuilder: (_, __, ___) => Center(
-                          child: Text(meta['icon'] as String, style: TextStyle(fontSize: Responsive.fontSize(context, 16))),
+                          child: Text(meta['icon'] as String? ?? '❓', style: TextStyle(fontSize: Responsive.fontSize(context, 16))),
                         ),
                       ),
                     ),

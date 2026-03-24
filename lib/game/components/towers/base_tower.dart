@@ -4,6 +4,8 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flame/collisions.dart';
+
+import '../../../common/debug_log.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/effects.dart';
@@ -924,7 +926,7 @@ class BaseTower extends PositionComponent
     _soldiers.removeWhere((s) => s.isDead && !s.isMounted);
     final removed = beforeCount - _soldiers.length;
     if (removed > 0) {
-      debugPrint('🗡️ [Barracks] $removed soldiers died, ${_soldiers.length}/$_maxSoldiers remaining');
+      dlog('🗡️ [Barracks] $removed soldiers died, ${_soldiers.length}/$_maxSoldiers remaining');
     }
 
     // 병사 부족 시 재소환 타이머
@@ -948,7 +950,7 @@ class BaseTower extends PositionComponent
         );
         _soldiers.add(soldier);
         game.world.add(soldier);
-        debugPrint('🗡️ [Barracks] Respawned soldier at ${rallyPos}, now ${_soldiers.length}/$_maxSoldiers');
+        dlog('🗡️ [Barracks] Respawned soldier at ${rallyPos}, now ${_soldiers.length}/$_maxSoldiers');
       }
     } else {
       _soldierRespawnTimer = 0;

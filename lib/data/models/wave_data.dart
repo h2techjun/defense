@@ -1,4 +1,4 @@
-﻿// 해원의 문 - 웨이브 데이터 모델
+// 해원의 문 - 웨이브 데이터 모델
 
 import '../../common/enums.dart';
 import 'map_object_data.dart';
@@ -100,8 +100,8 @@ class LevelData {
     return LevelData(
       levelNumber: json['levelNumber'] as int,
       chapter: Chapter.values.firstWhere((e) => e.name == json['chapter']),
-      name: json['name'] as String,
-      briefing: json['briefing'] as String,
+      name: json['name'] as String? ?? '',
+      briefing: json['briefing'] as String? ?? '',
       startingSinmyeong: json['startingSinmyeong'] as int,
       gatewayHp: json['gatewayHp'] as int,
       waves: const [], // 런타임에 WaveBuilder가 채움

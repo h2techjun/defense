@@ -27,8 +27,8 @@ class HeroSkillData {
   /// JSON → HeroSkillData
   factory HeroSkillData.fromJson(Map<String, dynamic> json) {
     return HeroSkillData(
-      name: json['name'] as String,
-      description: json['description'] as String,
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
       cooldown: (json['cooldown'] as num).toDouble(),
       damage: (json['damage'] as num?)?.toDouble() ?? 0,
       range: (json['range'] as num?)?.toDouble() ?? 100,
@@ -79,8 +79,8 @@ class HeroEvolutionData {
   factory HeroEvolutionData.fromJson(Map<String, dynamic> json) {
     return HeroEvolutionData(
       tier: EvolutionTier.values.firstWhere((e) => e.name == json['tier']),
-      visualName: json['visualName'] as String,
-      description: json['description'] as String,
+      visualName: json['visualName'] as String? ?? '',
+      description: json['description'] as String? ?? '',
       hpMultiplier: (json['hpMultiplier'] as num?)?.toDouble() ?? 1.0,
       attackMultiplier: (json['attackMultiplier'] as num?)?.toDouble() ?? 1.0,
       rangeMultiplier: (json['rangeMultiplier'] as num?)?.toDouble() ?? 1.0,
@@ -132,9 +132,9 @@ class HeroData {
   factory HeroData.fromJson(Map<String, dynamic> json) {
     return HeroData(
       id: HeroId.values.firstWhere((e) => e.name == json['id']),
-      name: json['name'] as String,
-      title: json['title'] as String,
-      backstory: json['backstory'] as String,
+      name: json['name'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      backstory: json['backstory'] as String? ?? '',
       baseHp: (json['baseHp'] as num).toDouble(),
       baseAttack: (json['baseAttack'] as num).toDouble(),
       baseSpeed: (json['baseSpeed'] as num).toDouble(),
@@ -145,7 +145,7 @@ class HeroData {
           .map((e) => HeroEvolutionData.fromJson(e as Map<String, dynamic>))
           .toList(),
       barks: (json['barks'] as Map<String, dynamic>?)
-          ?.map((k, v) => MapEntry(k, v as String)) ?? {},
+          ?.map((k, v) => MapEntry(k, v as String? ?? '')) ?? {},
     );
   }
 

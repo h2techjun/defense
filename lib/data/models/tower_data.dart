@@ -26,7 +26,7 @@ class TowerUpgradeData {
   factory TowerUpgradeData.fromJson(Map<String, dynamic> json) {
     return TowerUpgradeData(
       level: json['level'] as int,
-      name: json['name'] as String,
+      name: json['name'] as String? ?? '',
       cost: json['cost'] as int,
       damage: (json['damage'] as num).toDouble(),
       range: (json['range'] as num).toDouble(),
@@ -105,8 +105,8 @@ class TowerBranchData {
   factory TowerBranchData.fromJson(Map<String, dynamic> json) {
     return TowerBranchData(
       branch: TowerBranch.values.firstWhere((e) => e.name == json['branch']),
-      name: json['name'] as String,
-      description: json['description'] as String,
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
       cost: json['cost'] as int,
       damage: (json['damage'] as num).toDouble(),
       range: (json['range'] as num).toDouble(),
@@ -194,8 +194,8 @@ class TowerData {
   factory TowerData.fromJson(Map<String, dynamic> json) {
     return TowerData(
       type: TowerType.values.firstWhere((e) => e.name == json['type']),
-      name: json['name'] as String,
-      description: json['description'] as String,
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
       baseCost: json['baseCost'] as int,
       baseDamage: (json['baseDamage'] as num).toDouble(),
       baseRange: (json['baseRange'] as num).toDouble(),

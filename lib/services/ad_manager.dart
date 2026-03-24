@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'save_manager.dart';
 import '../l10n/app_strings.dart';
+import '../common/debug_log.dart';
 
 /// 광고 유형
 enum AdType {
@@ -173,13 +174,13 @@ class AdManager {
       if (adData['dailyResetDate'] != null) {
         _dailyResetDate = DateTime.tryParse(adData['dailyResetDate']) ?? DateTime.now();
       }
-      if (kDebugMode) debugPrint('[AD] 광고 시청 데이터 로드 완료');
+      if (kDebugMode) dlog('[AD] 광고 시청 데이터 로드 완료');
     }
 
     if (kIsWeb) {
-      if (kDebugMode) debugPrint('📺 AdManager 초기화 (웹 시뮬레이션)');
+      if (kDebugMode) dlog('📺 AdManager 초기화 (웹 시뮬레이션)');
     } else {
-      if (kDebugMode) debugPrint('📺 AdManager 초기화 (모바일)');
+      if (kDebugMode) dlog('📺 AdManager 초기화 (모바일)');
       // TODO: MobileAds.instance.initialize();
     }
     _initialized = true;
@@ -244,12 +245,12 @@ class AdManager {
       await _saveData();
 
       if (kDebugMode) {
-        debugPrint('📺 보상형 광고 완료: ${reward.description} (오늘 $_dailyRewardedCount/$_maxDailyRewarded)');
+        dlog('📺 보상형 광고 완료: ${reward.description} (오늘 $_dailyRewardedCount/$_maxDailyRewarded)');
       }
 
       return reward;
     } catch (e) {
-      if (kDebugMode) debugPrint('⚠️ 광고 오류: $e');
+      if (kDebugMode) dlog('⚠️ 광고 오류: $e');
       return null;
     } finally {
       _isAdPlaying = false;
@@ -266,9 +267,9 @@ class AdManager {
       await Future.delayed(const Duration(seconds: 3));
       _stagesSinceLastInterstitial = 0;
 
-      if (kDebugMode) debugPrint('📺 전면 광고 표시 완료');
+      if (kDebugMode) dlog('📺 전면 광고 표시 완료');
     } catch (e) {
-      if (kDebugMode) debugPrint('⚠️ 전면 광고 오류: $e');
+      if (kDebugMode) dlog('⚠️ 전면 광고 오류: $e');
     } finally {
       _isAdPlaying = false;
     }

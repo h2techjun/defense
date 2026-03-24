@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../common/debug_log.dart';
+
 /// 지원 언어 목록
 enum GameLanguage {
   ko('한국어', '🇰🇷'),
@@ -54,9 +56,9 @@ class AppStrings {
       );
       
       _cache[lang] = strings;
-      debugPrint('🌐 [i18n] Loaded ${lang.name}.json');
+      dlog('🌐 [i18n] Loaded ${lang.name}.json');
     } catch (e) {
-      debugPrint('🚨 [i18n] Failed to load ${lang.name}.json: $e');
+      dlog('🚨 [i18n] Failed to load ${lang.name}.json: $e');
       _cache[lang] = {};
     }
   }

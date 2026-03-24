@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
 import 'dart:ui';
 import '../../common/constants.dart';
+import '../../common/debug_log.dart';
 
 /// 게임 맵 컴포넌트 (경로, 배치 가능 지점 등)
 class GameMap extends Component {
@@ -33,20 +34,20 @@ class GameMap extends Component {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    if (kDebugMode) debugPrint('GameMap.onLoad started');
+    if (kDebugMode) dlog('GameMap.onLoad started');
   }
 
   @override
   void onMount() {
     super.onMount();
-    if (kDebugMode) debugPrint('GameMap.onMount — isMounted: $isMounted');
+    if (kDebugMode) dlog('GameMap.onMount — isMounted: $isMounted');
 
     // 배경을 래스터 이미지로 캐시
     _renderBackgroundToImage();
 
     // 만약 mount 전에 setPath가 호출되었다면, 지금 시각 그리기
     if (_pendingVisuals) {
-      if (kDebugMode) debugPrint('GameMap: Processing pending visuals in onMount');
+      if (kDebugMode) dlog('GameMap: Processing pending visuals in onMount');
       _pendingVisuals = false;
       _addVisuals();
     }
@@ -57,7 +58,7 @@ class GameMap extends Component {
     super.update(dt);
     // Failsafe: waypoints가 있지만 시각 요소가 렌더링되지 않았다면 강제 렌더링
     if (waypoints.isNotEmpty && !_visualsAdded && isMounted) {
-      if (kDebugMode) debugPrint('GameMap.update: Failsafe — forcing visual render');
+      if (kDebugMode) dlog('GameMap.update: Failsafe — forcing visual render');
       _addVisuals();
     }
   }
@@ -168,7 +169,7 @@ class GameMap extends Component {
       priority: -1,
     );
     add(_bgComponent!);
-    if (kDebugMode) debugPrint('GameMap: Background rasterized to single image');
+    if (kDebugMode) dlog('GameMap: Background rasterized to single image');
   }
 
   // ──────────────────────────────────────────────
@@ -262,13 +263,13 @@ class GameMap extends Component {
         size: Vector2(w, h),
         priority: 2,
       ));
-      if (kDebugMode) debugPrint('GameMap: Path rasterized to single image');
+      if (kDebugMode) dlog('GameMap: Path rasterized to single image');
     });
   }
 
   /// 경로 설정 (그리드 좌표 → 월드 좌표 변환)
   void setPath(List<List<int>> gridPath) {
-    if (kDebugMode) debugPrint('GameMap.setPath called with ${gridPath.length} points');
+    if (kDebugMode) dlog('GameMap.setPath called with ${gridPath.length} points');
 
     waypoints = gridPath.map((coord) {
       return Vector2(
@@ -278,16 +279,16 @@ class GameMap extends Component {
     }).toList();
 
     if (kDebugMode) {
-      debugPrint('GameMap: Generated ${waypoints.length} waypoints');
+      dlog('GameMap: Generated ${waypoints.length} waypoints');
       for (int i = 0; i < waypoints.length; i++) {
-        debugPrint('  wp[$i]: (${waypoints[i].x}, ${waypoints[i].y})');
+        dlog('  wp[$i]: (${waypoints[i].x}, ${waypoints[i].y})');
       }
     }
 
     // 경로 주변에 타워 배치 지점 자동 생성
     _generateTowerSlots();
 
-    if (kDebugMode) debugPrint('GameMap: Generated ${towerSlots.length} tower slots');
+    if (kDebugMode) dlog('GameMap: Generated ${towerSlots.length} tower slots');
 
     // 시각 요소 추가 — 마운트 상태에 따라 즉시 또는 지연
     _visualsAdded = false; // 리셋
@@ -295,7 +296,7 @@ class GameMap extends Component {
       _clearPathVisuals();
       _addVisuals();
     } else {
-      if (kDebugMode) debugPrint('GameMap: Not mounted yet, deferring visuals');
+      if (kDebugMode) dlog('GameMap: Not mounted yet, deferring visuals');
       _pendingVisuals = true;
     }
   }
@@ -317,7 +318,7 @@ class GameMap extends Component {
     _slotVisuals.clear();
 
     if (kDebugMode) {
-      debugPrint('GameMap._clearPathVisuals: removed ${sprites.length} path images, ${slotVisuals.length} slots');
+      dlog('GameMap._clearPathVisuals: removed ${sprites.length} path images, ${slotVisuals.length} slots');
     }
   }
 
@@ -360,7 +361,7 @@ class GameMap extends Component {
       }
     }
 
-    if (kDebugMode) debugPrint('GameMap: ${pathTiles.length} path tiles identified');
+    if (kDebugMode) dlog('GameMap: ${pathTiles.length} path tiles identified');
 
     // 경로 인접 타일에만 배치 지점 생성 (경로 위 제외)
     final offsets = [
@@ -401,7 +402,7 @@ class GameMap extends Component {
     _visualsAdded = true;
 
     if (kDebugMode) {
-      debugPrint('GameMap._addVisuals: ${waypoints.length} waypoints, ${towerSlots.length} slots');
+      dlog('GameMap._addVisuals: ${waypoints.length} waypoints, ${towerSlots.length} slots');
     }
 
     // 1. 도로/점선을 래스터 이미지로 캐시
@@ -419,7 +420,7 @@ class GameMap extends Component {
     }
 
     if (kDebugMode) {
-      debugPrint('GameMap._addVisuals COMPLETE — path cached + ${towerSlots.length} slot visuals');
+      dlog('GameMap._addVisuals COMPLETE — path cached + ${towerSlots.length} slot visuals');
     }
   }
 

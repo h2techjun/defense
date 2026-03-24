@@ -48,6 +48,7 @@ import 'ui/dialogs/tutorial_overlay.dart';
 import 'data/models/story_data.dart';
 import 'common/responsive.dart';
 import 'ui/common/ad_side_banners.dart';
+import 'l10n/app_strings.dart';
 
 /// 게임 화면 (메인메뉴 ↔ 게임 전환)
 class GameScreen extends ConsumerStatefulWidget {
@@ -1237,22 +1238,23 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                                     ? Icons.sync
                                     : Icons.cloud_upload_outlined,
                                 label: CloudSaveManager.instance.isSyncing
-                                    ? '동기화 중...'
-                                    : '☁️ 클라우드 저장',
+                                    ? AppStrings.get(ref.read(gameLanguageProvider), 'cloud_syncing')
+                                    : AppStrings.get(ref.read(gameLanguageProvider), 'cloud_save'),
                                 color: const Color(0xFF3B82F6),
                                 onTap: () async {
                                   syncSetState(() {});
                                   final result = await CloudSaveManager.instance.appStartSync();
                                   syncSetState(() {});
                                   if (mounted) {
+                                    final lang = ref.read(gameLanguageProvider);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
                                           result == CloudSyncResult.success
-                                              ? '☁️ 클라우드 동기화 완료!'
+                                              ? AppStrings.get(lang, 'cloud_sync_success')
                                               : result == CloudSyncResult.notConfigured
-                                                  ? '⚠️ Supabase 미설정 — .env 파일을 확인하세요'
-                                                  : '❌ 동기화 실패',
+                                                  ? AppStrings.get(lang, 'cloud_sync_not_configured')
+                                                  : AppStrings.get(lang, 'cloud_sync_failed'),
                                         ),
                                         backgroundColor: result == CloudSyncResult.success
                                             ? Colors.green

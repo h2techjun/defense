@@ -1,10 +1,12 @@
-﻿// 해원의 문 - JSON 데이터 로더
+// 해원의 문 - JSON 데이터 로더
 // JSON 에셋 파일에서 게임 데이터를 로딩합니다.
 
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+
+import '../common/debug_log.dart';
 
 import '../common/enums.dart';
 import 'models/enemy_data.dart';
@@ -53,11 +55,11 @@ class JsonDataLoader {
   /// 모든 JSON 데이터를 비동기로 로드합니다.
   static Future<void> loadAll() async {
     if (_isLoaded) {
-      debugPrint('ℹ️ [JsonDataLoader] Already loaded.');
+      dlog('ℹ️ [JsonDataLoader] Already loaded.');
       return;
     }
 
-    debugPrint('🚀 [JsonDataLoader] Loading all data...');
+    dlog('🚀 [JsonDataLoader] Loading all data...');
     try {
       await Future.wait([
         _loadHeroes(),
@@ -67,15 +69,15 @@ class JsonDataLoader {
       ]);
       _isLoaded = true;
       if (kDebugMode) {
-        debugPrint('[JsonDataLoader] ✅ 모든 데이터 로드 완료');
-        debugPrint('  영웅: ${_heroes.length}명');
-        debugPrint('  적: ${_enemies.length}종');
-        debugPrint('  타워: ${_towers.length}종, 분기: ${_branches.length}개');
-        debugPrint('  레벨: ${allLevels.length}개');
+        dlog('[JsonDataLoader] ✅ 모든 데이터 로드 완료');
+        dlog('  영웅: ${_heroes.length}명');
+        dlog('  적: ${_enemies.length}종');
+        dlog('  타워: ${_towers.length}종, 분기: ${_branches.length}개');
+        dlog('  레벨: ${allLevels.length}개');
       }
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('[JsonDataLoader] ❌ 데이터 로드 실패: $e');
+        dlog('[JsonDataLoader] ❌ 데이터 로드 실패: $e');
       }
       rethrow;
     }
@@ -83,7 +85,7 @@ class JsonDataLoader {
 
   /// 영웅 데이터 로드
   static Future<void> _loadHeroes() async {
-    debugPrint('⏳ [JsonDataLoader] Loading heroes.json...');
+    dlog('⏳ [JsonDataLoader] Loading heroes.json...');
     final jsonStr = await rootBundle.loadString('assets/data/heroes.json');
     final List<dynamic> jsonList = json.decode(jsonStr) as List<dynamic>;
     final heroMap = <HeroId, HeroData>{};
@@ -96,7 +98,7 @@ class JsonDataLoader {
 
   /// 적 데이터 로드
   static Future<void> _loadEnemies() async {
-    debugPrint('⏳ [JsonDataLoader] Loading enemies.json...');
+    dlog('⏳ [JsonDataLoader] Loading enemies.json...');
     final jsonStr = await rootBundle.loadString('assets/data/enemies.json');
     final List<dynamic> jsonList = json.decode(jsonStr) as List<dynamic>;
     final enemyMap = <EnemyId, EnemyData>{};
@@ -109,7 +111,7 @@ class JsonDataLoader {
 
   /// 타워 데이터 로드
   static Future<void> _loadTowers() async {
-    debugPrint('⏳ [JsonDataLoader] Loading towers.json...');
+    dlog('⏳ [JsonDataLoader] Loading towers.json...');
     final jsonStr = await rootBundle.loadString('assets/data/towers.json');
     final Map<String, dynamic> jsonData =
         json.decode(jsonStr) as Map<String, dynamic>;
@@ -183,17 +185,17 @@ class JsonDataLoader {
 
   /// waveConfig JSON에서 WaveBuilder로 웨이브 데이터 생성
   static List<WaveData> _buildWavesFromConfig(Map<String, dynamic> config) {
-    final type = config['type'] as String;
+    final type = config['type'] as String? ?? 'normal';
     final stageNumber = config['stageNumber'] as int;
     final waveCount = config['waveCount'] as int;
     final availableEnemies = (config['availableEnemies'] as List<dynamic>)
-        .map((e) => EnemyId.values.firstWhere((id) => id.name == e as String))
+        .map((e) => EnemyId.values.firstWhere((id) => id.name == e as String?))
         .toList();
     final openingNarrative = config['openingNarrative'] as String?;
 
     if (type == 'boss') {
       final bossId = EnemyId.values.firstWhere(
-        (e) => e.name == config['bossId'] as String,
+        (e) => e.name == config['bossId'] as String?,
       );
       final bossNarrative = config['bossNarrative'] as String?;
       return WaveBuilder.buildBoss(
