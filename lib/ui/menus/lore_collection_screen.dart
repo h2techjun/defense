@@ -214,7 +214,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
         labelColor: Colors.white,
         unselectedLabelColor: Colors.white38,
         labelStyle: TextStyle(fontSize: 16 * s, fontWeight: FontWeight.bold),
-        tabs: _categories.map((cat) => Tab(text: '${cat.emoji} ${cat.label}')).toList(),
+        tabs: _categories.map((cat) => Tab(text: '${cat.emoji} ${tr(ref, cat.label)}')).toList(),
       ),
     );
   }
