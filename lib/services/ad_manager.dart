@@ -121,9 +121,9 @@ class AdManager {
     final hours = secs ~/ 3600;
     final mins = (secs % 3600) ~/ 60;
     if (hours > 0) {
-      return mins > 0 ? '${hours}시간 ${mins}분' : '${hours}시간';
+      return mins > 0 ? '${hours}h ${mins}m' : '${hours}h';
     }
-    return '${mins}분';
+    return '${mins}m';
   }
 
   /// 오늘 수집한 무료 보석 횟수 (0~5)
@@ -206,32 +206,32 @@ class AdManager {
       final reward = switch (purpose) {
         RewardedAdPurpose.freeGems => const AdReward(
           gems: 30,
-          description: '💎 보석 30개 획득!',
+          description: '💎 30 Gems!',
           purpose: RewardedAdPurpose.freeGems,
         ),
         RewardedAdPurpose.revive => const AdReward(
           gems: 0,
-          description: '💚 게이트웨이 HP 50% 회복!',
+          description: '💚 Gateway HP +50%!',
           purpose: RewardedAdPurpose.revive,
         ),
         RewardedAdPurpose.doubleReward => const AdReward(
           gems: 0,
-          description: '✨ 보상 2배 적용!',
+          description: '✨ Double Reward!',
           purpose: RewardedAdPurpose.doubleReward,
         ),
         RewardedAdPurpose.freeSummon => const AdReward(
           gems: 0,
-          description: '🎫 무료 소환 1회!',
+          description: '🎫 Free Summon x1!',
           purpose: RewardedAdPurpose.freeSummon,
         ),
         RewardedAdPurpose.bonusMission => const AdReward(
           gems: 15,
-          description: '🎁 추가 보상 획득!',
+          description: '🎁 Bonus Reward!',
           purpose: RewardedAdPurpose.bonusMission,
         ),
         RewardedAdPurpose.seasonPremium => const AdReward(
           gems: 0,
-          description: '✨ 프리미엄 패스 해금!',
+          description: '✨ Premium Pass!',
           purpose: RewardedAdPurpose.seasonPremium,
         ),
       };

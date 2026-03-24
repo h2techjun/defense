@@ -240,7 +240,7 @@ class TowerFloorGenerator {
       bonusGems: getGemReward(floor, type),
       bonusExp: getExpReward(floor, type),
       waveCount: waveCount,
-      floorTitle: '$typeEmoji $floor층 — $typeName',
+      floorTitle: '$typeEmoji F$floor — $typeName',
       narrative: type == TowerFloorType.boss
           ? 'et_narr_boss'
           : (type == TowerFloorType.elite

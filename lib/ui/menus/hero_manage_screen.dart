@@ -3050,7 +3050,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                 onPressed: () => Navigator.of(ctx).pop(),
 
 
-                child: Text('닫기', style: TextStyle(color: color)),
+                child: Text('Close', style: TextStyle(color: color)),
 
 
               ),

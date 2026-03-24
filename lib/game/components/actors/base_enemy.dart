@@ -560,9 +560,9 @@ class BaseEnemy extends PositionComponent
   void takeDamage(double damage, DamageType damageType) {
     if (_state == EnemyState.dying) return;
 
-    // 물리 면역 체크 (그슨대 등 — abilities에 '물리 면역' 포함)
+    // 물리 면역 체크 (그슨대 등 — abilities에 'Phys Immune' 포함)
     if (damageType == DamageType.physical &&
-        data.abilities.any((a) => a.name == '물리 면역')) {
+        data.abilities.any((a) => a.name == 'Phys Immune')) {
       return; // 물리 공격 무효
     }
 
@@ -605,7 +605,7 @@ class BaseEnemy extends PositionComponent
   /// 보스 특수 능력 발동
   void _executeBossAbility() {
     // 챕터 1: 두억시니 — 지진
-    if (data.abilities.any((a) => a.name == '지진')) {
+    if (data.abilities.any((a) => a.name == 'Earthquake')) {
       final towers = game.cachedTowers;
       for (final tower in towers) {
         tower.silence(2.0);
@@ -616,7 +616,7 @@ class BaseEnemy extends PositionComponent
     }
 
     // 챕터 2: 산군 — 포효 & 창귀 소환
-    if (data.abilities.any((a) => a.name == '포효')) {
+    if (data.abilities.any((a) => a.name == 'Roar')) {
       final towers = game.cachedTowers;
       for (final tower in towers) {
         tower.silence(3.0);
@@ -625,20 +625,20 @@ class BaseEnemy extends PositionComponent
       game.triggerRedFlash(duration: 0.4);
       
       // 창귀 소환 (능력 목록에 있으면 발동)
-      if (data.abilities.any((a) => a.name == '창귀 소환')) {
-        final ability = data.abilities.firstWhere((a) => a.name == '창귀 소환');
+      if (data.abilities.any((a) => a.name == 'Summon')) {
+        final ability = data.abilities.firstWhere((a) => a.name == 'Summon');
         _spawnBossMinions(EnemyId.tigerSlave, ability.value?.toInt() ?? 3);
       }
       return;
     }
 
     // 챕터 3: 대왕 달걀귀신 — 스킬 반사 & 흡수
-    if (data.abilities.any((a) => a.name == '스킬 반사')) {
+    if (data.abilities.any((a) => a.name == 'Reflect')) {
       // 기획: 일정 시간 동안 받는 스킬 데미지를 0으로 하고 반사 (시각 효과만 우선)
       game.triggerRedFlash(duration: 0.3);
       // TODO: 실제 에너지 탄환 발사 로직 (반사)
       
-      if (data.abilities.any((a) => a.name == '흡수')) {
+      if (data.abilities.any((a) => a.name == 'Absorb')) {
         // 주변 병사 제거 (병영 방어 무력화)
         // game.world.children.whereType<BarracksSoldier>() 중 가까운 것 제거
       }
@@ -646,8 +646,8 @@ class BaseEnemy extends PositionComponent
     }
 
     // 챕터 4: 폭군왕 — 칙령 & 궁녀 소환
-    if (data.abilities.any((a) => a.name == '칙령')) {
-      final ability = data.abilities.firstWhere((a) => a.name == '칙령');
+    if (data.abilities.any((a) => a.name == 'Decree')) {
+      final ability = data.abilities.firstWhere((a) => a.name == 'Decree');
       final towers = List<BaseTower>.from(game.cachedTowers)..shuffle();
       // 랜덤 타워 3개 (또는 value만큼) 침묵
       final count = (ability.value?.toInt() ?? 3).clamp(0, towers.length);
@@ -656,14 +656,14 @@ class BaseEnemy extends PositionComponent
       }
       game.triggerRedFlash(duration: 0.8);
 
-      if (data.abilities.any((a) => a.name == '궁녀 소환')) {
+      if (data.abilities.any((a) => a.name == 'Summon')) {
         _spawnBossMinions(EnemyId.courtAssassin, 4);
       }
       return;
     }
 
     // 챕터 5: 귀문관 수문장 — 귀문개방 & 저승의 선고
-    if (data.abilities.any((a) => a.name == '귀문개방')) {
+    if (data.abilities.any((a) => a.name == 'Ghost Gate')) {
       // 랜덤 적 소환 (창귀, 아귀, 자객 중 랜덤)
       final pool = [EnemyId.hungryGhost, EnemyId.tigerSlave, EnemyId.courtAssassin];
       final targetId = pool[_random.nextInt(pool.length)];
@@ -671,7 +671,7 @@ class BaseEnemy extends PositionComponent
       game.shakeScreen(5.0, duration: 0.5);
     }
 
-    if (data.abilities.any((a) => a.name == '저승의 선고')) {
+    if (data.abilities.any((a) => a.name == 'Judgment')) {
       // 가장 비싼(강한) 타워 1개 파괴 (또는 장시간 무력화)
       final towers = List<BaseTower>.from(game.cachedTowers);
       if (towers.isNotEmpty) {
@@ -836,11 +836,11 @@ class BaseEnemy extends PositionComponent
 
   Map<String, dynamic> _buildTooltipInfo() {
     final abilities = <String>[];
-    if (data.isFlying) abilities.add('비행');
-    if (data.isStealth) abilities.add('은신');
-    if (data.isBoss) abilities.add('보스');
-    if (data.shieldHpRatio > 0) abilities.add('방패');
-    if (data.debuffSlowAura > 0) abilities.add('감속 오라');
+    if (data.isFlying) abilities.add('Flying');
+    if (data.isStealth) abilities.add('Stealth');
+    if (data.isBoss) abilities.add('Boss');
+    if (data.shieldHpRatio > 0) abilities.add('Shield');
+    if (data.debuffSlowAura > 0) abilities.add('Slow Aura');
 
     return {
       'type': 'enemy',

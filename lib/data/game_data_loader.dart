@@ -36,7 +36,7 @@ class GameDataLoader {
 
   /// 초기화 확인 가드
   static void _ensureInitialized() {
-    assert(_initialized, 'GameDataLoader.initFromJson()을 먼저 호출하세요');
+    assert(_initialized, 'Call GameDataLoader.initFromJson() first');
   }
 
   // ──────────────────────────────

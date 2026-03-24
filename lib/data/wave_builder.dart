@@ -157,7 +157,7 @@ class WaveBuilder {
         availableEnemies: floor.availableEnemies,
         bossId: floor.bossId!,
         waveCount: floor.waveCount,
-        openingNarrative: '"${floor.floor}층 — 탑의 주인이 기다린다"',
+        openingNarrative: '"${floor.floor}층 — The tower master awaits"',
         bossNarrative: floor.narrative,
       );
     }
@@ -167,7 +167,7 @@ class WaveBuilder {
       stageNumber: virtualStage,
       availableEnemies: floor.availableEnemies,
       waveCount: floor.waveCount,
-      openingNarrative: floor.narrative ?? '"${floor.floor}층에 도달했다."',
+      openingNarrative: floor.narrative ?? '"${floor.floor} reached."',
     );
 
     // 엘리트: 적 수 +30%, 인터벌 -20%

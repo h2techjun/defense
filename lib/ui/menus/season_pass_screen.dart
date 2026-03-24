@@ -11,6 +11,7 @@ import '../../state/season_pass_provider.dart';
 import '../../state/user_state.dart';
 import '../../services/ad_manager.dart';
 import '../theme/app_colors.dart';
+import '../../l10n/app_strings.dart';
 
 class SeasonPassScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;

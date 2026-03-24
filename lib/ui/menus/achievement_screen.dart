@@ -8,6 +8,7 @@ import '../../common/responsive.dart';
 import '../../data/models/achievement_data.dart';
 import '../../state/achievement_provider.dart';
 import '../theme/app_colors.dart';
+import '../../l10n/app_strings.dart';
 
 class AchievementScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
@@ -266,13 +267,13 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _rankStat(context, '🗼', '${state.personalBestTower}', '탑 최고층'),
+                _rankStat(context, '🗼', '${state.personalBestTower}', 'Tower Best'),
                 Container(
                   width: 1,
                   height: Responsive.spacing(context, 40),
                   color: Colors.white12,
                 ),
-                _rankStat(context, '📅', '${state.personalBestDaily}', '도전 최고웨이브'),
+                _rankStat(context, '📅', '${state.personalBestDaily}', 'Best Wave'),
               ],
             ),
           ),
@@ -293,9 +294,9 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _rankStat(context, '🗼', '${state.seasonBestTower}', '탑 최고'),
+                _rankStat(context, '🗼', '${state.seasonBestTower}', 'Best Floor'),
                 Container(width: 1, height: Responsive.spacing(context, 30), color: Colors.white12),
-                _rankStat(context, '📅', '${state.seasonBestDaily}', '도전 최고'),
+                _rankStat(context, '📅', '${state.seasonBestDaily}', 'Best Wave'),
               ],
             ),
           ),
@@ -336,7 +337,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
           // 무한의 탑 랭킹
           _sectionTitle(context, '🗼 무한의 탑 기록'),
           if (state.towerRankings.isEmpty)
-            _emptyRanking(context, '아직 기록이 없습니다. 탑에 도전해보세요!')
+            _emptyRanking(context, 'No records yet. Try the tower!')
           else
             ...state.towerRankings.asMap().entries.map(
               (e) => _RankingRow(rank: e.key + 1, entry: e.value),
@@ -347,7 +348,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
           // 일일 도전 랭킹
           _sectionTitle(context, '📅 일일 도전 기록'),
           if (state.dailyRankings.isEmpty)
-            _emptyRanking(context, '아직 기록이 없습니다. 일일 도전을 시작하세요!')
+            _emptyRanking(context, 'No records yet. Start a daily challenge!')
           else
             ...state.dailyRankings.asMap().entries.map(
               (e) => _RankingRow(rank: e.key + 1, entry: e.value),

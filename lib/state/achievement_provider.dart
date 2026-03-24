@@ -9,6 +9,7 @@ import '../services/save_manager.dart';
 import 'user_state.dart';
 import 'season_pass_provider.dart';
 import '../../common/debug_log.dart';
+import '../l10n/app_strings.dart';
 
 // ═══════════════════════════════════════════
 // 업적 상태

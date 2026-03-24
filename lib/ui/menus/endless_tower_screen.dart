@@ -14,6 +14,7 @@ import '../../data/wave_builder.dart';
 import '../../data/json_data_loader.dart';
 import '../../state/endless_tower_provider.dart';
 import '../theme/app_colors.dart';
+import '../../l10n/app_strings.dart';
 
 class EndlessTowerScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
@@ -150,7 +151,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                '보상을 하나 선택하세요',
+                'Select a reward',
                 style: TextStyle(color: Colors.white70, fontSize: 14),
               ),
               const SizedBox(height: 16),
@@ -481,9 +482,9 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _rewardItem(context, '💎', '${challenge.reward.gems}', '보석'),
-                      _rewardItem(context, '⭐', '${challenge.reward.exp}', '경험치'),
-                      _rewardItem(context, '🏆', challenge.reward.title, '칭호'),
+                      _rewardItem(context, '💎', '${challenge.reward.gems}', 'Gems'),
+                      _rewardItem(context, '⭐', '${challenge.reward.exp}', 'EXP'),
+                      _rewardItem(context, '🏆', challenge.reward.title, 'Title'),
                     ],
                   ),
                 ),
@@ -503,8 +504,8 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _statItem(context, '🔥', '${state.streak}일', '연속 도전'),
-                _statItem(context, '⚔️', '${state.bestWavesSurvived}', '최고 웨이브'),
-                _statItem(context, '🏅', '${state.totalChallengesCompleted}', '총 완료'),
+                _statItem(context, '⚔️', '${state.bestWavesSurvived}', 'Best Wave'),
+                _statItem(context, '🏅', '${state.totalChallengesCompleted}', 'Total'),
               ],
             ),
           ),
@@ -672,7 +673,7 @@ class _TowerFloorCard extends StatelessWidget {
                       SizedBox(height: Responsive.spacing(context, 2)),
                       Text(
                         floor.type == TowerFloorType.rest
-                            ? '보상 선택'
+                            ? 'Select Reward'
                             : '웨이브: ${floor.waveCount} | 난이도: ×${floor.difficultyScale.toStringAsFixed(1)}',
                         style: TextStyle(
                           color: Colors.white38,
