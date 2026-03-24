@@ -95,7 +95,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'tower_deploy_title',
+                  tr(ref, 'tower_deploy_title'),
                   style: TextStyle(color: AppColors.lavender, fontSize: Responsive.fontSize(context, 13), fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 6 * s),

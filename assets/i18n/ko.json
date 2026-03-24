@@ -924,5 +924,6 @@
   "trait_shield": "방패",
   "trait_slow_aura": "감속 오라",
   "wave_floor_boss": "탑의 주인이 기다린다",
-  "wave_floor_reached": "에 도달했다."
+  "wave_floor_reached": "에 도달했다.",
+  "lore_undiscovered": "미발견"
 }

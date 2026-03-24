@@ -189,5 +189,9 @@
   "trait_shield": "Shield",
   "trait_slow_aura": "Slow Aura",
   "wave_floor_boss": "The tower master awaits",
-  "wave_floor_reached": " reached."
+  "wave_floor_reached": " reached.",
+  "ach_tab_achievements": "Achievements",
+  "ach_tab_ranking": "Ranking",
+  "ach_hidden": "Hidden",
+  "lore_undiscovered": "Undiscovered"
 }

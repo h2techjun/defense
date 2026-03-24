@@ -924,5 +924,6 @@
   "trait_shield": "シールド",
   "trait_slow_aura": "減速オーラ",
   "wave_floor_boss": "塔の主が待っている",
-  "wave_floor_reached": "に到達した。"
+  "wave_floor_reached": "に到達した。",
+  "lore_undiscovered": "未発見"
 }

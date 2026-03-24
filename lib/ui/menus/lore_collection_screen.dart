@@ -102,7 +102,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'lore_title',
+                  tr(ref, 'lore_title'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: Responsive.fontSize(context, 22),
@@ -162,7 +162,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('${ms.emoji} "${ms.rewardTitle}" 칭호 획득! 💎${ms.rewardGems}'),
+                          content: Text('${ms.emoji} "${ms.rewardTitle}" ${tr(ref, "lore_title_earned")} 💎${ms.rewardGems}'),
                           backgroundColor: Colors.purple,
                         ),
                       );
@@ -222,7 +222,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
   Widget _buildEntryList(BuildContext context, WidgetRef ref,
       LoreCollectionState state, List<LoreEntry> entries, double s) {
     if (entries.isEmpty) {
-      return Center(child: Text(AppStrings.get(GameLanguage.ko, 'lore_empty'), style: const TextStyle(color: Colors.white38)));
+      return Center(child: Text(tr(ref, 'lore_empty'), style: const TextStyle(color: Colors.white38)));
     }
 
     return ListView.builder(
@@ -289,7 +289,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                       if (!isLocked) ...[
                         SizedBox(width: 6 * s),
                         Text(
-                          '처치: $kills',
+                          '${tr(ref, "lore_kill_count")}: $kills',
                           style: TextStyle(color: Colors.white38, fontSize: 13 * s),
                         ),
                       ],
@@ -303,7 +303,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
         children: isLocked
             ? [
                 Text(
-                  AppStrings.get(GameLanguage.ko, 'lore_locked_hint'),
+                  AppStrings.get(ref.read(gameLanguageProvider), 'lore_locked_hint'),
                   style: TextStyle(color: Colors.white24, fontStyle: FontStyle.italic, fontSize: 14 * s),
                 ),
               ]
@@ -366,7 +366,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '다음 단계까지 ${remaining}마리 남음',
+            '${tr(ref, "lore_remaining")} ${remaining} ${tr(ref, "lore_remaining_unit")}',
             style: TextStyle(color: Colors.white38, fontSize: 14 * s),
           ),
           SizedBox(height: 4 * s),
@@ -432,7 +432,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      '💎$gems 수령',
+                      '💎$gems ${tr(ref, "lore_claim")}',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 13 * s,
@@ -462,11 +462,11 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
 
   Widget _tierBadge(LoreUnlockTier tier, double s) {
     final (label, color) = switch (tier) {
-      LoreUnlockTier.locked      => (AppStrings.get(GameLanguage.ko, 'lore_tier_locked'), Colors.grey),
-      LoreUnlockTier.encountered => (AppStrings.get(GameLanguage.ko, 'lore_tier_encountered'),   Colors.blue),
-      LoreUnlockTier.basic       => (AppStrings.get(GameLanguage.ko, 'lore_tier_basic'),   Colors.green),
-      LoreUnlockTier.secretLore  => (AppStrings.get(GameLanguage.ko, 'lore_tier_secret'),   Colors.purple),
-      LoreUnlockTier.hiddenStory => (AppStrings.get(GameLanguage.ko, 'lore_tier_hidden'),   Colors.amber),
+      LoreUnlockTier.locked      => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_locked'), Colors.grey),
+      LoreUnlockTier.encountered => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_encountered'),   Colors.blue),
+      LoreUnlockTier.basic       => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_basic'),   Colors.green),
+      LoreUnlockTier.secretLore  => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_secret'),   Colors.purple),
+      LoreUnlockTier.hiddenStory => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_hidden'),   Colors.amber),
     };
 
     return Container(

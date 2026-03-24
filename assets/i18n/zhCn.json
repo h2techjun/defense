@@ -924,5 +924,6 @@
   "trait_shield": "护盾",
   "trait_slow_aura": "减速光环",
   "wave_floor_boss": "塔主在等待",
-  "wave_floor_reached": "已到达。"
+  "wave_floor_reached": "已到达。",
+  "lore_undiscovered": "未发现"
 }

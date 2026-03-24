@@ -1,4 +1,4 @@
-﻿// 해원의 문 - 업적 + 랭킹 UI 화면
+// 해원의 문 - 업적 + 랭킹 UI 화면
 // 업적 목록, 진행도, 랭킹 보드
 
 import 'dart:ui';
@@ -101,7 +101,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'ach_ranking_title',
+                  tr(ref, 'ach_ranking_title'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: Responsive.fontSize(context, 22),
@@ -109,7 +109,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                   ),
                 ),
                 Text(
-                  '달성: ${state.completed.length}/${allAchievements.length} (${(state.completionRate * 100).toStringAsFixed(0)}%)',
+                  '${tr(ref, "ach_completion")}: ${state.completed.length}/${allAchievements.length} (${(state.completionRate * 100).toStringAsFixed(0)}%)',
                   style: TextStyle(
                     color: Colors.white60,
                     fontSize: Responsive.fontSize(context, 15),
@@ -129,7 +129,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '${state.unclaimedCount} 미수령',
+                '${state.unclaimedCount} ${tr(ref, "ach_unclaimed")}',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: Responsive.fontSize(context, 14),
@@ -154,9 +154,9 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
           fontSize: Responsive.fontSize(context, 14),
           fontWeight: FontWeight.bold,
         ),
-        tabs: const [
-          Tab(text: '🏅 업적'), // TODO: i18n via tr(ref, 'ach_tab_achievements')
-          Tab(text: '🏆 랭킹'), // TODO: i18n via tr(ref, 'ach_tab_ranking')
+        tabs: [
+          Tab(text: '🏅 ${tr(ref, "ach_tab_achievements")}'),
+          Tab(text: '🏆 ${tr(ref, "ach_tab_ranking")}'),
         ],
       ),
     );
@@ -183,7 +183,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
               child: Row(
                 children: [
                   Text(
-                    '${category.emoji} ${category.displayName}',
+                    '${category.emoji} ${tr(ref, category.displayName)}',
                     style: TextStyle(
                       color: category.color,
                       fontSize: Responsive.fontSize(context, 16),
@@ -209,6 +209,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
 
               return _AchievementCard(
                 achievement: achievement,
+                lang: ref.read(gameLanguageProvider),
                 progress: progress,
                 isCompleted: isCompleted,
                 isClaimed: isClaimed,
@@ -220,7 +221,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                         if (success) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('💎 ${achievement.rewardGems} 보석 획득!'),
+                              content: Text('💎 ${achievement.rewardGems} ${tr(ref, "ach_gems_reward")}'),
                               backgroundColor: Colors.green.shade700,
                             ),
                           );
@@ -281,7 +282,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
           SizedBox(height: Responsive.spacing(context, 20)),
 
           // ── 이번 시즌 기록 (매월 리셋) ──
-          _sectionTitle(context, '📅 이번 시즌 (${state.seasonMonth.isNotEmpty ? state.seasonMonth : "시즌 대기"})'),
+          _sectionTitle(context, '📅 ${tr(ref, "ach_season")} (${state.seasonMonth.isNotEmpty ? state.seasonMonth : tr(ref, "ach_season_wait")})'),
           Container(
             padding: EdgeInsets.all(Responsive.spacing(context, 12)),
             decoration: BoxDecoration(
@@ -416,6 +417,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
 
 class _AchievementCard extends StatelessWidget {
   final AchievementData achievement;
+  final GameLanguage lang;
   final int progress;
   final bool isCompleted;
   final bool isClaimed;
@@ -424,6 +426,7 @@ class _AchievementCard extends StatelessWidget {
 
   const _AchievementCard({
     required this.achievement,
+    required this.lang,
     required this.progress,
     required this.isCompleted,
     required this.isClaimed,
@@ -472,7 +475,7 @@ class _AchievementCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isHidden ? 'ach_hidden' : achievement.name,
+                    isHidden ? AppStrings.get(lang, 'ach_hidden') : AppStrings.get(lang, achievement.name),
                     style: TextStyle(
                       color: isCompleted ? Colors.white : Colors.white70,
                       fontSize: Responsive.fontSize(context, 13),
@@ -480,7 +483,7 @@ class _AchievementCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    isHidden ? '???' : achievement.description,
+                    isHidden ? '???' : AppStrings.get(lang, achievement.description),
                     style: TextStyle(
                       color: Colors.white38,
                       fontSize: Responsive.fontSize(context, 13),
