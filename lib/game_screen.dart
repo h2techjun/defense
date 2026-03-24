@@ -135,18 +135,18 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final type = info['type'] as String? ?? 'unknown';
     if (type == 'tower') {
       return GameTooltipData(
-        title: info['name'] as String? ?? '타워',
+        title: info['name'] as String? ?? AppStrings.get(_currentLang, 'stat_tower'),
         subtitle: 'Lv.${info['level']}',
         description: info['description'] as String?,
         color: _getTowerColor(info['towerType'] as TowerType),
         icon: _getTowerIcon(info['towerType'] as TowerType),
         imagePath: info['imagePath'] as String?,
         stats: [
-          TooltipStat('공격력', '${(info['damage'] as double).toStringAsFixed(0)}'),
-          TooltipStat('사거리', '${(info['range'] as double).toStringAsFixed(0)}'),
-          TooltipStat('공격속도', '${(info['fireRate'] as double).toStringAsFixed(2)}/s'),
+          TooltipStat(AppStrings.get(_currentLang, 'stat_attack'), '${(info['damage'] as double).toStringAsFixed(0)}'),
+          TooltipStat(AppStrings.get(_currentLang, 'stat_range'), '${(info['range'] as double).toStringAsFixed(0)}'),
+          TooltipStat(AppStrings.get(_currentLang, 'stat_attack_speed'), '${(info['fireRate'] as double).toStringAsFixed(2)}/s'),
           if (info['specialAbility'] != null)
-            TooltipStat('특수', info['specialAbility'] as String? ?? '', highlight: true),
+            TooltipStat(AppStrings.get(_currentLang, 'stat_special'), info['specialAbility'] as String? ?? '', highlight: true),
         ],
       );
     } else if (type == 'hero') {
@@ -170,18 +170,18 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         stats: [
           TooltipStat('HP', '${info['hp']} / ${info['maxHp']}',
             highlight: isDead),
-          TooltipStat('공격력', info['attack'] as String? ?? '-'),
-          TooltipStat('사거리', info['range'] as String? ?? '-'),
-          TooltipStat('속성', info['damageType'] as String? ?? '-'),
-          TooltipStat('경험치', xpText, highlight: heroLevel >= heroMaxLevel),
+          TooltipStat(AppStrings.get(_currentLang, 'stat_attack'), info['attack'] as String? ?? '-'),
+          TooltipStat(AppStrings.get(_currentLang, 'stat_range'), info['range'] as String? ?? '-'),
+          TooltipStat(AppStrings.get(_currentLang, 'stat_attribute'), info['damageType'] as String? ?? '-'),
+          TooltipStat(AppStrings.get(_currentLang, 'stat_exp'), xpText, highlight: heroLevel >= heroMaxLevel),
           if (isDead)
-            TooltipStat('상태', '💀 부활 대기', highlight: true),
+            TooltipStat(AppStrings.get(_currentLang, 'stat_status'), AppStrings.get(_currentLang, 'stat_dead'), highlight: true),
         ],
       );
     } else {
       // 적
       return GameTooltipData(
-        title: info['name'] as String? ?? '적',
+        title: info['name'] as String? ?? AppStrings.get(_currentLang, 'stat_enemy'),
         subtitle: 'HP: ${info['hp']}',
         description: info['description'] as String?,
         color: (info['isBerserk'] as bool? ?? false)
@@ -189,10 +189,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             : const Color(0xFFCC3333),
         icon: '👻',
         stats: [
-          TooltipStat('속도', info['speed'] as String? ?? ''),
-          TooltipStat('보상', '✨${info['reward']}'),
+          TooltipStat(AppStrings.get(_currentLang, 'stat_speed'), info['speed'] as String? ?? ''),
+          TooltipStat(AppStrings.get(_currentLang, 'stat_reward'), '✨${info['reward']}'),
           if ((info['abilities'] as String? ?? '').isNotEmpty)
-            TooltipStat('능력', info['abilities'] as String? ?? '', highlight: true),
+            TooltipStat(AppStrings.get(_currentLang, 'stat_ability'), info['abilities'] as String? ?? '', highlight: true),
         ],
       );
     }
@@ -349,8 +349,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('💚 부활! 게이트웨이 HP가 50% 회복되었습니다!'),
+          SnackBar(
+            content: Text(AppStrings.get(_currentLang, 'msg_revive')),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
@@ -370,8 +370,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✨ 보상 2배! 💎 보석 30개 추가 획득!'),
+          SnackBar(
+            content: Text(AppStrings.get(_currentLang, 'msg_double_reward')),
             backgroundColor: Colors.amber,
             duration: Duration(seconds: 2),
           ),
@@ -682,7 +682,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('취소', style: TextStyle(color: Colors.white60)),
+            child: Text(AppStrings.get(_currentLang, 'btn_cancel'), style: TextStyle(color: Colors.white60)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -695,12 +695,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('확인', style: TextStyle(color: Colors.white)),
+            child: Text(AppStrings.get(_currentLang, 'btn_confirm'), style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
     );
   }
+
+  /// 현재 언어
+  GameLanguage get _currentLang => ref.read(gameLanguageProvider);
 
   @override
   Widget build(BuildContext context) {
@@ -721,7 +724,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('🏆 업적 달성!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                          Text(AppStrings.get(_currentLang, 'msg_achievement'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                           Text(achievement.name, style: const TextStyle(fontSize: 11)),
                         ],
                       ),
@@ -1000,8 +1003,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               onSpeedToggle: () {
                 if (!ref.read(userStateProvider).hasSpeedPass) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('🔒 상점에서 아무 상품을 구매하면 2배속이 해금됩니다!'),
+                    SnackBar(
+                      content: Text(AppStrings.get(_currentLang, 'msg_speed_locked')),
                       backgroundColor: Color(0xFF6633AA),
                       duration: Duration(seconds: 2),
                     ),
@@ -1173,7 +1176,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           Icon(Icons.pause_circle_outline,
                               color: const Color(0xFF8B5CF6), size: 48 * Responsive.uiScale(context)),
                           SizedBox(height: 12 * Responsive.uiScale(context)),
-                          Text('일시정지',
+                          Text(AppStrings.get(_currentLang, 'pause_title'),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: Responsive.fontSize(context, 22),
@@ -1280,7 +1283,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           // 계속하기 버튼
                           _buildPauseMenuButton(
                             icon: Icons.play_arrow_rounded,
-                            label: '계속하기',
+                            label: AppStrings.get(_currentLang, 'pause_resume'),
                             color: const Color(0xFF10B981),
                             onTap: () {
                               _game.togglePause();
@@ -1291,12 +1294,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           // 재시작 버튼
                           _buildPauseMenuButton(
                             icon: Icons.refresh_rounded,
-                            label: '처음부터',
+                            label: AppStrings.get(_currentLang, 'pause_restart_label'),
                             color: const Color(0xFFF59E0B),
                             onTap: () {
                               _showConfirmDialog(
-                                title: '재시작',
-                                message: '처음부터 다시 시작하시겠습니까?',
+                                title: AppStrings.get(_currentLang, 'pause_restart_title'),
+                                message: AppStrings.get(_currentLang, 'pause_restart_msg'),
                                 onConfirm: () {
                                   _game.togglePause();
                                   _restartLevel();
@@ -1308,12 +1311,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           // 메뉴로 나가기 버튼
                           _buildPauseMenuButton(
                             icon: Icons.home_rounded,
-                            label: '메뉴로 나가기',
+                            label: AppStrings.get(_currentLang, 'pause_exit_label'),
                             color: const Color(0xFFEF4444),
                             onTap: () {
                               _showConfirmDialog(
-                                title: '나가기',
-                                message: '메뉴로 돌아가시겠습니까?\n현재 진행 상황은 사라집니다.',
+                                title: AppStrings.get(_currentLang, 'pause_exit_title'),
+                                message: AppStrings.get(_currentLang, 'pause_exit_msg'),
                                 onConfirm: () {
                                   _game.togglePause();
                                   _returnToMenu();
@@ -1347,36 +1350,36 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             if (_showTutorial)
               Positioned.fill(
                 child: TutorialOverlay(
-                  steps: const [
+                  steps: [
                     TutorialStep(
                       emoji: '🏯',
-                      title: '해원의 문에 오신 것을 환영합니다!',
-                      content: '이곳은 이승과 저승 사이의 해원문입니다.\n마스터가 되어 원한의 악귀들을 정화하고\n영혼을 승천시키세요!',
+                      title: AppStrings.get(_currentLang, 'tut1_title'),
+                      content: AppStrings.get(_currentLang, 'tut1_content'),
                     ),
                     TutorialStep(
                       emoji: '🗼',
-                      title: '타워 배치하기',
-                      content: '하단의 타워 아이콘을 길게 누른 뒤\n초록색 배치 슬롯 위에 드래그하세요.\n\n타워는 신명(⚡) 자원으로 건설합니다.\n좋은 위치에 배치하면 전투가 유리해져요!',
+                      title: AppStrings.get(_currentLang, 'tut2_title'),
+                      content: AppStrings.get(_currentLang, 'tut2_content'),
                     ),
                     TutorialStep(
                       emoji: '🔥',
-                      title: '타워의 속성 (오행)',
-                      content: '🔥 화(火) 봉화대 — 범위 공격\n💧 수(水) 선녀천 — 감속/디버프\n🌿 목(木) 당산목 — 다중 타격\n⚔️ 금(金) 종루 — 단일 강타\n🪨 토(土) 서낭당 — 병사 소환\n\n속성 조합이 전략의 핵심입니다!',
+                      title: AppStrings.get(_currentLang, 'tut3_title'),
+                      content: AppStrings.get(_currentLang, 'tut3_content'),
                     ),
                     TutorialStep(
                       emoji: '🌙',
-                      title: '낮과 밤의 순환',
-                      content: '☀️ 낮에는 화·목 타워가 강해집니다.\n🌙 밤에는 수·금 타워가 강해지고\n  스텔스 적이 출몰합니다.\n⏳ 전환기에는 토 타워가 강화됩니다.\n\n시간대에 맞춰 타워를 배치하세요!',
+                      title: AppStrings.get(_currentLang, 'tut4_title'),
+                      content: AppStrings.get(_currentLang, 'tut4_content'),
                     ),
                     TutorialStep(
                       emoji: '👻',
-                      title: '원혼 정화 시스템',
-                      content: '적을 처치하면 원혼이 떨어지고\n자동으로 정화되어 신명(자원)을 획득!\n\n⚠️ 정화가 밀리면 \"곡소리\" 게이지가\n올라가 타워가 약해지고, 100%가 되면\n모든 적이 광폭화합니다!',
+                      title: AppStrings.get(_currentLang, 'tut5_title'),
+                      content: AppStrings.get(_currentLang, 'tut5_content'),
                     ),
                     TutorialStep(
                       emoji: '⚔️',
-                      title: '영웅의 전투',
-                      content: '영웅은 범위 내 적을 자동으로 공격하고\n스킬도 쿨타임이 차면 자동 발동됩니다.\n\n💡 영웅을 터치하면 즉시 스킬 발동!\n드래그하면 위치를 옮길 수 있어요.\n\n준비 되셨나요? 전투를 시작합니다!',
+                      title: AppStrings.get(_currentLang, 'tut6_title'),
+                      content: AppStrings.get(_currentLang, 'tut6_content'),
                     ),
                   ],
                   onFinish: () {
