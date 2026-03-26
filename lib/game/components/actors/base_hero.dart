@@ -1003,6 +1003,7 @@ class BaseHero extends PositionComponent
     return {
       'type': 'hero',
       'name': data.name,
+      'nameKey': 'hero_${data.id.name}',
       'title': data.title,
       'emoji': _getHeroEmoji(data.id),
       'imagePath': 'assets/images/heroes/${_getHeroFileName(data.id)}_tier${_getSkinTierNumber()}_sprites.png',

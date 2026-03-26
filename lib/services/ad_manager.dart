@@ -117,7 +117,7 @@ class AdManager {
   /// 남은 시간 포맷 ("2시간 30분" / "45분" / "즉시 가능")
   String get freeGemsCooldownFormatted {
     final secs = freeGemsCooldownSeconds;
-    if (secs <= 0) return AppStrings.get(GameLanguage.ko, 'ad_cooldown_ready');
+    if (secs <= 0) return AppStrings.trs('ad_cooldown_ready');
     final hours = secs ~/ 3600;
     final mins = (secs % 3600) ~/ 60;
     if (hours > 0) {

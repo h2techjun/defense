@@ -456,7 +456,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
             child: Text(
 
 
-              'hero_guardian_label',
+              tr(ref, 'hero_guardian_label'),
 
 
               style: TextStyle(
@@ -1039,13 +1039,13 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
 
 
 
-    final displayName = equippedSkin?.name ?? hero.name;
+    final displayName = equippedSkin != null ? tr(ref, equippedSkin.name) : hero.name;
 
 
     final displayTitle = equippedSkin?.rarity.displayName != null 
 
 
-        ? '${equippedSkin!.rarity.displayName} 등급 ' + hero.title
+        ? '${tr(ref, equippedSkin!.rarity.displayName)} ${tr(ref, 'grade')} ' + hero.title
 
 
         : hero.title;
@@ -1388,7 +1388,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                     ),
                     SizedBox(width: 4 * s),
                     Text(
-                      skin.name,
+                      tr(ref, skin.name),
                       style: TextStyle(
                         color: skin.rarity.color,
                         fontSize: 12 * s,
@@ -2009,7 +2009,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                             const SizedBox(height: 4),
                             // 등급 이름
                             Text(
-                              rarity.displayName,
+                              tr(ref, rarity.displayName),
                               style: TextStyle(
                                 fontSize: Responsive.fontSize(context, 9),
                                 color: isEquipped ? Colors.white : rarity.color,

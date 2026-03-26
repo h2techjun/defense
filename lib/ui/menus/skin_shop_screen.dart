@@ -106,7 +106,7 @@ class SkinShopScreen extends ConsumerWidget {
           ),
           SizedBox(width: 8 * s),
           Text(
-            'skin_shop_title',
+            tr(ref, 'skin_shop_title'),
             style: TextStyle(
               color: Colors.white,
               fontSize: Responsive.fontSize(context, 20),
@@ -200,7 +200,7 @@ class SkinShopScreen extends ConsumerWidget {
       ref.read(skinProvider.notifier).equipSkin(skin.heroId, skin.id);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${skin.name} 스킨을 장착했습니다!'),
+          content: Text('${tr(ref, skin.name)} ${tr(ref, 'skin_equipped_msg')}'),
           backgroundColor: const Color(0xFF4CAF50),
           duration: const Duration(seconds: 1),
         ),
@@ -220,7 +220,7 @@ class SkinShopScreen extends ConsumerWidget {
         backgroundColor: AppColors.surfaceDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          '${skin.rarity.emoji} ${skin.name}',
+          '${skin.rarity.emoji} ${tr(ref, skin.name)}',
           style: TextStyle(color: skin.rarity.color, fontWeight: FontWeight.bold),
         ),
         content: SingleChildScrollView(
@@ -253,7 +253,7 @@ class SkinShopScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                '등급: ${skin.rarity.displayName}',
+                '${tr(ref, 'grade')}: ${tr(ref, skin.rarity.displayName)}',
                 style: TextStyle(color: skin.rarity.color),
               ),
               // 이펙트 설명 (있는 경우만)
@@ -312,7 +312,7 @@ class SkinShopScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get(GameLanguage.ko, 'cancel'), style: const TextStyle(color: Colors.grey)),
+            child: Text(AppStrings.trs('cancel'), style: const TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -326,7 +326,7 @@ class SkinShopScreen extends ConsumerWidget {
                 Navigator.of(ctx).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppStrings.get(GameLanguage.ko, 'skin_gems_insufficient')),
+                    content: Text(AppStrings.trs('skin_gems_insufficient')),
                     backgroundColor: const Color(0xFFE53935),
                     duration: const Duration(seconds: 2),
                   ),
@@ -339,13 +339,13 @@ class SkinShopScreen extends ConsumerWidget {
               Navigator.of(ctx).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${skin.name} 스킨을 획득했습니다!'),
+                  content: Text('${tr(ref, skin.name)} ${tr(ref, 'skin_acquired_msg')}'),
                   backgroundColor: const Color(0xFF9C27B0),
                   duration: const Duration(seconds: 2),
                 ),
               );
             },
-            child: Text(AppStrings.get(GameLanguage.ko, 'purchase')),
+            child: Text(AppStrings.trs('purchase')),
           ),
         ],
       ),
@@ -354,11 +354,11 @@ class SkinShopScreen extends ConsumerWidget {
 
   String _getHeroName(HeroId id) {
     switch (id) {
-      case HeroId.kkaebi:  return AppStrings.get(GameLanguage.ko, 'hero_kkaebi');
-      case HeroId.miho:    return AppStrings.get(GameLanguage.ko, 'hero_miho');
-      case HeroId.gangrim: return AppStrings.get(GameLanguage.ko, 'hero_gangrim');
-      case HeroId.sua:     return AppStrings.get(GameLanguage.ko, 'hero_sua');
-      case HeroId.bari:    return AppStrings.get(GameLanguage.ko, 'hero_bari');
+      case HeroId.kkaebi:  return AppStrings.trs('hero_kkaebi');
+      case HeroId.miho:    return AppStrings.trs('hero_miho');
+      case HeroId.gangrim: return AppStrings.trs('hero_gangrim');
+      case HeroId.sua:     return AppStrings.trs('hero_sua');
+      case HeroId.bari:    return AppStrings.trs('hero_bari');
     }
   }
 }
@@ -512,7 +512,7 @@ class _SkinCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      skin.rarity.displayName,
+                      AppStrings.trs(skin.rarity.displayName),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: Responsive.fontSize(context, 12),
@@ -582,7 +582,7 @@ class _SkinCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        skin.name,
+                        AppStrings.trs(skin.name),
                         style: TextStyle(
                           color: owned ? Colors.white : Colors.white60,
                           fontSize: Responsive.fontSize(context, 14),
@@ -598,7 +598,7 @@ class _SkinCard extends StatelessWidget {
                       SizedBox(height: 3 * s),
                       if (equipped)
                         Text(
-                          AppStrings.get(GameLanguage.ko, 'equipped'),
+                          AppStrings.trs('equipped'),
                           style: TextStyle(
                             color: AppColors.sinmyeongGold,
                             fontSize: Responsive.fontSize(context, 12),
@@ -623,7 +623,7 @@ class _SkinCard extends StatelessWidget {
                         )
                       else
                         Text(
-                          AppStrings.get(GameLanguage.ko, 'owned'),
+                          AppStrings.trs('owned'),
                           style: TextStyle(
                             color: Colors.white38,
                             fontSize: Responsive.fontSize(context, 12),
@@ -770,7 +770,7 @@ Widget _buildSetBonusBanner(BuildContext context, SkinState skinState) {
           SizedBox(width: 6 * s),
           Expanded(
             child: Text(
-              AppStrings.get(GameLanguage.ko, 'skin_set_bonus'),
+              AppStrings.trs('skin_set_bonus'),
               style: TextStyle(color: Colors.white38, fontSize: 11 * s),
             ),
           ),
@@ -790,7 +790,7 @@ Widget _buildSetBonusBanner(BuildContext context, SkinState skinState) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('skin_set_bonus_active', style: TextStyle(
+        Text(AppStrings.trs('skin_set_bonus_active'), style: TextStyle(
           color: Colors.amber, fontSize: 12 * s, fontWeight: FontWeight.bold,
         )),
         SizedBox(height: 4 * s),

@@ -247,7 +247,7 @@ class _RewardPopupContentState extends State<_RewardPopupContent>
                           ),
                         ),
                         child: Text(
-                          AppStrings.get(GameLanguage.ko, 'confirm'),
+                          AppStrings.trs('confirm'),
                           style: TextStyle(
                             fontSize: Responsive.fontSize(context, 16),
                             fontWeight: FontWeight.bold,

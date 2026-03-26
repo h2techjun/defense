@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/story_data.dart';
 import '../../audio/sound_manager.dart';
 import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 
 
-class StoryCutsceneDialog extends StatefulWidget {
+class StoryCutsceneDialog extends ConsumerStatefulWidget {
   final List<StoryScene> scenes;
   final VoidCallback onFinish;
 
@@ -16,10 +17,10 @@ class StoryCutsceneDialog extends StatefulWidget {
   });
 
   @override
-  State<StoryCutsceneDialog> createState() => _StoryCutsceneDialogState();
+  ConsumerState<StoryCutsceneDialog> createState() => _StoryCutsceneDialogState();
 }
 
-class _StoryCutsceneDialogState extends State<StoryCutsceneDialog>
+class _StoryCutsceneDialogState extends ConsumerState<StoryCutsceneDialog>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   bool _isTyping = true;
@@ -53,12 +54,15 @@ class _StoryCutsceneDialogState extends State<StoryCutsceneDialog>
     _typeNextChar();
   }
 
+  String _translatedText(StoryScene scene) => tr(ref, scene.text);
+
   void _typeNextChar() {
     if (!mounted) return;
     final currentScene = widget.scenes[_currentIndex];
-    if (_charIndex < currentScene.text.length) {
+    final translated = _translatedText(currentScene);
+    if (_charIndex < translated.length) {
       setState(() {
-        _displayedText += currentScene.text[_charIndex];
+        _displayedText += translated[_charIndex];
         _charIndex++;
       });
       
@@ -75,10 +79,11 @@ class _StoryCutsceneDialogState extends State<StoryCutsceneDialog>
   void _skipOrNext() {
     if (_isTyping) {
       // 스킵하여 텍스트 전체 즉시 표시
+      final translated = _translatedText(widget.scenes[_currentIndex]);
       setState(() {
-        _displayedText = widget.scenes[_currentIndex].text;
+        _displayedText = translated;
         _isTyping = false;
-        _charIndex = widget.scenes[_currentIndex].text.length;
+        _charIndex = translated.length;
       });
     } else {
       // 다음 씬으로 넘어가기
@@ -178,7 +183,7 @@ class _StoryCutsceneDialogState extends State<StoryCutsceneDialog>
                           children: [
                             // 화자 이름
                             Text(
-                              scene.speakerName,
+                              tr(ref, scene.speakerName),
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -218,7 +223,7 @@ class _StoryCutsceneDialogState extends State<StoryCutsceneDialog>
               child: TextButton.icon(
                 onPressed: widget.onFinish,
                 icon: const Icon(Icons.skip_next, color: Colors.white70),
-                label: Text(AppStrings.get(GameLanguage.ko, 'story_skip'), style: const TextStyle(color: Colors.white70)),
+                label: Text(tr(ref, 'story_skip'), style: const TextStyle(color: Colors.white70)),
               ),
             ),
           ],

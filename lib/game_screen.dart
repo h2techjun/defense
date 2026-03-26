@@ -160,10 +160,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       final xpText = heroLevel >= heroMaxLevel
           ? 'MAX'
           : '$heroXp / $heroXpNext';
+      final nameKey = info['nameKey'] as String? ?? '';
+      final heroName = nameKey.isNotEmpty ? AppStrings.get(_currentLang, nameKey) : '${info['name']}';
+      final dmgTypeKey = 'dmg_${info['damageType']}';
       return GameTooltipData(
-        title: '${info['name']}',
+        title: heroName,
         subtitle: '${info['title']} · Lv.$heroLevel',
-        description: '🎯 ${info['skillName']}\n${info['skillDesc']}\n⏱ 쿨타임: ${info['skillCooldown']}초',
+        description: '🎯 ${info['skillName']}\n${info['skillDesc']}\n⏱ ${AppStrings.get(_currentLang, 'skill_cooltime')}: ${info['skillCooldown']}${AppStrings.get(_currentLang, 'unit_seconds')}',
         color: Color(colorInt),
         icon: info['emoji'] as String? ?? '⚔️',
         imagePath: info['imagePath'] as String?,
@@ -172,7 +175,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             highlight: isDead),
           TooltipStat(AppStrings.get(_currentLang, 'stat_attack'), info['attack'] as String? ?? '-'),
           TooltipStat(AppStrings.get(_currentLang, 'stat_range'), info['range'] as String? ?? '-'),
-          TooltipStat(AppStrings.get(_currentLang, 'stat_attribute'), info['damageType'] as String? ?? '-'),
+          TooltipStat(AppStrings.get(_currentLang, 'stat_attribute'), AppStrings.get(_currentLang, dmgTypeKey)),
           TooltipStat(AppStrings.get(_currentLang, 'stat_exp'), xpText, highlight: heroLevel >= heroMaxLevel),
           if (isDead)
             TooltipStat(AppStrings.get(_currentLang, 'stat_status'), AppStrings.get(_currentLang, 'stat_dead'), highlight: true),
@@ -1188,8 +1191,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           Consumer(
                             builder: (_, consumerRef, __) {
                               final gs = consumerRef.watch(gameStateProvider);
-                              final mins = gs.elapsedSeconds ~/ 60;
-                              final secs = gs.elapsedSeconds % 60;
+                              final totalSecs = gs.elapsedSeconds.toInt();
+                              final mins = totalSecs ~/ 60;
+                              final secs = totalSecs % 60;
                               return Text(
                                 '⏱ ${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}',
                                 style: TextStyle(
@@ -1274,7 +1278,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           SizedBox(height: 8 * Responsive.uiScale(context)),
                           // 마지막 동기화 시간
                           Text(
-                            CloudSaveManager.instance.lastSyncTimeFormatted,
+                            (() { final s = CloudSaveManager.instance.lastSyncTimeFormatted; return s == 'no_sync_record' ? tr(ref, s) : s; })(),
                             style: TextStyle(
                               color: Colors.white30,
                               fontSize: Responsive.fontSize(context, 10),

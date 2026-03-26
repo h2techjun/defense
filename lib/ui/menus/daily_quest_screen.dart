@@ -392,7 +392,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                           ),
                         Flexible(
                           child: Text(
-                            quest.description,
+                            tr(ref, quest.description),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18 * s,

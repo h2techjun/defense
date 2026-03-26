@@ -442,7 +442,7 @@ class _PartySlotWidget extends StatelessWidget {
                       color: Colors.white.withAlpha(60), size: 28 * s),
                   SizedBox(height: 4 * s),
                   Text(
-                    AppStrings.get(GameLanguage.ko, 'deploy_slot').replaceAll('{n}', '${slotIndex + 1}'),
+                    AppStrings.trs('deploy_slot').replaceAll('{n}', '${slotIndex + 1}'),
                     style: TextStyle(
                       color: Colors.white.withAlpha(60),
                       fontSize: Responsive.fontSize(context, 9),
@@ -562,9 +562,9 @@ class _HeroPoolCard extends StatelessWidget {
     final color = _getHeroColor(hero.id);
 
     final tooltipMessage = isLocked
-        ? AppStrings.get(GameLanguage.ko, 'deploy_tooltip_locked').replaceAll('{name}', hero.name).replaceAll('{stage}', '$unlockStage')
+        ? AppStrings.trs('deploy_tooltip_locked').replaceAll('{name}', hero.name).replaceAll('{stage}', '$unlockStage')
         : '${_getHeroEmoji(hero.id)} ${hero.name} — ${hero.title}\n\n'
-          '${AppStrings.get(GameLanguage.ko, 'deploy_tooltip_info').replaceAll('{skillName}', hero.skill.name).replaceAll('{skillDesc}', hero.skill.description).replaceAll('{hp}', '${hero.baseHp.toInt()}').replaceAll('{atk}', '${hero.baseAttack.toInt()}')}';
+          '${AppStrings.trs('deploy_tooltip_info').replaceAll('{skillName}', hero.skill.name).replaceAll('{skillDesc}', hero.skill.description).replaceAll('{hp}', '${hero.baseHp.toInt()}').replaceAll('{atk}', '${hero.baseAttack.toInt()}')}';
 
 
     return Tooltip(

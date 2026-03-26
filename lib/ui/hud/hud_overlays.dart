@@ -2,19 +2,20 @@
 // WailingGauge, WailingWarningOverlay, BossHealthBar, NextWavePreview
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../common/responsive.dart';
 import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 
 /// 한(恨) 게이지 위젯
-class HudWailingGauge extends StatelessWidget {
+class HudWailingGauge extends ConsumerWidget {
   final double wailing;
 
   const HudWailingGauge({super.key, required this.wailing});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final ratio = (wailing / 100).clamp(0.0, 1.0);
     final isMax = wailing >= 100;
     final isHigh = wailing >= 80;
@@ -43,7 +44,7 @@ class HudWailingGauge extends StatelessWidget {
         Row(
           children: [
             Text(
-              label,
+              tr(ref, label),
               style: TextStyle(
                 color: labelColor,
                 fontSize: Responsive.fontSize(context, 10),
@@ -331,7 +332,7 @@ class HudNextWavePreview extends StatelessWidget {
               ),
               SizedBox(width: 4 * sc),
               Text(
-                AppStrings.get(GameLanguage.ko, 'wave_next').replaceAll('{n}', '$nextWaveNum'),
+                AppStrings.trs('wave_next').replaceAll('{n}', '$nextWaveNum'),
                 style: TextStyle(
                   color: isBoss ? const Color(0xFFFF6666) : Colors.white70,
                   fontSize: Responsive.fontSize(context, 10),
@@ -343,7 +344,7 @@ class HudNextWavePreview extends StatelessWidget {
           SizedBox(height: 4 * sc),
           ...parsed.map((entry) {
             final nameKey = _enemyNameKeys[entry.key];
-            final name = nameKey != null ? AppStrings.get(GameLanguage.ko, nameKey) : entry.key;
+            final name = nameKey != null ? AppStrings.trs(nameKey) : entry.key;
             final icon = _enemyIcons[entry.key] ?? '👾';
             final isBossEnemy = entry.key.toLowerCase().contains('boss');
             return Padding(

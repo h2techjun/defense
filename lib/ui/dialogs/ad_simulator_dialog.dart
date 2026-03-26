@@ -57,12 +57,12 @@ class _AdSimulatorDialogState extends State<AdSimulatorDialog> {
             const Icon(Icons.video_library, size: 48, color: AppColors.lavender),
             const SizedBox(height: 16),
             Text(
-              AppStrings.get(GameLanguage.ko, 'ad_watching'),
+              AppStrings.trs('ad_watching'),
               style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Text(
-              canClose ? AppStrings.get(GameLanguage.ko, 'ad_reward_ready') : AppStrings.get(GameLanguage.ko, 'ad_reward_wait').replaceAll('{seconds}', '$_timeLeft'),
+              canClose ? AppStrings.trs('ad_reward_ready') : AppStrings.trs('ad_reward_wait').replaceAll('{seconds}', '$_timeLeft'),
               style: const TextStyle(color: Colors.white70, fontSize: 16),
             ),
             const SizedBox(height: 24),
@@ -72,7 +72,7 @@ class _AdSimulatorDialogState extends State<AdSimulatorDialog> {
                 if (!canClose)
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text(AppStrings.get(GameLanguage.ko, 'ad_close_no_reward'), style: const TextStyle(color: Colors.grey)),
+                    child: Text(AppStrings.trs('ad_close_no_reward'), style: const TextStyle(color: Colors.grey)),
                   ),
                 if (canClose)
                   ElevatedButton(
@@ -81,7 +81,7 @@ class _AdSimulatorDialogState extends State<AdSimulatorDialog> {
                       widget.onRewardEarned();
                       Navigator.of(context).pop();
                     },
-                    child: Text(AppStrings.get(GameLanguage.ko, 'ad_claim_reward'), style: const TextStyle(color: AppColors.bgDeepPlum, fontWeight: FontWeight.bold)),
+                    child: Text(AppStrings.trs('ad_claim_reward'), style: const TextStyle(color: AppColors.bgDeepPlum, fontWeight: FontWeight.bold)),
                   ),
               ],
             )

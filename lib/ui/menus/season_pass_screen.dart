@@ -105,7 +105,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '🌸 ${season.title}',
+                      '🌸 ${tr(ref, season.title)}',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: Responsive.fontSize(context, 20),
@@ -326,7 +326,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
             if (success) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${reward.emoji} ${reward.name} 획득!'),
+                  content: Text('${reward.emoji} ${tr(ref, reward.name)} ${tr(ref, 'reward_claimed')}'),
                   backgroundColor: Colors.green.shade700,
                   duration: const Duration(seconds: 2),
                 ),
@@ -594,7 +594,7 @@ class _RewardChip extends StatelessWidget {
             SizedBox(width: Responsive.spacing(context, 3)),
             Flexible(
               child: Text(
-                reward.name,
+                AppStrings.trs(reward.name),
                 style: TextStyle(
                   color: isClaimed
                       ? Colors.green

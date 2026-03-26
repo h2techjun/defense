@@ -130,8 +130,8 @@ class _WaveAnnounceBannerState extends State<WaveAnnounceBanner>
                   ],
                   Text(
                     isBoss
-                        ? AppStrings.get(GameLanguage.ko, 'wave_boss')
-                        : AppStrings.get(GameLanguage.ko, 'wave_number').replaceAll('{n}', '${widget.waveNumber}'),
+                        ? AppStrings.trs('wave_boss')
+                        : AppStrings.trs('wave_number').replaceAll('{n}', '${widget.waveNumber}'),
                     style: TextStyle(
                       color: isBoss
                           ? AppColors.peachCoral
@@ -281,7 +281,7 @@ class WaveCooldownIndicator extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              AppStrings.get(GameLanguage.ko, 'wave_next').replaceAll('{n}', '$nextWaveNumber'),
+              AppStrings.trs('wave_next').replaceAll('{n}', '$nextWaveNumber'),
               style: const TextStyle(
                 color: AppColors.lavender,
                 fontSize: 13,
@@ -302,7 +302,7 @@ class WaveCooldownIndicator extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              AppStrings.get(GameLanguage.ko, 'wave_place_towers'),
+              AppStrings.trs('wave_place_towers'),
               style: TextStyle(
                 color: Colors.white.withAlpha(150),
                 fontSize: 11,

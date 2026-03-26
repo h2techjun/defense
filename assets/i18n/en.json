@@ -925,5 +925,12 @@
   "trait_slow_aura": "Slow Aura",
   "wave_floor_boss": "The tower master awaits",
   "wave_floor_reached": " reached.",
-  "lore_undiscovered": "Undiscovered"
+  "lore_undiscovered": "Undiscovered",
+  "no_sync_record": "No sync record",
+  "grade": "Grade",
+  "skin_equipped_msg": "skin equipped!",
+  "skin_acquired_msg": "skin acquired!",
+  "reward_claimed": "claimed!",
+  "et_difficulty": "Difficulty",
+  "unit_seconds": "s"
 }

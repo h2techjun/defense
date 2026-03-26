@@ -186,7 +186,7 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                         ],
                       ),
                       child: Text(
-                        AppStrings.get(GameLanguage.ko, 'hero_ready'),
+                        AppStrings.trs('hero_ready'),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

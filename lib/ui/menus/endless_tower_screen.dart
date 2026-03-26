@@ -240,7 +240,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'et_title',
+                  tr(ref, 'et_title'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: Responsive.fontSize(context, 22),
@@ -431,7 +431,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                 SizedBox(height: Responsive.spacing(context, 16)),
 
                 Text(
-                  'et_special_rules',
+                  tr(ref, 'et_special_rules'),
                   style: TextStyle(
                     color: Colors.amber,
                     fontSize: Responsive.fontSize(context, 14),
@@ -450,7 +450,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              mod.displayName,
+                              tr(ref, mod.displayName),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: Responsive.fontSize(context, 13),
@@ -673,8 +673,8 @@ class _TowerFloorCard extends StatelessWidget {
                       SizedBox(height: Responsive.spacing(context, 2)),
                       Text(
                         floor.type == TowerFloorType.rest
-                            ? 'Select Reward'
-                            : '웨이브: ${floor.waveCount} | 난이도: ×${floor.difficultyScale.toStringAsFixed(1)}',
+                            ? AppStrings.trs('et_reward_select')
+                            : '${AppStrings.trs('wave')}: ${floor.waveCount} | ${AppStrings.trs('et_difficulty')}: ×${floor.difficultyScale.toStringAsFixed(1)}',
                         style: TextStyle(
                           color: Colors.white38,
                           fontSize: Responsive.fontSize(context, 14),

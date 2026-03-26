@@ -48,7 +48,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF1A0E2E),
       appBar: AppBar(
-        title: Text(AppStrings.get(GameLanguage.ko, 'relic_title'), style: TextStyle(
+        title: Text(AppStrings.trs('relic_title'), style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: Responsive.fontSize(context, 18),
         )),
@@ -201,7 +201,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  relic?.nameKo ?? AppStrings.get(GameLanguage.ko, 'relic_slot_empty'),
+                  relic?.nameKo ?? AppStrings.trs('relic_slot_empty'),
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 14),
                     fontWeight: FontWeight.bold,
@@ -212,7 +212,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                 ),
                 SizedBox(height: 3 * s),
                 Text(
-                  relic?.description ?? AppStrings.get(GameLanguage.ko, 'relic_equip_prompt'),
+                  relic?.description ?? AppStrings.trs('relic_equip_prompt'),
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 10),
                     color: relic != null ? Colors.white70 : Colors.white30,

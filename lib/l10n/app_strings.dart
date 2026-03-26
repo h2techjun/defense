@@ -34,8 +34,16 @@ String tr(WidgetRef ref, String key) {
 class AppStrings {
   static final Map<GameLanguage, Map<String, String>> _cache = {};
 
+  /// 현재 앱의 전역 언어 상태 — 비-Consumer 위젯에서 사용
+  /// Provider와 항상 동기화됨 (설정 변경 시 함께 업데이트)
+  static GameLanguage currentLang = GameLanguage.ko;
+
+  /// Provider 없이 현재 언어로 번역 (비-Consumer 위젯용)
+  static String trs(String key) => get(currentLang, key);
+
   /// 초기 구동 시 기본(혹은 저장된) 언어 프리로드
   static Future<void> init([GameLanguage defaultLang = GameLanguage.ko]) async {
+    currentLang = defaultLang;
     await loadLanguage(defaultLang);
     // 폴백용 한국어도 로드해두는 것이 안전
     if (defaultLang != GameLanguage.ko) {

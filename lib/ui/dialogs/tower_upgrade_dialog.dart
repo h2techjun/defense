@@ -129,7 +129,7 @@ class TowerUpgradeDialog extends StatelessWidget {
             // ── 액션 버튼 ──
             if (showBranch) ...[
               _MiniButton(
-                label: towerData.branchA != null ? (GameDataLoader.getBranches()[towerData.branchA]?.name ?? AppStrings.get(GameLanguage.ko, 'branch_a')) : AppStrings.get(GameLanguage.ko, 'branch_a'),
+                label: towerData.branchA != null ? (GameDataLoader.getBranches()[towerData.branchA]?.name ?? AppStrings.trs('branch_a')) : AppStrings.trs('branch_a'),
                 cost: GameDataLoader.getBranches()[towerData.branchA]?.cost ?? 300,
                 canAfford: currentSinmyeong >= (GameDataLoader.getBranches()[towerData.branchA]?.cost ?? 300),
                 color: AppColors.mintGreen,
@@ -137,7 +137,7 @@ class TowerUpgradeDialog extends StatelessWidget {
               ),
               const SizedBox(height: 3),
               _MiniButton(
-                label: towerData.branchB != null ? (GameDataLoader.getBranches()[towerData.branchB]?.name ?? AppStrings.get(GameLanguage.ko, 'branch_b')) : AppStrings.get(GameLanguage.ko, 'branch_b'),
+                label: towerData.branchB != null ? (GameDataLoader.getBranches()[towerData.branchB]?.name ?? AppStrings.trs('branch_b')) : AppStrings.trs('branch_b'),
                 cost: GameDataLoader.getBranches()[towerData.branchB]?.cost ?? 300,
                 canAfford: currentSinmyeong >= (GameDataLoader.getBranches()[towerData.branchB]?.cost ?? 300),
                 color: AppColors.peachCoral,
@@ -173,7 +173,7 @@ class TowerUpgradeDialog extends StatelessWidget {
             const SizedBox(height: 3),
             // 판매
             _MiniButton(
-              label: AppStrings.get(GameLanguage.ko, 'sell_refund').replaceAll('{amount}', '$sellRefund'),
+              label: AppStrings.trs('sell_refund').replaceAll('{amount}', '$sellRefund'),
               cost: -sellRefund,
               canAfford: true,
               color: AppColors.berserkRed,

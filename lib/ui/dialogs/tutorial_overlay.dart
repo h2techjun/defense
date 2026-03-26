@@ -196,8 +196,8 @@ class _TutorialOverlayState extends State<TutorialOverlay>
                 children: [
                   Text(
                     _currentIndex < widget.steps.length - 1
-                        ? AppStrings.get(GameLanguage.ko, 'tutorial_tap_next')
-                        : AppStrings.get(GameLanguage.ko, 'tutorial_tap_start'),
+                        ? AppStrings.trs('tutorial_tap_next')
+                        : AppStrings.trs('tutorial_tap_start'),
                     style: TextStyle(
                       color: _currentIndex < widget.steps.length - 1
                           ? Colors.white54

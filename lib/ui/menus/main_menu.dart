@@ -492,6 +492,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                           onChanged: (lang) async {
                             if (lang != null) {
                               await AppStrings.loadLanguage(lang);
+                              AppStrings.currentLang = lang;
                               widget.ref.read(gameLanguageProvider.notifier).state = lang;
                               setState(() {});
                             }
@@ -581,7 +582,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                     ],
                     SizedBox(height: 4 * s),
                     Text(
-                      CloudSaveManager.instance.lastSyncTimeFormatted,
+                      (() { final s = CloudSaveManager.instance.lastSyncTimeFormatted; return s == 'no_sync_record' ? AppStrings.trs(s) : s; })(),
                       style: TextStyle(
                         color: Colors.white30,
                         fontSize: Responsive.fontSize(context, 10),

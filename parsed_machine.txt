@@ -1,0 +1,54 @@
+Total lines: 597
+--- Top Files with Errors ---
+particle_effect.dart: 42 errors
+base_tower.dart: 39 errors
+save_manager.dart: 26 errors
+enemy_renderer.dart: 22 errors
+base_enemy.dart: 21 errors
+defense_game.dart: 18 errors
+projectile.dart: 15 errors
+hero_manage_screen.dart: 15 errors
+game_screen.dart: 14 errors
+tower_upgrade_dialog.dart: 14 errors
+game_map.dart: 14 errors
+base_hero.dart: 13 errors
+sprite_hit_effect.dart: 13 errors
+game_event_bridge.dart: 13 errors
+web_audio_synth.dart: 11 errors
+achievement_provider.dart: 11 errors
+lore_collection_screen.dart: 11 errors
+map_object_component.dart: 10 errors
+tower_renderer.dart: 9 errors
+cloud_save_manager.dart: 9 errors
+
+--- Example Errors ---
+sound_manager.dart:203  Catch clause should use 'on' to specify the type of exception being caught.
+game_data_loader.dart:4  Unused import: 'package:flutter/foundation.dart'.
+relic_data.dart:97  The value of the local variable 'pct' isn't used.
+season_pass_data.dart:4  Unused import: 'package:flutter/material.dart'.
+wave_builder.dart:35  The value of the local variable 'hpScale' isn't used.
+base_enemy.dart:56  The value of the field '_debuffAuraTimer' isn't used.
+base_enemy.dart:174  The declaration '_buildEnemyVisual' isn't referenced.
+base_enemy.dart:630  The receiver can't be null, so the null-aware operator '?.' is unnecessary.
+base_enemy.dart:655  The left operand can't be null, so the right operand is never executed.
+base_enemy.dart:793  The value of the field '_dotDamageType' isn't used.
+base_hero.dart:13  Unused import: '../../../common/constants.dart'.
+base_hero.dart:21  Unused import: '../towers/base_tower.dart'.
+base_hero.dart:67  The value of the field '_shadow' isn't used.
+base_hero.dart:68  The value of the field '_border' isn't used.
+enemy_renderer.dart:7  The name LinearGradient is shown, but isn't used.
+barracks_soldier.dart:52  The value of the field '_random' isn't used.
+base_tower.dart:11  Unused import: 'package:flame/effects.dart'.
+base_tower.dart:24  Unused import: 'projectile.dart'.
+base_tower.dart:28  Unused import: '../effects/sprite_effect.dart'.
+base_tower.dart:48  The value of the field '_rangeVisible' isn't used.
+base_tower.dart:245  The declaration '_buildTowerVisual' isn't referenced.
+base_tower.dart:431  The declaration '_updateWardAuraPulse' isn't referenced.
+projectile.dart:46  The value of the field '_trailTimer' isn't used.
+rally_flag_component.dart:133  Don't invoke 'print' in production code.
+grid_system.dart:1  Unused import: 'dart:ui'.
+game_screen.dart:594  The declaration '_buildHeroSkillPanel' isn't referenced.
+game_screen.dart:1030  The value of the local variable 's' isn't used.
+ad_manager.dart:72  The value of the field '_freeGemsAmount' isn't used.
+achievement_provider.dart:12  Unused import: '../l10n/app_strings.dart'.
+endless_tower_provider.dart:7  Unused import: '../data/models/daily_challenge_data.dart'.
