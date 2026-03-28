@@ -1,14 +1,11 @@
 // 해원의 문 - 타워 (BaseTower) 컴포넌트
 
-import 'dart:math' as math;
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
 import 'package:flame/collisions.dart';
 
 import '../../../common/debug_log.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/effects.dart';
 
 
 import '../../../common/enums.dart';
@@ -21,18 +18,15 @@ import '../../../state/tower_loadout_provider.dart';
 import '../../defense_game.dart';
 import '../actors/base_enemy.dart';
 
-import 'projectile.dart';
 import 'barracks_soldier.dart';
 import 'rally_flag_component.dart';
 import '../effects/particle_effect.dart';
-import '../effects/sprite_effect.dart';
 import '../../../audio/sound_manager.dart';
 import 'strategies/tower_attack_strategy.dart';
 
 /// 타워 기본 컴포넌트
 class BaseTower extends PositionComponent
     with TapCallbacks, HoverCallbacks, HasGameReference<DefenseGame> {
-  static final math.Random _random = math.Random();
   final TowerData data;
   int upgradeLevel = 0;
   TowerBranch? selectedBranch;
@@ -45,7 +39,6 @@ class BaseTower extends PositionComponent
   BaseEnemy? _currentTarget;
   bool _isSilenced = false;
   double _silenceTimer = 0;
-  bool _rangeVisible = false;
 
   // 적 디버프 오라
   double _slowDebuff = 0; // 0~1, 매 프레임 리셋
@@ -119,7 +112,6 @@ class BaseTower extends PositionComponent
   double _recoilTimer = 0; // 공격 반동 애니메이션
   bool _sotdaeBuffed = false; // 솟대 버프 상태 (forward declare)
   CircleComponent? _wardAura; // 솟대 수호결계 오라
-  double _wardPulseTimer = 0; // 오라 맥동 타이머
 
   // 병영 전용 변수
   final List<BarracksSoldier> _soldiers = [];
@@ -172,7 +164,7 @@ class BaseTower extends PositionComponent
       position: size / 2,
       anchor: Anchor.center,
       paint: Paint()
-        ..color = rangeColor.withOpacity(0)
+        ..color = rangeColor.withAlpha(0)
         ..style = PaintingStyle.fill,
     );
     add(_rangeFill);
@@ -182,7 +174,7 @@ class BaseTower extends PositionComponent
       position: size / 2,
       anchor: Anchor.center,
       paint: Paint()
-        ..color = rangeColor.withOpacity(0)
+        ..color = rangeColor.withAlpha(0)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5,
     );
@@ -241,140 +233,6 @@ class BaseTower extends PositionComponent
     }
   }
 
-  /// 타워 타입별 고유 비주얼 빌드
-  void _buildTowerVisual(PositionComponent parent, TowerType type, Color color) {
-    final s = size.x;
-    final halfS = s / 2;
-
-    switch (type) {
-      case TowerType.archer:
-        // 궁수탑: 삼각형 지붕 + 세로 몸체 + 활 선
-        // 몸체 (아래쪽 사각형)
-        parent.add(RectangleComponent(
-          size: Vector2(s * 0.5, s * 0.55),
-          position: Vector2(s * 0.25, s * 0.45),
-          paint: Paint()..color = color,
-        ));
-        // 지붕 (삼각형 — PolygonComponent)
-        parent.add(PolygonComponent(
-          [
-            Vector2(halfS, 0),          // 꼭대기
-            Vector2(s * 0.1, s * 0.5),  // 좌하
-            Vector2(s * 0.9, s * 0.5),  // 우하
-          ],
-          paint: Paint()..color = Color.fromARGB(255, (color.red * 0.7).toInt(), (color.green * 0.7).toInt(), (color.blue * 0.7).toInt()),
-        ));
-        // 활 (원호 대용 — 작은 원)
-        parent.add(CircleComponent(
-          radius: s * 0.12,
-          position: Vector2(halfS, halfS),
-          anchor: Anchor.center,
-          paint: Paint()
-            ..color = const Color(0xCCFFD700)
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 2,
-        ));
-        break;
-
-      case TowerType.barracks:
-        // 병영: 방패 모양 (둥근 사각형 + 십자)
-        parent.add(RectangleComponent(
-          size: Vector2(s * 0.7, s * 0.8),
-          position: Vector2(s * 0.15, s * 0.1),
-          paint: Paint()..color = color,
-        ));
-        // 십자 가로선
-        parent.add(RectangleComponent(
-          size: Vector2(s * 0.5, s * 0.08),
-          position: Vector2(s * 0.25, s * 0.46),
-          paint: Paint()..color = const Color(0xCCFFFFFF),
-        ));
-        // 십자 세로선
-        parent.add(RectangleComponent(
-          size: Vector2(s * 0.08, s * 0.5),
-          position: Vector2(s * 0.46, s * 0.25),
-          paint: Paint()..color = const Color(0xCCFFFFFF),
-        ));
-        break;
-
-      case TowerType.shaman:
-        // 무당: 보라 원형 오브 + 작은 위성
-        parent.add(CircleComponent(
-          radius: s * 0.3,
-          position: Vector2(halfS, halfS),
-          anchor: Anchor.center,
-          paint: Paint()..color = color,
-        ));
-        // 내부 빛
-        parent.add(CircleComponent(
-          radius: s * 0.15,
-          position: Vector2(halfS, halfS),
-          anchor: Anchor.center,
-          paint: Paint()..color = Color.fromARGB(180, 200, 150, 255),
-        ));
-        // 궤도 링
-        parent.add(CircleComponent(
-          radius: s * 0.38,
-          position: Vector2(halfS, halfS),
-          anchor: Anchor.center,
-          paint: Paint()
-            ..color = Color.fromARGB(80, color.red, color.green, color.blue)
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1.5,
-        ));
-        break;
-
-      case TowerType.artillery:
-        // 화포: 포탑(사각형 베이스) + 포신(직사각형)
-        // 베이스
-        parent.add(RectangleComponent(
-          size: Vector2(s * 0.7, s * 0.5),
-          position: Vector2(s * 0.15, s * 0.4),
-          paint: Paint()..color = color,
-        ));
-        // 포신 (위쪽 돌출)
-        parent.add(RectangleComponent(
-          size: Vector2(s * 0.15, s * 0.5),
-          position: Vector2(s * 0.42, s * 0.05),
-          paint: Paint()..color = Color.fromARGB(255, (color.red * 0.8).toInt(), (color.green * 0.8).toInt(), (color.blue * 0.8).toInt()),
-        ));
-        // 포구 (원형)
-        parent.add(CircleComponent(
-          radius: s * 0.1,
-          position: Vector2(halfS, s * 0.05),
-          anchor: Anchor.center,
-          paint: Paint()..color = const Color(0xFFFF4444),
-        ));
-        break;
-
-      case TowerType.sotdae:
-        // 솟대: 세로 기둥 + 새 모양(삼각형) + 빛 원
-        // 기둥
-        parent.add(RectangleComponent(
-          size: Vector2(s * 0.12, s * 0.7),
-          position: Vector2(s * 0.44, s * 0.3),
-          paint: Paint()..color = Color.fromARGB(255, 139, 101, 8),
-        ));
-        // 새 (삼각형)
-        parent.add(PolygonComponent(
-          [
-            Vector2(halfS, s * 0.05),   // 머리
-            Vector2(s * 0.2, s * 0.3),  // 좌날개
-            Vector2(s * 0.8, s * 0.3),  // 우날개
-          ],
-          paint: Paint()..color = color,
-        ));
-        // 발광 원
-        parent.add(CircleComponent(
-          radius: s * 0.2,
-          position: Vector2(halfS, s * 0.18),
-          anchor: Anchor.center,
-          paint: Paint()..color = Color.fromARGB(60, 255, 215, 0),
-        ));
-        break;
-    }
-  }
-
   /// 업그레이드 글로우 추가
   void _addUpgradeGlow(Color color) {
     final glowAlpha = (40 + upgradeLevel * 20).clamp(0, 120);
@@ -421,36 +279,10 @@ class BaseTower extends PositionComponent
       anchor: Anchor.center,
       priority: -2,
       paint: Paint()
-        ..color = auraColor.withOpacity(0.4)
+        ..color = auraColor.withAlpha(102)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.0,
     ));
-  }
-
-  /// 수호결계 오라 맥동 애니메이션 (호흡 효과)
-  void _updateWardAuraPulse(double dt) {
-    if (_wardAura == null) return;
-
-    _wardPulseTimer += dt;
-    // 2초 주기 호흡 맥동
-    final pulse = (math.sin(_wardPulseTimer * math.pi) * 0.5 + 0.5);
-    final baseAlpha = 0x18;
-    final maxAlpha = 0x40;
-    final alpha = (baseAlpha + (maxAlpha - baseAlpha) * pulse).toInt();
-
-    // 분기별 색상
-    final bd = branchData;
-    if (bd != null && bd.branch == TowerBranch.phoenixTotem) {
-      _wardAura!.paint.color = Color.fromARGB(alpha, 0xFF, 0xD7, 0x00);
-    } else if (bd != null && bd.branch == TowerBranch.earthSpiritAltar) {
-      _wardAura!.paint.color = Color.fromARGB(alpha, 0x88, 0xCC, 0x44);
-    } else {
-      _wardAura!.paint.color = Color.fromARGB(alpha, 0xFF, 0xD7, 0x00);
-    }
-
-    // 맥동에 따른 미세 크기 변화
-    final baseRadius = GameConstants.sotdaeWardRange;
-    _wardAura!.radius = baseRadius * (0.95 + 0.05 * pulse);
   }
 
   /// 타워 제거 시 (판매 등) 병영 병사 + 깃발도 함께 제거
@@ -480,22 +312,20 @@ class BaseTower extends PositionComponent
 
   /// 범위 강조 표시
   void showRange() {
-    _rangeVisible = true;
     final color = _getRangeColorForType(data.type);    // 색상 적용 (fill은 연하게, stroke는 진하게)
-    _rangeFill.paint.color = color.withOpacity(25 / 255.0);
+    _rangeFill.paint.color = color.withAlpha(25);
     _rangeIndicator.paint
-      ..color = color.withOpacity(180 / 255.0)
+      ..color = color.withAlpha(180)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
   }
 
   /// 범위 강조 해제 (기본 얇은 원으로 복귀)
   void hideRange() {
-    _rangeVisible = false;
     _rangeFill.paint.color = const Color(0x00000000);
     final color = _getRangeColorForType(data.type);
     _rangeIndicator.paint
-      ..color = color.withOpacity(0)
+      ..color = color.withAlpha(0)
       ..strokeWidth = 1.5;
   }
 
@@ -712,7 +542,7 @@ class BaseTower extends PositionComponent
     }
   }
 
-  /// 수호결계 — 범위 내 한(恨) 억제 + 디버프 내성
+  /// 수호결계 — 범위 내 한(恨) 억제 + 디버프 내성 + 은신 감지
   void _applyGuardianWard() {
     final wardRange = GameConstants.sotdaeWardRange *
         (upgradeLevel >= 3 ? 1.3 : 1.0); // 3레벨 시 결계 범위 +30%
@@ -733,11 +563,25 @@ class BaseTower extends PositionComponent
       }
     }
 
+    // 은신 감지 — 솟대 결계 범위 내 은신 적을 자동 reveal
+    // Lv2+이면 기본 솟대도 감지, 분기(봉황/지신)는 canDetectStealth=true로 무조건 감지
+    final bd = branchData;
+    final canDetect = (bd != null && bd.canDetectStealth) || upgradeLevel >= 2;
+    if (canDetect) {
+      final enemies = game.cachedAliveEnemies;
+      for (final enemy in enemies) {
+        if (enemy.isDead || !enemy.isStealth) continue;
+        final dist = position.distanceTo(enemy.position);
+        if (dist <= wardRange) {
+          enemy.reveal();
+        }
+      }
+    }
+
     // 한(恨) 억제 — 범위 내 한 게이지 증가량 감소
     double wailingReduction = GameConstants.sotdaeWailingReduction;
 
     // 수호신단 분기: 한 억제 강화
-    final bd = branchData;
     if (bd != null && bd.branch == TowerBranch.phoenixTotem) {
       wailingReduction = 0.5; // 50% 억제
     }

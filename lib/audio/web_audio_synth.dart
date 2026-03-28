@@ -90,7 +90,9 @@ class WebAudioSynth {
       try {
         osc.disconnect();
         gain.disconnect();
-      } catch (_) {}
+      } catch (e) {
+        dlog('[WebAudioSynth] 노드 정리 오류: $e');
+      }
       _activeNodeCount--;
     });
   }
@@ -217,6 +219,7 @@ class WebAudioSynth {
     if (!_initialized) return;
     for (int i = 0; i < frequencies.length; i++) {
       Future.delayed(Duration(milliseconds: (i * noteDuration * 1000).toInt()), () {
+        if (!_initialized) return;
         playTone(
           frequency: frequencies[i],
           duration: noteDuration * 0.9,

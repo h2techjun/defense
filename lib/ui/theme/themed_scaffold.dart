@@ -2,6 +2,7 @@
 // 에셋이 있으면 배경 이미지를, 없으면 기존 그라디언트를 사용
 
 import 'package:flutter/material.dart';
+import '../../common/debug_log.dart';
 import 'app_colors.dart';
 
 /// 배경 이미지를 지원하는 Scaffold 래퍼 위젯
@@ -44,7 +45,7 @@ class ThemedScaffold extends StatelessWidget {
                     BlendMode.darken,
                   ),
                   // 이미지 로드 실패 시 자동으로 기본 색상 표시
-                  onError: (_, __) {},
+                  onError: (e, st) { dlog('[ThemedScaffold] bg image load failed: $e'); },
                 ),
               ),
               child: SafeArea(child: body),

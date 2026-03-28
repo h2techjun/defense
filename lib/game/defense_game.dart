@@ -845,8 +845,8 @@ class _GatewayVisual extends PositionComponent
     try {
       final image = await game.images.load('app_icon.png');
       _iconSprite = Sprite(image);
-    } catch (_) {
-      // 아이콘 로드 실패 시 무시
+    } catch (e) {
+      dlog('[DefenseGame] app icon load failed: $e');
     }
   }
 

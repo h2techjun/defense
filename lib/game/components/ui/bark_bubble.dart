@@ -58,7 +58,7 @@ class BarkBubble extends PositionComponent {
       text: TextSpan(
         text: text,
         style: TextStyle(
-          color: Colors.white.withOpacity(_opacity),
+          color: Colors.white.withAlpha((_opacity * 255).round()),
           fontSize: 12,
           fontWeight: FontWeight.w600,
           height: 1.2,
@@ -78,9 +78,9 @@ class BarkBubble extends PositionComponent {
 
     // 버블 배경
     final bgPaint = Paint()
-      ..color = const Color(0xDD2D1B69).withOpacity(_opacity * 0.9);
+      ..color = const Color(0xDD2D1B69).withAlpha((_opacity * 0.9 * 255).round());
     final borderPaint = Paint()
-      ..color = const Color(0xFFE8D5B7).withOpacity(_opacity * 0.7)
+      ..color = const Color(0xFFE8D5B7).withAlpha((_opacity * 0.7 * 255).round())
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 

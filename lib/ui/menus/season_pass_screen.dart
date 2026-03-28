@@ -187,7 +187,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
               ),
             ),
             Text(
-              '다음 레벨까지 ${state.xpToNextLevel} XP',
+              AppStrings.trs('sp_xp_to_next').replaceAll('{xp}', '${state.xpToNextLevel}'),
               style: TextStyle(
                 color: Colors.amber,
                 fontSize: Responsive.fontSize(context, 14),
@@ -216,7 +216,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                 ref.read(seasonPassProvider.notifier).addXp(50);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: const Text('⚡ XP +50! (💎10 사용)'),
+                    content: Text(AppStrings.trs('sp_xp_boost_msg')),
                     backgroundColor: const Color(0xFF6633AA),
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -226,7 +226,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: const Text('💎 보석이 부족합니다 (필요: 10개)'),
+                    content: Text(AppStrings.trs('sp_gems_insufficient_msg')),
                     backgroundColor: Colors.red.shade700,
                     behavior: SnackBarBehavior.floating,
                     duration: const Duration(seconds: 2),
@@ -281,8 +281,8 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
           fontSize: Responsive.fontSize(context, 13),
           fontWeight: FontWeight.bold,
         ),
-        tabs: const [
-          Tab(text: '🎫 시즌패스'), // TODO: sp_tab
+        tabs: [
+          Tab(text: AppStrings.trs('sp_tab')),
         ],
       ),
     );
@@ -362,7 +362,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
             ),
             SizedBox(height: Responsive.spacing(context, 8)),
             Text(
-              '프리미엄 보상 트랙 해금\n한정 스킨, 유물, 보석 2배 보상',
+              AppStrings.trs('sp_premium_desc'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white70,
@@ -382,8 +382,8 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                   if (reward != null && context.mounted) {
                     ref.read(seasonPassProvider.notifier).purchasePremium();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('✨ 프리미엄 패스가 활성화되었습니다!'),
+                      SnackBar(
+                        content: Text(AppStrings.trs('sp_premium_activated')),
                         backgroundColor: Colors.purple,
                       ),
                     );

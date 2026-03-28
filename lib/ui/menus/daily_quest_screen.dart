@@ -250,7 +250,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                         if (success) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('${reward.emoji} ${reward.displayName} 획득!'),
+                              content: Text(AppStrings.trs('daily_reward_earned').replaceAll('{emoji}', reward.emoji).replaceAll('{name}', reward.displayName)),
                               backgroundColor: Colors.green.shade700,
                             ),
                           );

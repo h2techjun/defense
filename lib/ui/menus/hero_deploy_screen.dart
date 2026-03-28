@@ -477,7 +477,7 @@ class _PartySlotWidget extends StatelessWidget {
                     ),
                     SizedBox(height: 4 * s),
                     Text(
-                      heroData!.name,
+                      AppStrings.trs(heroData!.name),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: Responsive.fontSize(context, 12),
@@ -486,7 +486,7 @@ class _PartySlotWidget extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     Text(
-                      heroData!.title,
+                      AppStrings.trs(heroData!.title),
                       style: TextStyle(
                         color: Colors.white.withAlpha(150),
                         fontSize: Responsive.fontSize(context, 9),
@@ -562,9 +562,9 @@ class _HeroPoolCard extends StatelessWidget {
     final color = _getHeroColor(hero.id);
 
     final tooltipMessage = isLocked
-        ? AppStrings.trs('deploy_tooltip_locked').replaceAll('{name}', hero.name).replaceAll('{stage}', '$unlockStage')
-        : '${_getHeroEmoji(hero.id)} ${hero.name} — ${hero.title}\n\n'
-          '${AppStrings.trs('deploy_tooltip_info').replaceAll('{skillName}', hero.skill.name).replaceAll('{skillDesc}', hero.skill.description).replaceAll('{hp}', '${hero.baseHp.toInt()}').replaceAll('{atk}', '${hero.baseAttack.toInt()}')}';
+        ? AppStrings.trs('deploy_tooltip_locked').replaceAll('{name}', AppStrings.trs(hero.name)).replaceAll('{stage}', '$unlockStage')
+        : '${_getHeroEmoji(hero.id)} ${AppStrings.trs(hero.name)} — ${AppStrings.trs(hero.title)}\n\n'
+          '${AppStrings.trs('deploy_tooltip_info').replaceAll('{skillName}', AppStrings.trs(hero.skill.name)).replaceAll('{skillDesc}', AppStrings.trs(hero.skill.description)).replaceAll('{hp}', '${hero.baseHp.toInt()}').replaceAll('{atk}', '${hero.baseAttack.toInt()}')}';
 
 
     return Tooltip(
@@ -653,7 +653,7 @@ class _HeroPoolCard extends StatelessWidget {
             Icon(Icons.lock, color: const Color(0xFF555577), size: 14 * s),
             SizedBox(height: 2 * s),
             Text(
-              hero.name,
+              AppStrings.trs(hero.name),
               style: TextStyle(
                 color: const Color(0xFF555577),
                 fontSize: Responsive.fontSize(context, 11),
@@ -701,7 +701,7 @@ class _HeroPoolCard extends StatelessWidget {
               ),
               SizedBox(height: 2 * s),
               Text(
-                hero.name,
+                AppStrings.trs(hero.name),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: Responsive.fontSize(context, 11),
@@ -710,7 +710,7 @@ class _HeroPoolCard extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               Text(
-                hero.title,
+                AppStrings.trs(hero.title),
                 style: TextStyle(
                   color: Colors.white.withAlpha(140),
                   fontSize: Responsive.fontSize(context, 9),

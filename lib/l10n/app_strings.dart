@@ -2,7 +2,6 @@
 // 4개 언어 지원: 한국어, English, 日本語, 简体中文
 
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

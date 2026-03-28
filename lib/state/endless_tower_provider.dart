@@ -4,8 +4,6 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/endless_tower_data.dart';
-import '../data/models/daily_challenge_data.dart';
-import '../common/enums.dart';
 import '../services/save_manager.dart';
 import 'user_state.dart';
 

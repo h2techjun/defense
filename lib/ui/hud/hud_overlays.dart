@@ -180,7 +180,7 @@ class HudBossHealthBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '👹 $name',
+            '👹 ${AppStrings.trs(name)}',
             style: TextStyle(
               color: AppColors.sinmyeongGold,
               fontSize: Responsive.fontSize(context, 13),
@@ -262,6 +262,20 @@ class HudNextWavePreview extends StatelessWidget {
     'maliciousBird': 'enemy_maliciousBird',
     'faceStealerGhost': 'enemy_faceStealerGhost',
     'bossGreatEggGhost': 'enemy_bossGreatEggGhost',
+    // Chapter 4 - Shadow Palace
+    'courtAssassin': 'enemy_courtAssassin',
+    'corruptOfficial': 'enemy_corruptOfficial',
+    'royalGuardGhost': 'enemy_royalGuardGhost',
+    'curseScribe': 'enemy_curseScribe',
+    'puppetDancer': 'enemy_puppetDancer',
+    'bossTyrantKing': 'enemy_bossTyrantKing',
+    // Chapter 5 - Threshold of Death
+    'underworldMessenger': 'enemy_underworldMessenger',
+    'wailingBanshee': 'enemy_wailingBanshee',
+    'boneGolem': 'enemy_boneGolem',
+    'soulChainGhost': 'enemy_soulChainGhost',
+    'infernoSpirit': 'enemy_infernoSpirit',
+    'bossGatekeeper': 'enemy_bossGatekeeper',
   };
 
 
@@ -284,6 +298,20 @@ class HudNextWavePreview extends StatelessWidget {
     'maliciousBird': '🦅',
     'faceStealerGhost': '🎭',
     'bossGreatEggGhost': '🥚',
+    // Chapter 4 - Shadow Palace
+    'courtAssassin': '🗡️',
+    'corruptOfficial': '💰',
+    'royalGuardGhost': '🛡️',
+    'curseScribe': '📜',
+    'puppetDancer': '🪆',
+    'bossTyrantKing': '👑',
+    // Chapter 5 - Threshold of Death
+    'underworldMessenger': '💀',
+    'wailingBanshee': '😭',
+    'boneGolem': '🦴',
+    'soulChainGhost': '⛓️',
+    'infernoSpirit': '🔥',
+    'bossGatekeeper': '🚪',
   };
 
   const HudNextWavePreview({

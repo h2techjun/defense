@@ -1,7 +1,6 @@
 // 해원의 문 - 사용자 데이터 상태 (Riverpod)
 // 게임 세션 간 유지되는 데이터를 관리합니다.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../common/enums.dart';
 import '../services/save_manager.dart';

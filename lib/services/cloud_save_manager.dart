@@ -1,6 +1,5 @@
 
 import 'dart:math';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../state/user_state.dart';
@@ -73,7 +72,8 @@ class CloudSaveManager {
     try {
       Supabase.instance.client;
       return true;
-    } catch (_) {
+    } catch (e) {
+      dlog('[CloudSaveManager] Supabase not configured: $e');
       return false;
     }
   }

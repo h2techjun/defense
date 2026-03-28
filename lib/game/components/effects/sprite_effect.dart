@@ -1,6 +1,7 @@
 ﻿// 해원의 문 - 스프라이트 다중 프레임 기반 2D 이펙트 컴포넌트
 
 import 'package:flame/components.dart';
+import '../../../common/debug_log.dart';
 import '../../defense_game.dart';
 
 enum SpriteEffectType {
@@ -54,8 +55,7 @@ class SpriteEffect extends SpriteAnimationComponent with HasGameRef<DefenseGame>
             final image = await game.images.load('${prefix}_$i.png');
             sprites.add(Sprite(image));
         } catch (e) {
-            // 아직 에셋이 생성되지 않은 프레임은 무시 (에러 방지)
-            // print('SpriteEffect 렌더링 폴백 - 프레임 누락: ${prefix}_$i.png');
+            dlog('[SpriteEffect] frame load failed: ${prefix}_$i.png: $e');
         }
     }
     

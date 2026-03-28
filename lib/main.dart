@@ -26,18 +26,18 @@ Future<void> main() async {
 
   // 에러 핸들러 — 빨간 에러 화면 방지, 로그만 출력
   FlutterError.onError = (FlutterErrorDetails details) {
-    debugPrint('');
-    debugPrint('🚨🚨🚨 [FLUTTER-ERROR] ${details.exception}');
-    debugPrint('📍 Library: ${details.library}');
-    debugPrint('📍 Context: ${details.context}');
-    debugPrint('📍 Stack: ${details.stack}');
-    debugPrint('🚨🚨🚨');
-    debugPrint('');
+    dlog('');
+    dlog('🚨🚨🚨 [FLUTTER-ERROR] ${details.exception}');
+    dlog('📍 Library: ${details.library}');
+    dlog('📍 Context: ${details.context}');
+    dlog('📍 Stack: ${details.stack}');
+    dlog('🚨🚨🚨');
+    dlog('');
   };
 
   // 에러 위젯을 투명 SizedBox로 교체 (빨간 화면 대신)
   ErrorWidget.builder = (FlutterErrorDetails details) {
-    debugPrint('🔴 [ErrorWidget] ${details.exception}');
+    dlog('🔴 [ErrorWidget] ${details.exception}');
     return const SizedBox.shrink();
   };
 
@@ -115,11 +115,11 @@ Future<void> main() async {
       ),
     );
   }, (error, stack) {
-    debugPrint('');
-    debugPrint('💥💥💥 [ZONE-ERROR] $error');
-    debugPrint('📍 Stack: $stack');
-    debugPrint('💥💥💥');
-    debugPrint('');
+    dlog('');
+    dlog('💥💥💥 [ZONE-ERROR] $error');
+    dlog('📍 Stack: $stack');
+    dlog('💥💥💥');
+    dlog('');
   });
 }
 

@@ -139,7 +139,7 @@ class _StoryCutsceneDialogState extends ConsumerState<StoryCutsceneDialog>
         child: Stack(
           children: [
             // 전체 배경 약간 어둡게
-            Container(color: Colors.black.withOpacity(0.6)),
+            Container(color: Colors.black.withAlpha(153)),
             
             // 다이얼로그 박스 (하단 배치)
             Align(
@@ -167,12 +167,12 @@ class _StoryCutsceneDialogState extends ConsumerState<StoryCutsceneDialog>
                         width: double.infinity,
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: AppColors.surfaceMid.withOpacity(0.9),
+                          color: AppColors.surfaceMid.withAlpha(230),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: AppColors.cherryBlossom.withOpacity(0.5)),
+                          border: Border.all(color: AppColors.cherryBlossom.withAlpha(128)),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.cherryBlossom.withOpacity(0.2),
+                              color: AppColors.cherryBlossom.withAlpha(51),
                               blurRadius: 10,
                               spreadRadius: 2,
                             ),

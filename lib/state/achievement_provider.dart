@@ -1,7 +1,6 @@
 // 해원의 문 - 업적 + 랭킹 상태 관리
 // Riverpod StateNotifier 기반
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/achievement_data.dart';
 import '../common/enums.dart';
@@ -164,8 +163,8 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
         newCompleted.add(achievementId);
         justAchieved = true;
       }
-    } catch (_) {
-      // 알 수 없는 업적 ID는 무시
+    } catch (e) {
+      dlog('[AchievementProvider] unknown achievement id=$achievementId: $e');
     }
 
     state = state.copyWith(progress: newProgress, completed: newCompleted);
@@ -195,7 +194,9 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
         if (newValue >= achievement.targetValue) {
           newCompleted.add(entry.key);
         }
-      } catch (_) {}
+      } catch (e) {
+        dlog('[Achievement] 업적 진행 업데이트 오류 (${entry.key}): $e');
+      }
     }
 
     state = state.copyWith(progress: newProgress, completed: newCompleted);
@@ -216,7 +217,9 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
       if (value >= achievement.targetValue) {
         newCompleted.add(achievementId);
       }
-    } catch (_) {}
+    } catch (e) {
+      dlog('[Achievement] 업적 진행도 설정 오류 ($achievementId): $e');
+    }
 
     state = state.copyWith(progress: newProgress, completed: newCompleted);
     _persist();
@@ -241,7 +244,9 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
       if (achievement.rewardPassXp > 0) {
         _ref.read(seasonPassProvider.notifier).addXp(achievement.rewardPassXp);
       }
-    } catch (_) {}
+    } catch (e) {
+      dlog('[Achievement] 보상 수령 처리 오류 ($achievementId): $e');
+    }
 
     return true;
   }
@@ -273,7 +278,7 @@ class RankingNotifier extends StateNotifier<RankingState> {
   /// 무한의 탑 기록 추가
   void addTowerRecord(int floor, HeroId? heroId) {
     final entry = RankingEntry(
-      playerName: '나',
+      playerName: AppStrings.trs('ranking_player_name'),
       score: floor,
       achievedAt: DateTime.now(),
       usedHero: heroId,
@@ -308,7 +313,7 @@ class RankingNotifier extends StateNotifier<RankingState> {
   /// 일일 도전 기록 추가
   void addDailyRecord(int waves, HeroId? heroId) {
     final entry = RankingEntry(
-      playerName: '나',
+      playerName: AppStrings.trs('ranking_player_name'),
       score: waves,
       achievedAt: DateTime.now(),
       usedHero: heroId,

@@ -31,8 +31,6 @@ class WaveBuilder {
       // 기본 스폰 수 = 웹 성능 안전 범위 (3~12마리, 동시 30마리 이하)
       final baseCount = (3 + (difficulty * 0.15 + w * 0.5)).round().clamp(3, 12);
       final interval = (2.0 - phase * 1.0).clamp(0.6, 2.5);
-      // HP 보정 (난이도 유지 — 완화된 곡선)
-      final hpScale = 1.0 + phase * 0.5 + difficulty * 0.08;
 
       final groups = <SpawnGroup>[];
 

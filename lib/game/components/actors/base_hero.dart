@@ -3,14 +3,13 @@
 
 import 'dart:math' as math;
 import 'dart:ui' hide TextStyle;
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/painting.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 
 import '../../../common/enums.dart';
-import '../../../common/constants.dart';
 import '../../../data/models/hero_data.dart';
 import '../../../data/models/relic_data.dart';
 import '../../../data/models/skin_data.dart';
@@ -18,7 +17,6 @@ import '../../../state/relic_provider.dart';
 import '../../../state/skin_provider.dart';
 import '../../defense_game.dart';
 import '../actors/base_enemy.dart';
-import '../towers/base_tower.dart';
 import '../towers/projectile.dart';
 import '../effects/particle_effect.dart';
 import '../effects/sprite_hit_effect.dart';
@@ -64,8 +62,6 @@ class BaseHero extends PositionComponent
 
   // 시각
   late RectangleComponent _body;
-  RectangleComponent? _shadow;
-  RectangleComponent? _border;
   late RectangleComponent _hpBar;
   late RectangleComponent _xpBar;
   late RectangleComponent _skillBar; // 기술 차지 바
@@ -93,7 +89,8 @@ class BaseHero extends PositionComponent
   double _relicBonus(RelicEffectType type) {
     try {
       return game.ref.read(relicProvider.notifier).getEffectBonus(data.id, type);
-    } catch (_) {
+    } catch (e) {
+      dlog('[BaseHero] relicBonus($type) failed: $e');
       return 0; // 게임 미초기화 시
     }
   }
@@ -445,7 +442,9 @@ class BaseHero extends PositionComponent
           }
         }
       }
-    } catch (_) {}
+    } catch (e) {
+      dlog('[BaseHero] 스킨 티어 조회 오류: $e');
+    }
     return 1; // 기본
   }
 
@@ -488,8 +487,8 @@ class BaseHero extends PositionComponent
           return skin.primaryColor;
         }
       }
-    } catch (_) {
-      // 게임 초기화 전 폴백
+    } catch (e) {
+      dlog('[BaseHero] skin color lookup failed: $e');
     }
 
     // 기본 색상
@@ -775,11 +774,12 @@ class BaseHero extends PositionComponent
   }
 
   /// 강림: 호명 - 체력 30% 이하 적 즉사
-  /// 궁극기(Lv10+): 보스 포함 즉사 (50% 이하)
+  /// 궁극기(Lv10+): 비보스 50% 이하, 보스 15% 이하 즉사
   void _skillCallName() {
     final enemies = game.cachedAliveEnemies;
     final isUltimate = currentTier == EvolutionTier.ultimate;
     final threshold = isUltimate ? 0.5 : 0.3;
+    const bossThreshold = 0.15;
 
     // 🎆 스킬 이펙트: 보라 사신 소환
     if (SpriteHitEffect.canCreate) {
@@ -797,8 +797,10 @@ class BaseHero extends PositionComponent
     for (final enemy in enemies) {
       if (enemy.isDead) continue;
       final dist = position.distanceTo(enemy.position);
-      if (dist <= data.skill.range && enemy.hp / enemy.maxHp <= threshold) {
-        // 궁극기: 보스도 즉사 가능, 기본: 보스 제외
+      // 보스: 궁극기에서만 bossThreshold(15%) 적용, 비보스: threshold(30%/50%)
+      final effectiveThreshold = enemy.data.isBoss ? bossThreshold : threshold;
+      if (dist <= data.skill.range && enemy.hp / enemy.maxHp <= effectiveThreshold) {
+        // 기본: 보스 제외, 궁극기: 보스 포함 (15% 이하만)
         if (!isUltimate && enemy.data.isBoss) continue;
         enemy.takeDamage(99999, DamageType.purification);
         // 즉사 이펙트: 보라색 폭발

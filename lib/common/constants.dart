@@ -53,28 +53,8 @@ class GameConstants {
   /// 한 게이지 최대치
   static const double maxWailing = 100.0;
 
-  /// 한 100% 시 타워 공격속도 감소 비율
-  static const double wailingAttackSpeedPenalty = 0.4;
-
   /// 한 게이지 자연 감소 속도 (초당)
   static const double wailingDecayPerSecond = 0.5;
-
-  // ── 자원 ──
-  /// 시작 신명 (자원)
-  static const int startingSinmyeong = 250;
-
-  /// 게이트웨이(해원문) 최대 HP
-  static const int gatewayMaxHp = 20;
-
-  // ── 타워 비용 ──
-  static const int archerTowerCost = 70;
-  static const int barracksTowerCost = 90;
-  static const int shamanTowerCost = 100;
-  static const int artilleryTowerCost = 125;
-  static const int sotdaeTowerCost = 80;
-
-  // ── 타워 업그레이드 비용 배율 ──
-  static const double upgradeCostMultiplier = 1.5;
 
   // ── 속성 상성 데미지 배율 ──
   /// 물리 공격 → 영혼형 적 (50% 회피)
@@ -89,19 +69,9 @@ class GameConstants {
   /// 요괴형 적 기본 감소율
   static const double yokaiDamageReduction = 0.8;
 
-  // ── 영웅 ──
-  /// 영웅 스킬 기본 쿨타임 (초)
-  static const double defaultSkillCooldown = 15.0;
-
-  /// 영웅 진화 레벨 임계값
-  static const List<int> evolutionLevels = [1, 5, 10];
-
   // ── 웨이브 ──
   /// 웨이브 간 대기 시간 (초)
   static const double waveCooldown = 5.0;
-
-  /// 적 스폰 간격 (초)
-  static const double defaultSpawnInterval = 1.2;
 
   // ── 솟대 (Sotdae) — 수호결계 타워 ──
   /// 솟대 수호결계 범위

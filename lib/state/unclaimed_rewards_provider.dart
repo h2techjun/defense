@@ -2,6 +2,7 @@
 // 메인 메뉴 빨간 뱃지용 미수령 보상 체크
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../common/debug_log.dart';
 import 'daily_quest_provider.dart';
 import 'season_pass_provider.dart';
 import 'achievement_provider.dart';
@@ -50,7 +51,9 @@ final unclaimedRewardsProvider = Provider<UnclaimedRewards>((ref) {
         dailyQuestUnclaimed++;
       }
     }
-  } catch (_) {}
+  } catch (e) {
+    dlog('[UnclaimedRewards] 일일퀘스트 미수령 확인 오류: $e');
+  }
 
   // ── 시즌 패스 : 도달한 레벨 중 미수령 보상 카운트 ──
   int seasonPassUnclaimed = 0;
@@ -66,14 +69,18 @@ final unclaimedRewardsProvider = Provider<UnclaimedRewards>((ref) {
         seasonPassUnclaimed++;
       }
     }
-  } catch (_) {}
+  } catch (e) {
+    dlog('[UnclaimedRewards] 시즌패스 미수령 확인 오류: $e');
+  }
 
   // ── 업적 : unclaimedCount 속성 활용 ──
   int achievementUnclaimed = 0;
   try {
     final achState = ref.watch(achievementProvider);
     achievementUnclaimed = achState.unclaimedCount;
-  } catch (_) {}
+  } catch (e) {
+    dlog('[UnclaimedRewards] 업적 미수령 확인 오류: $e');
+  }
 
   return UnclaimedRewards(
     dailyQuest: dailyQuestUnclaimed,

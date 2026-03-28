@@ -1,9 +1,11 @@
 // 해원의 문 - 영웅 해금 축하 다이얼로그
 // 새 영웅 해금 시 화려한 팝업으로 알림
 
+import 'dart:math' show min;
 import 'package:flutter/material.dart';
 
 import '../../common/enums.dart';
+import '../../common/responsive.dart';
 import '../../data/game_data_loader.dart';
 import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
@@ -30,11 +32,15 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
       );
     },
     pageBuilder: (context, anim, secondaryAnim) {
+      final s = Responsive.scale(context);
+      final screenWidth = MediaQuery.of(context).size.width;
+      final dialogWidth = min(320.0, screenWidth - 48 * s);
+
       return Center(
         child: Material(
           color: Colors.transparent,
           child: GlassPanel(
-            borderRadius: 20,
+            borderRadius: 20 * s,
             blurAmount: 12,
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -47,7 +53,7 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
             ),
             borderColor: color.withAlpha(150),
             borderWidth: 2,
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(24 * s),
             boxShadow: [
               BoxShadow(
                 color: color.withAlpha(100),
@@ -56,7 +62,7 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
               ),
             ],
             child: Container(
-              width: 320,
+              width: dialogWidth,
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.85,
               ),
@@ -69,21 +75,21 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                     shaderCallback: (bounds) => LinearGradient(
                       colors: [color, Colors.white, color],
                     ).createShader(bounds),
-                    child: const Text(
-                      'hero_new_unlock',
+                    child: Text(
+                      AppStrings.trs('hero_new_unlock'),
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: Responsive.fontSize(context, 20),
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20 * s),
 
                   // 영웅 이모지 (크게)
                   Container(
-                    width: 80,
-                    height: 80,
+                    width: 80 * s,
+                    height: 80 * s,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
@@ -98,16 +104,16 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                     alignment: Alignment.center,
                     child: Text(
                       emoji,
-                      style: const TextStyle(fontSize: 40),
+                      style: TextStyle(fontSize: Responsive.fontSize(context, 40)),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16 * s),
 
                   // 영웅 이름
                   Text(
-                    heroData.name,
+                    AppStrings.trs(heroData.name),
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: Responsive.fontSize(context, 24),
                       fontWeight: FontWeight.bold,
                       color: color,
                     ),
@@ -115,17 +121,17 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
 
                   // 영웅 칭호
                   Text(
-                    heroData.title,
+                    AppStrings.trs(heroData.title),
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: Responsive.fontSize(context, 14),
                       color: Colors.white.withAlpha(180),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12 * s),
 
                   // 스킬 정보
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(12 * s),
                     decoration: BoxDecoration(
                       color: color.withAlpha(20),
                       borderRadius: BorderRadius.circular(12),
@@ -134,18 +140,18 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                     child: Column(
                       children: [
                         Text(
-                          '✨ ${heroData.skill.name}',
+                          '✨ ${AppStrings.trs(heroData.skill.name)}',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: Responsive.fontSize(context, 14),
                             fontWeight: FontWeight.bold,
                             color: color,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4 * s),
                         Text(
-                          heroData.skill.description,
+                          AppStrings.trs(heroData.skill.description),
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: Responsive.fontSize(context, 12),
                             color: Colors.white.withAlpha(160),
                           ),
                           textAlign: TextAlign.center,
@@ -153,26 +159,26 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8 * s),
 
                   // 스탯
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _StatChip('❤️', '${heroData.baseHp.toInt()}'),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12 * s),
                       _StatChip('⚔️', '${heroData.baseAttack.toInt()}'),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12 * s),
                       _StatChip('🎯', '${heroData.baseRange.toInt()}'),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20 * s),
 
                   // 확인 버튼
                   GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 32 * s, vertical: 12 * s),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [color, Color.lerp(color, Colors.white, 0.3)!],
@@ -188,7 +194,7 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                       child: Text(
                         AppStrings.trs('hero_ready'),
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: Responsive.fontSize(context, 16),
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),

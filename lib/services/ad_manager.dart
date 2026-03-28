@@ -69,7 +69,6 @@ class AdManager {
     Duration(hours: 3),         // 4회차: 3시간 후
     Duration(hours: 7),         // 5회차: 7시간 후
   ];
-  static const _freeGemsAmount = 30;
   static const _maxDailyFreeGems = 5;
   int _dailyFreeGemsCount = 0;
 
@@ -181,7 +180,8 @@ class AdManager {
       if (kDebugMode) dlog('📺 AdManager 초기화 (웹 시뮬레이션)');
     } else {
       if (kDebugMode) dlog('📺 AdManager 초기화 (모바일)');
-      // TODO: MobileAds.instance.initialize();
+      // NOTE: 프로덕션 배포 시 실제 AdMob 앱 ID 등록 후 주석 해제 필요
+      // MobileAds.instance.initialize();
     }
     _initialized = true;
   }

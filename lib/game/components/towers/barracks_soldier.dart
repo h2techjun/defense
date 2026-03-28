@@ -48,9 +48,6 @@ class BarracksSoldier extends PositionComponent
   /// ?쇨꺽 ?뚮옒??
   double _hitFlashTimer = 0;
 
-  /// 怨좎쑀 ?쒕뜡
-  static final math.Random _random = math.Random();
-
   BarracksSoldier({
     required this.rallyPoint,
     required this.hp,

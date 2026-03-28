@@ -73,7 +73,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error starting floor: $e'),
+            content: Text('${tr(ref, 'error_generic')}: $e'),
             duration: const Duration(seconds: 5),
             backgroundColor: Colors.red,
           ),
@@ -125,7 +125,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       levelNumber: 1000 + floorData.floor,
       chapter: Chapter.values[(floorData.floor - 1) % Chapter.values.length],
       name: floorData.floorTitle,
-      briefing: floorData.narrative ?? '무한의 탑 ${floorData.floor}층',
+      briefing: floorData.narrative ?? AppStrings.trs('et_fallback_briefing').replaceAll('{floor}', '${floorData.floor}'),
       startingSinmyeong: (200 * floorData.difficultyScale).round(),
       gatewayHp: scaledHp,
       waves: waves,
@@ -145,8 +145,10 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
           '🏕️ ${floorData.floor}층 — 휴식',
           style: const TextStyle(color: Colors.white, fontSize: 20),
         ),
-        content: SizedBox(
-          width: 320,
+        content: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.85,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -248,7 +250,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                   ),
                 ),
                 Text(
-                  '최고 기록: ${state.highestFloor}층 | 보석: ${state.totalGemsEarned}💎',
+                  AppStrings.trs('et_record_summary').replaceAll('{floor}', '${state.highestFloor}').replaceAll('{gems}', '${state.totalGemsEarned}'),
                   style: TextStyle(
                     color: Colors.white60,
                     fontSize: Responsive.fontSize(context, 15),
@@ -293,9 +295,9 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
           fontSize: Responsive.fontSize(context, 14),
           fontWeight: FontWeight.bold,
         ),
-        tabs: const [
-          Tab(text: '🗼 무한의 塔'), // TODO: et_tab_tower
-          Tab(text: '📅 일일 도전'), // TODO: et_tab_daily
+        tabs: [
+          Tab(text: AppStrings.trs('et_tab_tower')),
+          Tab(text: AppStrings.trs('et_tab_daily')),
         ],
       ),
     );
@@ -318,7 +320,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '활성 버프: ${state.activeBuffs.map((b) => b.name).join(', ')} (${state.buffRemainingFloors}층 남음)',
+                  AppStrings.trs('et_active_buffs').replaceAll('{buffs}', state.activeBuffs.map((b) => b.name).join(', ')).replaceAll('{floors}', '${state.buffRemainingFloors}'),
                   style: TextStyle(
                     color: Colors.greenAccent,
                     fontSize: Responsive.fontSize(context, 15),
@@ -503,7 +505,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _statItem(context, '🔥', '${state.streak}일', '연속 도전'),
+                _statItem(context, '🔥', '${state.streak}', AppStrings.trs('et_streak_label')),
                 _statItem(context, '⚔️', '${state.bestWavesSurvived}', 'Best Wave'),
                 _statItem(context, '🏅', '${state.totalChallengesCompleted}', 'Total'),
               ],

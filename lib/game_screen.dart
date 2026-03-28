@@ -34,7 +34,6 @@ import 'ui/menus/lore_collection_screen.dart';
 
 import 'ui/hud/game_hud.dart';
 import 'ui/hud/tower_select_panel.dart';
-import 'ui/hud/hero_skill_panel.dart';
 import 'ui/menus/hero_deploy_screen.dart';
 import 'ui/dialogs/game_result_dialog.dart';
 import 'ui/dialogs/tower_upgrade_dialog.dart';
@@ -59,7 +58,8 @@ class GameScreen extends ConsumerStatefulWidget {
   ConsumerState<GameScreen> createState() => _GameScreenState();
 }
 
-class _GameScreenState extends ConsumerState<GameScreen> {
+class _GameScreenState extends ConsumerState<GameScreen>
+    with WidgetsBindingObserver {
   late DefenseGame _game;
   String _currentScreen = 'mainMenu'; // mainMenu, stageSelect, heroManage, heroDeploy, gameplay
   LevelData? _currentLevel;
@@ -77,9 +77,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Offset _tappedTowerScreenPos = Offset.zero;
   double _tappedTowerHeight = 0;
 
+  // 앱 라이프사이클 — 백그라운드 전환 시 자동 일시정지 추적
+  bool _pausedByLifecycle = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     dlog('🚀 [GameScreen] initState 시작');
     _game = DefenseGame();
     _setupGameCallbacks();
@@ -104,6 +108,44 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         dlog('☁️ [GameScreen] 클라우드 동기화 스킵: $e');
       }
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    dlog('📱 [GameScreen] 앱 라이프사이클 전환: $state');
+
+    // 게임플레이 중이 아니면 무시
+    if (_currentScreen != 'gameplay') return;
+
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+        // 이미 일시정지 상태면 중복 처리 방지
+        if (!_game.isPaused && _game.isGameRunning) {
+          dlog('📱 [GameScreen] 백그라운드 전환 → 자동 일시정지');
+          _game.togglePause();
+          _pausedByLifecycle = true;
+          setState(() {});
+        }
+        break;
+      case AppLifecycleState.resumed:
+        // 라이프사이클로 인한 일시정지였으면 → 일시정지 메뉴 유지 (사용자가 수동 재개)
+        if (_pausedByLifecycle) {
+          dlog('📱 [GameScreen] 포그라운드 복귀 → 일시정지 메뉴 유지 (수동 재개 대기)');
+          _pausedByLifecycle = false;
+          // setState만 호출하여 UI 갱신 (일시정지 오버레이가 이미 표시 중)
+          setState(() {});
+        }
+        break;
+      default:
+        break;
+    }
   }
 
   void _setupGameCallbacks() {
@@ -184,9 +226,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     } else {
       // 적
       return GameTooltipData(
-        title: info['name'] as String? ?? AppStrings.get(_currentLang, 'stat_enemy'),
+        title: AppStrings.get(_currentLang, info['name'] as String? ?? 'stat_enemy'),
         subtitle: 'HP: ${info['hp']}',
-        description: info['description'] as String?,
+        description: info['description'] != null ? AppStrings.get(_currentLang, info['description'] as String) : null,
         color: (info['isBerserk'] as bool? ?? false)
             ? const Color(0xFFFF4500)
             : const Color(0xFFCC3333),
@@ -421,6 +463,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       // 해금 축하 팝업 표시 (승리 화면 위에 순차 표시)
       if (newlyUnlocked.isNotEmpty && mounted) {
         Future.delayed(const Duration(milliseconds: 1500), () async {
+          if (!mounted) return;
           for (final heroId in newlyUnlocked) {
             if (!mounted) break;
             await showHeroUnlockDialog(context, heroId);
@@ -593,77 +636,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     );
   }
 
-  /// 영웅 스킬 패널 빌더 (실시간 상태 반영)
-  Widget _buildHeroSkillPanel() {
-    return Positioned(
-      right: 16,
-      bottom: 16,
-      child: StatefulBuilder(
-        builder: (context, localSetState) {
-          // 250ms마다 영웅 상태 갱신
-          Future.delayed(const Duration(milliseconds: 250), () {
-            if (mounted && _currentScreen == 'gameplay') {
-              localSetState(() {});
-            }
-          });
-
-          final heroes = _game.activeHeroes;
-          if (heroes.isEmpty) return const SizedBox.shrink();
-
-          final heroInfos = <HeroSkillInfo>[];
-          for (int i = 0; i < heroes.length; i++) {
-            final hero = heroes[i];
-            final heroEmoji = _getHeroEmoji(hero.data.id);
-
-            // HeroId → 파일명 매핑
-            String heroFileName;
-            switch (hero.data.id) {
-              case HeroId.kkaebi: heroFileName = 'kkaebi'; break;
-              case HeroId.miho: heroFileName = 'miho'; break;
-              case HeroId.gangrim: heroFileName = 'gangrim'; break;
-              case HeroId.sua: heroFileName = 'sua'; break;
-              case HeroId.bari: heroFileName = 'bari'; break;
-            }
-
-            heroInfos.add(HeroSkillInfo(
-              name: hero.data.name,
-              emoji: heroEmoji,
-              heroId: heroFileName,
-              skillName: hero.data.skill.name,
-              hpRatio: hero.maxHp > 0 ? (hero.hp / hero.maxHp).clamp(0, 1) : 0,
-              cooldownRatio: hero.skillCooldownRatio,
-              isDead: hero.isDead,
-              reviveProgress: hero.reviveProgress,
-              isUltimate: hero.skillReady,
-              onSkillTap: () {
-                _game.useHeroSkill(i);
-              },
-            ));
-          }
-
-          return HeroSkillPanel(heroes: heroInfos);
-        },
-      ),
-    );
-  }
-
-  /// 영웅 ID별 이모지
-  String _getHeroEmoji(HeroId id) {
-    switch (id) {
-      case HeroId.kkaebi:
-        return '👹'; // 도깨비
-      case HeroId.miho:
-        return '🦊'; // 여우
-      case HeroId.gangrim:
-        return '💀'; // 저승차사
-      case HeroId.sua:
-        return '🌊'; // 물의 정령
-      case HeroId.bari:
-        return '🌸'; // 바리공주
-    }
-  }
-
-
   /// 확인 다이얼로그 (재시작/나가기 등 비가역 액션)
   void _showConfirmDialog({
     required String title,
@@ -744,7 +716,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             // 효과음 재생 (SFX)
             SoundManager.instance.playSfx(SfxType.uiUpgrade);
           }
-        } catch (_) {}
+        } catch (e) {
+          dlog('[GameScreen] 업적 달성 알림 처리 오류: $e');
+        }
       }
     });
 
@@ -1030,7 +1004,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       Builder(
                         builder: (context) {
                           final screenSize = MediaQuery.of(context).size;
-                          final s = Responsive.uiScale(context);
                           // 팝업 너비: 화면의 22%, 최대 180px (컴팩트)
                           final popupWidth = (screenSize.width * 0.22).clamp(140.0, 180.0);
                           // 하단/상단 보호 영역 (타워패널, HUD)

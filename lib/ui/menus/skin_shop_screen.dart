@@ -136,7 +136,7 @@ class SkinShopScreen extends ConsumerWidget {
             ref.read(userStateProvider.notifier).addGems(amount);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('💎 +$amount 보석 획득!'),
+                content: Text(AppStrings.trs('shop_gems_earned_msg').replaceAll('{amount}', '$amount')),
                 backgroundColor: AppColors.skyBlue,
                 duration: const Duration(seconds: 2),
               ),
@@ -668,7 +668,7 @@ class _AdRewardButtonState extends State<_AdRewardButton> {
     final s = Responsive.scale(context);
 
     return Tooltip(
-      message: '광고 시청하고 30보석 획득 (${remaining}회 남음)',
+      message: AppStrings.trs('ad_watch_gems_msg').replaceAll('{remaining}', '$remaining'),
       child: GestureDetector(
         onTap: canWatch ? _watchAd : null,
         child: Container(

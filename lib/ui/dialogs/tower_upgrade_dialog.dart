@@ -145,7 +145,7 @@ class TowerUpgradeDialog extends StatelessWidget {
               ),
             ] else if (!isMaxLevel && nextUpgrade != null) ...[
               _MiniButton(
-                label: '⬆ Lv.${currentLevel + 1}',
+                label: AppStrings.trs('tower_upgrade_lv').replaceAll('{n}', '${currentLevel + 1}'),
                 cost: nextUpgrade.cost,
                 canAfford: currentSinmyeong >= nextUpgrade.cost,
                 color: AppColors.mintGreen,
@@ -159,7 +159,7 @@ class TowerUpgradeDialog extends StatelessWidget {
                     totalCost += towerData.upgrades[i].cost;
                   }
                   return _MiniButton(
-                    label: '⚡ MAX',
+                    label: AppStrings.trs('tower_upgrade_max_btn'),
                     cost: totalCost,
                     canAfford: currentSinmyeong >= totalCost,
                     color: AppColors.peachCoral,
@@ -168,7 +168,7 @@ class TowerUpgradeDialog extends StatelessWidget {
                 }),
               ],
             ] else ...[
-              Center(child: Text('✨ MAX', style: TextStyle(color: _getColorForType(towerType), fontSize: 9))),
+              Center(child: Text(AppStrings.trs('label_max_sparkle'), style: TextStyle(color: _getColorForType(towerType), fontSize: 9))),
             ],
             const SizedBox(height: 3),
             // 판매
@@ -183,46 +183,6 @@ class TowerUpgradeDialog extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget _buildBranchButton(TowerBranch? branch, TowerData towerData) {
-    if (branch == null) return const SizedBox.shrink();
-    final bd = GameDataLoader.getBranches()[branch];
-    final branchName = bd?.name ?? _getBranchName(branch);
-    final cost = bd?.cost ?? 300;
-
-    return _CompactActionButton(
-      label: '🔱 $branchName',
-      cost: cost,
-      canAfford: currentSinmyeong >= cost,
-      color: AppColors.peachCoral,
-      onTap: () => onAction(TowerBranchResult(branch)),
-    );
-  }
-
-  String _getBranchName(TowerBranch branch) {
-    switch (branch) {
-      case TowerBranch.rocketBattery:
-        return 'branch_rocket';
-      case TowerBranch.spiritHunter:
-        return 'branch_exorcist';
-      case TowerBranch.generalTotem:
-        return 'branch_general';
-      case TowerBranch.goblinRing:
-        return 'branch_goblin_ring';
-      case TowerBranch.shamanTemple:
-        return 'branch_pantheon';
-      case TowerBranch.grimReaperOffice:
-        return 'branch_reaper_office';
-      case TowerBranch.fireDragon:
-        return 'branch_fire_dragon';
-      case TowerBranch.heavenlyThunder:
-        return 'branch_thunder';
-      case TowerBranch.phoenixTotem:
-        return 'branch_phoenix_totem';
-      case TowerBranch.earthSpiritAltar:
-        return 'branch_earth_altar';
-    }
   }
 
   Color _getColorForType(TowerType type) {
@@ -253,218 +213,6 @@ class TowerUpgradeDialog extends StatelessWidget {
       case TowerType.sotdae:
         return '🪶';
     }
-  }
-}
-
-// ====================================================================
-// Helper widgets
-// ====================================================================
-
-/// 스탯 한 줄 (단순 label: value)
-class _StatRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool highlight;
-
-  const _StatRow(this.label, this.value, {this.highlight = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: highlight
-                  ? AppColors.sinmyeongGold
-                  : AppColors.textDisabled,
-              fontSize: 13,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              value,
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                color: highlight ? AppColors.sinmyeongGold : Colors.white,
-                fontSize: 13,
-                fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 현재 -> 다음 레벨 비교 스탯 행
-class _CompareStatRow extends StatelessWidget {
-  final String label;
-  final double current;
-  final double? next;
-  final String Function(double) format;
-
-  const _CompareStatRow({
-    required this.label,
-    required this.current,
-    this.next,
-    required this.format,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final hasNext = next != null && next != current;
-    final diff = hasNext ? next! - current : 0.0;
-    final isPositive = diff > 0;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          // 라벨
-          SizedBox(
-            width: 45,
-            child: Text(
-              label,
-              style: const TextStyle(
-                  color: AppColors.textDisabled, fontSize: 13),
-            ),
-          ),
-          // 값 영역 (길어지면 자동 축소되도록 FittedBox 적용)
-          Expanded(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Row(
-                children: [
-                  // 현재값
-                  Text(
-                    format(current),
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
-                  ),
-                  // 다음값 미리보기
-                  if (hasNext) ...[
-                    const SizedBox(width: 4),
-                    Text(
-                      '→',
-                      style: TextStyle(
-                        color: Colors.white.withAlpha(100),
-                        fontSize: 12,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      format(next!),
-                      style: TextStyle(
-                        color: isPositive
-                            ? AppColors.mintGreen
-                            : AppColors.sinmyeongGold,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 3),
-                    Text(
-                      isPositive
-                          ? '(+${diff.toStringAsFixed(diff == diff.roundToDouble() ? 0 : 2)})'
-                          : '(${diff.toStringAsFixed(diff == diff.roundToDouble() ? 0 : 2)})',
-                      style: TextStyle(
-                        color: isPositive
-                            ? AppColors.mintGreen.withAlpha(180)
-                            : AppColors.sinmyeongGold.withAlpha(180),
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 액션 버튼 (업그레이드/판매) — 전체 너비 버전
-class _ActionButton extends StatelessWidget {
-  final String label;
-  final int cost;
-  final bool canAfford;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _ActionButton({
-    required this.label,
-    required this.cost,
-    required this.canAfford,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isRefund = cost < 0;
-    return GestureDetector(
-      onTap: () {
-        if (canAfford) {
-          SoundManager.instance.playSfx(SfxType.uiClick);
-          onTap();
-        } else {
-          SoundManager.instance.playSfx(SfxType.uiError);
-        }
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color:
-              canAfford ? color.withAlpha(50) : const Color(0x22333333),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: canAfford
-                ? color.withAlpha(150)
-                : AppColors.borderDefault,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(
-              child: Text(
-                label,
-                style: TextStyle(
-                  color:
-                      canAfford ? Colors.white : AppColors.textDisabled,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Text(
-              isRefund ? '+${-cost}✨' : '$cost✨',
-              style: TextStyle(
-                color: isRefund
-                    ? AppColors.mintGreen
-                    : canAfford
-                        ? AppColors.sinmyeongGold
-                        : AppColors.berserkRed.withAlpha(170),
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

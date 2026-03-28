@@ -1,7 +1,6 @@
 // 해원의 문 - 시즌 패스 상태 관리
 // Riverpod StateNotifier 기반
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/season_pass_data.dart';
 import '../data/models/skin_data.dart';

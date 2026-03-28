@@ -469,7 +469,7 @@ class _StageCard extends StatelessWidget {
             if (isBoss)
               Padding(
                 padding: EdgeInsets.only(top: 2),
-                child: Text('💀 BOSS',
+                child: Text(AppStrings.trs('label_boss'),
                     style: TextStyle(
                       fontSize: Responsive.fontSize(context, 13),
                       color: Color(0xFFFF6644),

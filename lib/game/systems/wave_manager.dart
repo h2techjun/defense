@@ -2,7 +2,6 @@
 // 웨이브별 적 스폰 스케줄링, 웨이브 클리어 판정
 
 import 'package:flame/components.dart';
-import 'package:flutter/foundation.dart';
 
 import '../../common/constants.dart';
 import '../../common/enums.dart';

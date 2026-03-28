@@ -201,10 +201,9 @@ class DefeatOverlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(gameStateProvider);
     final lang = ref.watch(gameLanguageProvider);
     final s = Responsive.uiScale(context);
-    
+
     final screenSize = MediaQuery.of(context).size;
     final dialogWidth = (screenSize.width * 0.35).clamp(240.0, 320.0);
 
@@ -419,16 +418,17 @@ class _StarRatingState extends State<_StarRating>
 
   @override
   Widget build(BuildContext context) {
+    final s = Responsive.scale(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(3, (i) {
         final isEarned = i < widget.stars;
         if (!isEarned) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: EdgeInsets.symmetric(horizontal: 4 * s),
             child: Icon(
               Icons.star_outline_rounded,
-              size: 36,
+              size: 36 * s,
               color: const Color(0x44FFFFFF),
             ),
           );
@@ -437,14 +437,14 @@ class _StarRatingState extends State<_StarRating>
           animation: _controllers[i],
           builder: (context, child) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+              padding: EdgeInsets.symmetric(horizontal: 4 * s),
               child: Opacity(
                 opacity: _opacityAnims[i].value,
                 child: Transform.scale(
                   scale: _scaleAnims[i].value,
                   child: Icon(
                     Icons.star_rounded,
-                    size: 44,
+                    size: 44 * s,
                     color: AppColors.sinmyeongGold,
                     shadows: [
                       Shadow(

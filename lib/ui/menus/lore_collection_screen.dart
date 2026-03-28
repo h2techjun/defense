@@ -420,7 +420,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                         .claimTierReward(entry.id, rewardTier);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('💎 보석 $gems개 획득!'),
+                        content: Text(AppStrings.trs('lore_gems_earned_msg').replaceAll('{n}', '$gems')),
                         backgroundColor: Colors.green.shade700,
                       ),
                     );

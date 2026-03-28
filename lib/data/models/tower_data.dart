@@ -67,6 +67,7 @@ class TowerBranchData {
   final double slowAuraRatio;          // 적 감속 비율 (0이면 없음)
   final bool canDetectStealth;         // 은신 감지 가능
   final bool hasPiercing;              // 관통 (방어 무시)
+  final bool ignoreShield;             // 방패 관통 (방패 무시하고 직접 HP 데미지)
   final int extraSoldierCount;         // 추가 병사 수 (병영 분기용)
   final double soldierHpMultiplier;    // 병사 HP 배율 (병영 분기용)
   final double purifySpeedMultiplier;  // 정화 속도 배율 (솟대 분기용)
@@ -92,6 +93,7 @@ class TowerBranchData {
     this.slowAuraRatio = 0,
     this.canDetectStealth = false,
     this.hasPiercing = false,
+    this.ignoreShield = false,
     this.extraSoldierCount = 0,
     this.soldierHpMultiplier = 1.0,
     this.purifySpeedMultiplier = 1.0,
@@ -122,6 +124,7 @@ class TowerBranchData {
       slowAuraRatio: (json['slowAuraRatio'] as num?)?.toDouble() ?? 0,
       canDetectStealth: json['canDetectStealth'] as bool? ?? false,
       hasPiercing: json['hasPiercing'] as bool? ?? false,
+      ignoreShield: json['ignoreShield'] as bool? ?? false,
       extraSoldierCount: json['extraSoldierCount'] as int? ?? 0,
       soldierHpMultiplier: (json['soldierHpMultiplier'] as num?)?.toDouble() ?? 1.0,
       purifySpeedMultiplier: (json['purifySpeedMultiplier'] as num?)?.toDouble() ?? 1.0,
@@ -150,6 +153,7 @@ class TowerBranchData {
     if (slowAuraRatio != 0) 'slowAuraRatio': slowAuraRatio,
     if (canDetectStealth) 'canDetectStealth': true,
     if (hasPiercing) 'hasPiercing': true,
+    if (ignoreShield) 'ignoreShield': true,
     if (extraSoldierCount != 0) 'extraSoldierCount': extraSoldierCount,
     if (soldierHpMultiplier != 1.0) 'soldierHpMultiplier': soldierHpMultiplier,
     if (purifySpeedMultiplier != 1.0) 'purifySpeedMultiplier': purifySpeedMultiplier,

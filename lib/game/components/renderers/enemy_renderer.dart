@@ -4,7 +4,7 @@
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flame/components.dart';
-import 'package:flutter/painting.dart' show LinearGradient, RadialGradient, Alignment;
+import 'package:flutter/painting.dart' show RadialGradient, Alignment;
 import '../../../common/enums.dart';
 import '../../../data/models/enemy_data.dart';
 import '../../defense_game.dart';

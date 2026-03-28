@@ -1,8 +1,6 @@
 // 해원의 문 - 게임 데이터 로더
 // JSON 에셋 기반 데이터 로딩 (v2.0 — 하드코딩 제거)
 
-import 'package:flutter/foundation.dart';
-
 import '../common/enums.dart';
 import 'models/hero_data.dart';
 import 'models/enemy_data.dart';

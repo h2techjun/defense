@@ -40,12 +40,10 @@ import '../../state/skin_provider.dart';
 
 import '../../data/models/skin_data.dart';
 import '../../audio/sound_manager.dart';
+import '../../state/user_state.dart';
 
 
 import '../theme/app_colors.dart';
-
-
-import '../theme/themed_scaffold.dart';
 
 
 import '../widgets/touch_button.dart';
@@ -812,7 +810,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                   Text(
 
 
-                    hero.name,
+                    AppStrings.trs(hero.name),
 
 
                     style: TextStyle(
@@ -1039,16 +1037,16 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
 
 
 
-    final displayName = equippedSkin != null ? tr(ref, equippedSkin.name) : hero.name;
+    final displayName = equippedSkin != null ? tr(ref, equippedSkin.name) : AppStrings.trs(hero.name);
 
 
     final displayTitle = equippedSkin?.rarity.displayName != null 
 
 
-        ? '${tr(ref, equippedSkin!.rarity.displayName)} ${tr(ref, 'grade')} ' + hero.title
+        ? '${tr(ref, equippedSkin!.rarity.displayName)} ${tr(ref, 'grade')} ' + AppStrings.trs(hero.title)
 
 
-        : hero.title;
+        : AppStrings.trs(hero.title);
 
 
 
@@ -1405,55 +1403,6 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
     );
   }
 
-  String _getEquippedSkinSprite(HeroId heroId, SkinState skinState) {
-
-
-    final skinId = skinState.equippedSkins[heroId];
-
-
-    final skins = getSkinsForHero(heroId);
-
-
-    final equippedSkin = skinId != null 
-
-
-        ? skins.firstWhere((s) => s.id == skinId, orElse: () => skins.first)
-
-
-        : skins.where((s) => s.rarity == SkinRarity.common).firstOrNull ?? skins.first;
-
-
-    
-
-
-    final tier = switch (equippedSkin.rarity) {
-
-
-      SkinRarity.common => 1,
-
-
-      SkinRarity.rare => 2,
-
-
-      SkinRarity.epic => 3,
-
-
-      SkinRarity.legendary => 4,
-
-
-    };
-
-
-    
-
-
-    return 'assets/images/heroes/${_getHeroFileName(heroId)}_tier${tier}_sprites.png';
-
-
-  }
-
-
-
 
 
   /// 레벨 & XP 진행률 바
@@ -1767,8 +1716,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
 
   /// 진화 단계 탭 (스탯 관련 — 기본/중급/궁극)
   Widget _buildEvolutionTabs(HeroData hero, Color color) {
-    // TODO: 실제 영웅 레벨 연동 시 provider에서 가져오기
-    final heroLevel = 1;
+    final heroLevel = ref.watch(userStateProvider).heroLevels[hero.id] ?? 1;
 
     return Row(
       children: List.generate(hero.evolutions.length, (i) {
@@ -2102,7 +2050,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           Text(
 
 
-            '✨ ${evo.visualName}',
+            '✨ ${AppStrings.trs(evo.visualName)}',
 
 
             style: TextStyle(
@@ -2129,7 +2077,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           Text(
 
 
-            evo.description,
+            AppStrings.trs(evo.description),
 
 
             style: TextStyle(
@@ -2648,7 +2596,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                     Text(
 
 
-                      skill.name,
+                      AppStrings.trs(skill.name),
 
 
                       style: TextStyle(
@@ -2711,7 +2659,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           Text(
 
 
-            skill.description,
+            AppStrings.trs(skill.description),
 
 
             style: TextStyle(
@@ -2861,7 +2809,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                   Text(
 
 
-                    '${hero.name}의 숨겨진 과거를 확인하세요.',
+                    AppStrings.trs('hero_lore_prompt').replaceAll('{name}', AppStrings.trs(hero.name)),
 
 
                     style: TextStyle(
@@ -2912,7 +2860,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
             ),
 
 
-            child: const Text('Read'), // TODO: hero_lore_read
+            child: Text(AppStrings.trs('hero_lore_read')),
 
 
           ),
@@ -2942,7 +2890,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
     // story_data.dart 에 정의된 상세 텍스트 로드 (없으면 기본 backstory 대체)
 
 
-    final loreText = StoryData.heroLoreData[hero.id.name] ?? hero.backstory;
+    final loreText = StoryData.heroLoreData[hero.id.name] ?? AppStrings.trs(hero.backstory);
 
 
 
@@ -2966,7 +2914,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           child: AlertDialog(
 
 
-            backgroundColor: AppColors.surfaceDark.withOpacity(0.9),
+            backgroundColor: AppColors.surfaceDark.withAlpha(230),
 
 
             shape: RoundedRectangleBorder(
@@ -2996,7 +2944,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                 Text(
 
 
-                  '${hero.name}의 전설',
+                  AppStrings.trs('hero_legend_title').replaceAll('{name}', AppStrings.trs(hero.name)),
 
 
                   style: TextStyle(color: color, fontWeight: FontWeight.bold),
@@ -3050,7 +2998,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
                 onPressed: () => Navigator.of(ctx).pop(),
 
 
-                child: Text('Close', style: TextStyle(color: color)),
+                child: Text(AppStrings.get(ref.watch(gameLanguageProvider), 'btn_close'), style: TextStyle(color: color)),
 
 
               ),
@@ -3074,196 +3022,6 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
   }
 
 
-
-
-
-  /// 대사
-
-
-  Widget _buildBarksSection(HeroData hero, Color color) {
-
-
-    return Column(
-
-
-      crossAxisAlignment: CrossAxisAlignment.start,
-
-
-      children: [
-
-
-        const Text(
-
-
-          'hero_barks_title',
-
-
-          style: TextStyle(
-
-
-            fontSize: 13,
-
-
-            fontWeight: FontWeight.bold,
-
-
-            color: Colors.white70,
-
-
-          ),
-
-
-        ),
-
-
-        const SizedBox(height: 6),
-
-
-        ...hero.barks.entries.map((entry) {
-
-
-          final lang = ref.watch(gameLanguageProvider);
-
-
-          final situationLabel = switch (entry.key) {
-
-
-            'deploy' => AppStrings.get(lang, 'bark_deploy'),
-
-
-            'skill' => AppStrings.get(lang, 'bark_skill'),
-
-
-            'idle' => AppStrings.get(lang, 'bark_idle'),
-
-
-            'boss' => AppStrings.get(lang, 'bark_boss'),
-
-
-            _ => entry.key,
-
-
-          };
-
-
-          return Padding(
-
-
-            padding: const EdgeInsets.only(bottom: 4),
-
-
-            child: Row(
-
-
-              crossAxisAlignment: CrossAxisAlignment.start,
-
-
-              children: [
-
-
-                Container(
-
-
-                  width: 44 * Responsive.scale(context),
-
-
-                  padding: EdgeInsets.symmetric(horizontal: 4 * Responsive.scale(context), vertical: 2 * Responsive.scale(context)),
-
-
-                  decoration: BoxDecoration(
-
-
-                    color: color.withValues(alpha: 0.1),
-
-
-                    borderRadius: BorderRadius.circular(4),
-
-
-                  ),
-
-
-                  child: Text(
-
-
-                    situationLabel,
-
-
-                    textAlign: TextAlign.center,
-
-
-                    style: TextStyle(
-
-
-                      fontSize: Responsive.fontSize(context, 9),
-
-
-                      color: color,
-
-
-                      fontWeight: FontWeight.w600,
-
-
-                    ),
-
-
-                  ),
-
-
-                ),
-
-
-                const SizedBox(width: 8),
-
-
-                Expanded(
-
-
-                  child: Text(
-
-
-                    '"${entry.value}"',
-
-
-                    style: TextStyle(
-
-
-                      fontSize: Responsive.fontSize(context, 11),
-
-
-                      color: Colors.white.withValues(alpha: 0.6),
-
-
-                      fontStyle: FontStyle.italic,
-
-
-                    ),
-
-
-                  ),
-
-
-                ),
-
-
-              ],
-
-
-            ),
-
-
-          );
-
-
-        }),
-
-
-      ],
-
-
-    );
-
-
-  }
 
 
 
@@ -3368,43 +3126,6 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
   }
 
 
-
-
-
-  /// 현재 영웅의 해금된 최고 진화 단계 번호
-
-
-  int _getCurrentHeroTier(HeroId id) {
-
-
-    final level = _getHeroLevel(id);
-
-
-    if (level >= 20) return 3;
-
-
-    if (level >= 10) return 2;
-
-
-    return 1;
-
-
-  }
-
-
-
-
-
-  /// 현재 선택된 진화 탭의 티어 번호
-
-
-  int _getSelectedTierNumber() {
-
-
-    return _selectedEvolutionIndex + 1;
-
-
-  }
 
 
 

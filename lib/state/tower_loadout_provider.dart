@@ -3,6 +3,7 @@
 
 import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../common/debug_log.dart';
 import '../common/enums.dart';
 import '../services/save_manager.dart';
 
@@ -86,8 +87,8 @@ class TowerLoadoutNotifier extends StateNotifier<TowerLoadoutState> {
           level: entry.value['level'] ?? 1,
           xp: entry.value['xp'] ?? 0,
         );
-      } catch (_) {
-        // 알 수 없는 타워 타입 무시
+      } catch (e) {
+        dlog('[TowerLoadout] unknown tower type=${entry.key}: $e');
       }
     }
 

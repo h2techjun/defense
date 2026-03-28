@@ -17,6 +17,7 @@ import '../../../data/models/enemy_data.dart';
 import '../../../data/game_data_loader.dart';
 import '../../../state/game_state.dart';
 import '../../defense_game.dart';
+import '../actors/base_hero.dart';
 import '../items/spirit_component.dart';
 import '../towers/base_tower.dart';
 import '../towers/barracks_soldier.dart';
@@ -51,9 +52,6 @@ class BaseEnemy extends PositionComponent
   // 보스 특수 능력 타이머
   double _bossAbilityTimer = 0;
   static const double _bossAbilityCooldown = 10.0; // 10초마다 발동
-
-  // 디버프 오라 주기 제한
-  double _debuffAuraTimer = 0;
 
   // 은신 상태
   bool _isRevealed = false; // 영웅에 의해 감지됨
@@ -170,135 +168,6 @@ class BaseEnemy extends PositionComponent
     }
   }
 
-  /// EnemyId별 고유 비주얼 빌드
-  void _buildEnemyVisual(PositionComponent parent, Color color) {
-    final s = size.x;
-    final halfS = s / 2;
-
-    switch (data.id) {
-      case EnemyId.hungryGhost:   // 허기귀신 — 둥근 몸체 + 입
-        parent.add(CircleComponent(
-          radius: s * 0.4,
-          position: Vector2(halfS, halfS),
-          anchor: Anchor.center,
-          paint: _bodyPaint,
-        ));
-        // 입 (반원 대용 — 작은 원)
-        parent.add(CircleComponent(
-          radius: s * 0.12,
-          position: Vector2(halfS, s * 0.65),
-          anchor: Anchor.center,
-          paint: Paint()..color = const Color(0xCC000000),
-        ));
-        break;
-
-      case EnemyId.strawShoeSpirit:     // 짚신귀 — 빠른 삼각형
-        parent.add(PolygonComponent(
-          [
-            Vector2(halfS, s * 0.1),
-            Vector2(s * 0.15, s * 0.85),
-            Vector2(s * 0.85, s * 0.85),
-          ],
-          paint: _bodyPaint,
-        ));
-        break;
-
-      case EnemyId.maidenGhost:      // 손각시 — 치마 형태
-        parent.add(PolygonComponent(
-          [
-            Vector2(halfS, s * 0.05),
-            Vector2(s * 0.05, s * 0.95),
-            Vector2(s * 0.95, s * 0.95),
-          ],
-          paint: _bodyPaint,
-        ));
-        // 오라 링
-        parent.add(CircleComponent(
-          radius: s * 0.45,
-          position: Vector2(halfS, halfS),
-          anchor: Anchor.center,
-          paint: Paint()
-            ..color = Color.fromARGB(40, color.red, color.green, color.blue)
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1.5,
-        ));
-        break;
-
-      case EnemyId.eggGhost: // 달걀귀신 — 타원형
-        parent.add(CircleComponent(
-          radius: s * 0.35,
-          position: Vector2(halfS, halfS * 0.9),
-          anchor: Anchor.center,
-          paint: _bodyPaint,
-        ));
-        // 눈 (두 점)
-        parent.add(CircleComponent(
-          radius: 2,
-          position: Vector2(s * 0.4, s * 0.38),
-          anchor: Anchor.center,
-          paint: Paint()..color = const Color(0xFF000000),
-        ));
-        parent.add(CircleComponent(
-          radius: 2,
-          position: Vector2(s * 0.6, s * 0.38),
-          anchor: Anchor.center,
-          paint: Paint()..color = const Color(0xFF000000),
-        ));
-        break;
-
-      case EnemyId.burdenedLaborer:    // 짐꾼귀 — 큰 사각형 + 짐 표시
-        parent.add(RectangleComponent(
-          size: Vector2(s * 0.8, s * 0.7),
-          position: Vector2(s * 0.1, s * 0.25),
-          paint: _bodyPaint,
-        ));
-        // 짐 (작은 사각형 위에)
-        parent.add(RectangleComponent(
-          size: Vector2(s * 0.5, s * 0.3),
-          position: Vector2(s * 0.25, s * 0.02),
-          paint: Paint()..color = Color.fromARGB(200, (color.red * 0.6).toInt(), (color.green * 0.6).toInt(), (color.blue * 0.6).toInt()),
-        ));
-        break;
-
-      case EnemyId.bossOgreLord:     // 두억시니 — 큰 원 + 뿔
-        parent.add(CircleComponent(
-          radius: s * 0.38,
-          position: Vector2(halfS, halfS * 1.1),
-          anchor: Anchor.center,
-          paint: _bodyPaint,
-        ));
-        // 왼쪽 뿔
-        parent.add(PolygonComponent(
-          [
-            Vector2(s * 0.3, s * 0.25),
-            Vector2(s * 0.2, s * 0.0),
-            Vector2(s * 0.35, s * 0.2),
-          ],
-          paint: Paint()..color = const Color(0xFFFF6600),
-        ));
-        // 오른쪽 뿔
-        parent.add(PolygonComponent(
-          [
-            Vector2(s * 0.7, s * 0.25),
-            Vector2(s * 0.8, s * 0.0),
-            Vector2(s * 0.65, s * 0.2),
-          ],
-          paint: Paint()..color = const Color(0xFFFF6600),
-        ));
-        break;
-
-      default:
-        // 기타 적 — 기본 원형
-        parent.add(CircleComponent(
-          radius: s * 0.38,
-          position: Vector2(halfS, halfS),
-          anchor: Anchor.center,
-          paint: _bodyPaint,
-        ));
-        break;
-    }
-  }
-
   Color _getColorForArmor(ArmorType armor) {
     switch (armor) {
       case ArmorType.physical:
@@ -310,33 +179,33 @@ class BaseEnemy extends PositionComponent
     }
   }
 
-  // ── 디버깅용 타이머 ──
+  // ── 디버깅용 타이머 (디버그 빌드 전용) ──
   double _debugTimer = 0;
   static int _debugSlotCounter = 0;
-  late final int _debugSlot;
-  bool _debugInitialized = false;
+  int _debugSlot = -1;
 
   @override
   void update(double dt) {
     super.update(dt);
 
-    // 디버깅: 최초 3개 적만 3초 주기로 상태 보고
-    if (!_debugInitialized) {
-      _debugSlot = _debugSlotCounter++;
-      _debugInitialized = true;
-    }
-    if (_debugSlot < 3 && !isDead) {
-      _debugTimer += dt;
-      if (_debugTimer >= 3.0) {
-        _debugTimer = 0;
-        dlog('[ENEMY#$_debugSlot] id=${data.id.name} '
-          'state=$_state pos=(${position.x.toInt()},${position.y.toInt()}) '
-          'wpIdx=$_currentWaypointIndex/${_waypoints.length} '
-          'speed=${_getEffectiveSpeed().toStringAsFixed(1)} '
-          'dt=${dt.toStringAsFixed(4)} '
-          'blocked=${_blockedBy != null} '
-          'berserk=$_isBerserk stun=${_stunTimer.toStringAsFixed(1)} '
-          'mounted=$isMounted');
+    // 디버깅: 최초 3개 적만 3초 주기로 상태 보고 (릴리즈 빌드에서는 완전 스킵)
+    if (kDebugMode) {
+      if (_debugSlot < 0) {
+        _debugSlot = _debugSlotCounter++;
+      }
+      if (_debugSlot < 3 && !isDead) {
+        _debugTimer += dt;
+        if (_debugTimer >= 3.0) {
+          _debugTimer = 0;
+          dlog('[ENEMY#$_debugSlot] id=${data.id.name} '
+            'state=$_state pos=(${position.x.toInt()},${position.y.toInt()}) '
+            'wpIdx=$_currentWaypointIndex/${_waypoints.length} '
+            'speed=${_getEffectiveSpeed().toStringAsFixed(1)} '
+            'dt=${dt.toStringAsFixed(4)} '
+            'blocked=${_blockedBy != null} '
+            'berserk=$_isBerserk stun=${_stunTimer.toStringAsFixed(1)} '
+            'mounted=$isMounted');
+        }
       }
     }
 
@@ -368,7 +237,10 @@ class BaseEnemy extends PositionComponent
           _counterAttackTimer += dt;
           if (_counterAttackTimer >= 1.5 && data.attack > 0) {
             _counterAttackTimer = 0; // 반격 후 리셋 (1.5초 주기)
-            _blockedBy!.takeDamage(data.attack);
+            final attackDmg = _isBerserk
+                ? data.attack * GameConstants.berserkAttackMultiplier
+                : data.attack;
+            _blockedBy!.takeDamage(attackDmg);
           }
         } else {
           // 비행 유닛은 직선 이동 (경로 무시), 지상 유닛은 경로 이동
@@ -557,7 +429,8 @@ class BaseEnemy extends PositionComponent
   }
 
   /// 데미지 받기
-  void takeDamage(double damage, DamageType damageType) {
+  /// [ignoreShield] — true이면 방패 데미지 감소를 무시하고 직접 HP에 적용 (저승사자 등)
+  void takeDamage(double damage, DamageType damageType, {bool ignoreShield = false}) {
     if (_state == EnemyState.dying) return;
 
     // 물리 면역 체크 (그슨대 등 — abilities에 'Phys Immune' 포함)
@@ -575,8 +448,8 @@ class BaseEnemy extends PositionComponent
       isFlying: data.isFlying,
     );
 
-    // 방패 활성 시 데미지 감소
-    if (_shieldActive) {
+    // 방패 활성 시 데미지 감소 (ignoreShield면 방패 무시)
+    if (_shieldActive && !ignoreShield) {
       finalDamage *= (1.0 - data.shieldDamageReduction);
     }
 
@@ -627,20 +500,48 @@ class BaseEnemy extends PositionComponent
       // 창귀 소환 (능력 목록에 있으면 발동)
       if (data.abilities.any((a) => a.name == 'Summon')) {
         final ability = data.abilities.firstWhere((a) => a.name == 'Summon');
-        _spawnBossMinions(EnemyId.tigerSlave, ability.value?.toInt() ?? 3);
+        _spawnBossMinions(EnemyId.tigerSlave, ability.value.toInt());
       }
       return;
     }
 
     // 챕터 3: 대왕 달걀귀신 — 스킬 반사 & 흡수
     if (data.abilities.any((a) => a.name == 'Reflect')) {
-      // 기획: 일정 시간 동안 받는 스킬 데미지를 0으로 하고 반사 (시각 효과만 우선)
       game.triggerRedFlash(duration: 0.3);
-      // TODO: 실제 에너지 탄환 발사 로직 (반사)
-      
+
+      // 반사 탄환: 가장 가까운 영웅에게 보스 공격력 50% 즉시 데미지
+      if (game.activeHeroes.isNotEmpty) {
+        BaseHero? nearest;
+        double minDist = double.infinity;
+        for (final hero in game.activeHeroes) {
+          if (hero.isDead) continue;
+          final dist = position.distanceTo(hero.position);
+          if (dist < minDist) {
+            minDist = dist;
+            nearest = hero;
+          }
+        }
+        if (nearest != null) {
+          nearest.takeDamage(data.attack * 0.5);
+          // 반사 이펙트
+          if (ParticleEffect.canCreate) {
+            parent?.add(ParticleEffect.magic(
+              position: nearest.position.clone(),
+              color: const Color(0xFFFF4488),
+            ));
+          }
+        }
+      }
+
       if (data.abilities.any((a) => a.name == 'Absorb')) {
         // 주변 병사 제거 (병영 방어 무력화)
-        // game.world.children.whereType<BarracksSoldier>() 중 가까운 것 제거
+        final soldiers = parent?.children.whereType<BarracksSoldier>().toList() ?? [];
+        for (final soldier in soldiers) {
+          final dist = position.distanceTo(soldier.position);
+          if (dist <= 150) {
+            soldier.removeFromParent();
+          }
+        }
       }
       return;
     }
@@ -650,9 +551,9 @@ class BaseEnemy extends PositionComponent
       final ability = data.abilities.firstWhere((a) => a.name == 'Decree');
       final towers = List<BaseTower>.from(game.cachedTowers)..shuffle();
       // 랜덤 타워 3개 (또는 value만큼) 침묵
-      final count = (ability.value?.toInt() ?? 3).clamp(0, towers.length);
+      final count = ability.value.toInt().clamp(0, towers.length);
       for (int i = 0; i < count; i++) {
-        towers[i].silence(ability.duration ?? 10.0);
+        towers[i].silence(ability.duration);
       }
       game.triggerRedFlash(duration: 0.8);
 
@@ -678,7 +579,19 @@ class BaseEnemy extends PositionComponent
         towers.sort((a, b) => b.totalInvestedCost.compareTo(a.totalInvestedCost));
         final target = towers.first;
         target.silence(15.0); // 15초간 정지
-        // TODO: 시각적으로 '파괴'된 느낌의 오버레이 추가
+
+        // 파괴 이펙트: 빨간 폭발 + 연기
+        if (ParticleEffect.canCreate) {
+          parent?.add(ParticleEffect.explosion(
+            position: target.position.clone(),
+            radius: 60,
+          ));
+          parent?.add(ParticleEffect.death(
+            position: target.position.clone(),
+            color: const Color(0xFFFF1744),
+          ));
+        }
+
         game.triggerRedFlash(duration: 1.0);
       }
     }
@@ -790,7 +703,6 @@ class BaseEnemy extends PositionComponent
   // DoT (화상, 독 등) — 화차 분기용
   double _dotDamage = 0;
   double _dotTimer = 0;
-  DamageType _dotDamageType = DamageType.physical;
 
   /// DoT 적용 (持continuation — tick damage)
   void applyDot(double damagePerSecond, double duration, DamageType type) {
@@ -798,7 +710,6 @@ class BaseEnemy extends PositionComponent
     if (damagePerSecond > _dotDamage) {
       _dotDamage = damagePerSecond;
       _dotTimer = duration;
-      _dotDamageType = type;
     }
   }
 

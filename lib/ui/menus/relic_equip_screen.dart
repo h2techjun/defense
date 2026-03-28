@@ -103,7 +103,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
   Widget _buildHeroSelector(double s) {
     return Container(
       height: 60 * s,
-      color: AppColors.surfaceMid.withOpacity(0.5),
+      color: AppColors.surfaceMid.withAlpha(128),
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 6 * s, vertical: 6 * s),
@@ -164,12 +164,12 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
         gradient: LinearGradient(
           colors: [
             AppColors.surfaceMid,
-            const Color(0xFF4A2C8A).withOpacity(0.8),
+            const Color(0xFF4A2C8A).withAlpha(204),
           ],
         ),
         borderRadius: BorderRadius.circular(14 * s),
         border: Border.all(
-          color: const Color(0xFFE8D5B7).withOpacity(0.5),
+          color: const Color(0xFFE8D5B7).withAlpha(128),
         ),
       ),
       child: Row(
@@ -201,7 +201,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  relic?.nameKo ?? AppStrings.trs('relic_slot_empty'),
+                  relic != null ? AppStrings.trs(relic.nameKo) : AppStrings.trs('relic_slot_empty'),
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 14),
                     fontWeight: FontWeight.bold,
@@ -212,7 +212,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                 ),
                 SizedBox(height: 3 * s),
                 Text(
-                  relic?.description ?? AppStrings.trs('relic_equip_prompt'),
+                  relic != null ? AppStrings.trs(relic.description) : AppStrings.trs('relic_equip_prompt'),
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 10),
                     color: relic != null ? Colors.white70 : Colors.white30,
@@ -273,7 +273,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                 color: isEquippedHere
                     ? AppColors.sinmyeongGold
                     : isUnlocked
-                        ? const Color(0xFFE8D5B7).withOpacity(0.4)
+                        ? const Color(0xFFE8D5B7).withAlpha(102)
                         : Colors.white12,
                 width: isEquippedHere ? 2 : 1,
               ),
@@ -288,7 +288,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                 ),
                 SizedBox(height: 6 * s),
                 Text(
-                  relic.nameKo,
+                  AppStrings.trs(relic.nameKo),
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 11),
                     fontWeight: FontWeight.bold,
@@ -298,8 +298,8 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                 SizedBox(height: 3 * s),
                 Text(
                   isUnlocked
-                      ? relic.description
-                      : relic.unlockCondition,
+                      ? AppStrings.trs(relic.description)
+                      : AppStrings.trs(relic.unlockCondition),
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 8),
                     color: isUnlocked ? Colors.white60 : Colors.white24,

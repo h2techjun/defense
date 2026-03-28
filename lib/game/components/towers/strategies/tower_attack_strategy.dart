@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flame/effects.dart';
 import 'package:flame/components.dart';
 import '../../../../common/enums.dart';
+import '../../../../common/constants.dart';
 import '../../../../audio/sound_manager.dart';
 import '../base_tower.dart';
 import '../../actors/base_enemy.dart';
@@ -61,8 +62,11 @@ class ArtillerySplashStrategy extends TowerAttackStrategy {
       onHit: () {
         final enemies = tower.game.gridSystem
             .getEnemiesNear(target.position, splashRadius);
+        final splashDamage = tower.currentDamage *
+            GameConstants.artillerySplashDamageRatio;
         for (final enemy in enemies) {
-          enemy.takeDamage(tower.currentDamage, damageType);
+          if (enemy == target) continue; // 메인 타겟은 이미 풀 데미지 적용됨
+          enemy.takeDamage(splashDamage, damageType);
         }
         SoundManager.instance.playSfx(SfxType.towerShoot);
       },
@@ -187,6 +191,7 @@ class ReaperAttackStrategy extends TowerAttackStrategy {
       damageType: damageType,
       speed: 350,
       startPosition: tower.position.clone(),
+      ignoreShield: true, // 저승사자: 방패 관통
     );
     tower.parent?.add(proj);
     SoundManager.instance.playSfx(SfxType.towerShoot); // ?�시

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../common/enums.dart';
 import '../state/user_state.dart';
@@ -325,7 +324,9 @@ class SaveManager {
         try {
           final relicId = RelicId.values.firstWhere((r) => r.name == entry.key);
           levels[relicId] = (entry.value as num).toInt();
-        } catch (_) {}
+        } catch (e) {
+          dlog('[SAVE] 유물 레벨 파싱 오류 (${entry.key}): $e');
+        }
       }
 
       return {
@@ -367,14 +368,18 @@ class SaveManager {
       for (final name in ownedList) {
         try {
           owned.add(SkinId.values.byName(name as String));
-        } catch (_) {}
+        } catch (e) {
+          dlog('[SAVE] 스킨 소유 파싱 오류 ($name): $e');
+        }
       }
 
       final equipped = <HeroId, SkinId>{};
       equippedMap.forEach((key, value) {
         try {
           equipped[HeroId.values.byName(key)] = SkinId.values.byName(value as String);
-        } catch (_) {}
+        } catch (e) {
+          dlog('[SAVE] 스킨 장착 파싱 오류 ($key: $value): $e');
+        }
       });
 
       return {'owned': owned, 'equipped': equipped};

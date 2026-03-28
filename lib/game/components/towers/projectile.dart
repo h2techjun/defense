@@ -35,6 +35,9 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
   /// 관???��? (?�궁 ?�용)
   final bool hasPiercing;
 
+  /// 방패 관통 (저승사자 등 — 방패 무시하고 직접 HP 데미지)
+  final bool ignoreShield;
+
   /// 발사 방향 (관????직선 ?�동??
   final Vector2? direction;
 
@@ -43,7 +46,6 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
 
   final ProjectileVisual? visualType;
   bool _hitTarget = false;
-  double _trailTimer = 0;
   double _traveledDistance = 0;
   double _angle = 0; // ?�동 방향 각도 (?�디??
 
@@ -58,6 +60,7 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
     required Vector2 startPosition,
     this.onHit,
     this.hasPiercing = false,
+    this.ignoreShield = false,
     this.direction,
     this.maxRange,
     this.visualType,
@@ -237,7 +240,6 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
       return;
     }
 
-    _trailTimer += dt;
     final moveStep = speed * dt;
     _traveledDistance += moveStep;
 
@@ -302,7 +304,7 @@ class Projectile extends PositionComponent with HasGameReference<DefenseGame> {
   /// ?��??�용 ?�합 메서??
   void _applyHit(BaseEnemy hitEnemy) {
     _hitEnemies.add(hitEnemy);
-    hitEnemy.takeDamage(damage, damageType);
+    hitEnemy.takeDamage(damage, damageType, ignoreShield: ignoreShield);
 
     // �??��??�중 ?�에�?onHit ?�출 (?�플?�시 ?�과 겹치지 ?�게 주의)
     if (hitEnemy == target && !_hitTarget) {

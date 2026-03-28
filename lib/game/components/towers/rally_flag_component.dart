@@ -7,6 +7,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 
+import '../../../common/debug_log.dart';
 import '../../defense_game.dart';
 import 'barracks_soldier.dart';
 
@@ -130,7 +131,7 @@ class RallyFlagComponent extends PositionComponent
     _flagBody.paint.color = const Color(0xFFFF4444);
 
     // 모든 병사의 랠리 포인트 업데이트
-    print('🚩 Flag drag ended, updating \ soldiers');
+    dlog('🚩 Flag drag ended, updating soldiers');
     _updateSoldiersRallyPoint();
   }
 
@@ -149,7 +150,7 @@ class RallyFlagComponent extends PositionComponent
         // 교전 해제 + 즉시 새 위치로 이동 시작
         soldier.forceFollowRally(position);
         // DEBUG
-        print('🚩 Soldier rallyPoint updated: mounted=\ pos=\ -> rally=');
+        dlog('🚩 Soldier rallyPoint updated');
       }
     }
   }

@@ -249,7 +249,7 @@ class _TowerButtonState extends State<_TowerButton> {
             height: 64 * Responsive.scale(context),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: widget.color.withOpacity(0.5),
+              color: widget.color.withAlpha(128),
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white, width: 2),
             ),

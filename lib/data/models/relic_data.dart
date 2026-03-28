@@ -94,7 +94,6 @@ class RelicData {
 
   /// 특정 레벨의 효과 설명 (UI용)
   String effectDescriptionAtLevel(int level) {
-    final pct = (effectAtLevel(level) * 100).toStringAsFixed(0);
     return switch (effectType) {
       RelicEffectType.rangeBonus => 'relic_eff_range',
       RelicEffectType.cooldownReduction => 'relic_eff_cooldown',

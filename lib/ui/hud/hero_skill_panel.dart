@@ -4,6 +4,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../common/responsive.dart';
+import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../common/hero_sprite_viewer.dart';
 
@@ -31,7 +32,7 @@ class HeroSkillInfo {
     this.isDead = false,
     this.reviveProgress = 1,
     this.isUltimate = false,
-    this.reviveLabel = 'revive_text', // TODO: make dynamic with AppStrings 
+    this.reviveLabel = 'revive_text',
     this.onSkillTap,
   });
 }
@@ -201,7 +202,7 @@ class _HeroSkillButton extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: Text(
-                  '⏳ ${info.reviveLabel} ${(info.reviveProgress * 100).toInt()}%',
+                  '⏳ ${AppStrings.trs(info.reviveLabel)} ${(info.reviveProgress * 100).toInt()}%',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white54,

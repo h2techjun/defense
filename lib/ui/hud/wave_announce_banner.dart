@@ -259,10 +259,14 @@ class WaveCooldownIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final seconds = secondsRemaining.ceil();
+    final s = Responsive.scale(context);
     return Center(
       child: Container(
-        margin: const EdgeInsets.only(top: 100),
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
+        margin: EdgeInsets.only(top: Responsive.spacing(context, 100)),
+        padding: EdgeInsets.symmetric(
+          horizontal: Responsive.spacing(context, 30),
+          vertical: Responsive.spacing(context, 16),
+        ),
         decoration: BoxDecoration(
           color: AppColors.bgDeepPlum.withAlpha(204),
           borderRadius: BorderRadius.circular(14),
@@ -282,54 +286,54 @@ class WaveCooldownIndicator extends StatelessWidget {
           children: [
             Text(
               AppStrings.trs('wave_next').replaceAll('{n}', '$nextWaveNumber'),
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.lavender,
-                fontSize: 13,
+                fontSize: Responsive.fontSize(context, 13),
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6 * s),
             Text(
               '$seconds',
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.sinmyeongGold,
-                fontSize: 36,
+                fontSize: Responsive.fontSize(context, 36),
                 fontWeight: FontWeight.w900,
-                shadows: [
+                shadows: const [
                   Shadow(color: AppColors.sinmyeongGold, blurRadius: 20),
                 ],
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4 * s),
             Text(
               AppStrings.trs('wave_place_towers'),
               style: TextStyle(
                 color: Colors.white.withAlpha(150),
-                fontSize: 11,
+                fontSize: Responsive.fontSize(context, 11),
               ),
             ),
             if (narrative != null) ...[
-              const SizedBox(height: 12),
+              SizedBox(height: 12 * s),
               Text(
                 narrative!,
                 style: TextStyle(
                   color: isBossWave ? AppColors.cherryBlossom : AppColors.lavender,
-                  fontSize: 12,
+                  fontSize: Responsive.fontSize(context, 12),
                   fontStyle: FontStyle.italic,
                 ),
                 textAlign: TextAlign.center,
               ),
             ],
             if (enemyEntries.isNotEmpty) ...[
-              const SizedBox(height: 8),
+              SizedBox(height: 8 * s),
               Wrap(
-                spacing: 6,
-                runSpacing: 4,
+                spacing: 6 * s,
+                runSpacing: 4 * s,
                 alignment: WrapAlignment.center,
                 children: enemyEntries.map((entry) {
                   final emoji = _getEnemyEmoji(entry.key);
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: EdgeInsets.symmetric(horizontal: 6 * s, vertical: 2 * s),
                     decoration: BoxDecoration(
                       color: Colors.black45,
                       borderRadius: BorderRadius.circular(6),
@@ -337,9 +341,9 @@ class WaveCooldownIndicator extends StatelessWidget {
                     ),
                     child: Text(
                       '$emoji \u00d7${entry.value}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white70,
-                        fontSize: 11,
+                        fontSize: Responsive.fontSize(context, 11),
                         fontWeight: FontWeight.w600,
                       ),
                     ),

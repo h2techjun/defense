@@ -118,7 +118,7 @@ class SoundManager {
     SfxType.uiPlace: 'sfx/ui_place.mp3',
     SfxType.uiUpgrade: 'sfx/ui_upgrade.mp3',
     SfxType.uiError: 'sfx/ui_error.mp3',
-    SfxType.storyTyping: 'sfx/typewriter.mp3',
+    // storyTyping: typewriter.mp3 에셋 없음 — 합성 폴백(uiClick과 동일 톤) 사용
     // 게임 이벤트
     SfxType.waveStart: 'sfx/wave_start.wav',
     SfxType.victory: 'sfx/victory.mp3',
@@ -184,7 +184,6 @@ class SoundManager {
             'sfx/ui_place.mp3',
             'sfx/ui_upgrade.mp3',
             'sfx/ui_error.mp3',
-            'sfx/typewriter.mp3',
             // 게임 이벤트
             'sfx/victory.mp3',
             'sfx/defeat.mp3',
@@ -266,8 +265,8 @@ class SoundManager {
           if (kDebugMode) dlog('⚠️ SFX 재생 실패[$type]: $e');
         });
         return;
-      } catch (_) {
-        // 동기 에러도 무시 — 합성 폴백으로 진행
+      } catch (e) {
+        dlog('[SoundManager] SFX sync error[$type]: $e');
       }
     }
 
@@ -286,6 +285,7 @@ class SoundManager {
       case SfxType.towerArtillery:
         _synth!.playNoise(duration: 0.2, volume: _sfxVolume * 0.6);
         Future.delayed(const Duration(milliseconds: 50), () {
+          if (_synth == null) return;
           _synth!.playTone(
             frequency: 120, duration: 0.3, volume: _sfxVolume * 0.7,
             waveType: 'sine', attack: 0.01, decay: 0.29,
@@ -329,6 +329,7 @@ class SoundManager {
           waveType: 'sawtooth', attack: 0.1, decay: 0.4,
         );
         Future.delayed(const Duration(milliseconds: 200), () {
+          if (_synth == null) return;
           _synth!.playTone(
             frequency: 60, duration: 0.5, volume: _sfxVolume * 0.7,
             waveType: 'sawtooth', attack: 0.05, decay: 0.45,
@@ -343,6 +344,7 @@ class SoundManager {
           volume: _sfxVolume * 0.6, waveType: 'square',
         );
         Future.delayed(const Duration(milliseconds: 100), () {
+          if (_synth == null) return;
           _synth!.playTone(
             frequency: 1047, duration: 0.15, volume: _sfxVolume * 0.5,
             waveType: 'square', attack: 0.01, decay: 0.14,
@@ -381,6 +383,7 @@ class SoundManager {
           waveType: 'triangle', attack: 0.01, decay: 0.09,
         );
         Future.delayed(const Duration(milliseconds: 60), () {
+          if (_synth == null) return;
           _synth!.playTone(
             frequency: 660, duration: 0.1, volume: _sfxVolume * 0.4,
             waveType: 'triangle', attack: 0.01, decay: 0.09,
@@ -403,6 +406,7 @@ class SoundManager {
           waveType: 'square', attack: 0.01, decay: 0.14,
         );
         Future.delayed(const Duration(milliseconds: 100), () {
+          if (_synth == null) return;
           _synth!.playTone(
             frequency: 150, duration: 0.15, volume: _sfxVolume * 0.5,
             waveType: 'square', attack: 0.01, decay: 0.14,
@@ -456,6 +460,7 @@ class SoundManager {
           waveType: 'triangle',
         );
         Future.delayed(const Duration(milliseconds: 300), () {
+          if (_synth == null) return;
           _synth!.playNoise(duration: 0.15, volume: _sfxVolume * 0.3);
         });
         break;
@@ -464,12 +469,14 @@ class SoundManager {
         // 번개 낙뢰: 날카로운 노이즈 → 저음 울림
         _synth!.playNoise(duration: 0.15, volume: _sfxVolume * 0.8);
         Future.delayed(const Duration(milliseconds: 50), () {
+          if (_synth == null) return;
           _synth!.playSweep(
             startFreq: 2000, endFreq: 80, duration: 0.3,
             volume: _sfxVolume * 0.7, waveType: 'sawtooth',
           );
         });
         Future.delayed(const Duration(milliseconds: 200), () {
+          if (_synth == null) return;
           _synth!.playTone(
             frequency: 60, duration: 0.5, volume: _sfxVolume * 0.5,
             waveType: 'sine', attack: 0.05, decay: 0.45,
@@ -493,6 +500,7 @@ class SoundManager {
           waveType: 'square', attack: 0.01, decay: 0.14,
         );
         Future.delayed(const Duration(milliseconds: 80), () {
+          if (_synth == null) return;
           _synth!.playNoise(duration: 0.08, volume: _sfxVolume * 0.5);
         });
         break;
@@ -551,7 +559,9 @@ class SoundManager {
     _stopBgmLoop();
     try {
       FlameAudio.bgm.stop();
-    } catch (_) {}
+    } catch (e) {
+      dlog('[SoundManager] BGM 정지 오류: $e');
+    }
   }
 
   void _stopBgmLoop() {
@@ -730,7 +740,9 @@ class SoundManager {
     _stopBgmLoop();
     try {
       FlameAudio.bgm.stop();
-    } catch (_) {}
+    } catch (e) {
+      dlog('[SoundManager] dispose BGM 정지 오류: $e');
+    }
     _synth?.dispose();
     _initialized = false;
   }
