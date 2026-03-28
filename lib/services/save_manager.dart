@@ -66,6 +66,7 @@ class SaveManager {
             try {
               return HeroId.values.firstWhere((h) => h.name == name);
             } catch (_) {
+              dlog('[SaveManager] 알 수 없는 영웅 ID 무시: $name');
               return null;
             }
           })
@@ -80,7 +81,7 @@ class SaveManager {
           final heroId = HeroId.values.firstWhere((h) => h.name == entry.key);
           heroLevels[heroId] = (entry.value as num).toInt();
         } catch (_) {
-          // 알 수 없는 영웅 ID는 무시
+          dlog('[SaveManager] 알 수 없는 영웅 레벨 ID 무시: ${entry.key}');
         }
       }
 
@@ -200,6 +201,7 @@ class SaveManager {
     try {
       return HeroId.values.firstWhere((h) => h.name == name);
     } catch (_) {
+      dlog('[SaveManager] 알 수 없는 선택 영웅 ID: $name');
       return null;
     }
   }
@@ -227,12 +229,14 @@ class SaveManager {
             try {
               return TowerType.values.firstWhere((t) => t.name == name);
             } catch (_) {
+              dlog('[SaveManager] 알 수 없는 타워 타입: $name');
               return null;
             }
           })
           .whereType<TowerType>()
           .toList();
-    } catch (_) {
+    } catch (e) {
+      dlog('[SaveManager] 타워 로드아웃 파싱 실패: $e');
       return [];
     }
   }
@@ -254,7 +258,8 @@ class SaveManager {
         key,
         (value as Map<String, dynamic>).map((k, v) => MapEntry(k, v as int)),
       ));
-    } catch (_) {
+    } catch (e) {
+      dlog('[SaveManager] 타워 레벨 파싱 실패: $e');
       return {};
     }
   }
@@ -294,6 +299,7 @@ class SaveManager {
             try {
               return RelicId.values.firstWhere((r) => r.name == name);
             } catch (_) {
+              dlog('[SaveManager] 알 수 없는 유물 ID: $name');
               return null;
             }
           })
@@ -313,7 +319,7 @@ class SaveManager {
           }
           equipped[heroId] = relicId;
         } catch (_) {
-          // 알 수 없는 ID는 무시
+          dlog('[SaveManager] 알 수 없는 유물 장착 ID: ${entry.key}');
         }
       }
 

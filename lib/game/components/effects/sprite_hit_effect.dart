@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'package:flame/components.dart';
 
+import '../../../common/debug_log.dart';
 import '../../defense_game.dart';
 
 /// 스프라이트 기반 이펙트 컴포넌트
@@ -196,8 +197,7 @@ class SpriteHitEffect extends SpriteAnimationComponent
         loop: false,
       );
     } catch (e) {
-      // fx 디렉토리나 에셋이 없을 경우 예외를 삼키고 컴포넌트를 즉시 제거
-      // 이를 통해 게임 루프(update) 전체가 멈추는 크리티컬 버그 방지
+      dlog('[SpriteHitEffect] fx 에셋 로드 실패 → 컴포넌트 제거: $e');
       removeFromParent();
     }
 

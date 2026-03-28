@@ -4,6 +4,7 @@
 import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show LinearGradient, RadialGradient, Alignment;
+import '../../../common/debug_log.dart';
 import '../../../common/enums.dart';
 import '../../defense_game.dart';
 
@@ -39,7 +40,7 @@ class TowerRenderer extends PositionComponent
       _sprite = Sprite(image);
       _spriteLoaded = true;
     } catch (e) {
-      // 이미지 로드 실패 → Canvas 폴백 사용
+      dlog('[TowerRenderer] 이미지 로드 실패 → Canvas 폴백: $e');
       _spriteLoaded = false;
     }
   }

@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flame/components.dart';
 
+import '../../../common/debug_log.dart';
 import '../../../common/enums.dart';
 
 import '../../../audio/sound_manager.dart';
@@ -114,7 +115,7 @@ class BarracksSoldier extends PositionComponent
       shieldRect.paint.color = const Color(0x00000000);
       weaponRect.paint.color = const Color(0x00000000);
     } catch (e) {
-      // ?ㅽ봽?쇱씠??濡쒕뱶 ?ㅽ뙣 ??湲곗〈 ?ш컖???좎?
+      dlog('[BarracksSoldier] 스프라이트 로드 실패 → 기존 렌더링: $e');
     }
 
     // ?좊━ ?ъ씤?몄뿉??怨좊Ⅴ寃?遺꾩궛 諛곗튂 (寃뱀묠 諛⑹?)

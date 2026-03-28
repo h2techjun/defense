@@ -256,6 +256,45 @@ enum MapObjectType {
   sacredTree,
 }
 
+/// 화면 라우팅 타입
+enum ScreenType {
+  /// 메인 메뉴
+  mainMenu,
+
+  /// 스테이지 선택
+  stageSelect,
+
+  /// 영웅 관리
+  heroManage,
+
+  /// 출전 준비
+  heroDeploy,
+
+  /// 타워 관리
+  towerManage,
+
+  /// 스킨 상점
+  skinShop,
+
+  /// 무한의 탑
+  endlessTower,
+
+  /// 시즌 패스
+  seasonPass,
+
+  /// 업적
+  achievement,
+
+  /// 일일 미션
+  dailyQuest,
+
+  /// 설화도감
+  loreCollection,
+
+  /// 게임플레이
+  gameplay,
+}
+
 /// 게임 모드
 enum GameMode {
   /// 캠페인 (스토리 모드)

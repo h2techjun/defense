@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show RadialGradient, Alignment;
+import '../../../common/debug_log.dart';
 import '../../../common/enums.dart';
 import '../../../data/models/enemy_data.dart';
 import '../../defense_game.dart';
@@ -41,7 +42,7 @@ class EnemyRenderer extends PositionComponent
       _sprite = Sprite(image);
       _spriteLoaded = true;
     } catch (e) {
-      // 이미지 로드 실패 → Canvas 폴백 사용
+      dlog('[EnemyRenderer] 이미지 로드 실패 → Canvas 폴백: $e');
       _spriteLoaded = false;
     }
   }
