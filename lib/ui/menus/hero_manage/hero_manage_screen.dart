@@ -140,19 +140,23 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
       padding: EdgeInsets.symmetric(horizontal: 16 * Responsive.scale(context), vertical: 12 * Responsive.scale(context)),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: widget.onBack,
-            child: Container(
-              padding: EdgeInsets.all(8 * Responsive.scale(context)),
-              decoration: BoxDecoration(
-                color: const Color(0x22FFFFFF),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color(0x44FFFFFF)),
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: AppColors.lavender,
-                size: 20 * Responsive.scale(context),
+          Semantics(
+            button: true,
+            label: AppStrings.get(ref.watch(gameLanguageProvider), 'back'),
+            child: GestureDetector(
+              onTap: widget.onBack,
+              child: Container(
+                padding: EdgeInsets.all(8 * Responsive.scale(context)),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceOverlayDim,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.surfaceOverlay),
+                ),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: AppColors.lavender,
+                  size: 20 * Responsive.scale(context),
+                ),
               ),
             ),
           ),
@@ -175,7 +179,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12 * Responsive.scale(context), vertical: 6 * Responsive.scale(context)),
             decoration: BoxDecoration(
-              color: const Color(0x22FFFFFF),
+              color: AppColors.surfaceOverlayDim,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(

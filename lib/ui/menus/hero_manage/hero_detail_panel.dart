@@ -49,7 +49,7 @@ class HeroDetailPanel extends ConsumerWidget {
       decoration: BoxDecoration(
         color: const Color(0x10FFFFFF),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0x22FFFFFF)),
+        border: Border.all(color: AppColors.surfaceOverlayDim),
       ),
       child: SingleChildScrollView(
         padding: EdgeInsets.all(20 * Responsive.scale(context)),
@@ -217,7 +217,7 @@ class HeroDetailPanel extends ConsumerWidget {
               child: Container(
                 height: 6 * Responsive.scale(context),
                 decoration: BoxDecoration(
-                  color: const Color(0x22FFFFFF),
+                  color: AppColors.surfaceOverlayDim,
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: FractionallySizedBox(
@@ -248,7 +248,7 @@ class HeroDetailPanel extends ConsumerWidget {
               isMaxLevel ? 'MAX' : '$xp / $xpNeeded',
               style: TextStyle(
                 fontSize: Responsive.fontSize(context, 10),
-                color: isMaxLevel ? AppColors.sinmyeongGold : Colors.white70,
+                color: isMaxLevel ? AppColors.sinmyeongGold : AppColors.textSecondary,
                 fontWeight: isMaxLevel ? FontWeight.bold : FontWeight.normal,
               ),
             ),

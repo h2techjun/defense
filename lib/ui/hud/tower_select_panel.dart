@@ -65,7 +65,7 @@ class TowerSelectPanel extends ConsumerWidget {
           ),
           // 타워 아이콘 Row (터치 흡수)
           Container(
-            color: const Color(0xCC000000),
+            color: AppColors.shadowDark,
             padding: EdgeInsets.symmetric(
               horizontal: 8 * Responsive.scale(context),
               vertical: 8 * Responsive.scale(context),
@@ -75,7 +75,7 @@ class TowerSelectPanel extends ConsumerWidget {
               children: loadout.map((type) {
                 final data = towers[type];
                 if (data == null) return const SizedBox.shrink();
-                final meta = towerMeta[type] ?? {'icon': '❓', 'color': Colors.grey, 'tooltip': ''};
+                final meta = towerMeta[type] ?? {'icon': '❓', 'color': AppColors.rarityCommon, 'tooltip': ''};
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 6 * Responsive.scale(context)),
                   child: _TowerButton(
@@ -142,7 +142,7 @@ class _TowerButtonState extends State<_TowerButton> {
   @override
   Widget build(BuildContext context) {
     final s = Responsive.scale(context);
-    final borderColor = widget.canAfford ? Colors.white70 : AppColors.berserkRed;
+    final borderColor = widget.canAfford ? AppColors.textSecondary : AppColors.berserkRed;
     
     final content = ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -280,11 +280,11 @@ class _TowerButtonState extends State<_TowerButton> {
     if (widget.tooltip == null) return child;
     return Tooltip(
       message: '${widget.name.replaceAll('\n', ' ')} (✨${widget.cost})\n${widget.tooltip!}',
-      textStyle: TextStyle(color: Colors.white, fontSize: Responsive.fontSize(context, 11)),
+      textStyle: TextStyle(color: AppColors.textPrimary, fontSize: Responsive.fontSize(context, 11)),
       decoration: BoxDecoration(
         color: AppColors.surfaceDark.withAlpha(240),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Color(0x44FFFFFF)),
+        border: Border.all(color: AppColors.surfaceOverlay),
       ),
       waitDuration: const Duration(milliseconds: 400),
       child: child,

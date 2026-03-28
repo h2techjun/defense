@@ -161,7 +161,7 @@ class _WaveAnnounceBannerState extends State<WaveAnnounceBanner>
                 Text(
                   '${widget.waveNumber} / ${widget.totalWaves}',
                   style: TextStyle(
-                    color: Colors.white.withAlpha(120),
+                    color: AppColors.textDisabled,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -196,12 +196,12 @@ class _WaveAnnounceBannerState extends State<WaveAnnounceBanner>
                       decoration: BoxDecoration(
                         color: Colors.black26,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.white24),
+                        border: Border.all(color: AppColors.textGhost),
                       ),
                       child: Text(
                         '$emoji \u00d7${entry.value}',
                         style: const TextStyle(
-                          color: Colors.white70,
+                          color: AppColors.textSecondary,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -308,7 +308,7 @@ class WaveCooldownIndicator extends StatelessWidget {
             Text(
               AppStrings.trs('wave_place_towers'),
               style: TextStyle(
-                color: Colors.white.withAlpha(150),
+                color: AppColors.textDisabled,
                 fontSize: Responsive.fontSize(context, 11),
               ),
             ),
@@ -337,12 +337,12 @@ class WaveCooldownIndicator extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.black45,
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.white24),
+                      border: Border.all(color: AppColors.textGhost),
                     ),
                     child: Text(
                       '$emoji \u00d7${entry.value}',
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: AppColors.textSecondary,
                         fontSize: Responsive.fontSize(context, 11),
                         fontWeight: FontWeight.w600,
                       ),

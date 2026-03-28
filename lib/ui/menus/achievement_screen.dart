@@ -85,7 +85,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
       ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.bgDeepPlum, Color(0xFF16213E)],
+          colors: [AppColors.bgDeepPlum, AppColors.bgNavy],
         ),
       ),
       child: Row(
@@ -93,7 +93,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
           IconButton(
             onPressed: widget.onBack,
             icon: Icon(Icons.arrow_back,
-                color: Colors.white, size: Responsive.iconSize(context, 24)),
+                color: AppColors.textPrimary, size: Responsive.iconSize(context, 24)),
           ),
           SizedBox(width: Responsive.spacing(context, 8)),
           Expanded(
@@ -103,7 +103,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                 Text(
                   tr(ref, 'ach_ranking_title'),
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: Responsive.fontSize(context, 22),
                     fontWeight: FontWeight.bold,
                   ),
@@ -111,7 +111,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                 Text(
                   '${tr(ref, "ach_completion")}: ${state.completed.length}/${allAchievements.length} (${(state.completionRate * 100).toStringAsFixed(0)}%)',
                   style: TextStyle(
-                    color: Colors.white60,
+                    color: AppColors.textDisabled,
                     fontSize: Responsive.fontSize(context, 15),
                   ),
                 ),
@@ -125,13 +125,13 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                 vertical: Responsive.spacing(context, 4),
               ),
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: AppColors.berserkRed,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 '${state.unclaimedCount} ${tr(ref, "ach_unclaimed")}',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                   fontSize: Responsive.fontSize(context, 14),
                   fontWeight: FontWeight.bold,
                 ),
@@ -144,12 +144,12 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
 
   Widget _buildTabBar(BuildContext context) {
     return Container(
-      color: const Color(0xFF16213E),
+      color: AppColors.bgNavy,
       child: TabBar(
         controller: _tabController,
-        indicatorColor: Colors.amber,
-        labelColor: Colors.amber,
-        unselectedLabelColor: Colors.white54,
+        indicatorColor: AppColors.sinmyeongGold,
+        labelColor: AppColors.sinmyeongGold,
+        unselectedLabelColor: AppColors.textMid,
         labelStyle: TextStyle(
           fontSize: Responsive.fontSize(context, 14),
           fontWeight: FontWeight.bold,
@@ -194,7 +194,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                   Text(
                     '${categoryAchievements.where((a) => state.completed.contains(a.id)).length}/${categoryAchievements.length}',
                     style: TextStyle(
-                      color: Colors.white38,
+                      color: AppColors.textFaint,
                       fontSize: Responsive.fontSize(context, 15),
                     ),
                   ),
@@ -260,9 +260,9 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.amber.withAlpha(60), width: 1.5),
+              border: Border.all(color: AppColors.sinmyeongGold.withAlpha(60), width: 1.5),
               boxShadow: [
-                BoxShadow(color: Colors.amber.withAlpha(30), blurRadius: 15, spreadRadius: 2),
+                BoxShadow(color: AppColors.sinmyeongGold.withAlpha(30), blurRadius: 15, spreadRadius: 2),
               ],
             ),
             child: Row(
@@ -272,7 +272,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                 Container(
                   width: 1,
                   height: Responsive.spacing(context, 40),
-                  color: Colors.white12,
+                  color: AppColors.textGhost,
                 ),
                 _rankStat(context, '📅', '${state.personalBestDaily}', 'Best Wave'),
               ],
@@ -287,16 +287,16 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
             padding: EdgeInsets.all(Responsive.spacing(context, 12)),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF1A1040), Color(0xFF16213E)],
+                colors: [Color(0xFF1A1040), AppColors.bgNavy],
               ),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.amber.withAlpha(40)),
+              border: Border.all(color: AppColors.sinmyeongGold.withAlpha(40)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _rankStat(context, '🗼', '${state.seasonBestTower}', 'Best Floor'),
-                Container(width: 1, height: Responsive.spacing(context, 30), color: Colors.white12),
+                Container(width: 1, height: Responsive.spacing(context, 30), color: AppColors.textGhost),
                 _rankStat(context, '📅', '${state.seasonBestDaily}', 'Best Wave'),
               ],
             ),
@@ -317,14 +317,14 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
                       vertical: Responsive.spacing(context, 6),
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.amber.withAlpha(20),
+                      color: AppColors.sinmyeongGold.withAlpha(20),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.amber.withAlpha(60)),
+                      border: Border.all(color: AppColors.sinmyeongGold.withAlpha(60)),
                     ),
                     child: Text(
                       '$floor층 ✅',
                       style: TextStyle(
-                        color: Colors.amber,
+                        color: AppColors.sinmyeongGold,
                         fontSize: Responsive.fontSize(context, 15),
                         fontWeight: FontWeight.bold,
                       ),
@@ -365,12 +365,12 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
         Text(emoji, style: TextStyle(fontSize: Responsive.fontSize(context, 24))),
         SizedBox(height: Responsive.spacing(context, 4)),
         Text(value, style: TextStyle(
-          color: Colors.white,
+          color: AppColors.textPrimary,
           fontSize: Responsive.fontSize(context, 22),
           fontWeight: FontWeight.bold,
         )),
         Text(label, style: TextStyle(
-          color: Colors.white54,
+          color: AppColors.textMid,
           fontSize: Responsive.fontSize(context, 14),
         )),
       ],
@@ -383,7 +383,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
       child: Text(
         title,
         style: TextStyle(
-          color: Colors.white,
+          color: AppColors.textPrimary,
           fontSize: Responsive.fontSize(context, 16),
           fontWeight: FontWeight.bold,
         ),
@@ -395,14 +395,14 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
     return Container(
       padding: EdgeInsets.all(Responsive.spacing(context, 20)),
       decoration: BoxDecoration(
-        color: const Color(0xFF16213E),
+        color: AppColors.bgNavy,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Center(
         child: Text(
           text,
           style: TextStyle(
-            color: Colors.white38,
+            color: AppColors.textFaint,
             fontSize: Responsive.fontSize(context, 13),
           ),
         ),
@@ -477,7 +477,7 @@ class _AchievementCard extends StatelessWidget {
                   Text(
                     isHidden ? AppStrings.get(lang, 'ach_hidden') : AppStrings.get(lang, achievement.name),
                     style: TextStyle(
-                      color: isCompleted ? Colors.white : Colors.white70,
+                      color: isCompleted ? AppColors.textPrimary : AppColors.textSecondary,
                       fontSize: Responsive.fontSize(context, 13),
                       fontWeight: FontWeight.bold,
                     ),
@@ -485,7 +485,7 @@ class _AchievementCard extends StatelessWidget {
                   Text(
                     isHidden ? '???' : AppStrings.get(lang, achievement.description),
                     style: TextStyle(
-                      color: Colors.white38,
+                      color: AppColors.textFaint,
                       fontSize: Responsive.fontSize(context, 13),
                     ),
                   ),
@@ -495,7 +495,7 @@ class _AchievementCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: (progress / achievement.targetValue).clamp(0.0, 1.0),
-                        backgroundColor: Colors.white10,
+                        backgroundColor: AppColors.textGhost,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           achievement.category.color.withValues(alpha: 0.7),
                         ),
@@ -506,7 +506,7 @@ class _AchievementCard extends StatelessWidget {
                     Text(
                       '$progress / ${achievement.targetValue}',
                       style: TextStyle(
-                        color: Colors.white30,
+                        color: AppColors.textFaint,
                         fontSize: Responsive.fontSize(context, 12),
                       ),
                     ),
@@ -529,7 +529,7 @@ class _AchievementCard extends StatelessWidget {
                   child: Text(
                     '💎${achievement.rewardGems}',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.black, // 금색 배경 위 텍스트
                       fontSize: Responsive.fontSize(context, 14),
                       fontWeight: FontWeight.bold,
                     ),
@@ -537,7 +537,7 @@ class _AchievementCard extends StatelessWidget {
                 ),
               )
             else if (isClaimed)
-              Icon(Icons.check_circle, color: Colors.green,
+              Icon(Icons.check_circle, color: AppColors.success,
                   size: Responsive.iconSize(context, 18)),
           ],
         ),
@@ -572,7 +572,7 @@ class _RankingRow extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: rank <= 3
-              ? Colors.amber.withValues(alpha: 0.05 * (4 - rank))
+              ? AppColors.sinmyeongGold.withValues(alpha: 0.05 * (4 - rank))
               : Colors.white.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(8),
         ),
@@ -589,7 +589,7 @@ class _RankingRow extends StatelessWidget {
               child: Text(
                 entry.playerName,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                   fontSize: Responsive.fontSize(context, 13),
                 ),
               ),
@@ -597,7 +597,7 @@ class _RankingRow extends StatelessWidget {
             Text(
               '${entry.score}',
               style: TextStyle(
-                color: Colors.amber,
+                color: AppColors.sinmyeongGold,
                 fontSize: Responsive.fontSize(context, 16),
                 fontWeight: FontWeight.bold,
               ),

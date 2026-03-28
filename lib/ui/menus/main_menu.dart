@@ -448,7 +448,8 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                     const Spacer(),
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close, color: Colors.white54),
+                      tooltip: AppStrings.get(currentLang, 'close'),
+                      icon: const Icon(Icons.close, color: AppColors.textMid),
                     ),
                   ],
                 ),
@@ -483,7 +484,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                               child: Text(
                                 '${lang.flag}  ${lang.displayName}',
                                 style: TextStyle(
-                                  color: lang == currentLang ? AppColors.borderHighlight : Colors.white70,
+                                  color: lang == currentLang ? AppColors.borderHighlight : AppColors.textSecondary,
                                   fontWeight: lang == currentLang ? FontWeight.bold : FontWeight.normal,
                                 ),
                               ),
@@ -507,6 +508,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                     _sectionLabel('🔊', AppStrings.get(currentLang, 'settings_sfx'), s),
                     SizedBox(height: 8 * s),
                     _audioRow(
+                      toggleLabel: AppStrings.get(currentLang, 'settings_sfx'),
                       enabled: _sfxOn,
                       volume: _sfxVol,
                       s: s,
@@ -526,6 +528,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                     _sectionLabel('🎵', AppStrings.get(currentLang, 'settings_bgm'), s),
                     SizedBox(height: 8 * s),
                     _audioRow(
+                      toggleLabel: AppStrings.get(currentLang, 'settings_bgm'),
                       enabled: _bgmOn,
                       volume: _bgmVol,
                       s: s,
@@ -574,7 +577,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                       Text(
                         _syncMessage!,
                         style: TextStyle(
-                          color: Colors.white60,
+                          color: AppColors.textDisabled,
                           fontSize: Responsive.fontSize(context, 11),
                         ),
                         textAlign: TextAlign.center,
@@ -612,6 +615,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
   }
 
   Widget _audioRow({
+    required String toggleLabel,
     required bool enabled,
     required double volume,
     required double s,
@@ -621,7 +625,11 @@ class _SettingsDialogState extends State<_SettingsDialog> {
     return Row(
       children: [
         // 켜기/끄기 버튼
-        GestureDetector(
+        Semantics(
+          toggled: enabled,
+          label: toggleLabel,
+          button: true,
+          child: GestureDetector(
           onTap: onToggle,
           child: Container(
             width: 36 * s,
@@ -634,20 +642,21 @@ class _SettingsDialogState extends State<_SettingsDialog> {
             child: Center(
               child: Icon(
                 enabled ? Icons.volume_up : Icons.volume_off,
-                color: enabled ? AppColors.borderHighlight : Colors.white38,
+                color: enabled ? AppColors.borderHighlight : AppColors.textFaint,
                 size: 20 * s,
               ),
             ),
           ),
+        ),
         ),
         SizedBox(width: 8 * s),
         // 볼륨 슬라이더
         Expanded(
           child: SliderTheme(
             data: SliderThemeData(
-              activeTrackColor: enabled ? AppColors.borderHighlight : Colors.white24,
+              activeTrackColor: enabled ? AppColors.borderHighlight : AppColors.textGhost,
               inactiveTrackColor: AppColors.borderDefault.withAlpha(20),
-              thumbColor: enabled ? AppColors.borderHighlight : Colors.white38,
+              thumbColor: enabled ? AppColors.borderHighlight : AppColors.textFaint,
               thumbShape: RoundSliderThumbShape(enabledThumbRadius: 7 * s),
               trackHeight: 4 * s,
               overlayShape: RoundSliderOverlayShape(overlayRadius: 14 * s),
@@ -666,7 +675,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
           child: Text(
             '${(volume * 100).toInt()}%',
             style: TextStyle(
-              color: enabled ? Colors.white70 : Colors.white24,
+              color: enabled ? AppColors.textSecondary : AppColors.textGhost,
               fontSize: Responsive.fontSize(context, 11),
               fontWeight: FontWeight.bold,
             ),
@@ -770,7 +779,10 @@ class _MenuButton extends StatelessWidget {
     final s = Responsive.uiScale(context);
     final btnWidth = compact ? double.infinity : 260 * s;
 
-    return GestureDetector(
+    return Semantics(
+      button: true,
+      label: label,
+      child: GestureDetector(
       onTap: () {
         SoundManager.instance.playSfx(SfxType.uiClick);
         onTap();
@@ -832,6 +844,7 @@ class _MenuButton extends StatelessWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }

@@ -26,7 +26,7 @@ class HudWailingGauge extends ConsumerWidget {
     Color labelColor;
     if (isMax) {
       label = 'hud_wailing_max';
-      labelColor = const Color(0xFFFF4444);
+      labelColor = AppColors.dangerBright;
     } else if (isHigh) {
       label = 'hud_wailing_high';
       labelColor = const Color(0xFFFF8844);
@@ -55,7 +55,7 @@ class HudWailingGauge extends ConsumerWidget {
             Text(
               '${wailing.toInt()}%',
               style: TextStyle(
-                color: isMax ? const Color(0xFFFF4444) : Colors.white60,
+                color: isMax ? AppColors.dangerBright : AppColors.textDisabled,
                 fontSize: Responsive.fontSize(context, 10),
               ),
             ),
@@ -65,7 +65,7 @@ class HudWailingGauge extends ConsumerWidget {
         Container(
           height: 6 * Responsive.scale(context),
           decoration: BoxDecoration(
-            color: const Color(0x33FFFFFF),
+            color: AppColors.borderDefault,
             borderRadius: BorderRadius.circular(3 * Responsive.scale(context)),
           ),
           child: FractionallySizedBox(
@@ -76,7 +76,7 @@ class HudWailingGauge extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(3),
                 gradient: LinearGradient(
                   colors: isMax
-                      ? [const Color(0xFFFF0000), const Color(0xFFFF4444)]
+                      ? [const Color(0xFFFF0000), AppColors.dangerBright]
                       : isHigh
                           ? [const Color(0xFFFF6600), const Color(0xFFFF8844)]
                           : isMid
@@ -209,7 +209,7 @@ class HudBossHealthBar extends StatelessWidget {
                       gradient: LinearGradient(
                         colors: isLowHp
                             ? [const Color(0xFFFF2222), const Color(0xFFCC0000)]
-                            : [const Color(0xFFFF4444), const Color(0xFFDD2222)],
+                            : [AppColors.dangerBright, const Color(0xFFDD2222)],
                       ),
                     ),
                   ),
@@ -332,8 +332,8 @@ class HudNextWavePreview extends StatelessWidget {
     }
 
     final borderColor = isBoss
-        ? const Color(0xFFFF4444)
-        : const Color(0x66FFFFFF);
+        ? AppColors.dangerBright
+        : AppColors.surfaceOverlay;
     final bgColor = isBoss
         ? const Color(0x66330000)
         : const Color(0x88000000);
@@ -362,7 +362,7 @@ class HudNextWavePreview extends StatelessWidget {
               Text(
                 AppStrings.trs('wave_next').replaceAll('{n}', '$nextWaveNum'),
                 style: TextStyle(
-                  color: isBoss ? const Color(0xFFFF6666) : Colors.white70,
+                  color: isBoss ? const Color(0xFFFF6666) : AppColors.textSecondary,
                   fontSize: Responsive.fontSize(context, 10),
                   fontWeight: FontWeight.bold,
                 ),
@@ -388,7 +388,7 @@ class HudNextWavePreview extends StatelessWidget {
                       style: TextStyle(
                         color: isBossEnemy
                             ? const Color(0xFFFF8888)
-                            : Colors.white60,
+                            : AppColors.textDisabled,
                         fontSize: Responsive.fontSize(context, 10),
                         fontWeight: isBossEnemy
                             ? FontWeight.bold

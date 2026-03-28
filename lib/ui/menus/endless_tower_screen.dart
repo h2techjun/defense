@@ -143,7 +143,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           '🏕️ ${floorData.floor}층 — 휴식',
-          style: const TextStyle(color: Colors.white, fontSize: 20),
+          style: const TextStyle(color: AppColors.textPrimary, fontSize: 20),
         ),
         content: ConstrainedBox(
           constraints: BoxConstraints(
@@ -154,7 +154,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
             children: [
               const Text(
                 'Select a reward',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
               ),
               const SizedBox(height: 16),
               ...allRestRewards.map((reward) => Padding(
@@ -226,15 +226,16 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.bgDeepPlum, Color(0xFF16213E)],
+          colors: [AppColors.bgDeepPlum, AppColors.bgNavy],
         ),
       ),
       child: Row(
         children: [
           IconButton(
             onPressed: widget.onBack,
+            tooltip: AppStrings.trs('back'),
             icon: Icon(Icons.arrow_back,
-                color: Colors.white, size: Responsive.iconSize(context, 24)),
+                color: AppColors.textPrimary, size: Responsive.iconSize(context, 24)),
           ),
           SizedBox(width: Responsive.spacing(context, 8)),
           Expanded(
@@ -244,7 +245,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                 Text(
                   tr(ref, 'et_title'),
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: Responsive.fontSize(context, 22),
                     fontWeight: FontWeight.bold,
                   ),
@@ -252,7 +253,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                 Text(
                   AppStrings.trs('et_record_summary').replaceAll('{floor}', '${state.highestFloor}').replaceAll('{gems}', '${state.totalGemsEarned}'),
                   style: TextStyle(
-                    color: Colors.white60,
+                    color: AppColors.textDisabled,
                     fontSize: Responsive.fontSize(context, 15),
                   ),
                 ),
@@ -265,14 +266,14 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               vertical: Responsive.spacing(context, 6),
             ),
             decoration: BoxDecoration(
-              color: Colors.amber.withValues(alpha: 0.2),
+              color: AppColors.sinmyeongGold.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.amber.withValues(alpha: 0.5)),
+              border: Border.all(color: AppColors.sinmyeongGold.withValues(alpha: 0.5)),
             ),
             child: Text(
               '⚔️ ${state.totalFloorsCleared}층 클리어',
               style: TextStyle(
-                color: Colors.amber,
+                color: AppColors.sinmyeongGold,
                 fontSize: Responsive.fontSize(context, 15),
                 fontWeight: FontWeight.bold,
               ),
@@ -285,12 +286,12 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
 
   Widget _buildTabBar(BuildContext context) {
     return Container(
-      color: const Color(0xFF16213E),
+      color: AppColors.bgNavy,
       child: TabBar(
         controller: _tabController,
-        indicatorColor: Colors.amber,
-        labelColor: Colors.amber,
-        unselectedLabelColor: Colors.white54,
+        indicatorColor: AppColors.sinmyeongGold,
+        labelColor: AppColors.sinmyeongGold,
+        unselectedLabelColor: AppColors.textMid,
         labelStyle: TextStyle(
           fontSize: Responsive.fontSize(context, 14),
           fontWeight: FontWeight.bold,
@@ -315,14 +316,14 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
         if (state.activeBuffs.isNotEmpty)
           Container(
             padding: EdgeInsets.all(Responsive.spacing(context, 8)),
-            color: Colors.green.withValues(alpha: 0.15),
+            color: AppColors.success.withValues(alpha: 0.15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   AppStrings.trs('et_active_buffs').replaceAll('{buffs}', state.activeBuffs.map((b) => b.name).join(', ')).replaceAll('{floors}', '${state.buffRemainingFloors}'),
                   style: TextStyle(
-                    color: Colors.greenAccent,
+                    color: AppColors.mintGreen,
                     fontSize: Responsive.fontSize(context, 15),
                   ),
                 ),
@@ -358,7 +359,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
             child: ElevatedButton(
               onPressed: () => _startTowerFloor(startFloor),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber,
+                backgroundColor: AppColors.sinmyeongGold,
                 foregroundColor: Colors.black,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -395,7 +396,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               image: DecorationImage(
                 image: const AssetImage('assets/images/objects/obj_grave_mound.png'),
                 fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(const Color(0xFF16213E).withAlpha(200), BlendMode.darken),
+                colorFilter: ColorFilter.mode(AppColors.bgNavy.withAlpha(200), BlendMode.darken),
               ),
               gradient: const LinearGradient(
                 colors: [AppColors.surfaceMid, AppColors.bgDeepPlum],
@@ -404,11 +405,11 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.purple.withValues(alpha: 0.6),
+                color: AppColors.lavender.withValues(alpha: 0.6),
                 width: 2,
               ),
               boxShadow: [
-                BoxShadow(color: Colors.purple.withAlpha(60), blurRadius: 15, spreadRadius: 2),
+                BoxShadow(color: AppColors.lavender.withAlpha(60), blurRadius: 15, spreadRadius: 2),
               ],
             ),
             child: Column(
@@ -417,7 +418,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                 Text(
                   '📅 오늘의 도전',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: AppColors.textSecondary,
                     fontSize: Responsive.fontSize(context, 15),
                   ),
                 ),
@@ -425,7 +426,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                 Text(
                   challenge.title,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: Responsive.fontSize(context, 24),
                     fontWeight: FontWeight.bold,
                   ),
@@ -435,7 +436,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                 Text(
                   tr(ref, 'et_special_rules'),
                   style: TextStyle(
-                    color: Colors.amber,
+                    color: AppColors.sinmyeongGold,
                     fontSize: Responsive.fontSize(context, 14),
                     fontWeight: FontWeight.bold,
                   ),
@@ -454,7 +455,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                             Text(
                               tr(ref, mod.displayName),
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.textPrimary,
                                 fontSize: Responsive.fontSize(context, 13),
                                 fontWeight: FontWeight.bold,
                               ),
@@ -462,7 +463,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                             Text(
                               mod.description,
                               style: TextStyle(
-                                color: Colors.white54,
+                                color: AppColors.textMid,
                                 fontSize: Responsive.fontSize(context, 14),
                               ),
                             ),
@@ -499,7 +500,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
           Container(
             padding: EdgeInsets.all(Responsive.spacing(context, 16)),
             decoration: BoxDecoration(
-              color: const Color(0xFF16213E),
+              color: AppColors.bgNavy,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -519,7 +520,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
             child: ElevatedButton(
               onPressed: isCompleted ? null : _startDailyChallenge,
               style: ElevatedButton.styleFrom(
-                backgroundColor: isCompleted ? Colors.grey : Colors.purple,
+                backgroundColor: isCompleted ? AppColors.rarityCommon : AppColors.lavender,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -545,12 +546,12 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
         Text(emoji, style: TextStyle(fontSize: Responsive.fontSize(context, 20))),
         SizedBox(height: Responsive.spacing(context, 4)),
         Text(value, style: TextStyle(
-          color: Colors.white,
+          color: AppColors.textPrimary,
           fontSize: Responsive.fontSize(context, 14),
           fontWeight: FontWeight.bold,
         )),
         Text(label, style: TextStyle(
-          color: Colors.white54,
+          color: AppColors.textMid,
           fontSize: Responsive.fontSize(context, 13),
         )),
       ],
@@ -563,12 +564,12 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
         Text(emoji, style: TextStyle(fontSize: Responsive.fontSize(context, 20))),
         SizedBox(height: Responsive.spacing(context, 4)),
         Text(value, style: TextStyle(
-          color: Colors.white,
+          color: AppColors.textPrimary,
           fontSize: Responsive.fontSize(context, 16),
           fontWeight: FontWeight.bold,
         )),
         Text(label, style: TextStyle(
-          color: Colors.white54,
+          color: AppColors.textMid,
           fontSize: Responsive.fontSize(context, 14),
         )),
       ],
@@ -594,25 +595,35 @@ class _TowerFloorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderColor = isCurrent
-        ? Colors.amber
+        ? AppColors.sinmyeongGold
         : isCleared
-            ? Colors.green.withValues(alpha: 0.5)
-            : Colors.white12;
+            ? AppColors.success.withValues(alpha: 0.5)
+            : AppColors.textGhost;
 
     final bgColor = isCurrent
-        ? Colors.amber.withValues(alpha: 0.1)
+        ? AppColors.sinmyeongGold.withValues(alpha: 0.1)
         : isCleared
-            ? Colors.green.withValues(alpha: 0.05)
+            ? AppColors.success.withValues(alpha: 0.05)
             : Colors.white.withValues(alpha: 0.03);
 
     final typeColor = switch (floor.type) {
-      TowerFloorType.normal => Colors.white70,
-      TowerFloorType.elite  => Colors.orange,
-      TowerFloorType.boss   => Colors.red,
-      TowerFloorType.rest   => Colors.green,
+      TowerFloorType.normal => AppColors.textSecondary,
+      TowerFloorType.elite  => AppColors.peachCoral,
+      TowerFloorType.boss   => AppColors.berserkRed,
+      TowerFloorType.rest   => AppColors.success,
     };
 
-    return Padding(
+    final floorStatus = isCleared
+        ? 'Cleared'
+        : isCurrent
+            ? 'Current'
+            : '';
+    final floorLabel = '${floor.floorTitle}, ${floor.type.name}${floorStatus.isNotEmpty ? ', $floorStatus' : ''}';
+
+    return Semantics(
+      button: isCurrent,
+      label: floorLabel,
+      child: Padding(
       padding: EdgeInsets.only(bottom: Responsive.spacing(context, 8)),
       child: Material(
         color: Colors.transparent,
@@ -628,12 +639,12 @@ class _TowerFloorCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: isCurrent ? null : bgColor,
               gradient: isCurrent
-                  ? LinearGradient(colors: [Colors.amber.withAlpha(40), Colors.black.withAlpha(150)])
+                  ? LinearGradient(colors: [AppColors.sinmyeongGold.withAlpha(40), Colors.black.withAlpha(150)])
                   : null,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor, width: isCurrent ? 2 : 1),
               boxShadow: isCurrent
-                  ? [BoxShadow(color: Colors.amber.withAlpha(60), blurRadius: 10, offset: const Offset(0, 2))]
+                  ? [BoxShadow(color: AppColors.sinmyeongGold.withAlpha(60), blurRadius: 10, offset: const Offset(0, 2))]
                   : null,
             ),
             child: Row(
@@ -666,7 +677,7 @@ class _TowerFloorCard extends StatelessWidget {
                       Text(
                         floor.floorTitle,
                         style: TextStyle(
-                          color: isCleared ? Colors.white54 : Colors.white,
+                          color: isCleared ? AppColors.textMid : AppColors.textPrimary,
                           fontSize: Responsive.fontSize(context, 14),
                           fontWeight: FontWeight.bold,
                           decoration: isCleared ? TextDecoration.lineThrough : null,
@@ -678,7 +689,7 @@ class _TowerFloorCard extends StatelessWidget {
                             ? AppStrings.trs('et_reward_select')
                             : '${AppStrings.trs('wave')}: ${floor.waveCount} | ${AppStrings.trs('et_difficulty')}: ×${floor.difficultyScale.toStringAsFixed(1)}',
                         style: TextStyle(
-                          color: Colors.white38,
+                          color: AppColors.textFaint,
                           fontSize: Responsive.fontSize(context, 14),
                         ),
                       ),
@@ -693,13 +704,13 @@ class _TowerFloorCard extends StatelessWidget {
                       vertical: Responsive.spacing(context, 4),
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.amber.withValues(alpha: 0.15),
+                      color: AppColors.sinmyeongGold.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       '💎${floor.bonusGems}',
                       style: TextStyle(
-                        color: Colors.amber,
+                        color: AppColors.sinmyeongGold,
                         fontSize: Responsive.fontSize(context, 14),
                         fontWeight: FontWeight.bold,
                       ),
@@ -710,14 +721,14 @@ class _TowerFloorCard extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(left: Responsive.spacing(context, 8)),
                     child: Icon(Icons.check_circle,
-                      color: Colors.green, size: Responsive.iconSize(context, 20)),
+                      color: AppColors.success, size: Responsive.iconSize(context, 20)),
                   ),
 
                 if (isCurrent)
                   Padding(
                     padding: EdgeInsets.only(left: Responsive.spacing(context, 8)),
                     child: Icon(Icons.play_circle_fill,
-                      color: Colors.amber, size: Responsive.iconSize(context, 24)),
+                      color: AppColors.sinmyeongGold, size: Responsive.iconSize(context, 24)),
                   ),
               ],
             ),
@@ -726,7 +737,7 @@ class _TowerFloorCard extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -761,7 +772,7 @@ class _RestRewardButton extends StatelessWidget {
                     Text(
                       reward.name,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.bold,
                         fontSize: Responsive.fontSize(context, 13),
                       ),
@@ -769,14 +780,14 @@ class _RestRewardButton extends StatelessWidget {
                     Text(
                       reward.description,
                       style: TextStyle(
-                        color: Colors.white54,
+                        color: AppColors.textMid,
                         fontSize: Responsive.fontSize(context, 14),
                       ),
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: Colors.white38, size: Responsive.iconSize(context, 20)),
+              Icon(Icons.chevron_right, color: AppColors.textFaint, size: Responsive.iconSize(context, 20)),
             ],
           ),
         ),

@@ -1180,5 +1180,11 @@
   "branch_phoenix_totem_ability": "디버프 면역 + 한 억제 50% + 은신 감지",
   "branch_earth_spirit_name": "지신제단",
   "branch_earth_spirit_desc": "대지의 힘으로 적 공격력 -20% + 감속 오라 20% + 은신 적 감지.",
-  "branch_earth_spirit_ability": "적 공격력 -20% + 감속 20% + 은신 감지"
+  "branch_earth_spirit_ability": "적 공격력 -20% + 감속 20% + 은신 감지",
+
+  "skill_ready": "스킬 사용 가능",
+  "hero_dead": "사망",
+  "skill_cooldown": "쿨다운 중",
+  "hud_game_speed": "게임 속도",
+  "a11y_season_progress": "시즌 진행률"
 }

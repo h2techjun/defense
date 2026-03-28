@@ -1180,5 +1180,11 @@
   "branch_phoenix_totem_ability": "减益免疫 + 怨气抑制50% + 隐身感知",
   "branch_earth_spirit_name": "地神祭坛",
   "branch_earth_spirit_desc": "大地之力降低敌人攻击力-20% + 减速光环20% + 隐身敌人感知。",
-  "branch_earth_spirit_ability": "敌人攻击力-20% + 减速20% + 隐身感知"
+  "branch_earth_spirit_ability": "敌人攻击力-20% + 减速20% + 隐身感知",
+
+  "skill_ready": "技能就绪",
+  "hero_dead": "阵亡",
+  "skill_cooldown": "冷却中",
+  "hud_game_speed": "游戏速度",
+  "a11y_season_progress": "赛季进度"
 }

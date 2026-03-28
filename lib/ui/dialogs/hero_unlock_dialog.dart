@@ -73,7 +73,7 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                   // 타이틀
                   ShaderMask(
                     shaderCallback: (bounds) => LinearGradient(
-                      colors: [color, Colors.white, color],
+                      colors: [color, AppColors.textPrimary, color],
                     ).createShader(bounds),
                     child: Text(
                       AppStrings.trs('hero_new_unlock'),
@@ -124,7 +124,7 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                     AppStrings.trs(heroData.title),
                     style: TextStyle(
                       fontSize: Responsive.fontSize(context, 14),
-                      color: Colors.white.withAlpha(180),
+                      color: AppColors.textSecondary,
                     ),
                   ),
                   SizedBox(height: 12 * s),
@@ -152,7 +152,7 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                           AppStrings.trs(heroData.skill.description),
                           style: TextStyle(
                             fontSize: Responsive.fontSize(context, 12),
-                            color: Colors.white.withAlpha(160),
+                            color: AppColors.textDisabled,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -196,7 +196,7 @@ Future<void> showHeroUnlockDialog(BuildContext context, HeroId heroId) async {
                         style: TextStyle(
                           fontSize: Responsive.fontSize(context, 16),
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ),
@@ -224,14 +224,14 @@ class _StatChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0x22FFFFFF),
+        color: AppColors.surfaceOverlayDim,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         '$icon $value',
         style: const TextStyle(
           fontSize: 12,
-          color: Colors.white70,
+          color: AppColors.textSecondary,
           fontWeight: FontWeight.bold,
         ),
       ),

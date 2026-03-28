@@ -136,7 +136,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
             onPressed: widget.onBack,
           ),
           SizedBox(width: 8 * s),
@@ -147,7 +147,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                 Text(
                   AppStrings.get(lang, 'daily_quest_title'),
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: Responsive.fontSize(context, 22),
                     fontWeight: FontWeight.bold,
                   ),
@@ -155,7 +155,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                 Text(
                   AppStrings.get(lang, 'daily_quest_progress').replaceAll('{completed}', '$completed').replaceAll('{total}', '$total').replaceAll('{streak}', '${state.loginStreak}'),
                   style: TextStyle(
-                    color: Colors.white60,
+                    color: AppColors.textDisabled,
                     fontSize: Responsive.fontSize(context, 12),
                   ),
                 ),
@@ -163,12 +163,12 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                 // 리셋 카운트다운 타이머
                 Row(
                   children: [
-                    Icon(Icons.timer, color: Colors.amber, size: 14 * s),
+                    Icon(Icons.timer, color: AppColors.sinmyeongGold, size: 14 * s),
                     SizedBox(width: 4 * s),
                     Text(
                       AppStrings.get(lang, 'daily_quest_reset_timer').replaceAll('{time}', _getRemainingTime()),
                       style: TextStyle(
-                        color: _now.hour >= 23 ? Colors.redAccent : Colors.amber,
+                        color: _now.hour >= 23 ? Colors.redAccent : AppColors.sinmyeongGold,
                         fontSize: Responsive.fontSize(context, 11),
                         fontWeight: FontWeight.bold,
                       ),
@@ -195,7 +195,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                 Text(
                   '${state.loginStreak}${AppStrings.get(lang, 'daily_quest_streak_day').replaceAll('{day}', '')}',
                   style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary, fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
@@ -228,7 +228,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
           Text(
             AppStrings.get(lang, 'daily_quest_streak_reward'),
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: Responsive.fontSize(context, 16),
               fontWeight: FontWeight.bold,
             ),
@@ -251,7 +251,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(AppStrings.trs('daily_reward_earned').replaceAll('{emoji}', reward.emoji).replaceAll('{name}', reward.displayName)),
-                              backgroundColor: Colors.green.shade700,
+                              backgroundColor: AppColors.success,
                             ),
                           );
                         }
@@ -266,24 +266,24 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isClaimed
-                            ? Colors.green.withAlpha(50)
+                            ? AppColors.success.withAlpha(50)
                             : isClaimable
-                                ? Colors.amber.withAlpha(80)
+                                ? AppColors.sinmyeongGold.withAlpha(80)
                                 : isReached
-                                    ? Colors.white.withAlpha(15)
-                                    : Colors.white.withAlpha(5),
+                                    ? AppColors.textPrimary.withAlpha(15)
+                                    : AppColors.textPrimary.withAlpha(5),
                         border: Border.all(
                           color: isClaimed
-                              ? Colors.green
+                              ? AppColors.success
                               : isClaimable
-                                  ? Colors.amber
+                                  ? AppColors.sinmyeongGold
                                   : isToday
-                                      ? Colors.white54
+                                      ? AppColors.textMid
                                       : Colors.white12,
                           width: isClaimable ? 2 : 1,
                         ),
                         boxShadow: isClaimable
-                            ? [BoxShadow(color: Colors.amber.withAlpha(60), blurRadius: 8)]
+                            ? [BoxShadow(color: AppColors.sinmyeongGold.withAlpha(60), blurRadius: 8)]
                             : null,
                       ),
                       child: Center(
@@ -298,7 +298,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                     Text(
                       AppStrings.get(lang, 'daily_quest_streak_day').replaceAll('{day}', '${reward.day}'),
                       style: TextStyle(
-                        color: isReached ? Colors.white : Colors.white38,
+                        color: isReached ? AppColors.textPrimary : AppColors.textFaint,
                         fontSize: 14 * s,
                         fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                       ),
@@ -343,19 +343,19 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
       padding: EdgeInsets.all(14 * s),
       decoration: BoxDecoration(
         color: isClaimed
-            ? Colors.green.withAlpha(25)
+            ? AppColors.success.withAlpha(25)
             : isBonus
                 ? const Color(0xFF1F1040).withAlpha(180)
-                : const Color(0xFF16213E).withAlpha(180),
+                : AppColors.bgNavy.withAlpha(180),
         borderRadius: BorderRadius.circular(14 * s),
         border: Border.all(
           color: isClaimed
-              ? Colors.green.withAlpha(100)
+              ? AppColors.success.withAlpha(100)
               : isBonus
-                  ? Colors.amber.withAlpha(80)
+                  ? AppColors.sinmyeongGold.withAlpha(80)
                   : isCompleted
-                      ? Colors.cyan.withAlpha(80)
-                      : Colors.white.withAlpha(15),
+                      ? AppColors.skyBlue.withAlpha(80)
+                      : AppColors.textPrimary.withAlpha(15),
           width: isBonus ? 1.5 : 1,
         ),
       ),
@@ -378,7 +378,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                             margin: EdgeInsets.only(right: 6 * s),
                             padding: EdgeInsets.symmetric(horizontal: 6 * s, vertical: 1),
                             decoration: BoxDecoration(
-                              color: Colors.amber,
+                              color: AppColors.sinmyeongGold,
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -394,7 +394,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                           child: Text(
                             tr(ref, quest.description),
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               fontSize: 18 * s,
                               fontWeight: FontWeight.w600,
                             ),
@@ -433,13 +433,13 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 4 * s),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green, width: 2),
+                            border: Border.all(color: AppColors.success, width: 2),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             'CLEAR',
                             style: TextStyle(
-                              color: Colors.green,
+                              color: AppColors.success,
                               fontWeight: FontWeight.w900,
                               fontSize: 16 * s,
                               letterSpacing: 2,
@@ -459,13 +459,13 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(AppStrings.get(lang, 'daily_quest_reward_claimed').replaceAll('{emoji}', quest.type.emoji)),
-                          backgroundColor: Colors.green.shade700,
+                          backgroundColor: AppColors.success,
                         ),
                       );
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amber,
+                    backgroundColor: AppColors.sinmyeongGold,
                     foregroundColor: Colors.black,
                     padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 8 * s),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -480,15 +480,15 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(AppStrings.get(lang, 'daily_quest_go_menu')),
-                        backgroundColor: Colors.cyan.shade700,
+                        backgroundColor: AppColors.skyBlue,
                         duration: const Duration(seconds: 2),
                       ),
                     );
                   },
-                  icon: Icon(Icons.flight_takeoff, size: 14 * s, color: Colors.cyan),
-                  label: Text(AppStrings.get(lang, 'daily_quest_go_button'), style: TextStyle(color: Colors.cyan, fontSize: 13 * s, fontWeight: FontWeight.bold)),
+                  icon: Icon(Icons.flight_takeoff, size: 14 * s, color: AppColors.skyBlue),
+                  label: Text(AppStrings.get(lang, 'daily_quest_go_button'), style: TextStyle(color: AppColors.skyBlue, fontSize: 13 * s, fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.cyan.withAlpha(100)),
+                    side: BorderSide(color: AppColors.skyBlue.withAlpha(100)),
                     padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 4 * s),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
@@ -496,7 +496,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
               else
                 Text(
                   '$progress/${quest.targetValue}',
-                  style: TextStyle(color: Colors.white54, fontSize: 14 * s),
+                  style: TextStyle(color: AppColors.textMid, fontSize: 14 * s),
                 ),
             ],
           ),
@@ -506,13 +506,13 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: progressRatio,
-              backgroundColor: Colors.white.withAlpha(15),
+              backgroundColor: AppColors.textPrimary.withAlpha(15),
               valueColor: AlwaysStoppedAnimation<Color>(
                 isClaimed
-                    ? Colors.green
+                    ? AppColors.success
                     : isCompleted
-                        ? Colors.cyan
-                        : Colors.amber,
+                        ? AppColors.skyBlue
+                        : AppColors.sinmyeongGold,
               ),
               minHeight: 5 * s,
             ),
@@ -551,7 +551,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(AppStrings.get(lang, 'daily_quest_all_clear_bonus')),
-                    backgroundColor: Colors.purple,
+                    backgroundColor: AppColors.lavender,
                   ),
                 );
               }
@@ -560,7 +560,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
       child: Container(
         padding: EdgeInsets.all(20 * s),
         decoration: BoxDecoration(
-          color: isReady ? null : const Color(0xFF16213E).withAlpha(200),
+          color: isReady ? null : AppColors.bgNavy.withAlpha(200),
           image: isReady && !isClaimed
               ? DecorationImage(
                   image: const AssetImage('assets/images/objects/obj_shrine.png'),
@@ -574,14 +574,14 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
           borderRadius: BorderRadius.circular(16 * s),
           border: Border.all(
             color: isClaimed
-                ? Colors.green.withAlpha(100)
+                ? AppColors.success.withAlpha(100)
                 : isReady
-                    ? Colors.amber.withAlpha(150)
-                    : Colors.white.withAlpha(10),
+                    ? AppColors.sinmyeongGold.withAlpha(150)
+                    : AppColors.textPrimary.withAlpha(10),
             width: isReady ? 2 : 1,
           ),
           boxShadow: isReady && !isClaimed
-              ? [BoxShadow(color: Colors.purple.withAlpha(80), blurRadius: 15, spreadRadius: 3)]
+              ? [BoxShadow(color: AppColors.lavender.withAlpha(80), blurRadius: 15, spreadRadius: 3)]
               : null,
         ),
         child: Column(
@@ -594,7 +594,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
             Text(
               AppStrings.get(lang, 'daily_quest_all_clear'),
               style: TextStyle(
-                color: isClaimed ? Colors.green : Colors.white,
+                color: isClaimed ? AppColors.success : AppColors.textPrimary,
                 fontSize: 16 * s,
                 fontWeight: FontWeight.bold,
               ),
@@ -607,7 +607,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                       ? AppStrings.get(lang, 'daily_quest_all_clear_ready')
                       : AppStrings.get(lang, 'daily_quest_all_clear_locked'),
               style: TextStyle(
-                color: isClaimed ? Colors.green.shade300 : Colors.white60,
+                color: isClaimed ? AppColors.success : AppColors.textDisabled,
                 fontSize: 12 * s,
               ),
             ),
@@ -634,7 +634,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
       padding: EdgeInsets.all(12 * s),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF1A1040), Color(0xFF16213E)],
+          colors: [Color(0xFF1A1040), AppColors.bgNavy],
         ),
         borderRadius: BorderRadius.circular(16 * s),
         border: Border.all(color: AppColors.lavender.withAlpha(40)),
@@ -645,7 +645,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
           Row(
             children: [
               Text(AppStrings.get(lang, 'daily_quest_monthly_title'), style: TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 15 * s,
                 fontWeight: FontWeight.bold,
               )),
@@ -653,11 +653,11 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 3 * s),
                 decoration: BoxDecoration(
-                  color: Colors.amber.withAlpha(30),
+                  color: AppColors.sinmyeongGold.withAlpha(30),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(AppStrings.get(lang, 'daily_quest_monthly_count').replaceAll('{count}', '${state.monthlyLoginCount}'), style: TextStyle(
-                  color: Colors.amber,
+                  color: AppColors.sinmyeongGold,
                   fontSize: 11 * s,
                   fontWeight: FontWeight.bold,
                 )),
@@ -690,19 +690,19 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: isClaimed
-                        ? Colors.green.withAlpha(30)
+                        ? AppColors.success.withAlpha(30)
                         : canClaim
-                            ? Colors.amber.withAlpha(30)
+                            ? AppColors.sinmyeongGold.withAlpha(30)
                             : Colors.white.withAlpha(5),
                     borderRadius: BorderRadius.circular(8 * s),
                     border: Border.all(
                       color: reward.isSpecial
-                          ? Colors.amber.withAlpha(isClaimed ? 60 : 180)
+                          ? AppColors.sinmyeongGold.withAlpha(isClaimed ? 60 : 180)
                           : isClaimed
-                              ? Colors.green.withAlpha(60)
+                              ? AppColors.success.withAlpha(60)
                               : canClaim
-                                  ? Colors.amber.withAlpha(80)
-                                  : Colors.white12,
+                                  ? AppColors.sinmyeongGold.withAlpha(80)
+                                  : AppColors.textGhost,
                       width: reward.isSpecial ? 2 : 1,
                     ),
                     boxShadow: reward.isSpecial && !isLocked ? [
@@ -713,7 +713,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (isClaimed)
-                        Icon(Icons.check_circle, color: Colors.green, size: 28 * s)
+                        Icon(Icons.check_circle, color: AppColors.success, size: 28 * s)
                       else
                         Text(
                           reward.isSpecial ? '🎁' : reward.emoji,
@@ -724,7 +724,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
                       Text(
                         '$day',
                         style: TextStyle(
-                          color: isLocked ? Colors.white24 : Colors.white70,
+                          color: isLocked ? AppColors.textGhost : AppColors.textSecondary,
                           fontSize: 13 * s,
                           fontWeight: reward.isSpecial ? FontWeight.bold : FontWeight.normal,
                         ),

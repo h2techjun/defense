@@ -1180,5 +1180,11 @@
   "branch_phoenix_totem_ability": "Debuff immunity + grudge suppress 50% + Stealth Detect",
   "branch_earth_spirit_name": "Earth Spirit Altar",
   "branch_earth_spirit_desc": "Earth power reduces enemy ATK -20% + slow aura 20% + stealth detection.",
-  "branch_earth_spirit_ability": "Enemy ATK -20% + slow 20% + Stealth Detect"
+  "branch_earth_spirit_ability": "Enemy ATK -20% + slow 20% + Stealth Detect",
+
+  "skill_ready": "Skill ready",
+  "hero_dead": "Dead",
+  "skill_cooldown": "Cooling down",
+  "hud_game_speed": "Game speed",
+  "a11y_season_progress": "Season progress"
 }

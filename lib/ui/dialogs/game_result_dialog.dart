@@ -109,13 +109,13 @@ class VictoryOverlay extends ConsumerWidget {
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(vertical: 10 * s),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFFF8C00), Color(0xFFFFD700)],
+                          gradient: LinearGradient(
+                            colors: [const Color(0xFFFF8C00), AppColors.goldBright],
                           ),
                           borderRadius: BorderRadius.circular(10 * s),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.amber.withAlpha(80),
+                              color: AppColors.sinmyeongGold.withAlpha(80),
                               blurRadius: 8,
                               spreadRadius: 1,
                             ),
@@ -302,7 +302,7 @@ class DefeatOverlay extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(10 * s),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.green.withAlpha(80),
+                              color: AppColors.success.withAlpha(80),
                               blurRadius: 8,
                               spreadRadius: 1,
                             ),
@@ -316,7 +316,7 @@ class DefeatOverlay extends ConsumerWidget {
                             Text(
                               AppStrings.trs('ad_revive'),
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.textPrimary,
                                 fontSize: Responsive.fontSize(context, 13),
                                 fontWeight: FontWeight.bold,
                               ),
@@ -429,7 +429,7 @@ class _StarRatingState extends State<_StarRating>
             child: Icon(
               Icons.star_outline_rounded,
               size: 36 * s,
-              color: const Color(0x44FFFFFF),
+              color: AppColors.surfaceOverlay,
             ),
           );
         }
@@ -478,7 +478,7 @@ class _StatRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: TextStyle(color: AppColors.lavender, fontSize: Responsive.fontSize(context, 11))),
-          Text(value, style: TextStyle(color: Colors.white, fontSize: Responsive.fontSize(context, 11), fontWeight: FontWeight.bold)),
+          Text(value, style: TextStyle(color: AppColors.textPrimary, fontSize: Responsive.fontSize(context, 11), fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -512,12 +512,12 @@ class _DialogButton extends StatelessWidget {
                   colors: [AppColors.lavender, Color(0xFF9944CC)],
                 )
               : null,
-          color: isPrimary ? null : const Color(0x22FFFFFF),
+          color: isPrimary ? null : AppColors.surfaceOverlayDim,
           borderRadius: BorderRadius.circular(10 * s),
           border: Border.all(
             color: isPrimary
                 ? AppColors.lavender
-                : const Color(0x44FFFFFF),
+                : AppColors.surfaceOverlay,
           ),
         ),
         child: Row(
@@ -526,7 +526,7 @@ class _DialogButton extends StatelessWidget {
           children: [
             if (icon != null) ...[
               Icon(icon, size: Responsive.fontSize(context, 14),
-                color: isPrimary ? Colors.white : const Color(0xFFBB99DD)),
+                color: isPrimary ? AppColors.textPrimary : const Color(0xFFBB99DD)),
               SizedBox(width: 4 * s),
             ],
             Flexible(
@@ -535,7 +535,7 @@ class _DialogButton extends StatelessWidget {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: isPrimary ? Colors.white : AppColors.lavender,
+                  color: isPrimary ? AppColors.textPrimary : AppColors.lavender,
                   fontWeight: isPrimary ? FontWeight.bold : FontWeight.normal,
                   fontSize: Responsive.fontSize(context, 11),
                 ),

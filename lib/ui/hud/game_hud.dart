@@ -130,27 +130,30 @@ class GameHud extends ConsumerWidget {
                     Text(
                       '💀 ${state.enemiesKilled}',
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: AppColors.textSecondary,
                         fontSize: Responsive.fontSize(context, isPhone ? 11 : 13),
                       ),
                     ),
                     SizedBox(width: isPhone ? 4 * s : 8 * s),
 
                     // 배속 버튼
-                    GestureDetector(
+                    Semantics(
+                      button: true,
+                      label: '${AppStrings.get(lang, 'hud_game_speed')}: ${isSpeedLocked ? '2' : state.gameSpeed.toInt()}x',
+                      child: GestureDetector(
                       onTap: isSpeedLocked ? null : onSpeedToggle,
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: isPhone ? 6 * s : 10 * s, vertical: isPhone ? 4 * s : 6 * s),
                         decoration: BoxDecoration(
                           color: isSpeedLocked
-                              ? const Color(0x33FFFFFF)
+                              ? AppColors.borderDefault
                               : state.gameSpeed > 1.0
                                   ? AppColors.peachCoral.withAlpha(60)
-                                  : const Color(0x44FFFFFF),
+                                  : AppColors.surfaceOverlay,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: isSpeedLocked
-                                ? const Color(0x44FFFFFF)
+                                ? AppColors.surfaceOverlay
                                 : state.gameSpeed > 1.0
                                     ? AppColors.peachCoral
                                     : const Color(0x66FFFFFF),
@@ -160,16 +163,16 @@ class GameHud extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (isSpeedLocked)
-                              Icon(Icons.lock, color: Colors.white38, size: Responsive.fontSize(context, isPhone ? 10 : 12)),
+                              Icon(Icons.lock, color: AppColors.textFaint, size: Responsive.fontSize(context, isPhone ? 10 : 12)),
                             if (isSpeedLocked) SizedBox(width: 2 * s),
                             Text(
                               isSpeedLocked ? '2×' : '${state.gameSpeed.toInt()}×',
                               style: TextStyle(
                                 color: isSpeedLocked
-                                    ? Colors.white38
+                                    ? AppColors.textFaint
                                     : state.gameSpeed > 1.0
                                         ? AppColors.peachCoral
-                                        : Colors.white70,
+                                        : AppColors.textSecondary,
                                 fontSize: Responsive.fontSize(context, isPhone ? 12 : 14),
                                 fontWeight: FontWeight.bold,
                               ),
@@ -177,6 +180,7 @@ class GameHud extends ConsumerWidget {
                           ],
                         ),
                       ),
+                    ),
                     ),
 
                     // SFX/BGM 토글 (폰에서 숨김 — 일시정지 메뉴에서 접근)
@@ -212,8 +216,9 @@ class GameHud extends ConsumerWidget {
                     // 일시정지 버튼
                     IconButton(
                       onPressed: onPause,
+                      tooltip: AppStrings.get(lang, 'pause_title'),
                       icon: Icon(Icons.pause_circle_outline,
-                          color: Colors.white70, size: Responsive.iconSize(context, isPhone ? 24 : 28)),
+                          color: AppColors.textSecondary, size: Responsive.iconSize(context, isPhone ? 24 : 28)),
                       padding: EdgeInsets.zero,
                       constraints: isPhone ? const BoxConstraints(minWidth: 48, minHeight: 48) : null,
                     ),

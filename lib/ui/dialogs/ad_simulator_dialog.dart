@@ -58,12 +58,12 @@ class _AdSimulatorDialogState extends State<AdSimulatorDialog> {
             const SizedBox(height: 16),
             Text(
               AppStrings.trs('ad_watching'),
-              style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Text(
               canClose ? AppStrings.trs('ad_reward_ready') : AppStrings.trs('ad_reward_wait').replaceAll('{seconds}', '$_timeLeft'),
-              style: const TextStyle(color: Colors.white70, fontSize: 16),
+              style: const TextStyle(color: AppColors.textSecondary, fontSize: 16),
             ),
             const SizedBox(height: 24),
             Row(
@@ -72,7 +72,7 @@ class _AdSimulatorDialogState extends State<AdSimulatorDialog> {
                 if (!canClose)
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text(AppStrings.trs('ad_close_no_reward'), style: const TextStyle(color: Colors.grey)),
+                    child: Text(AppStrings.trs('ad_close_no_reward'), style: const TextStyle(color: AppColors.rarityCommon)),
                   ),
                 if (canClose)
                   ElevatedButton(

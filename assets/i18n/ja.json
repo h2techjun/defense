@@ -1180,5 +1180,11 @@
   "branch_phoenix_totem_ability": "デバフ免疫 + 怨抑制50% + ステルス感知",
   "branch_earth_spirit_name": "地神祭壇",
   "branch_earth_spirit_desc": "大地の力で敵攻撃力-20% + 減速オーラ20% + ステルス敵感知。",
-  "branch_earth_spirit_ability": "敵攻撃力-20% + 減速20% + ステルス感知"
+  "branch_earth_spirit_ability": "敵攻撃力-20% + 減速20% + ステルス感知",
+
+  "skill_ready": "スキル使用可能",
+  "hero_dead": "死亡",
+  "skill_cooldown": "クールダウン中",
+  "hud_game_speed": "ゲーム速度",
+  "a11y_season_progress": "シーズン進捗"
 }

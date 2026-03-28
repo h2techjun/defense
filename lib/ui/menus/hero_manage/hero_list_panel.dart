@@ -13,6 +13,7 @@ import '../../../data/models/hero_data.dart';
 import '../../../l10n/app_strings.dart';
 import '../../../state/skin_provider.dart';
 import '../../common/hero_sprite_viewer.dart';
+import '../../theme/app_colors.dart';
 import '../../widgets/touch_button.dart';
 import 'hero_helpers.dart';
 
@@ -36,7 +37,7 @@ class HeroListPanel extends ConsumerWidget {
       decoration: BoxDecoration(
         color: const Color(0x15FFFFFF),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0x22FFFFFF)),
+        border: Border.all(color: AppColors.surfaceOverlayDim),
       ),
       child: ListView.builder(
         padding: EdgeInsets.all(8 * Responsive.scale(context)),
@@ -124,7 +125,7 @@ class HeroListPanel extends ConsumerWidget {
                       Text(
                         AppStrings.trs(hero.name),
                         style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.white70,
+                          color: isSelected ? Colors.white : AppColors.textSecondary,
                           fontSize: Responsive.fontSize(context, 14),
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         ),

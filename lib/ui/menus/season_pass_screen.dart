@@ -96,8 +96,9 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
             children: [
               IconButton(
                 onPressed: widget.onBack,
+                tooltip: AppStrings.trs('back'),
                 icon: Icon(Icons.arrow_back,
-                    color: Colors.white, size: Responsive.iconSize(context, 24)),
+                    color: AppColors.textPrimary, size: Responsive.iconSize(context, 24)),
               ),
               SizedBox(width: Responsive.spacing(context, 8)),
               Expanded(
@@ -107,7 +108,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                     Text(
                       '🌸 ${tr(ref, season.title)}',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: Responsive.fontSize(context, 20),
                         fontWeight: FontWeight.bold,
                       ),
@@ -115,7 +116,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                     Text(
                       'D-${season.daysRemaining} | Lv.${state.currentLevel}/${season.maxLevel}',
                       style: TextStyle(
-                        color: season.daysRemaining <= 7 ? Colors.redAccent : Colors.white60,
+                        color: season.daysRemaining <= 7 ? Colors.redAccent : AppColors.textDisabled,
                         fontSize: Responsive.fontSize(context, 15),
                         fontWeight: season.daysRemaining <= 7 ? FontWeight.bold : FontWeight.normal,
                       ),
@@ -132,9 +133,9 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                             final elapsed = DateTime.now().difference(season.startDate).inDays;
                             return (elapsed / totalDays).clamp(0.0, 1.0);
                           })(),
-                          backgroundColor: Colors.white12,
+                          backgroundColor: AppColors.textGhost,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            season.daysRemaining <= 7 ? Colors.redAccent : Colors.amber,
+                            season.daysRemaining <= 7 ? Colors.redAccent : AppColors.sinmyeongGold,
                           ),
                         ),
                       ),
@@ -182,14 +183,14 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
             Text(
               'XP: ${state.currentXp} / ${season1.xpForLevel(state.currentLevel)}',
               style: TextStyle(
-                color: Colors.white54,
+                color: AppColors.textMid,
                 fontSize: Responsive.fontSize(context, 14),
               ),
             ),
             Text(
               AppStrings.trs('sp_xp_to_next').replaceAll('{xp}', '${state.xpToNextLevel}'),
               style: TextStyle(
-                color: Colors.amber,
+                color: AppColors.sinmyeongGold,
                 fontSize: Responsive.fontSize(context, 14),
               ),
             ),
@@ -200,8 +201,8 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
           borderRadius: BorderRadius.circular(6),
           child: LinearProgressIndicator(
             value: state.isMaxLevel ? 1.0 : state.levelProgress,
-            backgroundColor: Colors.white10,
-            valueColor: const AlwaysStoppedAnimation<Color>(Colors.amber),
+            backgroundColor: AppColors.textGhost,
+            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.sinmyeongGold),
             minHeight: Responsive.spacing(context, 8),
           ),
         ),
@@ -253,7 +254,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                   Text(
                     'XP 부스트 (💎10 → +50XP)',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: Responsive.fontSize(context, 14),
                       fontWeight: FontWeight.bold,
                     ),
@@ -269,14 +270,14 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
   Widget _buildTabBar(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF16213E).withAlpha(220),
+        color: AppColors.bgNavy.withAlpha(220),
         border: Border(bottom: BorderSide(color: Colors.white.withAlpha(20), width: 1)),
       ),
       child: TabBar(
         controller: _tabController,
-        indicatorColor: Colors.amber,
-        labelColor: Colors.amber,
-        unselectedLabelColor: Colors.white54,
+        indicatorColor: AppColors.sinmyeongGold,
+        labelColor: AppColors.sinmyeongGold,
+        unselectedLabelColor: AppColors.textMid,
         labelStyle: TextStyle(
           fontSize: Responsive.fontSize(context, 13),
           fontWeight: FontWeight.bold,
@@ -347,7 +348,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
             colors: [AppColors.surfaceMid, Color(0xFF4A148C)],
           ),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.amber.withValues(alpha: 0.5), width: 2),
+          border: Border.all(color: AppColors.sinmyeongGold.withValues(alpha: 0.5), width: 2),
         ),
         padding: EdgeInsets.all(Responsive.spacing(context, 20)),
         child: Column(
@@ -355,7 +356,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
             Text(
               'sp_premium_title',
               style: TextStyle(
-                color: Colors.amber,
+                color: AppColors.sinmyeongGold,
                 fontSize: Responsive.fontSize(context, 20),
                 fontWeight: FontWeight.bold,
               ),
@@ -365,7 +366,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
               AppStrings.trs('sp_premium_desc'),
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white70,
+                color: AppColors.textSecondary,
                 fontSize: Responsive.fontSize(context, 13),
               ),
             ),
@@ -384,13 +385,13 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(AppStrings.trs('sp_premium_activated')),
-                        backgroundColor: Colors.purple,
+                        backgroundColor: AppColors.lavender,
                       ),
                     );
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
+                  backgroundColor: AppColors.sinmyeongGold,
                   foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -457,11 +458,11 @@ class _PassLevelRow extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isUnlocked ? Colors.amber.withAlpha(60) : Colors.white.withAlpha(10),
+                color: isUnlocked ? AppColors.sinmyeongGold.withAlpha(60) : Colors.white.withAlpha(10),
                 width: isUnlocked ? 1.5 : 1.0,
               ),
               boxShadow: isUnlocked
-                  ? [BoxShadow(color: Colors.amber.withAlpha(20), blurRadius: 8, spreadRadius: 1)]
+                  ? [BoxShadow(color: AppColors.sinmyeongGold.withAlpha(20), blurRadius: 8, spreadRadius: 1)]
                   : null,
             ),
             child: Row(
@@ -480,7 +481,7 @@ class _PassLevelRow extends StatelessWidget {
                 child: Text(
                   '$level',
                   style: TextStyle(
-                    color: isUnlocked ? Colors.amber : Colors.white38,
+                    color: isUnlocked ? AppColors.sinmyeongGold : AppColors.textFaint,
                     fontSize: Responsive.fontSize(context, 15),
                     fontWeight: FontWeight.bold,
                   ),
@@ -511,7 +512,7 @@ class _PassLevelRow extends StatelessWidget {
             Container(
               width: 1,
               height: Responsive.spacing(context, 30),
-              color: Colors.amber.withValues(alpha: 0.3),
+              color: AppColors.sinmyeongGold.withValues(alpha: 0.3),
             ),
             SizedBox(width: Responsive.spacing(context, 8)),
 
@@ -569,18 +570,18 @@ class _RewardChip extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isClaimed
-              ? Colors.green.withValues(alpha: 0.2)
+              ? AppColors.success.withValues(alpha: 0.2)
               : isPremiumLocked
-                  ? Colors.purple.withValues(alpha: 0.1)
+                  ? AppColors.lavender.withValues(alpha: 0.1)
                   : isUnlocked
-                      ? Colors.amber.withValues(alpha: 0.15)
+                      ? AppColors.sinmyeongGold.withValues(alpha: 0.15)
                       : Colors.white.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(6),
           border: Border.all(
             color: isClaimed
-                ? Colors.green.withValues(alpha: 0.5)
+                ? AppColors.success.withValues(alpha: 0.5)
                 : isPremiumLocked
-                    ? Colors.purple.withValues(alpha: 0.3)
+                    ? AppColors.lavender.withValues(alpha: 0.3)
                     : Colors.transparent,
           ),
         ),
@@ -597,10 +598,10 @@ class _RewardChip extends StatelessWidget {
                 AppStrings.trs(reward.name),
                 style: TextStyle(
                   color: isClaimed
-                      ? Colors.green
+                      ? AppColors.success
                       : isUnlocked
-                          ? Colors.white
-                          : Colors.white38,
+                          ? AppColors.textPrimary
+                          : AppColors.textFaint,
                   fontSize: Responsive.fontSize(context, 13),
                 ),
                 overflow: TextOverflow.ellipsis,

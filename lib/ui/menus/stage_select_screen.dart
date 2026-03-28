@@ -112,9 +112,9 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                     onTap: widget.onBack,
                     borderRadius: BorderRadius.circular(10),
                     decoration: BoxDecoration(
-                      color: const Color(0x22FFFFFF),
+                      color: AppColors.surfaceOverlayDim,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: const Color(0x44FFFFFF)),
+                      border: Border.all(color: AppColors.surfaceOverlay),
                     ),
                     padding: EdgeInsets.all(8 * Responsive.scale(context)),
                     child: Icon(Icons.arrow_back,
@@ -216,7 +216,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                                   ? const Color(0x11FFFFFF)
                                   : isSelected
                                       ? ch.gradientColors[0].withValues(alpha: 0.6)
-                                      : const Color(0x22FFFFFF),
+                                      : AppColors.surfaceOverlayDim,
                             ),
                           ),
                           alignment: Alignment.center,
@@ -225,7 +225,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if (isChapterLocked) ...[
-                                Icon(Icons.lock, size: 12 * Responsive.scale(context), color: const Color(0x44FFFFFF)),
+                                Icon(Icons.lock, size: 12 * Responsive.scale(context), color: AppColors.surfaceOverlay),
                                 const SizedBox(width: 4),
                               ],
                               Text(
@@ -234,7 +234,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                                   fontSize: Responsive.fontSize(context, 13),
                                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                   color: isChapterLocked
-                                      ? const Color(0x44FFFFFF)
+                                      ? AppColors.surfaceOverlay
                                       : isSelected
                                           ? ch.gradientColors[0]
                                           : const Color(0xFF776699),
@@ -250,7 +250,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
               ),
 
               SizedBox(height: 8 * Responsive.scale(context)),
-              const Divider(color: Color(0x22FFFFFF), height: 1),
+              Divider(color: AppColors.surfaceOverlayDim, height: 1),
               SizedBox(height: 8 * Responsive.scale(context)),
 
               // ── 스테이지 그리드 ──
@@ -335,7 +335,7 @@ class _StageCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFF0F0A1A).withAlpha(180),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0x22FFFFFF), width: 1),
+              border: Border.all(color: AppColors.surfaceOverlayDim, width: 1),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -377,7 +377,7 @@ class _StageCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isBoss
-                ? const Color(0xFFFF6644)
+                ? AppColors.statAttack
                 : isCleared
                     ? const Color(0x66FFD700)
                     : const Color(0x44AA66DD),
@@ -413,7 +413,7 @@ class _StageCard extends StatelessWidget {
                 color: isBoss
                     ? const Color(0xFFFF8844)
                     : isCleared
-                        ? const Color(0xFFFFD700)
+                        ? AppColors.goldBright
                         : AppColors.lavender,
               ),
             ),
@@ -472,7 +472,7 @@ class _StageCard extends StatelessWidget {
                 child: Text(AppStrings.trs('label_boss'),
                     style: TextStyle(
                       fontSize: Responsive.fontSize(context, 13),
-                      color: Color(0xFFFF6644),
+                      color: AppColors.statAttack,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
                     )),

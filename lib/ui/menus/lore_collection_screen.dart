@@ -93,7 +93,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
             onPressed: widget.onBack,
           ),
           SizedBox(width: 8 * s),
@@ -104,7 +104,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                 Text(
                   tr(ref, 'lore_title'),
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: Responsive.fontSize(context, 22),
                     fontWeight: FontWeight.bold,
                   ),
@@ -146,7 +146,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
     return Container(
       height: 80 * s,
       padding: EdgeInsets.symmetric(horizontal: 12 * s),
-      color: const Color(0xFF16213E),
+      color: AppColors.bgNavy,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: collectionMilestones.map((ms) {
@@ -163,7 +163,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('${ms.emoji} "${ms.rewardTitle}" ${tr(ref, "lore_title_earned")} 💎${ms.rewardGems}'),
-                          backgroundColor: Colors.purple,
+                          backgroundColor: AppColors.lavender,
                         ),
                       );
                     }
@@ -190,7 +190,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                   Text(
                     '${(ms.percentage * 100).toInt()}%',
                     style: TextStyle(
-                      color: reached ? Colors.amber : Colors.white38,
+                      color: reached ? AppColors.sinmyeongGold : AppColors.textFaint,
                       fontSize: 14 * s,
                       fontWeight: FontWeight.bold,
                     ),
@@ -211,8 +211,8 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
         controller: _tabController,
         isScrollable: false,
         indicatorColor: AppColors.lavender,
-        labelColor: Colors.white,
-        unselectedLabelColor: Colors.white38,
+        labelColor: AppColors.textPrimary,
+        unselectedLabelColor: AppColors.textFaint,
         labelStyle: TextStyle(fontSize: 16 * s, fontWeight: FontWeight.bold),
         tabs: _categories.map((cat) => Tab(text: '${cat.emoji} ${tr(ref, cat.label)}')).toList(),
       ),
@@ -222,7 +222,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
   Widget _buildEntryList(BuildContext context, WidgetRef ref,
       LoreCollectionState state, List<LoreEntry> entries, double s) {
     if (entries.isEmpty) {
-      return Center(child: Text(tr(ref, 'lore_empty'), style: const TextStyle(color: Colors.white38)));
+      return Center(child: Text(tr(ref, 'lore_empty'), style: const TextStyle(color: AppColors.textFaint)));
     }
 
     return ListView.builder(
@@ -259,8 +259,8 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
       child: ExpansionTile(
         tilePadding: EdgeInsets.symmetric(horizontal: 14 * s, vertical: 4 * s),
         childrenPadding: EdgeInsets.fromLTRB(14 * s, 0, 14 * s, 14 * s),
-        iconColor: Colors.white38,
-        collapsedIconColor: Colors.white24,
+        iconColor: AppColors.textFaint,
+        collapsedIconColor: AppColors.textGhost,
         title: Row(
           children: [
             // 아이콘
@@ -276,7 +276,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                   Text(
                     isLocked ? '???' : entry.name,
                     style: TextStyle(
-                      color: isLocked ? Colors.white24 : Colors.white,
+                      color: isLocked ? AppColors.textGhost : AppColors.textPrimary,
                       fontSize: 18 * s,
                       fontWeight: FontWeight.bold,
                     ),
@@ -290,7 +290,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                         SizedBox(width: 6 * s),
                         Text(
                           '${tr(ref, "lore_kill_count")}: $kills',
-                          style: TextStyle(color: Colors.white38, fontSize: 13 * s),
+                          style: TextStyle(color: AppColors.textFaint, fontSize: 13 * s),
                         ),
                       ],
                     ],
@@ -304,7 +304,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
             ? [
                 Text(
                   AppStrings.get(ref.read(gameLanguageProvider), 'lore_locked_hint'),
-                  style: TextStyle(color: Colors.white24, fontStyle: FontStyle.italic, fontSize: 14 * s),
+                  style: TextStyle(color: AppColors.textGhost, fontStyle: FontStyle.italic, fontSize: 14 * s),
                 ),
               ]
             : _buildLoreContent(context, ref, state, entry, tier, kills, s),
@@ -367,7 +367,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
         children: [
           Text(
             '${tr(ref, "lore_remaining")} ${remaining} ${tr(ref, "lore_remaining_unit")}',
-            style: TextStyle(color: Colors.white38, fontSize: 14 * s),
+            style: TextStyle(color: AppColors.textFaint, fontSize: 14 * s),
           ),
           SizedBox(height: 4 * s),
           ClipRRect(
@@ -408,7 +408,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
           Row(
             children: [
               Text(title, style: TextStyle(
-                color: unlocked ? _tierColor(rewardTier) : Colors.white24,
+                color: unlocked ? _tierColor(rewardTier) : AppColors.textGhost,
                 fontSize: 15 * s,
                 fontWeight: FontWeight.bold,
               )),
@@ -449,7 +449,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
           Text(
             text,
             style: TextStyle(
-              color: unlocked ? Colors.white70 : Colors.white24,
+              color: unlocked ? AppColors.textSecondary : AppColors.textGhost,
               fontSize: 16 * s,
               height: 1.5,
               fontStyle: unlocked ? FontStyle.normal : FontStyle.italic,
@@ -462,11 +462,11 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
 
   Widget _tierBadge(LoreUnlockTier tier, double s) {
     final (label, color) = switch (tier) {
-      LoreUnlockTier.locked      => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_locked'), Colors.grey),
-      LoreUnlockTier.encountered => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_encountered'),   Colors.blue),
-      LoreUnlockTier.basic       => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_basic'),   Colors.green),
-      LoreUnlockTier.secretLore  => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_secret'),   Colors.purple),
-      LoreUnlockTier.hiddenStory => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_hidden'),   Colors.amber),
+      LoreUnlockTier.locked      => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_locked'), AppColors.rarityCommon),
+      LoreUnlockTier.encountered => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_encountered'),   AppColors.skyBlue),
+      LoreUnlockTier.basic       => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_basic'),   AppColors.success),
+      LoreUnlockTier.secretLore  => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_secret'),   AppColors.lavender),
+      LoreUnlockTier.hiddenStory => (AppStrings.get(ref.read(gameLanguageProvider), 'lore_tier_hidden'),   AppColors.sinmyeongGold),
     };
 
     return Container(
@@ -484,10 +484,10 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
   }
 
   Color _tierColor(LoreUnlockTier tier) => switch (tier) {
-    LoreUnlockTier.locked      => Colors.grey,
-    LoreUnlockTier.encountered => Colors.blue,
-    LoreUnlockTier.basic       => Colors.green,
-    LoreUnlockTier.secretLore  => Colors.purple,
-    LoreUnlockTier.hiddenStory => Colors.amber,
+    LoreUnlockTier.locked      => AppColors.rarityCommon,
+    LoreUnlockTier.encountered => AppColors.skyBlue,
+    LoreUnlockTier.basic       => AppColors.success,
+    LoreUnlockTier.secretLore  => AppColors.lavender,
+    LoreUnlockTier.hiddenStory => AppColors.sinmyeongGold,
   };
 }

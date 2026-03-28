@@ -158,7 +158,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
         children: [
           IconButton(
             onPressed: widget.onBack,
-            icon: const Icon(Icons.arrow_back, color: Colors.white70),
+            icon: const Icon(Icons.arrow_back, color: AppColors.textSecondary),
             iconSize: 22 * s,
           ),
           Text(
@@ -363,7 +363,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
                   children: [
                     Icon(
                       Icons.play_arrow_rounded,
-                      color: isReady ? Colors.white : Colors.white38,
+                      color: isReady ? Colors.white : AppColors.textFaint,
                       size: 24 * s,
                     ),
                     SizedBox(width: 8 * s),
@@ -372,7 +372,7 @@ class _HeroDeployScreenState extends ConsumerState<HeroDeployScreen>
                           ? AppStrings.get(lang, 'deploy_button_ready').replaceAll('{count}', '${partyState.party.length}')
                           : AppStrings.get(lang, 'deploy_button_empty'),
                       style: TextStyle(
-                        color: isReady ? Colors.white : Colors.white38,
+                        color: isReady ? Colors.white : AppColors.textFaint,
                         fontSize: Responsive.fontSize(context, 16),
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
@@ -726,7 +726,7 @@ class _HeroPoolCard extends StatelessWidget {
                   Text(
                     '❤️${hero.baseHp.toInt()}',
                     style: TextStyle(
-                      color: Colors.white54,
+                      color: AppColors.textMid,
                       fontSize: Responsive.fontSize(context, 9),
                     ),
                   ),
@@ -734,7 +734,7 @@ class _HeroPoolCard extends StatelessWidget {
                   Text(
                     '⚔️${hero.baseAttack.toInt()}',
                     style: TextStyle(
-                      color: Colors.white54,
+                      color: AppColors.textMid,
                       fontSize: Responsive.fontSize(context, 9),
                     ),
                   ),

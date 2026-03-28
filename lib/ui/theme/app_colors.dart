@@ -128,6 +128,59 @@ abstract class AppColors {
   /// 한정 (Divine)
   static const Color rarityDivine = Color(0xFFFF6B6B);
 
+  // ── 서피스/오버레이 ──
+
+  /// 13% 흰색 오버레이 (반투명 서피스)
+  static const Color surfaceOverlayDim = Color(0x22FFFFFF);
+
+  /// 27% 흰색 오버레이 (반투명 서피스)
+  static const Color surfaceOverlay = Color(0x44FFFFFF);
+
+  // ── 추가 색상 ──
+
+  /// 순금색 (강조, 이펙트)
+  static const Color goldBright = Color(0xFFFFD700);
+
+  /// 남색 배경
+  static const Color bgNavy = Color(0xFF16213E);
+
+  /// 밝은 레드 (위험 강조)
+  static const Color dangerBright = Color(0xFFFF4444);
+
+  // ── 스탯 표시 색상 ──
+
+  /// 공격력 스탯
+  static const Color statAttack = Color(0xFFFF6644);
+
+  /// 사거리 스탯
+  static const Color statRange = Color(0xFF44AAFF);
+
+  /// HP 스탯
+  static const Color statHp = Color(0xFF44DD44);
+
+  /// 공격속도 스탯
+  static const Color statSpeed = Color(0xFFFFBB44);
+
+  /// 바이올렛 악센트 (일시정지 메뉴 등)
+  static const Color violetAccent = Color(0xFF8B5CF6);
+
+  /// 그림자 오버레이 (검정 27%)
+  static const Color shadowOverlay = Color(0x44000000);
+
+  /// 검정 80% 오버레이 (결과 화면 등)
+  static const Color shadowDark = Color(0xCC000000);
+
+  // ── 텍스트 투명도 보강 ──
+
+  /// white54 대응 (중간 밝기 텍스트)
+  static const Color textMid = Color(0x8AFFFFFF);
+
+  /// white38 대응 (흐릿한 텍스트)
+  static const Color textFaint = Color(0x61FFFFFF);
+
+  /// white24 대응 (유령 텍스트)
+  static const Color textGhost = Color(0x3DFFFFFF);
+
   // ── 그라디언트 ──
 
   /// 배경 그라디언트 (위→아래) — 따뜻한 어둠

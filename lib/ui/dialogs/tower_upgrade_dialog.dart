@@ -121,7 +121,7 @@ class TowerUpgradeDialog extends StatelessWidget {
             if (towerData.description.isNotEmpty)
               Text(
                 towerData.description,
-                style: TextStyle(color: Colors.white.withAlpha(130), fontSize: 8, height: 1.2),
+                style: TextStyle(color: AppColors.textDisabled, fontSize: 8, height: 1.2),
                 maxLines: 1, overflow: TextOverflow.ellipsis,
               ),
             const SizedBox(height: 4),
@@ -263,7 +263,7 @@ class _CompactActionButton extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: canAfford ? Colors.white : AppColors.textDisabled,
+                color: canAfford ? AppColors.textPrimary : AppColors.textDisabled,
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
               ),
@@ -335,7 +335,7 @@ class _MiniButton extends StatelessWidget {
               child: Text(
                 label,
                 style: TextStyle(
-                  color: canAfford ? Colors.white : AppColors.textDisabled,
+                  color: canAfford ? AppColors.textPrimary : AppColors.textDisabled,
                   fontSize: 9, fontWeight: FontWeight.w600,
                 ),
                 overflow: TextOverflow.ellipsis,

@@ -6,13 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../common/enums.dart';
 import '../../../l10n/app_strings.dart';
+import '../../theme/app_colors.dart';
 
 Color getHeroColor(HeroId id) {
   return switch (id) {
     HeroId.kkaebi => const Color(0xFF44BB44),
     HeroId.miho => const Color(0xFFFF66AA),
     HeroId.gangrim => const Color(0xFF7744CC),
-    HeroId.sua => const Color(0xFF44AAFF),
+    HeroId.sua => AppColors.statRange,
     HeroId.bari => const Color(0xFFFFBB44),
   };
 }

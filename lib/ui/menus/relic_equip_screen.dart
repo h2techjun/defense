@@ -122,7 +122,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                 border: Border.all(
                   color: isSelected
                       ? const Color(0xFFE8D5B7)
-                      : Colors.white24,
+                      : AppColors.textGhost,
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -137,7 +137,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                     _heroNames[heroId] ?? '',
                     style: TextStyle(
                       fontSize: Responsive.fontSize(context, 9),
-                      color: isSelected ? Colors.white : Colors.white60,
+                      color: isSelected ? Colors.white : AppColors.textDisabled,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
@@ -185,7 +185,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
               border: Border.all(
                 color: relic != null
                     ? AppColors.sinmyeongGold
-                    : Colors.white24,
+                    : AppColors.textGhost,
               ),
             ),
             child: Center(
@@ -207,7 +207,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                     fontWeight: FontWeight.bold,
                     color: relic != null
                         ? AppColors.sinmyeongGold
-                        : Colors.white38,
+                        : AppColors.textFaint,
                   ),
                 ),
                 SizedBox(height: 3 * s),
@@ -215,7 +215,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                   relic != null ? AppStrings.trs(relic.description) : AppStrings.trs('relic_equip_prompt'),
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 10),
-                    color: relic != null ? Colors.white70 : Colors.white30,
+                    color: relic != null ? AppColors.textSecondary : Colors.white30,
                   ),
                 ),
               ],
@@ -302,7 +302,7 @@ class _RelicEquipScreenState extends ConsumerState<RelicEquipScreen> {
                       : AppStrings.trs(relic.unlockCondition),
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 8),
-                    color: isUnlocked ? Colors.white60 : Colors.white24,
+                    color: isUnlocked ? AppColors.textDisabled : AppColors.textGhost,
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 2,

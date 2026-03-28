@@ -18,7 +18,7 @@ class RewardItem {
     required this.emoji,
     required this.name,
     required this.amount,
-    this.color = Colors.white,
+    this.color = AppColors.textPrimary,
   });
 }
 
@@ -131,7 +131,7 @@ class _RewardPopupContentState extends State<_RewardPopupContent>
               end: Alignment.bottomCenter,
               colors: [
                 AppColors.bgDeepPlum,
-                const Color(0xFF16213E),
+                AppColors.bgNavy,
               ],
             ),
             borderRadius: BorderRadius.circular(20 * s),
@@ -195,7 +195,7 @@ class _RewardPopupContentState extends State<_RewardPopupContent>
                       Text(
                         widget.subtitle!,
                         style: TextStyle(
-                          color: Colors.white54,
+                          color: AppColors.textMid,
                           fontSize: Responsive.fontSize(context, 12),
                         ),
                         textAlign: TextAlign.center,
@@ -282,7 +282,7 @@ class _RewardPopupContentState extends State<_RewardPopupContent>
             child: Text(
               reward.name,
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: Responsive.fontSize(context, 14),
               ),
             ),

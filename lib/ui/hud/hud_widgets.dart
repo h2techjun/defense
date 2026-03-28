@@ -29,7 +29,11 @@ class HudResourceBadge extends StatelessWidget {
     final isPhone = Responsive.deviceType(context) == DeviceType.phone;
     final hPad = isPhone ? 6.0 * s : 10.0 * s;
 
-    return GlassPanel(
+    final semanticName = label ?? icon;
+    return Semantics(
+      label: '$semanticName: $value',
+      excludeSemantics: true,
+      child: GlassPanel(
       borderRadius: 12 * s,
       blurAmount: 8,
       backgroundColor: Colors.black.withAlpha(60),
@@ -70,6 +74,7 @@ class HudResourceBadge extends StatelessWidget {
             ),
         ],
       ),
+      ),
     );
   }
 }
@@ -91,20 +96,25 @@ class HudSoundToggleBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: GestureDetector(
-        onTap: onTap,
-        child: GlassPanel(
-          borderRadius: 8 * Responsive.scale(context),
-          blurAmount: 6,
-          backgroundColor: active ? Colors.white.withAlpha(30) : AppColors.berserkRed.withAlpha(20),
-          borderColor: active ? Colors.white.withAlpha(50) : AppColors.berserkRed.withAlpha(60),
-          padding: EdgeInsets.all(6 * Responsive.scale(context)),
-          child: Icon(
-            icon,
-            color: active ? Colors.white70 : AppColors.berserkRed.withAlpha(180),
-            size: Responsive.iconSize(context, 20),
+    return Semantics(
+      toggled: active,
+      button: true,
+      label: tooltip,
+      child: Tooltip(
+        message: tooltip,
+        child: GestureDetector(
+          onTap: onTap,
+          child: GlassPanel(
+            borderRadius: 8 * Responsive.scale(context),
+            blurAmount: 6,
+            backgroundColor: active ? Colors.white.withAlpha(30) : AppColors.berserkRed.withAlpha(20),
+            borderColor: active ? Colors.white.withAlpha(50) : AppColors.berserkRed.withAlpha(60),
+            padding: EdgeInsets.all(6 * Responsive.scale(context)),
+            child: Icon(
+              icon,
+              color: active ? AppColors.textSecondary : AppColors.berserkRed.withAlpha(180),
+              size: Responsive.iconSize(context, 20),
+            ),
           ),
         ),
       ),
@@ -130,9 +140,9 @@ class HudCurrentTimeBadge extends StatelessWidget {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 8 * sc, vertical: 4 * sc),
           decoration: BoxDecoration(
-            color: const Color(0x44000000),
+            color: AppColors.shadowOverlay,
             borderRadius: BorderRadius.circular(10 * sc),
-            border: Border.all(color: const Color(0x44FFFFFF)),
+            border: Border.all(color: AppColors.surfaceOverlay),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -142,7 +152,7 @@ class HudCurrentTimeBadge extends StatelessWidget {
               Text(
                 timeStr,
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: AppColors.textSecondary,
                   fontSize: Responsive.fontSize(context, 13),
                   fontWeight: FontWeight.bold,
                   fontFamily: 'monospace',
@@ -171,7 +181,7 @@ class HudElapsedTimeBadge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8 * sc, vertical: 4 * sc),
       decoration: BoxDecoration(
-        color: const Color(0x44000000),
+        color: AppColors.shadowOverlay,
         borderRadius: BorderRadius.circular(10 * sc),
         border: Border.all(color: AppColors.skyBlue.withAlpha(68)),
       ),

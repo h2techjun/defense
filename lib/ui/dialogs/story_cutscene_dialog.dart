@@ -125,7 +125,7 @@ class _StoryCutsceneDialogState extends ConsumerState<StoryCutsceneDialog>
             errorBuilder: (_, __, ___) => const Icon(
               Icons.person,
               size: 80,
-              color: Colors.white54,
+              color: AppColors.textMid,
             ),
           ),
         ),
@@ -196,7 +196,7 @@ class _StoryCutsceneDialogState extends ConsumerState<StoryCutsceneDialog>
                               _displayedText,
                               style: const TextStyle(
                                 fontSize: 16,
-                                color: Colors.white,
+                                color: AppColors.textPrimary,
                                 height: 1.5,
                               ),
                             ),
@@ -222,8 +222,8 @@ class _StoryCutsceneDialogState extends ConsumerState<StoryCutsceneDialog>
               right: 20,
               child: TextButton.icon(
                 onPressed: widget.onFinish,
-                icon: const Icon(Icons.skip_next, color: Colors.white70),
-                label: Text(tr(ref, 'story_skip'), style: const TextStyle(color: Colors.white70)),
+                icon: const Icon(Icons.skip_next, color: AppColors.textSecondary),
+                label: Text(tr(ref, 'story_skip'), style: const TextStyle(color: AppColors.textSecondary)),
               ),
             ),
           ],

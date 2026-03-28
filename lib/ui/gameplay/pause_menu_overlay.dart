@@ -32,7 +32,7 @@ class PauseMenuOverlay extends ConsumerWidget {
 
     return Positioned.fill(
       child: Container(
-        color: const Color(0xCC000000),
+        color: AppColors.shadowDark,
         child: Center(
           child: Container(
             width: 280 * s,
@@ -43,10 +43,10 @@ class PauseMenuOverlay extends ConsumerWidget {
             decoration: BoxDecoration(
               color: const Color(0xFF1A1A2E),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFF8B5CF6), width: 1.5),
+              border: Border.all(color: AppColors.violetAccent, width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                  color: AppColors.violetAccent.withValues(alpha: 0.3),
                   blurRadius: 20,
                   spreadRadius: 2,
                 ),
@@ -56,11 +56,11 @@ class PauseMenuOverlay extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.pause_circle_outline,
-                    color: const Color(0xFF8B5CF6), size: 48 * s),
+                    color: AppColors.violetAccent, size: 48 * s),
                 SizedBox(height: 12 * s),
                 Text(AppStrings.get(lang, 'pause_title'),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: Responsive.fontSize(context, 22),
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
@@ -76,7 +76,7 @@ class PauseMenuOverlay extends ConsumerWidget {
                     return Text(
                       '⏱ ${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}',
                       style: TextStyle(
-                        color: Colors.white54,
+                        color: AppColors.textMid,
                         fontSize: Responsive.fontSize(context, 13),
                       ),
                     );
@@ -130,7 +130,7 @@ class PauseMenuOverlay extends ConsumerWidget {
                       label: CloudSaveManager.instance.isSyncing
                           ? AppStrings.get(lang, 'cloud_syncing')
                           : AppStrings.get(lang, 'cloud_save'),
-                      color: const Color(0xFF3B82F6),
+                      color: AppColors.info,
                       onTap: () async {
                         syncSetState(() {});
                         final result = await CloudSaveManager.instance.appStartSync();
@@ -146,8 +146,8 @@ class PauseMenuOverlay extends ConsumerWidget {
                                         : AppStrings.get(lang, 'cloud_sync_failed'),
                               ),
                               backgroundColor: result == CloudSyncResult.success
-                                  ? Colors.green
-                                  : Colors.orange,
+                                  ? AppColors.success
+                                  : AppColors.warning,
                               duration: const Duration(seconds: 2),
                             ),
                           );
@@ -161,7 +161,7 @@ class PauseMenuOverlay extends ConsumerWidget {
                 Text(
                   (() { final sync = CloudSaveManager.instance.lastSyncTimeFormatted; return sync == 'no_sync_record' ? tr(ref, sync) : sync; })(),
                   style: TextStyle(
-                    color: Colors.white30,
+                    color: AppColors.textFaint,
                     fontSize: Responsive.fontSize(context, 10),
                   ),
                 ),
@@ -170,7 +170,7 @@ class PauseMenuOverlay extends ConsumerWidget {
                   context: context,
                   icon: Icons.play_arrow_rounded,
                   label: AppStrings.get(lang, 'pause_resume'),
-                  color: const Color(0xFF10B981),
+                  color: AppColors.mintGreen,
                   onTap: onResume,
                 ),
                 SizedBox(height: 12 * s),
@@ -179,7 +179,7 @@ class PauseMenuOverlay extends ConsumerWidget {
                   context: context,
                   icon: Icons.refresh_rounded,
                   label: AppStrings.get(lang, 'pause_restart_label'),
-                  color: const Color(0xFFF59E0B),
+                  color: AppColors.sinmyeongGold,
                   onTap: () {
                     _showConfirmDialog(
                       context: context,
@@ -196,7 +196,7 @@ class PauseMenuOverlay extends ConsumerWidget {
                   context: context,
                   icon: Icons.home_rounded,
                   label: AppStrings.get(lang, 'pause_exit_label'),
-                  color: const Color(0xFFEF4444),
+                  color: AppColors.berserkRed,
                   onTap: () {
                     _showConfirmDialog(
                       context: context,
@@ -228,10 +228,10 @@ class PauseMenuOverlay extends ConsumerWidget {
       height: 48 * s,
       child: ElevatedButton.icon(
         onPressed: onTap,
-        icon: Icon(icon, color: Colors.white, size: 22 * s),
+        icon: Icon(icon, color: AppColors.textPrimary, size: 22 * s),
         label: Text(label,
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: Responsive.fontSize(context, 15),
               fontWeight: FontWeight.w600,
             )),
@@ -259,19 +259,19 @@ class PauseMenuOverlay extends ConsumerWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12 * s, vertical: 8 * s),
         decoration: BoxDecoration(
-          color: active ? const Color(0x338B5CF6) : const Color(0x22FFFFFF),
+          color: active ? AppColors.violetAccent.withAlpha(51) : AppColors.surfaceOverlayDim,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: active ? const Color(0xFF8B5CF6) : const Color(0x44FFFFFF),
+            color: active ? AppColors.violetAccent : AppColors.surfaceOverlay,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: active ? Colors.white : Colors.white38, size: 20 * s),
+            Icon(icon, color: active ? AppColors.textPrimary : AppColors.textFaint, size: 20 * s),
             SizedBox(width: 6 * s),
             Text(label, style: TextStyle(
-              color: active ? Colors.white : Colors.white38,
+              color: active ? AppColors.textPrimary : AppColors.textFaint,
               fontSize: Responsive.fontSize(context, 12),
               fontWeight: FontWeight.w600,
             )),
@@ -298,13 +298,13 @@ class PauseMenuOverlay extends ConsumerWidget {
           side: const BorderSide(color: AppColors.borderAccent, width: 1),
         ),
         title: Text(title,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
         content: Text(message,
-            style: const TextStyle(color: Colors.white70, fontSize: 14)),
+            style: const TextStyle(color: AppColors.textSecondary, fontSize: 14)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get(lang, 'btn_cancel'), style: TextStyle(color: Colors.white60)),
+            child: Text(AppStrings.get(lang, 'btn_cancel'), style: TextStyle(color: AppColors.textDisabled)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -317,7 +317,7 @@ class PauseMenuOverlay extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text(AppStrings.get(lang, 'btn_confirm'), style: TextStyle(color: Colors.white)),
+            child: Text(AppStrings.get(lang, 'btn_confirm'), style: TextStyle(color: AppColors.textPrimary)),
           ),
         ],
       ),

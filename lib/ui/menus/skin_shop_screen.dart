@@ -101,14 +101,15 @@ class SkinShopScreen extends ConsumerWidget {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
             onPressed: onBack,
+            tooltip: AppStrings.trs('back'),
           ),
           SizedBox(width: 8 * s),
           Text(
             tr(ref, 'skin_shop_title'),
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: Responsive.fontSize(context, 20),
               fontWeight: FontWeight.bold,
             ),
@@ -126,7 +127,7 @@ class SkinShopScreen extends ConsumerWidget {
               children: [
                 Icon(Icons.diamond, color: AppColors.skyBlue, size: 16 * s),
                 SizedBox(width: 4 * s),
-                Text('$gems', style: TextStyle(color: Colors.white, fontSize: Responsive.fontSize(context, 14))),
+                Text('$gems', style: TextStyle(color: AppColors.textPrimary, fontSize: Responsive.fontSize(context, 14))),
               ],
             ),
           ),
@@ -287,7 +288,7 @@ class SkinShopScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Text(
                     skin.lore!,
-                    style: const TextStyle(color: Colors.white38, fontSize: 11, fontStyle: FontStyle.italic),
+                    style: const TextStyle(color: AppColors.textFaint, fontSize: 11, fontStyle: FontStyle.italic),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -301,7 +302,7 @@ class SkinShopScreen extends ConsumerWidget {
                 Text(
                   '${skin.price}',
                   style: const TextStyle(
-                    color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
@@ -312,7 +313,7 @@ class SkinShopScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.trs('cancel'), style: const TextStyle(color: Colors.grey)),
+            child: Text(AppStrings.trs('cancel'), style: const TextStyle(color: AppColors.rarityCommon)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -394,7 +395,17 @@ class _SkinCard extends StatelessWidget {
       SkinRarity.epic => 1.5,
       SkinRarity.legendary => 2.5,
     };
-    return GestureDetector(
+    final skinName = AppStrings.trs(skin.name);
+    final statusLabel = equipped
+        ? AppStrings.trs('equipped')
+        : owned
+            ? AppStrings.trs('owned')
+            : '${skin.price} gems';
+
+    return Semantics(
+      button: true,
+      label: '$skinName, ${AppStrings.trs(skin.rarity.displayName)}, $statusLabel',
+      child: GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
@@ -404,7 +415,7 @@ class _SkinCard extends StatelessWidget {
                 ? AppColors.sinmyeongGold
                 : owned
                     ? skin.rarity.color.withAlpha(180)
-                    : const Color(0x22FFFFFF),
+                    : AppColors.surfaceOverlayDim,
             width: equipped ? 2.5 : borderWidth,
           ),
           boxShadow: (skin.rarity.hasGlow && owned) || equipped
@@ -514,7 +525,7 @@ class _SkinCard extends StatelessWidget {
                     child: Text(
                       AppStrings.trs(skin.rarity.displayName),
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: Responsive.fontSize(context, 12),
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
@@ -537,7 +548,7 @@ class _SkinCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white24, width: 1),
                     ),
-                    child: Icon(Icons.lock_outline, color: Colors.white60, size: 20 * s),
+                    child: Icon(Icons.lock_outline, color: AppColors.textDisabled, size: 20 * s),
                   ),
                 ),
 
@@ -584,7 +595,7 @@ class _SkinCard extends StatelessWidget {
                       Text(
                         AppStrings.trs(skin.name),
                         style: TextStyle(
-                          color: owned ? Colors.white : Colors.white60,
+                          color: owned ? AppColors.textPrimary : AppColors.textDisabled,
                           fontSize: Responsive.fontSize(context, 14),
                           fontWeight: FontWeight.bold,
                           shadows: [
@@ -625,7 +636,7 @@ class _SkinCard extends StatelessWidget {
                         Text(
                           AppStrings.trs('owned'),
                           style: TextStyle(
-                            color: Colors.white38,
+                            color: AppColors.textFaint,
                             fontSize: Responsive.fontSize(context, 12),
                           ),
                         ),
@@ -637,7 +648,7 @@ class _SkinCard extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -676,7 +687,7 @@ class _AdRewardButtonState extends State<_AdRewardButton> {
           decoration: BoxDecoration(
             gradient: canWatch
                 ? const LinearGradient(
-                    colors: [Color(0xFFFF6B35), Color(0xFFFFD700)],
+                    colors: [Color(0xFFFF6B35), AppColors.goldBright],
                   )
                 : null,
             color: canWatch ? null : const Color(0xFF444444),
@@ -695,14 +706,14 @@ class _AdRewardButtonState extends State<_AdRewardButton> {
               else
                 Icon(
                   Icons.play_circle_fill,
-                  color: canWatch ? Colors.white : Colors.grey,
+                  color: canWatch ? AppColors.textPrimary : AppColors.rarityCommon,
                   size: 14 * s,
                 ),
               SizedBox(width: 3 * s),
               Text(
                 '+30',
                 style: TextStyle(
-                  color: canWatch ? Colors.white : Colors.grey,
+                  color: canWatch ? AppColors.textPrimary : AppColors.rarityCommon,
                   fontSize: Responsive.fontSize(context, 14),
                   fontWeight: FontWeight.bold,
                 ),
@@ -710,7 +721,7 @@ class _AdRewardButtonState extends State<_AdRewardButton> {
               SizedBox(width: 2 * s),
               Icon(
                 Icons.diamond,
-                color: canWatch ? AppColors.skyBlue : Colors.grey,
+                color: canWatch ? AppColors.skyBlue : AppColors.rarityCommon,
                 size: 12 * s,
               ),
             ],
@@ -763,7 +774,7 @@ Widget _buildSetBonusBanner(BuildContext context, SkinState skinState) {
   if (activeBonuses.isEmpty) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 6 * s),
-      color: const Color(0xFF16213E).withAlpha(150),
+      color: AppColors.bgNavy.withAlpha(150),
       child: Row(
         children: [
           Text('👗', style: TextStyle(fontSize: 14 * s)),
@@ -771,7 +782,7 @@ Widget _buildSetBonusBanner(BuildContext context, SkinState skinState) {
           Expanded(
             child: Text(
               AppStrings.trs('skin_set_bonus'),
-              style: TextStyle(color: Colors.white38, fontSize: 11 * s),
+              style: TextStyle(color: AppColors.textFaint, fontSize: 11 * s),
             ),
           ),
         ],
@@ -783,7 +794,7 @@ Widget _buildSetBonusBanner(BuildContext context, SkinState skinState) {
     padding: EdgeInsets.symmetric(horizontal: 12 * s, vertical: 8 * s),
     decoration: BoxDecoration(
       gradient: LinearGradient(
-        colors: [const Color(0xFF1A1040).withAlpha(200), const Color(0xFF16213E).withAlpha(200)],
+        colors: [const Color(0xFF1A1040).withAlpha(200), AppColors.bgNavy.withAlpha(200)],
       ),
       border: Border(bottom: BorderSide(color: Colors.amber.withAlpha(30))),
     ),
@@ -791,7 +802,7 @@ Widget _buildSetBonusBanner(BuildContext context, SkinState skinState) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(AppStrings.trs('skin_set_bonus_active'), style: TextStyle(
-          color: Colors.amber, fontSize: 12 * s, fontWeight: FontWeight.bold,
+          color: AppColors.sinmyeongGold, fontSize: 12 * s, fontWeight: FontWeight.bold,
         )),
         SizedBox(height: 4 * s),
         Wrap(

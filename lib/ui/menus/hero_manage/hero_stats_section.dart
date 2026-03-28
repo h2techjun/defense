@@ -103,10 +103,10 @@ class HeroStatsSection extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isLocked
-                      ? const Color(0x22FFFFFF)
+                      ? AppColors.surfaceOverlayDim
                       : isSelected
                           ? tierColor.withValues(alpha: 0.6)
-                          : const Color(0x22FFFFFF),
+                          : AppColors.surfaceOverlayDim,
                   width: isSelected && !isLocked ? 1.5 : 1,
                 ),
                 boxShadow: isSelected && !isLocked
@@ -129,7 +129,7 @@ class HeroStatsSection extends ConsumerWidget {
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: isLocked
-                                  ? Colors.white24
+                                  ? AppColors.textGhost
                                   : isSelected ? tierColor : tierColor.withValues(alpha: 0.3),
                               width: isSelected && !isLocked ? 2 : 1,
                             ),
@@ -147,7 +147,7 @@ class HeroStatsSection extends ConsumerWidget {
                           ),
                         ),
                         if (isLocked)
-                          Icon(Icons.lock, color: Colors.white60, size: 20 * Responsive.scale(context)),
+                          Icon(Icons.lock, color: AppColors.textDisabled, size: 20 * Responsive.scale(context)),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -155,7 +155,7 @@ class HeroStatsSection extends ConsumerWidget {
                       tierLabel,
                       style: TextStyle(
                         fontSize: Responsive.fontSize(context, 10),
-                        color: isLocked ? Colors.white30 : isSelected ? Colors.white : Colors.white54,
+                        color: isLocked ? Colors.white30 : isSelected ? Colors.white : AppColors.textMid,
                         fontWeight: isSelected && !isLocked ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
@@ -170,7 +170,7 @@ class HeroStatsSection extends ConsumerWidget {
                         tierBadge,
                         style: TextStyle(
                           fontSize: Responsive.fontSize(context, 8),
-                          color: isLocked ? Colors.white30 : isSelected ? tierColor : Colors.white38,
+                          color: isLocked ? Colors.white30 : isSelected ? tierColor : AppColors.textFaint,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -223,9 +223,9 @@ class HeroStatsSection extends ConsumerWidget {
                   if (evo.hpMultiplier > 1.0)
                     _buildMultiplierChip(context, 'HP', evo.hpMultiplier, const Color(0xFF44DD44)),
                   if (evo.attackMultiplier > 1.0)
-                    _buildMultiplierChip(context, AppStrings.get(ref.watch(gameLanguageProvider), 'stat_attack'), evo.attackMultiplier, const Color(0xFFFF6644)),
+                    _buildMultiplierChip(context, AppStrings.get(ref.watch(gameLanguageProvider), 'stat_attack'), evo.attackMultiplier, AppColors.statAttack),
                   if (evo.rangeMultiplier > 1.0)
-                    _buildMultiplierChip(context, AppStrings.get(ref.watch(gameLanguageProvider), 'stat_range'), evo.rangeMultiplier, const Color(0xFF44AAFF)),
+                    _buildMultiplierChip(context, AppStrings.get(ref.watch(gameLanguageProvider), 'stat_range'), evo.rangeMultiplier, AppColors.statRange),
                 ],
               ),
             ),
@@ -257,8 +257,8 @@ class HeroStatsSection extends ConsumerWidget {
     final lang = ref.watch(gameLanguageProvider);
     final stats = [
       ('HP', hero.baseHp * evo.hpMultiplier, 1000.0, const Color(0xFF44DD44)),
-      (AppStrings.get(lang, 'stat_attack_power'), hero.baseAttack * evo.attackMultiplier, 200.0, const Color(0xFFFF6644)),
-      (AppStrings.get(lang, 'stat_range'), hero.baseRange * evo.rangeMultiplier, 400.0, const Color(0xFF44AAFF)),
+      (AppStrings.get(lang, 'stat_attack_power'), hero.baseAttack * evo.attackMultiplier, 200.0, AppColors.statAttack),
+      (AppStrings.get(lang, 'stat_range'), hero.baseRange * evo.rangeMultiplier, 400.0, AppColors.statRange),
       (AppStrings.get(lang, 'stat_speed'), hero.baseSpeed, 100.0, const Color(0xFFFFBB44)),
     ];
 
@@ -299,7 +299,7 @@ class HeroStatsSection extends ConsumerWidget {
             child: Container(
               height: 8 * Responsive.scale(context),
               decoration: BoxDecoration(
-                color: const Color(0x22FFFFFF),
+                color: AppColors.surfaceOverlayDim,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: FractionallySizedBox(
@@ -411,10 +411,10 @@ class HeroStatsSection extends ConsumerWidget {
           const SizedBox(height: 6),
           Row(
             children: [
-              _buildTag(context, '${AppStrings.get(ref.watch(gameLanguageProvider), "skill_damage")}: ${skill.damage.toInt()}', const Color(0xFFFF6644)),
+              _buildTag(context, '${AppStrings.get(ref.watch(gameLanguageProvider), "skill_damage")}: ${skill.damage.toInt()}', AppColors.statAttack),
               if (skill.duration > 0) ...[
                 const SizedBox(width: 6),
-                _buildTag(context, '${AppStrings.get(ref.watch(gameLanguageProvider), "skill_duration")}: ${skill.duration.toInt()}s', const Color(0xFF44AAFF)),
+                _buildTag(context, '${AppStrings.get(ref.watch(gameLanguageProvider), "skill_duration")}: ${skill.duration.toInt()}s', AppColors.statRange),
               ],
             ],
           ),

@@ -47,12 +47,12 @@ class BannerAdWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.ad_units, color: Colors.white54, size: 16 * s),
+              Icon(Icons.ad_units, color: AppColors.textMid, size: 16 * s),
               SizedBox(width: 8 * s),
               Text(
                 'Test Banner Ad ($width x $height)',
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: AppColors.textSecondary,
                   fontSize: Responsive.fontSize(context, 12),
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1 * s,

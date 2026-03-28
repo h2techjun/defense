@@ -173,7 +173,7 @@ class _TutorialOverlayState extends State<TutorialOverlay>
           Text(
             step.content,
             style: const TextStyle(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 13,
               height: 1.6,
             ),
@@ -200,7 +200,7 @@ class _TutorialOverlayState extends State<TutorialOverlay>
                         : AppStrings.trs('tutorial_tap_start'),
                     style: TextStyle(
                       color: _currentIndex < widget.steps.length - 1
-                          ? Colors.white54
+                          ? AppColors.textMid
                           : AppColors.sinmyeongGold,
                       fontSize: 12,
                       fontWeight: _currentIndex < widget.steps.length - 1
@@ -234,7 +234,7 @@ class _TutorialOverlayState extends State<TutorialOverlay>
                 ? AppColors.sinmyeongGold
                 : isDone
                     ? AppColors.sinmyeongGold.withAlpha(120)
-                    : Colors.white24,
+                    : AppColors.textGhost,
           ),
         );
       }),

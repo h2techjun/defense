@@ -61,7 +61,18 @@ class _HeroSkillButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isReady = info.cooldownRatio <= 0 && !info.isDead;
 
-    return GestureDetector(
+    final skillHint = isReady
+        ? AppStrings.trs('skill_ready')
+        : info.isDead
+            ? AppStrings.trs('hero_dead')
+            : AppStrings.trs('skill_cooldown');
+
+    return Semantics(
+      button: true,
+      label: '${info.name} ${info.skillName}',
+      enabled: isReady,
+      hint: skillHint,
+      child: GestureDetector(
       onTap: isReady ? info.onSkillTap : null,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
@@ -85,7 +96,7 @@ class _HeroSkillButton extends StatelessWidget {
                     ? AppColors.sinmyeongGold // 궁극기 금테
                     : isReady
                         ? AppColors.skyBlue
-                        : const Color(0xFF444466),
+                        : AppColors.borderDefault,
             width: info.isUltimate ? 2.5 : 1.5,
           ),
           boxShadow: isReady
@@ -128,7 +139,7 @@ class _HeroSkillButton extends StatelessWidget {
                     child: FractionallySizedBox(
                       heightFactor: info.reviveProgress,
                       child: Container(
-                        color: const Color(0x44FFFFFF),
+                        color: AppColors.surfaceOverlay,
                       ),
                     ),
                   ),
@@ -159,7 +170,7 @@ class _HeroSkillButton extends StatelessWidget {
                       info.emoji,
                       style: TextStyle(
                         fontSize: Responsive.fontSize(context, 22),
-                        color: info.isDead ? Colors.white30 : null,
+                        color: info.isDead ? AppColors.textFaint : null,
                       ),
                     ),
                 ],
@@ -205,7 +216,7 @@ class _HeroSkillButton extends StatelessWidget {
                   '⏳ ${AppStrings.trs(info.reviveLabel)} ${(info.reviveProgress * 100).toInt()}%',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white54,
+                    color: AppColors.textMid,
                     fontSize: Responsive.fontSize(context, 8),
                   ),
                 ),
@@ -222,6 +233,7 @@ class _HeroSkillButton extends StatelessWidget {
         ),
       ),
         ),
+      ),
       ),
     );
   }

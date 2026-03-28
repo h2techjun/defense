@@ -60,13 +60,13 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                   onTap: widget.onBack,
                   borderRadius: BorderRadius.circular(8),
                   decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0x44FFFFFF)),
+                    border: Border.all(color: AppColors.surfaceOverlay),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 12 * s, vertical: 6 * s),
                   child: Text(
                     AppStrings.get(lang, 'back'),
-                    style: TextStyle(color: Colors.white70, fontSize: Responsive.fontSize(context, 13)),
+                    style: TextStyle(color: AppColors.textSecondary, fontSize: Responsive.fontSize(context, 13)),
                   ),
                 ),
                 SizedBox(width: 12 * s),
@@ -87,7 +87,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
             margin: EdgeInsets.symmetric(horizontal: 12 * s),
             padding: EdgeInsets.all(10 * s),
             decoration: BoxDecoration(
-              color: const Color(0x22FFFFFF),
+              color: AppColors.surfaceOverlayDim,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0x44CC88FF)),
             ),
@@ -132,7 +132,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                                       ? const Color(0xFFCC88FF)
                                       : hasSlot
                                           ? (meta?['color'] as Color?)?.withAlpha(200) ?? const Color(0x66FFFFFF)
-                                          : const Color(0x22FFFFFF),
+                                          : AppColors.surfaceOverlayDim,
                                   width: hasSlot ? 2 : 1,
                                 ),
                               ),
@@ -148,11 +148,11 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                                           ),
                                           Text(
                                             'Lv.${loadoutState.getTowerLevel(type!)}',
-                                            style: TextStyle(color: Colors.white54, fontSize: Responsive.fontSize(context, 8)),
+                                            style: TextStyle(color: AppColors.textMid, fontSize: Responsive.fontSize(context, 8)),
                                           ),
                                         ],
                                       )
-                                    : Text('+', style: TextStyle(color: Colors.white24, fontSize: Responsive.fontSize(context, 18))),
+                                    : Text('+', style: TextStyle(color: AppColors.textGhost, fontSize: Responsive.fontSize(context, 18))),
                               ),
                             ),
                           );
@@ -419,7 +419,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                 borderRadius: BorderRadius.circular(2),
                 child: LinearProgressIndicator(
                   value: level >= maxLv ? 1.0 : (xpNeeded > 0 ? xp / xpNeeded : 0),
-                  backgroundColor: const Color(0x22FFFFFF),
+                  backgroundColor: AppColors.surfaceOverlayDim,
                   color: level >= maxLv ? AppColors.sinmyeongGold : color.withAlpha(180),
                   minHeight: 3 * s,
                 ),
@@ -428,7 +428,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                 padding: EdgeInsets.only(top: 2 * s),
                 child: Text(
                   level >= maxLv ? '✨ MAX' : '$xp / $xpNeeded XP',
-                  style: TextStyle(color: Colors.white38, fontSize: Responsive.fontSize(context, 7)),
+                  style: TextStyle(color: AppColors.textFaint, fontSize: Responsive.fontSize(context, 7)),
                 ),
               ),
               SizedBox(height: 4 * s),
@@ -439,7 +439,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                 decoration: BoxDecoration(
                   color: isBranch ? AppColors.sinmyeongGold.withAlpha(20) : Colors.white.withAlpha(10),
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: isBranch ? AppColors.sinmyeongGold.withAlpha(80) : Colors.white24),
+                  border: Border.all(color: isBranch ? AppColors.sinmyeongGold.withAlpha(80) : AppColors.textGhost),
                 ),
                 child: DropdownButton<int>(
                   value: previewIdx,
@@ -451,7 +451,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                   dropdownColor: const Color(0xEE1A1530),
                   underline: const SizedBox.shrink(),
                   iconSize: 14 * s,
-                  icon: Icon(Icons.arrow_drop_down, color: Colors.white54, size: 14 * s),
+                  icon: Icon(Icons.arrow_drop_down, color: AppColors.textMid, size: 14 * s),
                   style: TextStyle(color: Colors.white, fontSize: Responsive.fontSize(context, 9)),
                 ),
               ),
@@ -483,7 +483,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                 SizedBox(height: 2 * s),
                 Text(
                   stats.desc!,
-                  style: TextStyle(color: Colors.white38, fontSize: Responsive.fontSize(context, 6)),
+                  style: TextStyle(color: AppColors.textFaint, fontSize: Responsive.fontSize(context, 6)),
                   maxLines: 2, overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -500,7 +500,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
       children: [
         Text(icon, style: TextStyle(fontSize: Responsive.fontSize(context, 8))),
         SizedBox(width: 2 * s),
-        Text(label, style: TextStyle(color: Colors.white54, fontSize: Responsive.fontSize(context, 7))),
+        Text(label, style: TextStyle(color: AppColors.textMid, fontSize: Responsive.fontSize(context, 7))),
         const Spacer(),
         Text(value, style: TextStyle(color: Colors.white, fontSize: Responsive.fontSize(context, 8), fontWeight: FontWeight.bold)),
       ],

@@ -162,7 +162,7 @@ class GameTooltip extends StatelessWidget {
                           style: TextStyle(
                             color: stat.highlight
                               ? AppColors.sinmyeongGold
-                              : Colors.white,
+                              : AppColors.textPrimary,
                             fontSize: Responsive.fontSize(context, 10),
                             fontWeight: stat.highlight
                               ? FontWeight.bold
