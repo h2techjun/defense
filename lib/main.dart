@@ -17,10 +17,17 @@ import 'game_screen.dart';
 import 'l10n/app_strings.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'services/crazygames.dart';
 
 Future<void> main() async {
   dlog('🚀 [main] Flutter app starting...');
   WidgetsFlutterBinding.ensureInitialized();
+
+  // CrazyGames SDK: 로딩 시작 알림 → 초기화
+  if (kIsWeb) {
+    CrazyGamesService.loadingStart();
+    await CrazyGamesService.init();
+  }
 
   // Zone mismatch 경고는 무해 (ensureInitialized: 루트 Zone, runApp: guarded Zone)
 

@@ -21,6 +21,7 @@ import 'state/skin_provider.dart';
 import 'state/achievement_provider.dart';
 import 'services/ad_manager.dart';
 import 'services/cloud_save_manager.dart';
+import 'services/crazygames.dart';
 import 'l10n/app_strings.dart';
 import 'ui/dialogs/hero_unlock_dialog.dart';
 import 'ui/dialogs/story_cutscene_dialog.dart';
@@ -87,6 +88,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
       } on Exception catch (e) {
         dlog('☁️ [GameScreen] 클라우드 동기화 스킵: $e');
       }
+
+      // CrazyGames: 로딩 완료 + 게임플레이 시작
+      CrazyGamesService.loadingStop();
+      CrazyGamesService.gameplayStart();
     });
   }
 
