@@ -22,5 +22,15 @@ if ([string]::IsNullOrEmpty($supabaseUrl) -or [string]::IsNullOrEmpty($supabaseA
         --dart-define="SUPABASE_ANON_KEY=$supabaseAnonKey"
 }
 
+# 프로덕션 불필요 파일 정리 (CrazyGames 50MB 제한 대응)
+Get-ChildItem build/web -Recurse -Filter "*.js.symbols" | Remove-Item -Force
+Write-Host "Cleaned .js.symbols files" -ForegroundColor Gray
+
 $size = (Get-ChildItem build/web -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
 Write-Host "`nBuild size: $([math]::Round($size, 1)) MB" -ForegroundColor Cyan
+
+if ($size -gt 50) {
+    Write-Host "WARNING: Over 50MB CrazyGames limit!" -ForegroundColor Red
+} else {
+    Write-Host "CrazyGames ready!" -ForegroundColor Green
+}
