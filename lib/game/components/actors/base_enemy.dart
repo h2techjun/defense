@@ -433,9 +433,9 @@ class BaseEnemy extends PositionComponent
   void takeDamage(double damage, DamageType damageType, {bool ignoreShield = false}) {
     if (_state == EnemyState.dying) return;
 
-    // 물리 면역 체크 (그슨대 등 — abilities에 'Phys Immune' 포함)
+    // 물리 면역 체크 (그슨대 등 — abilities에 'phys_immune' 포함)
     if (damageType == DamageType.physical &&
-        data.abilities.any((a) => a.name == 'Phys Immune')) {
+        data.abilities.any((a) => a.id == 'phys_immune')) {
       return; // 물리 공격 무효
     }
 
@@ -478,7 +478,7 @@ class BaseEnemy extends PositionComponent
   /// 보스 특수 능력 발동
   void _executeBossAbility() {
     // 챕터 1: 두억시니 — 지진
-    if (data.abilities.any((a) => a.name == 'Earthquake')) {
+    if (data.abilities.any((a) => a.id == 'earthquake')) {
       final towers = game.cachedTowers;
       for (final tower in towers) {
         tower.silence(2.0);
@@ -489,24 +489,24 @@ class BaseEnemy extends PositionComponent
     }
 
     // 챕터 2: 산군 — 포효 & 창귀 소환
-    if (data.abilities.any((a) => a.name == 'Roar')) {
+    if (data.abilities.any((a) => a.id == 'roar')) {
       final towers = game.cachedTowers;
       for (final tower in towers) {
         tower.silence(3.0);
       }
       game.shakeScreen(5.0, duration: 0.4);
       game.triggerRedFlash(duration: 0.4);
-      
+
       // 창귀 소환 (능력 목록에 있으면 발동)
-      if (data.abilities.any((a) => a.name == 'Summon')) {
-        final ability = data.abilities.firstWhere((a) => a.name == 'Summon');
+      if (data.abilities.any((a) => a.id == 'summon')) {
+        final ability = data.abilities.firstWhere((a) => a.id == 'summon');
         _spawnBossMinions(EnemyId.tigerSlave, ability.value.toInt());
       }
       return;
     }
 
     // 챕터 3: 대왕 달걀귀신 — 스킬 반사 & 흡수
-    if (data.abilities.any((a) => a.name == 'Reflect')) {
+    if (data.abilities.any((a) => a.id == 'reflect')) {
       game.triggerRedFlash(duration: 0.3);
 
       // 반사 탄환: 가장 가까운 영웅에게 보스 공격력 50% 즉시 데미지
@@ -533,7 +533,7 @@ class BaseEnemy extends PositionComponent
         }
       }
 
-      if (data.abilities.any((a) => a.name == 'Absorb')) {
+      if (data.abilities.any((a) => a.id == 'absorb')) {
         // 주변 병사 제거 (병영 방어 무력화)
         final soldiers = parent?.children.whereType<BarracksSoldier>().toList() ?? [];
         for (final soldier in soldiers) {
@@ -547,8 +547,8 @@ class BaseEnemy extends PositionComponent
     }
 
     // 챕터 4: 폭군왕 — 칙령 & 궁녀 소환
-    if (data.abilities.any((a) => a.name == 'Decree')) {
-      final ability = data.abilities.firstWhere((a) => a.name == 'Decree');
+    if (data.abilities.any((a) => a.id == 'decree')) {
+      final ability = data.abilities.firstWhere((a) => a.id == 'decree');
       final towers = List<BaseTower>.from(game.cachedTowers)..shuffle();
       // 랜덤 타워 3개 (또는 value만큼) 침묵
       final count = ability.value.toInt().clamp(0, towers.length);
@@ -557,14 +557,14 @@ class BaseEnemy extends PositionComponent
       }
       game.triggerRedFlash(duration: 0.8);
 
-      if (data.abilities.any((a) => a.name == 'Summon')) {
+      if (data.abilities.any((a) => a.id == 'summon')) {
         _spawnBossMinions(EnemyId.courtAssassin, 4);
       }
       return;
     }
 
     // 챕터 5: 귀문관 수문장 — 귀문개방 & 저승의 선고
-    if (data.abilities.any((a) => a.name == 'Ghost Gate')) {
+    if (data.abilities.any((a) => a.id == 'ghost_gate')) {
       // 랜덤 적 소환 (창귀, 아귀, 자객 중 랜덤)
       final pool = [EnemyId.hungryGhost, EnemyId.tigerSlave, EnemyId.courtAssassin];
       final targetId = pool[_random.nextInt(pool.length)];
@@ -572,7 +572,7 @@ class BaseEnemy extends PositionComponent
       game.shakeScreen(5.0, duration: 0.5);
     }
 
-    if (data.abilities.any((a) => a.name == 'Judgment')) {
+    if (data.abilities.any((a) => a.id == 'judgment')) {
       // 가장 비싼(강한) 타워 1개 파괴 (또는 장시간 무력화)
       final towers = List<BaseTower>.from(game.cachedTowers);
       if (towers.isNotEmpty) {
@@ -746,12 +746,16 @@ class BaseEnemy extends PositionComponent
   }
 
   Map<String, dynamic> _buildTooltipInfo() {
-    final abilities = <String>[];
-    if (data.isFlying) abilities.add('Flying');
-    if (data.isStealth) abilities.add('Stealth');
-    if (data.isBoss) abilities.add('Boss');
-    if (data.shieldHpRatio > 0) abilities.add('Shield');
-    if (data.debuffSlowAura > 0) abilities.add('Slow Aura');
+    // 능력 키 목록 (i18n 키, gameplay_scaffold에서 번역됨)
+    final abilityKeys = <String>[];
+    if (data.isFlying) abilityKeys.add('ability_tag_flying');
+    if (data.isStealth) abilityKeys.add('ability_tag_stealth');
+    if (data.isBoss) abilityKeys.add('ability_tag_boss');
+    if (data.shieldHpRatio > 0) abilityKeys.add('ability_tag_shield');
+    if (data.debuffSlowAura > 0) abilityKeys.add('ability_tag_slow_aura');
+    for (final a in data.abilities) {
+      abilityKeys.add(a.name);
+    }
 
     return {
       'type': 'enemy',
@@ -760,7 +764,7 @@ class BaseEnemy extends PositionComponent
       'speed': _speed.toStringAsFixed(0),
       'reward': data.sinmyeongReward.toString(),
       'description': data.description,
-      'abilities': abilities.join(', '),
+      'abilityKeys': abilityKeys,
       'isBerserk': _isBerserk,
       'position': Vector2(position.x, position.y),
     };

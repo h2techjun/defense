@@ -21,7 +21,8 @@ class TowerFloorData {
   final int bonusGems;                // 클리어 보석 보상
   final int bonusExp;                 // 클리어 경험치 보상
   final int waveCount;                // 웨이브 수
-  final String floorTitle;            // "3층 - 굶주린 혼령의 길"
+  final String floorTitle;            // "⚔️ F3" 형태 (이모지+층수, i18n 키 없음)
+  final String typeKey;               // i18n 키: "et_type_normal" 등
   final String? narrative;            // 시작 대사
 
   const TowerFloorData({
@@ -34,6 +35,7 @@ class TowerFloorData {
     required this.bonusExp,
     required this.waveCount,
     required this.floorTitle,
+    required this.typeKey,
     this.narrative,
   });
 }
@@ -240,7 +242,8 @@ class TowerFloorGenerator {
       bonusGems: getGemReward(floor, type),
       bonusExp: getExpReward(floor, type),
       waveCount: waveCount,
-      floorTitle: '$typeEmoji F$floor — $typeName',
+      floorTitle: '$typeEmoji F$floor',
+      typeKey: typeName,
       narrative: type == TowerFloorType.boss
           ? 'et_narr_boss'
           : (type == TowerFloorType.elite

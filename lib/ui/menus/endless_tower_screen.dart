@@ -96,6 +96,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       bonusExp: challenge.reward.exp,
       waveCount: challenge.targetWaves,
       floorTitle: '📅 ${challenge.title}',
+      typeKey: challenge.bossId != null ? 'et_type_boss' : 'et_type_normal',
       narrative: 'et_narr_start',
     );
 
@@ -676,7 +677,7 @@ class _TowerFloorCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        floor.floorTitle,
+                        '${floor.floorTitle} — ${AppStrings.trs(floor.typeKey)}',
                         style: TextStyle(
                           color: isCleared ? AppColors.textMid : AppColors.textPrimary,
                           fontSize: Responsive.fontSize(context, 14),

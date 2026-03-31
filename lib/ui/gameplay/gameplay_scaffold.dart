@@ -466,8 +466,14 @@ class _GameplayScaffoldState extends ConsumerState<GameplayScaffold> {
         stats: [
           TooltipStat(AppStrings.get(_currentLang, 'stat_speed'), info['speed'] as String? ?? ''),
           TooltipStat(AppStrings.get(_currentLang, 'stat_reward'), '✨${info['reward']}'),
-          if ((info['abilities'] as String? ?? '').isNotEmpty)
-            TooltipStat(AppStrings.get(_currentLang, 'stat_ability'), info['abilities'] as String? ?? '', highlight: true),
+          if ((info['abilityKeys'] as List<dynamic>? ?? []).isNotEmpty)
+            TooltipStat(
+              AppStrings.get(_currentLang, 'stat_ability'),
+              (info['abilityKeys'] as List<dynamic>)
+                  .map((k) => AppStrings.get(_currentLang, k as String))
+                  .join(', '),
+              highlight: true,
+            ),
         ],
       );
     }

@@ -390,7 +390,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          data.name,
+                          AppStrings.get(lang, data.name),
                           style: TextStyle(color: Colors.white, fontSize: Responsive.fontSize(context, 9), fontWeight: FontWeight.bold),
                           maxLines: 1, overflow: TextOverflow.ellipsis,
                         ),
@@ -472,7 +472,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                     SizedBox(width: 2 * s),
                     Expanded(
                       child: Text(
-                        stats.special!,
+                        AppStrings.get(lang, stats.special!),
                         style: TextStyle(color: AppColors.sinmyeongGold, fontSize: Responsive.fontSize(context, 7)),
                         maxLines: 3, overflow: TextOverflow.ellipsis,
                       ),

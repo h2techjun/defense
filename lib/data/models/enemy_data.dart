@@ -4,12 +4,16 @@ import '../../common/enums.dart';
 
 /// 적 특수 능력
 class EnemyAbility {
+  /// 능력 식별자 (영문 snake_case, 코드 내 비교용)
+  final String id;
+  /// 능력 표시명 i18n 키
   final String name;
   final String description;
   final double value; // 능력의 수치 (확률, 데미지 등)
   final double duration;
 
   const EnemyAbility({
+    required this.id,
     required this.name,
     required this.description,
     this.value = 0,
@@ -18,8 +22,12 @@ class EnemyAbility {
 
   /// JSON → EnemyAbility
   factory EnemyAbility.fromJson(Map<String, dynamic> json) {
+    final nameKey = json['name'] as String? ?? '';
+    // id 필드가 없으면 name 필드를 id로 사용 (구 포맷 호환)
+    final id = json['id'] as String? ?? nameKey;
     return EnemyAbility(
-      name: json['name'] as String? ?? '',
+      id: id,
+      name: nameKey,
       description: json['description'] as String? ?? '',
       value: (json['value'] as num?)?.toDouble() ?? 0,
       duration: (json['duration'] as num?)?.toDouble() ?? 0,
@@ -28,6 +36,7 @@ class EnemyAbility {
 
   /// EnemyAbility → JSON
   Map<String, dynamic> toJson() => {
+    'id': id,
     'name': name,
     'description': description,
     if (value != 0) 'value': value,

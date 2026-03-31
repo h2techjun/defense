@@ -12,7 +12,8 @@
         "evasion":  0.05,
         "abilities":  [
                           {
-                              "name":  "Mana Steal",
+                              "id":  "mana_steal",
+                              "name":  "ability_mana_steal_name",
                               "description":  "ability_mana_steal_desc",
                               "value":  2
                           }
@@ -44,7 +45,8 @@
         "deathSpawnCount":  2,
         "abilities":  [
                           {
-                              "name":  "Burden Explosion",
+                              "id":  "burden_explosion",
+                              "name":  "ability_burden_explosion_name",
                               "description":  "ability_burden_explosion_desc"
                           }
                       ]
@@ -65,7 +67,8 @@
         "debuffRange":  120,
         "abilities":  [
                           {
-                              "name":  "Scream",
+                              "id":  "scream",
+                              "name":  "ability_scream_name",
                               "description":  "ability_scream_desc",
                               "value":  0.5,
                               "duration":  3
@@ -86,7 +89,8 @@
         "isStealth":  true,
         "abilities":  [
                           {
-                              "name":  "Stealth",
+                              "id":  "stealth",
+                              "name":  "ability_stealth_name",
                               "description":  "ability_stealth_desc"
                           }
                       ]
@@ -104,7 +108,8 @@
         "isBoss":  true,
         "abilities":  [
                           {
-                              "name":  "Earthquake",
+                              "id":  "earthquake",
+                              "name":  "ability_earthquake_name",
                               "description":  "ability_earthquake_desc",
                               "duration":  2
                           }
@@ -122,7 +127,8 @@
         "sinmyeongReward":  12,
         "abilities":  [
                           {
-                              "name":  "Tiger Summon",
+                              "id":  "tiger_summon",
+                              "name":  "ability_tiger_summon_name",
                               "description":  "ability_tiger_summon_desc",
                               "value":  0.2
                           }
@@ -141,7 +147,8 @@
         "isFlying":  true,
         "abilities":  [
                           {
-                              "name":  "Ignite",
+                              "id":  "ignite",
+                              "name":  "ability_ignite_name",
                               "description":  "ability_ignite_desc",
                               "value":  5,
                               "duration":  3
@@ -162,7 +169,8 @@
         "shieldDamageReduction":  0.5,
         "abilities":  [
                           {
-                              "name":  "Phys Immune",
+                              "id":  "phys_immune",
+                              "name":  "ability_phys_immune_name",
                               "description":  "ability_phys_immune_desc"
                           }
                       ]
@@ -179,7 +187,8 @@
         "sinmyeongReward":  18,
         "abilities":  [
                           {
-                              "name":  "Confuse",
+                              "id":  "confuse",
+                              "name":  "ability_confuse_name",
                               "description":  "ability_confuse_desc",
                               "duration":  3
                           }
@@ -197,7 +206,8 @@
         "sinmyeongReward":  25,
         "abilities":  [
                           {
-                              "name":  "Poison Cloud",
+                              "id":  "poison_cloud",
+                              "name":  "ability_poison_cloud_name",
                               "description":  "ability_poison_cloud_desc",
                               "value":  10,
                               "duration":  5
@@ -217,12 +227,14 @@
         "isBoss":  true,
         "abilities":  [
                           {
-                              "name":  "Roar",
+                              "id":  "roar",
+                              "name":  "ability_roar_name",
                               "description":  "ability_roar_desc",
                               "duration":  8
                           },
                           {
-                              "name":  "Summon",
+                              "id":  "summon",
+                              "name":  "ability_summon_name",
                               "description":  "ability_summon_changwi_desc",
                               "value":  3
                           }
@@ -240,7 +252,8 @@
         "sinmyeongReward":  15,
         "abilities":  [
                           {
-                              "name":  "Charm",
+                              "id":  "charm",
+                              "name":  "ability_charm_name",
                               "description":  "ability_charm_desc",
                               "duration":  3
                           }
@@ -271,7 +284,8 @@
         "sinmyeongReward":  15,
         "abilities":  [
                           {
-                              "name":  "Divination",
+                              "id":  "divination",
+                              "name":  "ability_divination_name",
                               "description":  "ability_divination_desc",
                               "value":  0.5,
                               "duration":  5
@@ -291,7 +305,8 @@
         "isFlying":  true,
         "abilities":  [
                           {
-                              "name":  "Scream",
+                              "id":  "scream",
+                              "name":  "ability_scream_name",
                               "description":  "ability_scream_bird_desc",
                               "value":  30,
                               "duration":  2
@@ -312,7 +327,8 @@
         "isStealth":  true,
         "abilities":  [
                           {
-                              "name":  "Clone",
+                              "id":  "clone",
+                              "name":  "ability_clone_name",
                               "description":  "ability_clone_desc"
                           }
                       ]
@@ -331,11 +347,13 @@
         "evasion":  0.3,
         "abilities":  [
                           {
-                              "name":  "Reflect",
+                              "id":  "reflect",
+                              "name":  "ability_reflect_name",
                               "description":  "ability_reflect_desc"
                           },
                           {
-                              "name":  "Absorb",
+                              "id":  "absorb",
+                              "name":  "ability_absorb_name",
                               "description":  "ability_absorb_desc",
                               "value":  1
                           }
@@ -354,7 +372,8 @@
         "isStealth":  true,
         "abilities":  [
                           {
-                              "name":  "Ambush",
+                              "id":  "ambush",
+                              "name":  "ability_ambush_name",
                               "description":  "ability_ambush_desc",
                               "value":  2
                           }
@@ -374,7 +393,8 @@
         "debuffRange":  100,
         "abilities":  [
                           {
-                              "name":  "Bribe",
+                              "id":  "bribe",
+                              "name":  "ability_bribe_name",
                               "description":  "ability_bribe_desc",
                               "value":  0.3
                           }
@@ -394,7 +414,8 @@
         "shieldDamageReduction":  0.6,
         "abilities":  [
                           {
-                              "name":  "Royal Shield",
+                              "id":  "royal_shield",
+                              "name":  "ability_royal_shield_name",
                               "description":  "ability_royal_shield_desc"
                           }
                       ]
@@ -412,7 +433,8 @@
         "isFlying":  true,
         "abilities":  [
                           {
-                              "name":  "Curse Script",
+                              "id":  "curse_script",
+                              "name":  "ability_curse_script_name",
                               "description":  "ability_curse_script_desc",
                               "duration":  3
                           }
@@ -432,7 +454,8 @@
         "deathSpawnCount":  2,
         "abilities":  [
                           {
-                              "name":  "Manipulate",
+                              "id":  "manipulate",
+                              "name":  "ability_manipulate_name",
                               "description":  "ability_manipulate_desc"
                           }
                       ]
@@ -450,13 +473,15 @@
         "isBoss":  true,
         "abilities":  [
                           {
-                              "name":  "Decree",
+                              "id":  "decree",
+                              "name":  "ability_decree_name",
                               "description":  "ability_decree_desc",
                               "value":  3,
                               "duration":  10
                           },
                           {
-                              "name":  "Summon",
+                              "id":  "summon",
+                              "name":  "ability_summon_name",
                               "description":  "ability_summon_assassin_desc",
                               "value":  4
                           }
@@ -475,7 +500,8 @@
         "evasion":  0.35,
         "abilities":  [
                           {
-                              "name":  "Death List",
+                              "id":  "death_list",
+                              "name":  "ability_death_list_name",
                               "description":  "ability_death_list_desc",
                               "value":  0.2
                           }
@@ -494,7 +520,8 @@
         "isFlying":  true,
         "abilities":  [
                           {
-                              "name":  "Wail",
+                              "id":  "wail",
+                              "name":  "ability_wail_name",
                               "description":  "ability_wail_desc",
                               "value":  5
                           }
@@ -514,7 +541,8 @@
         "shieldDamageReduction":  0.55,
         "abilities":  [
                           {
-                              "name":  "Bone Armor",
+                              "id":  "bone_armor",
+                              "name":  "ability_bone_armor_name",
                               "description":  "ability_bone_armor_desc"
                           }
                       ]
@@ -531,7 +559,8 @@
         "sinmyeongReward":  22,
         "abilities":  [
                           {
-                              "name":  "Shackle",
+                              "id":  "shackle",
+                              "name":  "ability_shackle_name",
                               "description":  "ability_shackle_desc",
                               "duration":  5
                           }
@@ -549,7 +578,8 @@
         "sinmyeongReward":  18,
         "abilities":  [
                           {
-                              "name":  "Karma Flame",
+                              "id":  "karma_flame",
+                              "name":  "ability_karma_flame_name",
                               "description":  "ability_karma_flame_desc",
                               "value":  8,
                               "duration":  4
@@ -569,12 +599,14 @@
         "isBoss":  true,
         "abilities":  [
                           {
-                              "name":  "Ghost Gate",
+                              "id":  "ghost_gate",
+                              "name":  "ability_ghost_gate_name",
                               "description":  "ability_ghost_gate_desc",
                               "value":  3
                           },
                           {
-                              "name":  "Judgment",
+                              "id":  "judgment",
+                              "name":  "ability_judgment_name",
                               "description":  "ability_judgment_desc",
                               "duration":  15
                           }
