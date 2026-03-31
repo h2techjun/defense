@@ -69,7 +69,7 @@ class WebAudioSynth {
       _audioCtx = JSAudioContext();
       _initialized = true;
       if (kDebugMode) dlog('🎵 WebAudioSynth 초기화 완료 (Web Audio API)');
-    } catch (e) {
+    } on Exception catch (e) {
       if (kDebugMode) dlog('⚠️ WebAudioSynth 초기화 실패: $e');
     }
   }
@@ -90,7 +90,7 @@ class WebAudioSynth {
       try {
         osc.disconnect();
         gain.disconnect();
-      } catch (e) {
+      } on Exception catch (e) {
         dlog('[WebAudioSynth] 노드 정리 오류: $e');
       }
       _activeNodeCount--;
@@ -130,7 +130,7 @@ class WebAudioSynth {
       osc.stop(now + duration + 0.05);
 
       _scheduleNodeCleanup(osc, gain, duration);
-    } catch (e) {
+    } on Exception catch (e) {
       if (kDebugMode) dlog('⚠️ playTone 오류: $e');
     }
   }
@@ -167,7 +167,7 @@ class WebAudioSynth {
 
         _scheduleNodeCleanup(osc, gain, duration);
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (kDebugMode) dlog('⚠️ playNoise 오류: $e');
     }
   }
@@ -204,7 +204,7 @@ class WebAudioSynth {
       osc.stop(now + duration + 0.05);
 
       _scheduleNodeCleanup(osc, gain, duration);
-    } catch (e) {
+    } on Exception catch (e) {
       if (kDebugMode) dlog('⚠️ playSweep 오류: $e');
     }
   }

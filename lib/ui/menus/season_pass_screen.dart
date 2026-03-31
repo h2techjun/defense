@@ -12,6 +12,7 @@ import '../../state/user_state.dart';
 import '../../services/ad_manager.dart';
 import '../theme/app_colors.dart';
 import '../../l10n/app_strings.dart';
+import '../../common/asset_paths.dart';
 
 class SeasonPassScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
@@ -52,7 +53,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
             child: Opacity(
               opacity: 0.15,
               child: Image.asset(
-                'assets/images/objects/obj_sacred_tree.png',
+                AssetPaths.asset('objects/obj_sacred_tree'),
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
               ),

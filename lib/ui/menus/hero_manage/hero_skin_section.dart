@@ -12,6 +12,7 @@ import '../../../l10n/app_strings.dart';
 import '../../../state/skin_provider.dart';
 import '../../common/hero_sprite_viewer.dart';
 import '../../theme/app_colors.dart';
+import '../../../common/asset_paths.dart';
 import 'hero_helpers.dart';
 
 class HeroSkinSection extends ConsumerWidget {
@@ -123,7 +124,7 @@ class HeroSkinSection extends ConsumerWidget {
                             BlendMode.srcATop,
                           ),
                     child: HeroSpriteViewer(
-                      imagePath: 'assets/images/heroes/${getHeroFileName(hero.id)}_tier${tier}_sprites.png',
+                      imagePath: AssetPaths.asset('heroes/${getHeroFileName(hero.id)}_tier${tier}_sprites'),
                       width: double.infinity,
                       height: 140 * s,
                       fallbackText: skin.rarity.emoji,
@@ -269,7 +270,7 @@ class HeroSkinSection extends ConsumerWidget {
                               ),
                               child: ClipOval(
                                 child: HeroSpriteViewer(
-                                  imagePath: 'assets/images/heroes/${heroFileName}_tier${tierNumber}_sprites.png',
+                                  imagePath: AssetPaths.asset('heroes/${heroFileName}_tier${tierNumber}_sprites'),
                                   width: 36 * Responsive.scale(context),
                                   height: 36 * Responsive.scale(context),
                                   fallbackText: rarity.emoji,

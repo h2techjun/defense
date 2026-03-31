@@ -7,6 +7,7 @@ import 'package:flame/components.dart';
 
 import '../../../common/debug_log.dart';
 import '../../../common/enums.dart';
+import '../../../common/asset_paths.dart';
 
 import '../../../audio/sound_manager.dart';
 import '../../defense_game.dart';
@@ -97,8 +98,8 @@ class BarracksSoldier extends PositionComponent
     // ?ㅽ봽?쇱씠???대?吏 濡쒕뱶 ?쒕룄
     try {
       final imagePath = isGrappler
-          ? 'soldiers/soldier_grappler.png'
-          : 'soldiers/soldier_normal.png';
+          ? AssetPaths.image('soldiers/soldier_grappler')
+          : AssetPaths.image('soldiers/soldier_normal');
       final image = await game.images.load(imagePath);
       final sprite = Sprite(image);
 
@@ -114,7 +115,7 @@ class BarracksSoldier extends PositionComponent
       bodyRect.paint.color = const Color(0x00000000);
       shieldRect.paint.color = const Color(0x00000000);
       weaponRect.paint.color = const Color(0x00000000);
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[BarracksSoldier] 스프라이트 로드 실패 → 기존 렌더링: $e');
     }
 

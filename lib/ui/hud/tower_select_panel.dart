@@ -1,6 +1,7 @@
 // 해원의 문 - 타워 선택 패널 (인게임 하단)
 
 import 'dart:ui';
+import 'package:gateway_of_regrets/common/asset_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -176,7 +177,7 @@ class _TowerButtonState extends State<_TowerButton> {
           ),
           child: Center(
             child: Image.asset(
-              'assets/images/towers/${widget.imageName}.png',
+              AssetPaths.asset('towers/${widget.imageName}'),
               width: 40 * s, height: 40 * s,
               fit: BoxFit.contain,
               errorBuilder: (_, __, ___) => Text(widget.icon, style: TextStyle(fontSize: Responsive.fontSize(context, 20))),
@@ -254,7 +255,7 @@ class _TowerButtonState extends State<_TowerButton> {
               border: Border.all(color: Colors.white, width: 2),
             ),
             child: Image.asset(
-              'assets/images/towers/${widget.imageName}.png',
+              AssetPaths.asset('towers/${widget.imageName}'),
               width: 48 * Responsive.scale(context),
               height: 48 * Responsive.scale(context),
               fit: BoxFit.contain,

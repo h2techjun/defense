@@ -1,12 +1,12 @@
 // 해원의 문 - 타워 업그레이드 & 판매 다이얼로그
 // 타워를 터치하면 표시되는 업그레이드/판매 패널
 
+import 'package:gateway_of_regrets/common/asset_paths.dart';
 import 'package:flutter/material.dart';
 
 import '../../audio/sound_manager.dart';
 import '../../common/enums.dart';
 import '../../data/game_data_loader.dart';
-import '../../data/models/tower_data.dart';
 import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../theme/glass_panel.dart';
@@ -97,8 +97,8 @@ class TowerUpgradeDialog extends StatelessWidget {
               children: [
                 Image.asset(
                   selectedBranch != null
-                      ? 'assets/images/towers/tower_${selectedBranch!.name}.png'
-                      : 'assets/images/towers/tower_${towerType.name}_${currentLevel.clamp(1, 3)}.png',
+                      ? AssetPaths.asset('towers/tower_${selectedBranch!.name}')
+                      : AssetPaths.asset('towers/tower_${towerType.name}_${currentLevel.clamp(1, 3)}'),
                   width: 16, height: 16, fit: BoxFit.contain,
                   errorBuilder: (_, __, ___) => Text(
                     _getIconForType(towerType), style: const TextStyle(fontSize: 10),

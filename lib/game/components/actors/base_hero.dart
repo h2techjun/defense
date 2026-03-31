@@ -2,7 +2,6 @@
 // 자동 공격, 액티브 스킬, 은신 감지, HP 재생, 부활 시스템
 
 import 'dart:math' as math;
-import 'dart:ui' hide TextStyle;
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/painting.dart';
 import 'package:flame/collisions.dart';
@@ -22,6 +21,7 @@ import '../effects/particle_effect.dart';
 import '../effects/sprite_hit_effect.dart';
 import '../../../audio/sound_manager.dart';
 import '../../../common/debug_log.dart';
+import '../../../common/asset_paths.dart';
 
 /// 영웅 컴포넌트 - 자동 공격 + 액티브 스킬 + 은신 감지
 class BaseHero extends PositionComponent
@@ -89,7 +89,7 @@ class BaseHero extends PositionComponent
   double _relicBonus(RelicEffectType type) {
     try {
       return game.ref.read(relicProvider.notifier).getEffectBonus(data.id, type);
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[BaseHero] relicBonus($type) failed: $e');
       return 0; // 게임 미초기화 시
     }
@@ -378,8 +378,8 @@ class BaseHero extends PositionComponent
     final hasSkin = skinTier > 1; // common(1) 이상이면 스킨 장착
     
     final imagePath = hasSkin
-        ? 'heroes/${heroName}_tier${skinTier}_sprites.png'
-        : 'heroes/${heroName}_evo${evoTier}_sprites.png';
+        ? AssetPaths.image('heroes/${heroName}_tier${skinTier}_sprites')
+        : AssetPaths.image('heroes/${heroName}_evo${evoTier}_sprites');
       final image = await game.images.load(imagePath);
       
       // 단일 이미지 전체가 1장의 캐릭터
@@ -409,7 +409,7 @@ class BaseHero extends PositionComponent
       _spriteComponent = animComponent;
       add(_spriteComponent!);
       _heroSpriteLoaded = true;
-    } catch (e) {
+    } on Exception catch (e) {
       if (kDebugMode) dlog('Sprite load err: $e');
       _heroSpriteLoaded = false;
     }
@@ -442,7 +442,7 @@ class BaseHero extends PositionComponent
           }
         }
       }
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[BaseHero] 스킨 티어 조회 오류: $e');
     }
     return 1; // 기본
@@ -487,7 +487,7 @@ class BaseHero extends PositionComponent
           return skin.primaryColor;
         }
       }
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[BaseHero] skin color lookup failed: $e');
     }
 
@@ -1008,7 +1008,7 @@ class BaseHero extends PositionComponent
       'nameKey': 'hero_${data.id.name}',
       'title': data.title,
       'emoji': _getHeroEmoji(data.id),
-      'imagePath': 'assets/images/heroes/${_getHeroFileName(data.id)}_tier${_getSkinTierNumber()}_sprites.png',
+      'imagePath': AssetPaths.asset('heroes/${_getHeroFileName(data.id)}_tier${_getSkinTierNumber()}_sprites'),
       'hp': _hp.toStringAsFixed(0),
       'maxHp': _maxHp.toStringAsFixed(0),
       'attack': effectiveAttack.toStringAsFixed(0),
@@ -1024,7 +1024,7 @@ class BaseHero extends PositionComponent
       'xp': _xp,
       'xpForNextLevel': xpForNextLevel,
       'isDead': _isDead,
-      'color': _getHeroColor(data.id).value,
+      'color': _getHeroColor(data.id).toARGB32(),
     };
   }
 

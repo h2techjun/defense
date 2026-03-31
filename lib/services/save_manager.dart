@@ -65,7 +65,7 @@ class SaveManager {
           .map((name) {
             try {
               return HeroId.values.firstWhere((h) => h.name == name);
-            } catch (_) {
+            } on Exception catch (_) {
               dlog('[SaveManager] 알 수 없는 영웅 ID 무시: $name');
               return null;
             }
@@ -80,7 +80,7 @@ class SaveManager {
         try {
           final heroId = HeroId.values.firstWhere((h) => h.name == entry.key);
           heroLevels[heroId] = (entry.value as num).toInt();
-        } catch (_) {
+        } on Exception catch (_) {
           dlog('[SaveManager] 알 수 없는 영웅 레벨 ID 무시: ${entry.key}');
         }
       }
@@ -94,7 +94,7 @@ class SaveManager {
         gems: (data['gems'] as num?)?.toInt() ?? 100,
         isPremium: (data['isPremium'] as bool?) ?? false,
       );
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 세이브 데이터 파싱 오류: $e');
       return null;
     }
@@ -126,7 +126,7 @@ class SaveManager {
     try {
       final data = jsonDecode(jsonStr) as Map<String, dynamic>;
       return data.map((k, v) => MapEntry(k, (v as num).toInt()));
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 스테이지 별 데이터 파싱 오류: $e');
       return {};
     }
@@ -200,7 +200,7 @@ class SaveManager {
     if (name == null) return null;
     try {
       return HeroId.values.firstWhere((h) => h.name == name);
-    } catch (_) {
+    } on Exception catch (_) {
       dlog('[SaveManager] 알 수 없는 선택 영웅 ID: $name');
       return null;
     }
@@ -228,14 +228,14 @@ class SaveManager {
           .map((name) {
             try {
               return TowerType.values.firstWhere((t) => t.name == name);
-            } catch (_) {
+            } on Exception catch (_) {
               dlog('[SaveManager] 알 수 없는 타워 타입: $name');
               return null;
             }
           })
           .whereType<TowerType>()
           .toList();
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SaveManager] 타워 로드아웃 파싱 실패: $e');
       return [];
     }
@@ -258,7 +258,7 @@ class SaveManager {
         key,
         (value as Map<String, dynamic>).map((k, v) => MapEntry(k, v as int)),
       ));
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SaveManager] 타워 레벨 파싱 실패: $e');
       return {};
     }
@@ -298,7 +298,7 @@ class SaveManager {
           .map((name) {
             try {
               return RelicId.values.firstWhere((r) => r.name == name);
-            } catch (_) {
+            } on Exception catch (_) {
               dlog('[SaveManager] 알 수 없는 유물 ID: $name');
               return null;
             }
@@ -318,7 +318,7 @@ class SaveManager {
             relicId = RelicId.values.firstWhere((r) => r.name == relicName);
           }
           equipped[heroId] = relicId;
-        } catch (_) {
+        } on Exception catch (_) {
           dlog('[SaveManager] 알 수 없는 유물 장착 ID: ${entry.key}');
         }
       }
@@ -330,7 +330,7 @@ class SaveManager {
         try {
           final relicId = RelicId.values.firstWhere((r) => r.name == entry.key);
           levels[relicId] = (entry.value as num).toInt();
-        } catch (e) {
+        } on Exception catch (e) {
           dlog('[SAVE] 유물 레벨 파싱 오류 (${entry.key}): $e');
         }
       }
@@ -340,7 +340,7 @@ class SaveManager {
         'equipped': equipped,
         'levels': levels,
       };
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 유물 데이터 파싱 오류: $e');
       return null;
     }
@@ -374,7 +374,7 @@ class SaveManager {
       for (final name in ownedList) {
         try {
           owned.add(SkinId.values.byName(name as String));
-        } catch (e) {
+        } on Exception catch (e) {
           dlog('[SAVE] 스킨 소유 파싱 오류 ($name): $e');
         }
       }
@@ -383,13 +383,13 @@ class SaveManager {
       equippedMap.forEach((key, value) {
         try {
           equipped[HeroId.values.byName(key)] = SkinId.values.byName(value as String);
-        } catch (e) {
+        } on Exception catch (e) {
           dlog('[SAVE] 스킨 장착 파싱 오류 ($key: $value): $e');
         }
       });
 
       return {'owned': owned, 'equipped': equipped};
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 스킨 데이터 파싱 오류: $e');
       return null;
     }
@@ -411,7 +411,7 @@ class SaveManager {
       final raw = prefs.getString('endless_tower');
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 무한의 탑 로드 오류: $e');
       return null;
     }
@@ -433,7 +433,7 @@ class SaveManager {
       final raw = prefs.getString('daily_challenge');
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 일일 도전 로드 오류: $e');
       return null;
     }
@@ -454,7 +454,7 @@ class SaveManager {
       final raw = prefs.getString('season_pass');
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 시즌 패스 로드 오류: $e');
       return null;
     }
@@ -477,7 +477,7 @@ class SaveManager {
       final raw = prefs.getString('achievements');
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 업적 로드 오류: $e');
       return null;
     }
@@ -498,7 +498,7 @@ class SaveManager {
       final raw = prefs.getString('rankings');
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 랭킹 로드 오류: $e');
       return null;
     }
@@ -519,7 +519,7 @@ class SaveManager {
       final raw = prefs.getString('daily_quest');
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 일일 미션 로드 오류: $e');
       return null;
     }
@@ -540,7 +540,7 @@ class SaveManager {
       final raw = prefs.getString('lore_collection');
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 설화도감 로드 오류: $e');
       return null;
     }
@@ -561,7 +561,7 @@ class SaveManager {
       final raw = prefs.getString(_keyAdData);
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 광고 데이터 로드 오류: $e');
       return null;
     }
@@ -582,7 +582,7 @@ class SaveManager {
       final raw = prefs.getString('custom_$key');
       if (raw == null) return null;
       return jsonDecode(raw) as Map<String, dynamic>;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SAVE] 커스텀 데이터 로드 오류 ($key): $e');
       return null;
     }

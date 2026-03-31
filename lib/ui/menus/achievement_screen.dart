@@ -9,6 +9,7 @@ import '../../data/models/achievement_data.dart';
 import '../../state/achievement_provider.dart';
 import '../theme/app_colors.dart';
 import '../../l10n/app_strings.dart';
+import '../../common/asset_paths.dart';
 
 class AchievementScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
@@ -49,7 +50,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
             child: Opacity(
               opacity: 0.15,
               child: Image.asset(
-                'assets/images/objects/obj_sacred_tree.png',
+                AssetPaths.asset('objects/obj_sacred_tree'),
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
               ),
@@ -250,7 +251,7 @@ class _AchievementScreenState extends ConsumerState<AchievementScreen>
             padding: EdgeInsets.all(Responsive.spacing(context, 16)),
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: const AssetImage('assets/images/objects/obj_old_well.png'),
+                image: AssetImage(AssetPaths.asset('objects/obj_old_well')),
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(AppColors.bgDeepPlum.withAlpha(200), BlendMode.darken),
               ),

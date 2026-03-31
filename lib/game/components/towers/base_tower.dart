@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 
 import '../../../common/debug_log.dart';
+import '../../../common/asset_paths.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 
@@ -356,8 +357,8 @@ class BaseTower extends PositionComponent
       'specialAbility': currentUpgradeData?.specialAbility,
       'position': Vector2(position.x, position.y),
       'imagePath': selectedBranch != null
-          ? 'assets/images/towers/tower_${selectedBranch!.name}.png'
-          : 'assets/images/towers/tower_${data.type.name}_${upgradeLevel.clamp(1, 3)}.png',
+          ? AssetPaths.asset('towers/tower_${selectedBranch!.name}')
+          : AssetPaths.asset('towers/tower_${data.type.name}_${upgradeLevel.clamp(1, 3)}'),
     };
   }
 

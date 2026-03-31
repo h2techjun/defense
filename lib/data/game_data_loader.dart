@@ -25,7 +25,7 @@ class GameDataLoader {
       await JsonDataLoader.loadAll();
       _initialized = true;
       dlog('[GameDataLoader] ✅ JSON 데이터 로드 완료');
-    } catch (e) {
+    } on Exception catch (e) {
       // JSON 로드 실패 시 하드코딩 폴백으로 자동 전환 (rethrow 하지 않음)
       _initialized = false;
       dlog('[GameDataLoader] ⚠️ JSON 로드 실패, 폴백 사용: $e');

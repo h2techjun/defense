@@ -163,7 +163,7 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
         newCompleted.add(achievementId);
         justAchieved = true;
       }
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[AchievementProvider] unknown achievement id=$achievementId: $e');
     }
 
@@ -194,7 +194,7 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
         if (newValue >= achievement.targetValue) {
           newCompleted.add(entry.key);
         }
-      } catch (e) {
+      } on Exception catch (e) {
         dlog('[Achievement] 업적 진행 업데이트 오류 (${entry.key}): $e');
       }
     }
@@ -217,7 +217,7 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
       if (value >= achievement.targetValue) {
         newCompleted.add(achievementId);
       }
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[Achievement] 업적 진행도 설정 오류 ($achievementId): $e');
     }
 
@@ -244,7 +244,7 @@ class AchievementNotifier extends StateNotifier<AchievementState> {
       if (achievement.rewardPassXp > 0) {
         _ref.read(seasonPassProvider.notifier).addXp(achievement.rewardPassXp);
       }
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[Achievement] 보상 수령 처리 오류 ($achievementId): $e');
     }
 

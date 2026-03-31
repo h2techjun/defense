@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 
 import '../../../common/debug_log.dart';
+import '../../../common/asset_paths.dart';
 import '../../defense_game.dart';
 
 /// 스프라이트 기반 이펙트 컴포넌트
@@ -186,7 +187,7 @@ class SpriteHitEffect extends SpriteAnimationComponent
     try {
       // 4프레임 로드
       for (int i = 0; i < 4; i++) {
-        final image = await game.images.load('fx/${prefix}_$i.png');
+        final image = await game.images.load(AssetPaths.image('fx/${prefix}_$i'));
         sprites.add(Sprite(image));
       }
 
@@ -196,7 +197,7 @@ class SpriteHitEffect extends SpriteAnimationComponent
         stepTime: _stepTime,
         loop: false,
       );
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SpriteHitEffect] fx 에셋 로드 실패 → 컴포넌트 제거: $e');
       removeFromParent();
     }

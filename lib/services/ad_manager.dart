@@ -249,7 +249,7 @@ class AdManager {
       }
 
       return reward;
-    } catch (e) {
+    } on Exception catch (e) {
       if (kDebugMode) dlog('⚠️ 광고 오류: $e');
       return null;
     } finally {
@@ -268,7 +268,7 @@ class AdManager {
       _stagesSinceLastInterstitial = 0;
 
       if (kDebugMode) dlog('📺 전면 광고 표시 완료');
-    } catch (e) {
+    } on Exception catch (e) {
       if (kDebugMode) dlog('⚠️ 전면 광고 오류: $e');
     } finally {
       _isAdPlaying = false;

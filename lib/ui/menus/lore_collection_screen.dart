@@ -9,6 +9,7 @@ import '../../data/models/lore_collection_data.dart';
 import '../../l10n/app_strings.dart';
 import '../../state/lore_collection_provider.dart';
 import '../theme/app_colors.dart';
+import '../../common/asset_paths.dart';
 
 class LoreCollectionScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
@@ -50,7 +51,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
             child: Opacity(
               opacity: 0.1,
               child: Image.asset(
-                'assets/images/objects/obj_shrine.png',
+                AssetPaths.asset('objects/obj_shrine'),
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
               ),

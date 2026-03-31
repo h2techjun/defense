@@ -160,7 +160,7 @@ class WaveManager extends Component with HasGameReference<DefenseGame> {
 
     try {
       _doUpdate(dt);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       dlog('[WAVE] ERROR in update: $e');
       dlog('[WAVE] StackTrace: $st');
       // 에러 발생해도 게임 루프는 계속 동작

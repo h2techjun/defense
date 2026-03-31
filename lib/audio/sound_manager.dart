@@ -1,6 +1,6 @@
 // 해원의 문 - 사운드 매니저
-// mp3/wav 파일 효과음 + Web Audio 합성 하이브리드
-// FlameAudio로 mp3/wav 재생, Web Audio로 폴백 합성
+// ogg 파일 효과음 + Web Audio 합성 하이브리드
+// FlameAudio로 ogg 재생, Web Audio로 폴백 합성
 // BGM: AI 생성(Lyria RealTime) 10곡 셔플 재생
 
 import 'dart:async';
@@ -73,18 +73,18 @@ class SoundManager {
   bool _useFileBgm = false;  // 파일 BGM 사용 여부
   final Random _rng = Random();
 
-  /// K-Poker 고품질 BGM 트랙 목록 (10곡, mp3)
+  /// K-Poker 고품질 BGM 트랙 목록 (10곡, ogg)
   static const List<String> _bgmTracks = [
-    'bgm/bgm_1.mp3',   // 0: 차분한 분위기
-    'bgm/bgm_2.mp3',   // 1: 서정적/몽환
-    'bgm/bgm_3.mp3',   // 2: 긴장감 상승
-    'bgm/bgm_4.mp3',   // 3: 전투 활기
-    'bgm/bgm_5.mp3',   // 4: 전략적/침착
-    'bgm/bgm_6.mp3',   // 5: 다이나믹 전투
-    'bgm/bgm_7.mp3',   // 6: 어두운 분위기
-    'bgm/bgm_8.mp3',   // 7: 강렬/보스급
-    'bgm/bgm_9.mp3',   // 8: 장엄/에픽
-    'bgm/bgm_10.mp3',  // 9: 승리/축제
+    'bgm/bgm_1.ogg',   // 0: 차분한 분위기
+    'bgm/bgm_2.ogg',   // 1: 서정적/몽환
+    'bgm/bgm_3.ogg',   // 2: 긴장감 상승
+    'bgm/bgm_4.ogg',   // 3: 전투 활기
+    'bgm/bgm_5.ogg',   // 4: 전략적/침착
+    'bgm/bgm_6.ogg',   // 5: 다이나믹 전투
+    'bgm/bgm_7.ogg',   // 6: 어두운 분위기
+    'bgm/bgm_8.ogg',   // 7: 강렬/보스급
+    'bgm/bgm_9.ogg',   // 8: 장엄/에픽
+    'bgm/bgm_10.ogg',  // 9: 승리/축제
   ];
 
   /// BgmType별 추천 트랙 인덱스 (분위기 매칭)
@@ -98,37 +98,37 @@ class SoundManager {
   /// 최근 재생한 트랙 인덱스 (중복 방지)
   int _lastBgmIndex = -1;
 
-  /// SFX 파일 매핑 — SfxType → mp3/wav 파일명
+  /// SFX 파일 매핑 — SfxType → ogg 파일명
   static const Map<SfxType, String> _sfxFileMap = {
-    // 전투 (AI 생성형 .wav)
-    SfxType.towerShoot: 'sfx/Arrow.wav',
-    SfxType.towerArtillery: 'sfx/cannon_fire.wav',
-    SfxType.towerMagic: 'sfx/Magical.wav',
-    SfxType.towerSotdae: 'sfx/sotdae_purify.wav',
-    // 적 (AI 생성형 .wav)
-    SfxType.enemyHit: 'sfx/enemy_hit.wav',
-    SfxType.enemyDeath: 'sfx/enemy_death.wav',
-    SfxType.enemyBoss: 'sfx/boss_appear.wav',
-    // 영웅 (AI 생성형 .wav)
-    SfxType.heroSkill: 'sfx/hero_skill.wav',
-    SfxType.heroDeath: 'sfx/hero_death.wav',
-    SfxType.heroRevive: 'sfx/hero_revive.wav',
-    // UI (기존 에셋 .mp3)
-    SfxType.uiClick: 'sfx/Uiclick.mp3',
-    SfxType.uiPlace: 'sfx/ui_place.mp3',
-    SfxType.uiUpgrade: 'sfx/ui_upgrade.mp3',
-    SfxType.uiError: 'sfx/ui_error.mp3',
-    // storyTyping: typewriter.mp3 에셋 없음 — 합성 폴백(uiClick과 동일 톤) 사용
+    // 전투 (AI 생성형 .ogg)
+    SfxType.towerShoot: 'sfx/Arrow.ogg',
+    SfxType.towerArtillery: 'sfx/cannon_fire.ogg',
+    SfxType.towerMagic: 'sfx/Magical.ogg',
+    SfxType.towerSotdae: 'sfx/sotdae_purify.ogg',
+    // 적 (AI 생성형 .ogg)
+    SfxType.enemyHit: 'sfx/enemy_hit.ogg',
+    SfxType.enemyDeath: 'sfx/enemy_death.ogg',
+    SfxType.enemyBoss: 'sfx/boss_appear.ogg',
+    // 영웅 (AI 생성형 .ogg)
+    SfxType.heroSkill: 'sfx/hero_skill.ogg',
+    SfxType.heroDeath: 'sfx/hero_death.ogg',
+    SfxType.heroRevive: 'sfx/hero_revive.ogg',
+    // UI (기존 에셋 .ogg)
+    SfxType.uiClick: 'sfx/Uiclick.ogg',
+    SfxType.uiPlace: 'sfx/ui_place.ogg',
+    SfxType.uiUpgrade: 'sfx/ui_upgrade.ogg',
+    SfxType.uiError: 'sfx/ui_error.ogg',
+    // storyTyping: typewriter.ogg 에셋 없음 — 합성 폴백(uiClick과 동일 톤) 사용
     // 게임 이벤트
-    SfxType.waveStart: 'sfx/wave_start.wav',
-    SfxType.victory: 'sfx/victory.mp3',
-    SfxType.defeat: 'sfx/defeat.mp3',
-    SfxType.gatewayHit: 'sfx/gateway_hit.mp3',
-    // 분기 (AI 생성형 .wav)
-    SfxType.branchSelect: 'sfx/branch_select.wav',
-    SfxType.branchThunder: 'sfx/branch_thunder.wav',
-    SfxType.branchFire: 'sfx/branch_fire.wav',
-    SfxType.branchGrapple: 'sfx/branch_grapple.wav',
+    SfxType.waveStart: 'sfx/wave_start.ogg',
+    SfxType.victory: 'sfx/victory.ogg',
+    SfxType.defeat: 'sfx/defeat.ogg',
+    SfxType.gatewayHit: 'sfx/gateway_hit.ogg',
+    // 분기 (AI 생성형 .ogg)
+    SfxType.branchSelect: 'sfx/branch_select.ogg',
+    SfxType.branchThunder: 'sfx/branch_thunder.ogg',
+    SfxType.branchFire: 'sfx/branch_fire.ogg',
+    SfxType.branchGrapple: 'sfx/branch_grapple.ogg',
   };
 
   /// SFX 쿨다운 — 동일 SFX 중복 재생 방지 (Web Audio 노드 폭주 방지)
@@ -162,45 +162,45 @@ class SoundManager {
       _synth!.init();
 
       // 웹에서는 대량 프리로드 스킵 (30초+ 타임아웃 방지)
-      // 네이티브에서만 mp3/wav 프리로드
+      // 네이티브에서만 ogg 프리로드
       if (!kIsWeb) {
         try {
           await FlameAudio.audioCache.loadAll([
             // 전투
-            'sfx/Arrow.wav',
-            'sfx/cannon_fire.wav',
-            'sfx/Magical.wav',
-            'sfx/sotdae_purify.wav',
+            'sfx/Arrow.ogg',
+            'sfx/cannon_fire.ogg',
+            'sfx/Magical.ogg',
+            'sfx/sotdae_purify.ogg',
             // 적
-            'sfx/enemy_hit.wav',
-            'sfx/enemy_death.wav',
-            'sfx/boss_appear.wav',
+            'sfx/enemy_hit.ogg',
+            'sfx/enemy_death.ogg',
+            'sfx/boss_appear.ogg',
             // 영웅
-            'sfx/hero_skill.wav',
-            'sfx/hero_death.wav',
-            'sfx/hero_revive.wav',
+            'sfx/hero_skill.ogg',
+            'sfx/hero_death.ogg',
+            'sfx/hero_revive.ogg',
             // UI
-            'sfx/Uiclick.mp3',
-            'sfx/ui_place.mp3',
-            'sfx/ui_upgrade.mp3',
-            'sfx/ui_error.mp3',
+            'sfx/Uiclick.ogg',
+            'sfx/ui_place.ogg',
+            'sfx/ui_upgrade.ogg',
+            'sfx/ui_error.ogg',
             // 게임 이벤트
-            'sfx/victory.mp3',
-            'sfx/defeat.mp3',
-            'sfx/gateway_hit.mp3',
-            'sfx/wave_start.wav',
+            'sfx/victory.ogg',
+            'sfx/defeat.ogg',
+            'sfx/gateway_hit.ogg',
+            'sfx/wave_start.ogg',
             // 분기
-            'sfx/branch_select.wav',
-            'sfx/branch_thunder.wav',
-            'sfx/branch_fire.wav',
-            'sfx/branch_grapple.wav',
+            'sfx/branch_select.ogg',
+            'sfx/branch_thunder.ogg',
+            'sfx/branch_fire.ogg',
+            'sfx/branch_grapple.ogg',
             // BGM (K-Poker 고품질 10곡)
             ..._bgmTracks,
           ]);
           _useFileBgm = true;
           if (kDebugMode) dlog('🎵 오디오 에셋 로드 완료 (BGM ${_bgmTracks.length}곡)');
-        } catch (e) {
-          if (kDebugMode) dlog('⚠️ mp3 로드 실패 (합성 폴백 사용): $e');
+        } on Exception catch (e) {
+          if (kDebugMode) dlog('⚠️ ogg 로드 실패 (합성 폴백 사용): $e');
         }
       } else {
         if (kDebugMode) dlog('🌐 웹 환경 — 오디오 프리로드 스킵 (합성 폴백 사용)');
@@ -208,7 +208,7 @@ class SoundManager {
 
       _initialized = true;
       if (kDebugMode) dlog('🔊 SoundManager 초기화 완료');
-    } catch (e) {
+    } on Exception catch (e) {
       if (kDebugMode) dlog('⚠️ SoundManager 초기화 실패: $e');
       _initialized = true; // 실패해도 initialized 마킹 (재호출 방지)
     }
@@ -252,7 +252,7 @@ class SoundManager {
       _sfxLastPlayedMs[type] = nowMs;
     }
 
-    // mp3/wav 파일이 있으면 파일 재생 우선
+    // ogg 파일이 있으면 파일 재생 우선
     final sfxFile = _sfxFileMap[type];
     if (sfxFile != null) {
       try {
@@ -265,7 +265,7 @@ class SoundManager {
           if (kDebugMode) dlog('⚠️ SFX 재생 실패[$type]: $e');
         });
         return;
-      } catch (e) {
+      } on Exception catch (e) {
         dlog('[SoundManager] SFX sync error[$type]: $e');
       }
     }
@@ -513,7 +513,7 @@ class SoundManager {
     _currentBgm = type;
     _stopBgmLoop();
 
-    // mp3 BGM 파일이 있으면 파일 재생
+    // ogg BGM 파일이 있으면 파일 재생
     if (_useFileBgm) {
       _playFileBgm();
       return;
@@ -545,7 +545,7 @@ class SoundManager {
         }
       });
       if (kDebugMode) dlog('🎵 BGM 재생: $bgmFile (${_currentBgm?.name})');
-    } catch (e) {
+    } on Exception catch (e) {
       if (kDebugMode) dlog('⚠️ BGM 파일 재생 실패: $e');
       // 폴백: 합성 BGM
       if (_synth != null && _currentBgm != null) {
@@ -559,7 +559,7 @@ class SoundManager {
     _stopBgmLoop();
     try {
       FlameAudio.bgm.stop();
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SoundManager] BGM 정지 오류: $e');
     }
   }
@@ -740,7 +740,7 @@ class SoundManager {
     _stopBgmLoop();
     try {
       FlameAudio.bgm.stop();
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[SoundManager] dispose BGM 정지 오류: $e');
     }
     _synth?.dispose();

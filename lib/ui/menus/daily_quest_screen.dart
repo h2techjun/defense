@@ -11,6 +11,7 @@ import '../../state/daily_quest_provider.dart';
 import '../../audio/sound_manager.dart';
 import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
+import '../../common/asset_paths.dart';
 
 class DailyQuestScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
@@ -66,7 +67,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
             child: Opacity(
               opacity: 0.1,
               child: Image.asset(
-                'assets/images/objects/obj_shrine.png',
+                AssetPaths.asset('objects/obj_shrine'),
                 fit: BoxFit.cover,
                 alignment: Alignment.topCenter,
               ),
@@ -212,7 +213,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
       decoration: BoxDecoration(
         color: AppColors.bgDeepPlum.withAlpha(200),
         image: DecorationImage(
-          image: const AssetImage('assets/images/objects/obj_old_well.png'),
+          image: AssetImage(AssetPaths.asset('objects/obj_old_well')),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(AppColors.bgDeepPlum.withAlpha(180), BlendMode.darken),
         ),
@@ -563,7 +564,7 @@ class _DailyQuestScreenState extends ConsumerState<DailyQuestScreen> {
           color: isReady ? null : AppColors.bgNavy.withAlpha(200),
           image: isReady && !isClaimed
               ? DecorationImage(
-                  image: const AssetImage('assets/images/objects/obj_shrine.png'),
+                  image: AssetImage(AssetPaths.asset('objects/obj_shrine')),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(const Color(0xFF4A148C).withAlpha(150), BlendMode.srcATop),
                 )

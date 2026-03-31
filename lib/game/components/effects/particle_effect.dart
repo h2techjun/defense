@@ -89,7 +89,7 @@ class ParticleEffect extends PositionComponent {
       x: 0, y: 0, vx: 0, vy: 0,
       life: 0.25,
       size: 20,
-      color: Color.fromARGB(150, color.red, color.green, color.blue),
+      color: color.withAlpha(150),
       shape: _ParticleShape.ring,
     ));
 
@@ -126,7 +126,7 @@ class ParticleEffect extends PositionComponent {
       vx: 0, vy: 0,
       life: 0.4,
       size: 20,
-      color: Color.fromARGB(80, color.red, color.green, color.blue),
+      color: color.withAlpha(80),
       shape: _ParticleShape.ring,
     ));
 
@@ -140,7 +140,7 @@ class ParticleEffect extends PositionComponent {
         vy: sin(angle) * speed - 15,
         life: 0.6 + rng.nextDouble() * 0.4,
         size: 4 + rng.nextDouble() * 5,
-        color: Color.fromARGB(60, color.red, color.green, color.blue),
+        color: color.withAlpha(60),
       ));
     }
     return effect;
@@ -228,7 +228,7 @@ class ParticleEffect extends PositionComponent {
       vx: 0, vy: -5,
       life: 0.4,
       size: 15,
-      color: Color.fromARGB(150, color.red, color.green, color.blue),
+      color: color.withAlpha(150),
       shape: _ParticleShape.circle,
     ));
 
@@ -238,7 +238,7 @@ class ParticleEffect extends PositionComponent {
       vx: 0, vy: 0,
       life: 0.35,
       size: 10,
-      color: Color.fromARGB(100, color.red, color.green, color.blue),
+      color: color.withAlpha(100),
       shape: _ParticleShape.ring,
     ));
 
@@ -310,7 +310,7 @@ class ParticleEffect extends PositionComponent {
       vx: 0, vy: 0,
       life: 0.4,
       size: 25,
-      color: Color.fromARGB(100, color.red, color.green, color.blue),
+      color: color.withAlpha(100),
       shape: _ParticleShape.ring,
     ));
 
@@ -320,7 +320,7 @@ class ParticleEffect extends PositionComponent {
       vx: 0, vy: 0,
       life: 0.25,
       size: 12,
-      color: Color.fromARGB(180, color.red, color.green, color.blue),
+      color: color.withAlpha(180),
     ));
 
     return effect;
@@ -369,7 +369,7 @@ class ParticleEffect extends PositionComponent {
       final currentSize = p.size * (1.0 - p.progress * 0.4);
       final c = Offset(p.x, p.y);
 
-      _sharedPaint.color = Color.fromARGB(alpha, p.color.red, p.color.green, p.color.blue);
+      _sharedPaint.color = p.color.withAlpha(alpha);
 
       switch (p.shape) {
         case _ParticleShape.circle:
@@ -411,7 +411,7 @@ class ParticleEffect extends PositionComponent {
           // 링 (확장하며 사라짐)
           canvas.drawCircle(c, currentSize,
             Paint()
-              ..color = Color.fromARGB(alpha, p.color.red, p.color.green, p.color.blue)
+              ..color = p.color.withAlpha(alpha)
               ..style = PaintingStyle.stroke
               ..strokeWidth = 2.0 * (1.0 - p.progress));
           break;

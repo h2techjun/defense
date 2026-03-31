@@ -17,6 +17,7 @@ import '../../state/unclaimed_rewards_provider.dart';
 import '../../state/user_state.dart';
 import '../widgets/notification_badge.dart';
 import '../widgets/banner_ad_widget.dart';
+import '../../common/asset_paths.dart';
 
 /// 메인 메뉴 화면
 class MainMenu extends ConsumerWidget {
@@ -60,7 +61,7 @@ class MainMenu extends ConsumerWidget {
       // 웹 전용: 전체화면 토글 FAB
       floatingActionButton: kIsWeb ? _buildFullscreenFab(lang, s) : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
-      backgroundAsset: 'assets/images/bg/bg_main_menu.png',
+      backgroundAsset: AssetPaths.asset('bg/bg_main_menu'),
       body: LayoutBuilder(
             builder: (context, constraints) {
               if (isLand && constraints.maxWidth > 600) {
@@ -737,7 +738,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
             ? AppStrings.get(lang, 'cloud_sync_success')
             : AppStrings.get(lang, 'cloud_sync_failed');
       });
-    } catch (e) {
+    } on Exception catch (e) {
       setState(() { _isSyncing = false; _syncMessage = AppStrings.get(lang, 'cloud_sync_failed'); });
     }
   }
@@ -754,7 +755,7 @@ class _SettingsDialogState extends State<_SettingsDialog> {
             ? AppStrings.get(lang, 'cloud_load_success')
             : AppStrings.get(lang, 'cloud_sync_failed');
       });
-    } catch (e) {
+    } on Exception catch (e) {
       setState(() { _isSyncing = false; _syncMessage = AppStrings.get(lang, 'cloud_sync_failed'); });
     }
   }

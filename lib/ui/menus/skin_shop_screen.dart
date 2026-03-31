@@ -14,6 +14,7 @@ import '../../l10n/app_strings.dart';
 import '../../services/game_event_bridge.dart';
 import '../theme/app_colors.dart';
 import '../common/hero_sprite_viewer.dart';
+import '../../common/asset_paths.dart';
 
 class SkinShopScreen extends ConsumerWidget {
   final VoidCallback onBack;
@@ -34,7 +35,7 @@ class SkinShopScreen extends ConsumerWidget {
             child: Opacity(
               opacity: 0.15,
               child: Image.asset(
-                'assets/images/objects/obj_sotdae.png',
+                AssetPaths.asset('objects/obj_sotdae'),
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
               ),
@@ -245,7 +246,7 @@ class SkinShopScreen extends ConsumerWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(11),
                   child: HeroSpriteViewer(
-                    imagePath: 'assets/images/heroes/${_getHeroFilePref(skin.heroId)}_tier${_getTierForRarity(skin.rarity)}_sprites.png',
+                    imagePath: AssetPaths.asset('heroes/${_getHeroFilePref(skin.heroId)}_tier${_getTierForRarity(skin.rarity)}_sprites'),
                     width: 140,
                     height: 180,
                     fallbackText: skin.rarity.emoji,
@@ -479,7 +480,7 @@ class _SkinCard extends StatelessWidget {
                                     BlendMode.srcATop,
                                   ),
                             child: HeroSpriteViewer(
-                              imagePath: 'assets/images/heroes/${_getHeroFilePref(skin.heroId)}_tier${_getTierForRarity(skin.rarity)}_sprites.png',
+                              imagePath: AssetPaths.asset('heroes/${_getHeroFilePref(skin.heroId)}_tier${_getTierForRarity(skin.rarity)}_sprites'),
                               width: double.infinity,
                               height: 180 * s, // 대략적인 높이 할당
                             ),
@@ -493,7 +494,7 @@ class _SkinCard extends StatelessWidget {
                             0, 0, 0, 0.35, 0,
                           ]),
                           child: HeroSpriteViewer(
-                            imagePath: 'assets/images/heroes/${_getHeroFilePref(skin.heroId)}_tier${_getTierForRarity(skin.rarity)}_sprites.png',
+                            imagePath: AssetPaths.asset('heroes/${_getHeroFilePref(skin.heroId)}_tier${_getTierForRarity(skin.rarity)}_sprites'),
                             width: double.infinity,
                             height: 180 * s,
                           ),

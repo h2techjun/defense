@@ -6,6 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show LinearGradient, RadialGradient, Alignment;
 import '../../../common/debug_log.dart';
 import '../../../common/enums.dart';
+import '../../../common/asset_paths.dart';
 import '../../defense_game.dart';
 
 /// 타워 타입별 스프라이트 이미지 기반 렌더링
@@ -39,7 +40,7 @@ class TowerRenderer extends PositionComponent
       final image = await game.images.load(imagePath);
       _sprite = Sprite(image);
       _spriteLoaded = true;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[TowerRenderer] 이미지 로드 실패 → Canvas 폴백: $e');
       _spriteLoaded = false;
     }
@@ -49,11 +50,11 @@ class TowerRenderer extends PositionComponent
   String _getImagePath() {
     // 분기 선택 시 분기 이미지 우선
     if (branch != null) {
-      return 'towers/${_getBranchImageName(branch!)}.png';
+      return AssetPaths.image('towers/${_getBranchImageName(branch!)}');
     }
     // 기본 타워: 타입_레벨
     final tier = (upgradeLevel + 1).clamp(1, 3);
-    return 'towers/tower_${_getTypeName(type)}_$tier.png';
+    return AssetPaths.image('towers/tower_${_getTypeName(type)}_$tier');
   }
 
   /// TowerType → 파일명 매핑

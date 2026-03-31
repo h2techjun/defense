@@ -7,6 +7,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show RadialGradient, Alignment;
 import '../../../common/debug_log.dart';
 import '../../../common/enums.dart';
+import '../../../common/asset_paths.dart';
 import '../../../data/models/enemy_data.dart';
 import '../../defense_game.dart';
 
@@ -41,7 +42,7 @@ class EnemyRenderer extends PositionComponent
       final image = await game.images.load(imagePath);
       _sprite = Sprite(image);
       _spriteLoaded = true;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[EnemyRenderer] 이미지 로드 실패 → Canvas 폴백: $e');
       _spriteLoaded = false;
     }
@@ -50,9 +51,10 @@ class EnemyRenderer extends PositionComponent
   /// EnemyId → 이미지 파일 경로 매핑
   String _getImagePath() {
     if (data.isBoss) {
-      return 'enemies/boss_${data.id.name.replaceAll('boss', '')}.png'.replaceFirst('boss__', 'boss_');
+      final bossName = 'enemies/boss_${data.id.name.replaceAll('boss', '')}'.replaceFirst('boss__', 'boss_');
+      return AssetPaths.image(bossName);
     }
-    return 'enemies/${data.id.name}.png';
+    return AssetPaths.image('enemies/${data.id.name}');
   }
 
   /// 피격 플래시 효과 트리거

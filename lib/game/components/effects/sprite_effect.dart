@@ -2,11 +2,12 @@
 
 import 'package:flame/components.dart';
 import '../../../common/debug_log.dart';
+import '../../../common/asset_paths.dart';
 import '../../defense_game.dart';
 
 enum SpriteEffectType {
-  fire,       // 5 프레임 (fx_fire_1 ~ 5)
-  lightning,  // 5 프레임 (fx_lightning_1 ~ 5)
+  fire,       // 4 프레임 (fx_fire_1 ~ 4)
+  lightning,  // 4 프레임 (fx_lightning_1 ~ 4)
   hit         // 4 프레임 (fx_hit_1 ~ 4)
 }
 
@@ -36,11 +37,11 @@ class SpriteEffect extends SpriteAnimationComponent with HasGameRef<DefenseGame>
 
     switch (type) {
       case SpriteEffectType.fire:
-        frameCount = 5;
+        frameCount = 4;
         prefix = 'effects/fx_fire';
         break;
       case SpriteEffectType.lightning:
-        frameCount = 5;
+        frameCount = 4;
         prefix = 'effects/fx_lightning';
         break;
       case SpriteEffectType.hit:
@@ -52,10 +53,10 @@ class SpriteEffect extends SpriteAnimationComponent with HasGameRef<DefenseGame>
     final sprites = <Sprite>[];
     for (int i = 1; i <= frameCount; i++) {
         try {
-            final image = await game.images.load('${prefix}_$i.png');
+            final image = await game.images.load(AssetPaths.image('${prefix}_$i'));
             sprites.add(Sprite(image));
-        } catch (e) {
-            dlog('[SpriteEffect] frame load failed: ${prefix}_$i.png: $e');
+        } on Exception catch (e) {
+            dlog('[SpriteEffect] frame load failed: ${prefix}_$i: $e');
         }
     }
     

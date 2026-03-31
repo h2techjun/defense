@@ -7,6 +7,7 @@ import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import '../../../common/debug_log.dart';
 import '../../../common/enums.dart';
+import '../../../common/asset_paths.dart';
 import '../../../data/models/map_object_data.dart';
 import '../../../state/game_state.dart';
 import '../../defense_game.dart';
@@ -62,7 +63,7 @@ class MapObjectComponent extends PositionComponent with TapCallbacks, HasGameRef
         _sprite = Sprite(image);
         _spriteLoaded = true;
       }
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[MapObjectComponent] 이미지 로드 실패 → Canvas 폴백: $e');
       _spriteLoaded = false;
     }
@@ -72,17 +73,17 @@ class MapObjectComponent extends PositionComponent with TapCallbacks, HasGameRef
   String? _getSpritePath() {
     switch (data.type) {
       case MapObjectType.sacredTree:
-        return 'objects/obj_sacred_tree.png';
+        return AssetPaths.image('objects/obj_sacred_tree');
       case MapObjectType.shrine:
-        return 'objects/obj_shrine.png';
+        return AssetPaths.image('objects/obj_shrine');
       case MapObjectType.torch:
-        return 'objects/obj_torch.png';
+        return AssetPaths.image('objects/obj_torch');
       case MapObjectType.oldWell:
-        return 'objects/obj_old_well.png';
+        return AssetPaths.image('objects/obj_old_well');
       case MapObjectType.mapSotdae:
-        return 'objects/obj_sotdae.png';
+        return AssetPaths.image('objects/obj_sotdae');
       case MapObjectType.tomb:
-        return 'objects/obj_grave_mound.png';
+        return AssetPaths.image('objects/obj_grave_mound');
     }
   }
 

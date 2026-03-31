@@ -6,7 +6,7 @@ enum SpeakerSide { left, right }
 class StoryScene {
   final String speakerName;
   final String text;
-  final String? portraitAsset; // 예: 'avatars/kkaebi_portrait.png'
+  final String? portraitAsset; // 예: 'assets/images/portraits/portrait_kkaebi.webp'
   final SpeakerSide side;
   final Color? nameColor;
 
@@ -37,14 +37,14 @@ class StoryData {
     StoryScene(
       speakerName: 'story_speaker_kkaebi',
       text: 'story_intro_3',
-      portraitAsset: 'assets/images/portraits/portrait_kkaebi.png',
+      portraitAsset: 'assets/images/portraits/portrait_kkaebi.webp',
       side: SpeakerSide.right,
       nameColor: Colors.orangeAccent,
     ),
     StoryScene(
       speakerName: 'story_speaker_gangrim',
       text: 'story_intro_4',
-      portraitAsset: 'assets/images/portraits/portrait_gangnim.png',
+      portraitAsset: 'assets/images/portraits/portrait_gangnim.webp',
       side: SpeakerSide.left,
       nameColor: Colors.deepPurpleAccent,
     ),
@@ -60,7 +60,7 @@ class StoryData {
     StoryScene(
       speakerName: 'story_speaker_miho',
       text: 'story_ep1to2_2',
-      portraitAsset: 'assets/images/portraits/portrait_miho.png',
+      portraitAsset: 'assets/images/portraits/portrait_miho.webp',
       side: SpeakerSide.right,
       nameColor: Colors.pinkAccent,
     )
@@ -76,7 +76,7 @@ class StoryData {
     StoryScene(
       speakerName: 'story_speaker_sua',
       text: 'story_ep2to3_2',
-      portraitAsset: 'assets/images/portraits/portrait_sua.png',
+      portraitAsset: 'assets/images/portraits/portrait_sua.webp',
       side: SpeakerSide.right,
       nameColor: Colors.blueAccent,
     )
@@ -101,14 +101,14 @@ class StoryData {
     StoryScene(
       speakerName: 'story_speaker_bari',
       text: 'story_ep4to5_2',
-      portraitAsset: 'assets/images/portraits/portrait_bari.png',
+      portraitAsset: 'assets/images/portraits/portrait_bari.webp',
       side: SpeakerSide.right,
       nameColor: Colors.tealAccent,
     ),
     StoryScene(
       speakerName: 'story_speaker_gangrim',
       text: 'story_ep4to5_3',
-      portraitAsset: 'assets/images/portraits/portrait_gangnim.png',
+      portraitAsset: 'assets/images/portraits/portrait_gangnim.webp',
       side: SpeakerSide.left,
       nameColor: Colors.deepPurpleAccent,
     ),

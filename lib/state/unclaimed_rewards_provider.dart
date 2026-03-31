@@ -51,7 +51,7 @@ final unclaimedRewardsProvider = Provider<UnclaimedRewards>((ref) {
         dailyQuestUnclaimed++;
       }
     }
-  } catch (e) {
+  } on Exception catch (e) {
     dlog('[UnclaimedRewards] 일일퀘스트 미수령 확인 오류: $e');
   }
 
@@ -69,7 +69,7 @@ final unclaimedRewardsProvider = Provider<UnclaimedRewards>((ref) {
         seasonPassUnclaimed++;
       }
     }
-  } catch (e) {
+  } on Exception catch (e) {
     dlog('[UnclaimedRewards] 시즌패스 미수령 확인 오류: $e');
   }
 
@@ -78,7 +78,7 @@ final unclaimedRewardsProvider = Provider<UnclaimedRewards>((ref) {
   try {
     final achState = ref.watch(achievementProvider);
     achievementUnclaimed = achState.unclaimedCount;
-  } catch (e) {
+  } on Exception catch (e) {
     dlog('[UnclaimedRewards] 업적 미수령 확인 오류: $e');
   }
 

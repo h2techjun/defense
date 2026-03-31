@@ -64,7 +64,7 @@ class AppStrings {
       
       _cache[lang] = strings;
       dlog('🌐 [i18n] Loaded ${lang.name}.json');
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('🚨 [i18n] Failed to load ${lang.name}.json: $e');
       _cache[lang] = {};
     }

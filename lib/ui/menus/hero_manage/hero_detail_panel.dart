@@ -16,6 +16,7 @@ import '../../../l10n/app_strings.dart';
 import '../../../state/skin_provider.dart';
 import '../../common/hero_sprite_viewer.dart';
 import '../../theme/app_colors.dart';
+import '../../../common/asset_paths.dart';
 import 'hero_helpers.dart';
 import 'hero_skin_section.dart';
 import 'hero_stats_section.dart';
@@ -126,7 +127,7 @@ class HeroDetailPanel extends ConsumerWidget {
               ),
               child: ClipOval(
                 child: HeroSpriteViewer(
-                  imagePath: 'assets/images/heroes/${getHeroFileName(hero.id)}_tier1_sprites.png',
+                  imagePath: AssetPaths.asset('heroes/${getHeroFileName(hero.id)}_tier1_sprites'),
                   width: 72 * Responsive.scale(context),
                   height: 72 * Responsive.scale(context),
                   fallbackText: getHeroEmoji(hero.id),

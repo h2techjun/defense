@@ -14,6 +14,7 @@ import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../theme/themed_scaffold.dart';
 import '../widgets/touch_button.dart';
+import '../../common/asset_paths.dart';
 
 class TowerManageScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
@@ -48,7 +49,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
 
     return ThemedScaffold(
       backgroundColor: AppColors.scaffoldBg,
-      backgroundAsset: 'assets/images/bg/bg_tower_manage.png',
+      backgroundAsset: AssetPaths.asset('bg/bg_tower_manage'),
       body: Column(
         children: [
           // 헤더
@@ -142,7 +143,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Image.asset(
-                                            'assets/images/towers/${meta?['image'] as String? ?? 'tower_archer_t1'}.png',
+                                            AssetPaths.asset('towers/${meta?['image'] as String? ?? 'tower_archer_1'}'),
                                             width: 80 * s, height: 80 * s, fit: BoxFit.contain,
                                             errorBuilder: (_, __, ___) => Text(meta?['icon'] as String? ?? '?', style: TextStyle(fontSize: Responsive.fontSize(context, 18))),
                                           ),
@@ -227,7 +228,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                                         ),
                                         child: Center(
                                           child: Image.asset(
-                                            'assets/images/towers/${meta['image'] as String? ?? 'tower_archer_1'}.png',
+                                            AssetPaths.asset('towers/${meta['image'] as String? ?? 'tower_archer_1'}'),
                                             width: 40 * s, height: 40 * s, fit: BoxFit.contain,
                                             errorBuilder: (_, __, ___) => Text(meta['icon'] as String? ?? '❓', style: TextStyle(fontSize: Responsive.fontSize(context, 24))),
                                           ),
@@ -375,7 +376,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(6),
                       child: Image.asset(
-                        'assets/images/towers/${meta['image'] as String? ?? 'tower_archer_1'}.png',
+                        AssetPaths.asset('towers/${meta['image'] as String? ?? 'tower_archer_1'}'),
                         width: 36 * s, height: 36 * s, fit: BoxFit.contain,
                         errorBuilder: (_, __, ___) => Center(
                           child: Text(meta['icon'] as String? ?? '❓', style: TextStyle(fontSize: Responsive.fontSize(context, 16))),

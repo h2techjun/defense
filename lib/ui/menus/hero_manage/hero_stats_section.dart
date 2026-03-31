@@ -11,6 +11,7 @@ import '../../../l10n/app_strings.dart';
 import '../../../state/user_state.dart';
 import '../../common/hero_sprite_viewer.dart';
 import '../../theme/app_colors.dart';
+import '../../../common/asset_paths.dart';
 import 'hero_helpers.dart';
 
 class HeroStatsSection extends ConsumerWidget {
@@ -139,7 +140,7 @@ class HeroStatsSection extends ConsumerWidget {
                           ),
                           child: ClipOval(
                             child: HeroSpriteViewer(
-                              imagePath: 'assets/images/heroes/${heroFileName}_evo${tierNumber}_sprites.png',
+                              imagePath: AssetPaths.asset('heroes/${heroFileName}_evo${tierNumber}_sprites'),
                               width: 40 * Responsive.scale(context),
                               height: 40 * Responsive.scale(context),
                               fallbackText: evo.tier == EvolutionTier.base ? '⚪' : evo.tier == EvolutionTier.intermediate ? '🔵' : '🟣',

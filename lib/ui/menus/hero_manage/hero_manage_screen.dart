@@ -11,6 +11,7 @@ import '../../../data/models/hero_data.dart';
 import '../../../l10n/app_strings.dart';
 import '../../../services/save_manager.dart';
 import '../../theme/app_colors.dart';
+import '../../../common/asset_paths.dart';
 import 'hero_detail_panel.dart';
 import 'hero_list_panel.dart';
 
@@ -71,7 +72,7 @@ class _HeroManageScreenState extends ConsumerState<HeroManageScreen>
             child: Opacity(
               opacity: 0.2,
               child: Image.asset(
-                'assets/images/bg/bg_hero_manage.png',
+                AssetPaths.asset('bg/bg_hero_manage'),
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
                 errorBuilder: (_, __, ___) => const SizedBox.shrink(),

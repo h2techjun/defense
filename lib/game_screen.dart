@@ -84,7 +84,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
           await ref.read(userStateProvider.notifier).loadFromSave();
           dlog('☁️ [GameScreen] 클라우드 데이터 반영 완료');
         }
-      } catch (e) {
+      } on Exception catch (e) {
         dlog('☁️ [GameScreen] 클라우드 동기화 스킵: $e');
       }
     });
@@ -405,7 +405,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
             );
             SoundManager.instance.playSfx(SfxType.uiUpgrade);
           }
-        } catch (e) {
+        } on Exception catch (e) {
           dlog('[GameScreen] 업적 달성 알림 처리 오류: $e');
         }
       }

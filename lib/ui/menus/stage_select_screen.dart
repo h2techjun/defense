@@ -14,6 +14,7 @@ import '../theme/app_colors.dart';
 import '../theme/themed_scaffold.dart';
 import '../widgets/touch_button.dart';
 import '../widgets/banner_ad_widget.dart';
+import '../../common/asset_paths.dart';
 
 /// 챕터 메타데이터
 class _ChapterMeta {
@@ -100,7 +101,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
 
     return ThemedScaffold(
     backgroundColor: AppColors.scaffoldBg,
-    backgroundAsset: 'assets/images/bg/bg_stage_select.png',
+    backgroundAsset: AssetPaths.asset('bg/bg_stage_select'),
     body: Column(
             children: [
               // ── 헤더 ──

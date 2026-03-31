@@ -15,6 +15,7 @@ import '../../data/json_data_loader.dart';
 import '../../state/endless_tower_provider.dart';
 import '../theme/app_colors.dart';
 import '../../l10n/app_strings.dart';
+import '../../common/asset_paths.dart';
 
 class EndlessTowerScreen extends ConsumerStatefulWidget {
   final VoidCallback onBack;
@@ -68,7 +69,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
       }
 
       widget.onStartLevel(levelData, GameMode.endlessTower);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       dlog('Endless Tower Error: $e\n$st');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -190,7 +191,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
             child: Opacity(
               opacity: 0.15,
               child: Image.asset(
-                'assets/images/objects/obj_sotdae.png',
+                AssetPaths.asset('objects/obj_sotdae'),
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
               ),
@@ -394,7 +395,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
             padding: EdgeInsets.all(Responsive.spacing(context, 20)),
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: const AssetImage('assets/images/objects/obj_grave_mound.png'),
+                image: AssetImage(AssetPaths.asset('objects/obj_grave_mound')),
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(AppColors.bgNavy.withAlpha(200), BlendMode.darken),
               ),

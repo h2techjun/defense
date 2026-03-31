@@ -15,6 +15,7 @@ import '../../state/user_state.dart';
 import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../common/hero_sprite_viewer.dart';
+import '../../common/asset_paths.dart';
 
 /// 영웅 해금 조건: 해당 스테이지 클리어 시 해금
 const Map<HeroId, int> heroUnlockStage = {
@@ -465,7 +466,7 @@ class _PartySlotWidget extends StatelessWidget {
                           maxWidth: 50 * s * 3, maxHeight: 50 * s,
                           alignment: Alignment.centerLeft,
                           child: Image.asset(
-                            'assets/images/heroes/${_getHeroFileName(heroData!.id)}_tier1_sprites.png',
+                            AssetPaths.asset('heroes/${_getHeroFileName(heroData!.id)}_tier1_sprites'),
                             height: 50 * s, fit: BoxFit.contain,
                             errorBuilder: (_, __, ___) => Text(
                               _getHeroEmoji(heroData!.id),
@@ -642,7 +643,7 @@ class _HeroPoolCard extends StatelessWidget {
               opacity: 0.3,
               child: ClipOval(
                 child: HeroSpriteViewer(
-                  imagePath: 'assets/images/heroes/${_getHeroFileName(hero.id)}_tier1_sprites.png',
+                  imagePath: AssetPaths.asset('heroes/${_getHeroFileName(hero.id)}_tier1_sprites'),
                   width: 50 * s,
                   height: 50 * s,
                   fallbackText: _getHeroEmoji(hero.id),
@@ -693,7 +694,7 @@ class _HeroPoolCard extends StatelessWidget {
             children: [
               ClipOval(
                 child: HeroSpriteViewer(
-                  imagePath: 'assets/images/heroes/${_getHeroFileName(hero.id)}_tier1_sprites.png',
+                  imagePath: AssetPaths.asset('heroes/${_getHeroFileName(hero.id)}_tier1_sprites'),
                   width: 50 * s,
                   height: 50 * s,
                   fallbackText: _getHeroEmoji(hero.id),

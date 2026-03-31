@@ -36,6 +36,7 @@ import '../services/game_event_bridge.dart';
 import '../state/endless_tower_provider.dart';
 import 'mixins/game_bark_mixin.dart';
 import 'mixins/game_camera_effects_mixin.dart';
+import '../common/asset_paths.dart';
 
 /// 메인 게임 클래스
 class DefenseGame extends FlameGame
@@ -637,7 +638,7 @@ class DefenseGame extends FlameGame
       // ── 밤 오버레이 + 빨간 플래시 ── (GameCameraEffectsMixin)
       renderNightOverlay(canvas);
       renderRedFlash(canvas);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       dlog('🚨 [RENDER-ERROR] $e');
       dlog('$st');
     }
@@ -664,7 +665,7 @@ class DefenseGame extends FlameGame
     final scaledDt = dt * _gameSpeed;
     try {
       super.update(scaledDt);
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       dlog('🚨 [UPDATE-ERROR] $e');
       dlog('$st');
     }
@@ -760,7 +761,7 @@ class DefenseGame extends FlameGame
       _achieveFlushAccum = 0;
       try {
         _eventBridge.flushBatch();
-      } catch (e) {
+      } on Exception catch (e) {
         dlog('[ACHIEVE-FLUSH-ERROR] $e');
       }
     }
@@ -798,7 +799,7 @@ class DefenseGame extends FlameGame
           final state = ref.read(gameStateProvider);
           if (state.gatewayHp <= 0) gameOver();
         }
-      } catch (e, st) {
+      } on Exception catch (e, st) {
         dlog('🚨 [BATCH-UPDATE-ERROR] $e');
         dlog('$st');
       }
@@ -843,9 +844,9 @@ class _GatewayVisual extends PositionComponent
   @override
   Future<void> onLoad() async {
     try {
-      final image = await game.images.load('app_icon.png');
+      final image = await game.images.load(AssetPaths.image('app_icon'));
       _iconSprite = Sprite(image);
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[DefenseGame] app icon load failed: $e');
     }
   }

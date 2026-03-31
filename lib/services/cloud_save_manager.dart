@@ -72,7 +72,7 @@ class CloudSaveManager {
     try {
       Supabase.instance.client;
       return true;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('[CloudSaveManager] Supabase not configured: $e');
       return false;
     }
@@ -140,7 +140,7 @@ class CloudSaveManager {
         final uploaded = await syncToCloud(userId);
         return uploaded ? CloudSyncResult.success : CloudSyncResult.error;
       }
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('☁️ [CloudSave] 스마트 동기화 실패: $e');
       return CloudSyncResult.error;
     } finally {
@@ -156,7 +156,7 @@ class CloudSaveManager {
           .select('user_id, save_data, updated_at')
           .eq('user_id', userId)
           .maybeSingle();
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('☁️ [CloudSave] 클라우드 데이터 조회 실패: $e');
       return null;
     }
@@ -194,7 +194,7 @@ class CloudSaveManager {
       _lastSyncTime = now;
       dlog('☁️ [CloudSave] 클라우드 동기화 100% 완료! ${payload['updated_at']}');
       return true;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('☁️ [CloudSave] 클라우드 동기화 실패: $e');
       return false;
     }
@@ -237,7 +237,7 @@ class CloudSaveManager {
       _lastSyncTime = DateTime.now();
       dlog('☁️ [CloudSave] 클라우드 데이터 로컬 이식 완료!');
       return true;
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('☁️ [CloudSave] 클라우드 데이터 다운로드 실패: $e');
       return false;
     }
@@ -254,7 +254,7 @@ class CloudSaveManager {
       try {
         final id = await getDeviceUserId();
         await syncToCloud(id);
-      } catch (e) {
+      } on Exception catch (e) {
         dlog('☁️ [CloudSave] 자동 동기화 실패 (무시): $e');
       }
     });
@@ -266,7 +266,7 @@ class CloudSaveManager {
     try {
       final id = await getDeviceUserId();
       return await syncSmartly(id);
-    } catch (e) {
+    } on Exception catch (e) {
       dlog('☁️ [CloudSave] 앱 시작 동기화 실패: $e');
       return CloudSyncResult.error;
     }

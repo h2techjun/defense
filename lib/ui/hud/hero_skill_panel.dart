@@ -7,6 +7,7 @@ import '../../common/responsive.dart';
 import '../../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../common/hero_sprite_viewer.dart';
+import '../../common/asset_paths.dart';
 
 /// 영웅 스킬 패널 데이터
 class HeroSkillInfo {
@@ -158,7 +159,7 @@ class _HeroSkillButton extends StatelessWidget {
                         width: 28 * Responsive.scale(context),
                         height: 28 * Responsive.scale(context),
                         child: HeroSpriteViewer(
-                          imagePath: 'assets/images/heroes/${info.heroId}_tier1_sprites.png',
+                          imagePath: AssetPaths.asset('heroes/${info.heroId}_tier1_sprites'),
                           width: 28 * Responsive.scale(context),
                           height: 28 * Responsive.scale(context),
                           fallbackText: info.emoji,

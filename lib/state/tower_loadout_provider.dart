@@ -87,7 +87,7 @@ class TowerLoadoutNotifier extends StateNotifier<TowerLoadoutState> {
           level: entry.value['level'] ?? 1,
           xp: entry.value['xp'] ?? 0,
         );
-      } catch (e) {
+      } on Exception catch (e) {
         dlog('[TowerLoadout] unknown tower type=${entry.key}: $e');
       }
     }

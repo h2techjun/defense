@@ -192,7 +192,7 @@ class SeasonPassNotifier extends StateNotifier<SeasonPassState> {
           try {
             final skinId = SkinId.values.firstWhere((s) => s.name == reward.unlockId);
             _ref.read(skinProvider.notifier).unlockSkin(skinId);
-          } catch (_) {
+          } on Exception catch (_) {
             dlog('[SeasonPass] Unknown SkinId: ${reward.unlockId}');
           }
         }
@@ -202,7 +202,7 @@ class SeasonPassNotifier extends StateNotifier<SeasonPassState> {
           try {
             final relicId = RelicId.values.firstWhere((r) => r.name == reward.unlockId);
             _ref.read(relicProvider.notifier).unlockRelic(relicId);
-          } catch (_) {
+          } on Exception catch (_) {
             dlog('[SeasonPass] Unknown RelicId: ${reward.unlockId}');
           }
         }
