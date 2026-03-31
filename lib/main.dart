@@ -41,7 +41,7 @@ Future<void> main() async {
     return const SizedBox.shrink();
   };
 
-  // 환경 변수 로드 (웹에서는 스킵)
+  // 환경 변수 로드 (네이티브에서만 .env 파일 사용)
   if (!kIsWeb) {
     try {
       await dotenv.load(fileName: '.env');
@@ -49,28 +49,28 @@ Future<void> main() async {
     } catch (e) {
       dlog('⚠️ [main] .env 파일 로드 실패 (무시): $e');
     }
-  } else {
-    dlog('🌐 [main] 웹 환경 — .env 로드 스킵');
   }
 
-  // Supabase 초기화 (웹에서는 .env 없으므로 스킵)
-  if (!kIsWeb) {
-    try {
-      final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
-      final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
-      if (supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty && supabaseUrl != 'YOUR_SUPABASE_URL_HERE') {
-        await Supabase.initialize(
-          url: supabaseUrl,
-          anonKey: supabaseAnonKey,
-        );
-        dlog('✅ [main] Supabase 초기화 완료');
-      }
-    // ignore: avoid_catches_without_on_clauses
-    } catch (e) {
-      dlog('⚠️ [main] Supabase 초기화 실패: $e');
+  // Supabase 초기화 (네이티브: .env, 웹: --dart-define)
+  try {
+    final supabaseUrl = kIsWeb
+        ? const String.fromEnvironment('SUPABASE_URL')
+        : (dotenv.env['SUPABASE_URL'] ?? '');
+    final supabaseAnonKey = kIsWeb
+        ? const String.fromEnvironment('SUPABASE_ANON_KEY')
+        : (dotenv.env['SUPABASE_ANON_KEY'] ?? '');
+    if (supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty && supabaseUrl != 'YOUR_SUPABASE_URL_HERE') {
+      await Supabase.initialize(
+        url: supabaseUrl,
+        anonKey: supabaseAnonKey,
+      );
+      dlog('✅ [main] Supabase 초기화 완료 (${kIsWeb ? "Web" : "Native"})');
+    } else {
+      dlog('⚠️ [main] Supabase 키 미설정 — 클라우드 세이브 비활성');
     }
-  } else {
-    dlog('🌐 [main] 웹 환경 — Supabase 초기화 스킵');
+  // ignore: avoid_catches_without_on_clauses
+  } catch (e) {
+    dlog('⚠️ [main] Supabase 초기화 실패: $e');
   }
 
   // 가로 모드 고정
