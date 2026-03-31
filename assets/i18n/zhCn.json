@@ -1221,5 +1221,6 @@
   "hero_dead": "阵亡",
   "skill_cooldown": "冷却中",
   "hud_game_speed": "游戏速度",
-  "a11y_season_progress": "赛季进度"
+  "a11y_season_progress": "赛季进度",
+  "lore_unlock_hint": "击败{kills}只后解锁 ({current}/{kills})"
 }

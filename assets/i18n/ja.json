@@ -1221,5 +1221,6 @@
   "hero_dead": "死亡",
   "skill_cooldown": "クールダウン中",
   "hud_game_speed": "ゲーム速度",
-  "a11y_season_progress": "シーズン進捗"
+  "a11y_season_progress": "シーズン進捗",
+  "lore_unlock_hint": "{kills}体討伐で解放 ({current}/{kills})"
 }

@@ -1221,5 +1221,6 @@
   "hero_dead": "사망",
   "skill_cooldown": "쿨다운 중",
   "hud_game_speed": "게임 속도",
-  "a11y_season_progress": "시즌 진행률"
+  "a11y_season_progress": "시즌 진행률",
+  "lore_unlock_hint": "{kills}마리 처치 시 해금 ({current}/{kills})"
 }

@@ -163,7 +163,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('${ms.emoji} "${ms.rewardTitle}" ${tr(ref, "lore_title_earned")} 💎${ms.rewardGems}'),
+                          content: Text('${ms.emoji} "${tr(ref, ms.rewardTitle)}" ${tr(ref, "lore_title_earned")} 💎${ms.rewardGems}'),
                           backgroundColor: AppColors.lavender,
                         ),
                       );
@@ -275,7 +275,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isLocked ? '???' : entry.name,
+                    isLocked ? '???' : tr(ref, entry.name),
                     style: TextStyle(
                       color: isLocked ? AppColors.textGhost : AppColors.textPrimary,
                       fontSize: 18 * s,
@@ -320,12 +320,14 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
       LoreUnlockTier tier, int kills, double s) {
     final widgets = <Widget>[];
 
+    final lang = ref.read(gameLanguageProvider);
+
     // 기본 설명 (encountered 이상)
     widgets.add(_loreSection(
       'lore_basic_label',
       tier.index >= LoreUnlockTier.basic.index
-          ? entry.basicDescription
-          : '${entry.basicKills}마리 처치 시 해금 (${kills}/${entry.basicKills})',
+          ? AppStrings.get(lang, entry.basicDescription)
+          : AppStrings.get(lang, 'lore_unlock_hint').replaceAll('{kills}', '${entry.basicKills}').replaceAll('{current}', '$kills'),
       tier.index >= LoreUnlockTier.basic.index,
       entry, LoreUnlockTier.basic, state, ref, s,
     ));
@@ -335,8 +337,8 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
     widgets.add(_loreSection(
       'lore_secret_label',
       tier.index >= LoreUnlockTier.secretLore.index
-          ? entry.secretDescription
-          : '${entry.secretKills}마리 처치 시 해금 (${kills}/${entry.secretKills})',
+          ? AppStrings.get(lang, entry.secretDescription)
+          : AppStrings.get(lang, 'lore_unlock_hint').replaceAll('{kills}', '${entry.secretKills}').replaceAll('{current}', '$kills'),
       tier.index >= LoreUnlockTier.secretLore.index,
       entry, LoreUnlockTier.secretLore, state, ref, s,
     ));
@@ -346,8 +348,8 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
     widgets.add(_loreSection(
       'lore_hidden_label',
       tier.index >= LoreUnlockTier.hiddenStory.index
-          ? entry.hiddenDescription
-          : '${entry.hiddenKills}마리 처치 시 해금 (${kills}/${entry.hiddenKills})',
+          ? AppStrings.get(lang, entry.hiddenDescription)
+          : AppStrings.get(lang, 'lore_unlock_hint').replaceAll('{kills}', '${entry.hiddenKills}').replaceAll('{current}', '$kills'),
       tier.index >= LoreUnlockTier.hiddenStory.index,
       entry, LoreUnlockTier.hiddenStory, state, ref, s,
     ));
@@ -408,7 +410,7 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
         children: [
           Row(
             children: [
-              Text(title, style: TextStyle(
+              Text(tr(ref, title), style: TextStyle(
                 color: unlocked ? _tierColor(rewardTier) : AppColors.textGhost,
                 fontSize: 15 * s,
                 fontWeight: FontWeight.bold,

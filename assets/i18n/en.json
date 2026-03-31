@@ -1221,5 +1221,6 @@
   "hero_dead": "Dead",
   "skill_cooldown": "Cooling down",
   "hud_game_speed": "Game speed",
-  "a11y_season_progress": "Season progress"
+  "a11y_season_progress": "Season progress",
+  "lore_unlock_hint": "Unlock at {kills} kills ({current}/{kills})"
 }
