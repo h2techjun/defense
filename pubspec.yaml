@@ -1,7 +1,7 @@
 name: gateway_of_regrets
 description: "Gateway of Regrets: Soul Defense — Korean Folklore Tower Defense RPG"
 publish_to: "none"
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.6.0
