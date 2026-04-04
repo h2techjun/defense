@@ -68,14 +68,14 @@ class MainMenu extends ConsumerWidget {
                 // ── 가로 모드: 좌(타이틀) + 우(버튼) ──
                 return Row(
                   children: [
-                    // 왼쪽: 타이틀 영역
+                    // 왼쪽: 타이틀 영역 (flex:5 → 영문 타이틀 오버플로 방지)
                     Expanded(
-                      flex: 4,
+                      flex: 5,
                       child: _buildTitleSection(context, lang, s),
                     ),
                     // 오른쪽: 버튼 영역
                     Expanded(
-                      flex: 5,
+                      flex: 4,
                       child: _buildButtonSection(context, ref, lang, s, isLandscape: true),
                     ),
                   ],
@@ -150,21 +150,30 @@ class MainMenu extends ConsumerWidget {
 
           SizedBox(height: 28 * s),
 
-          // 게임 타이틀
-          ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [AppColors.cherryBlossom, AppColors.peachCoral, AppColors.cherryBlossom],
-            ).createShader(bounds),
-            child: Text(
-              AppStrings.get(lang, 'app_title'),
-              maxLines: 1,
-              softWrap: false,
-              overflow: TextOverflow.visible,
-              style: TextStyle(
-                fontSize: Responsive.fontSize(context, 48),
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: 4 * s,
+          // 게임 타이틀 — LayoutBuilder로 실제 너비 확보 후 ShaderMask 적용
+          // SizedBox(width) + FittedBox로 텍스트가 ShaderMask 영역을 절대 초과하지 않도록 보장
+          LayoutBuilder(
+            builder: (ctx, c) => ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [AppColors.cherryBlossom, AppColors.peachCoral, AppColors.cherryBlossom],
+              ).createShader(bounds),
+              blendMode: BlendMode.srcIn,
+              child: SizedBox(
+                width: c.maxWidth,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    AppStrings.get(lang, 'app_title'),
+                    maxLines: 1,
+                    softWrap: false,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 38),
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1 * s,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
