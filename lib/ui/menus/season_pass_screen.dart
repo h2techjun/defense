@@ -355,7 +355,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
         child: Column(
           children: [
             Text(
-              'sp_premium_title',
+              AppStrings.trs('sp_premium_title'),
               style: TextStyle(
                 color: AppColors.sinmyeongGold,
                 fontSize: Responsive.fontSize(context, 20),
@@ -399,7 +399,7 @@ class _SeasonPassScreenState extends ConsumerState<SeasonPassScreen>
                   ),
                 ),
                 child: Text(
-                  'sp_ad_unlock',
+                  AppStrings.trs('sp_ad_unlock'),
                   style: TextStyle(
                     fontSize: Responsive.fontSize(context, 16),
                     fontWeight: FontWeight.bold,

@@ -154,9 +154,9 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Select a reward',
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+              Text(
+                AppStrings.trs('et_rest_select'),
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
               ),
               const SizedBox(height: 16),
               ...allRestRewards.map((reward) => Padding(
@@ -426,7 +426,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                 ),
                 SizedBox(height: Responsive.spacing(context, 4)),
                 Text(
-                  challenge.title,
+                  tr(ref, challenge.title),
                   style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: Responsive.fontSize(context, 24),
@@ -463,7 +463,7 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                               ),
                             ),
                             Text(
-                              mod.description,
+                              tr(ref, mod.description),
                               style: TextStyle(
                                 color: AppColors.textMid,
                                 fontSize: Responsive.fontSize(context, 14),
@@ -487,9 +487,9 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _rewardItem(context, '💎', '${challenge.reward.gems}', 'Gems'),
-                      _rewardItem(context, '⭐', '${challenge.reward.exp}', 'EXP'),
-                      _rewardItem(context, '🏆', challenge.reward.title, 'Title'),
+                      _rewardItem(context, '💎', '${challenge.reward.gems}', AppStrings.trs('et_reward_gems')),
+                      _rewardItem(context, '⭐', '${challenge.reward.exp}', AppStrings.trs('et_reward_exp')),
+                      _rewardItem(context, '🏆', tr(ref, challenge.reward.title), AppStrings.trs('et_reward_title_label')),
                     ],
                   ),
                 ),
@@ -509,8 +509,8 @@ class _EndlessTowerScreenState extends ConsumerState<EndlessTowerScreen>
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _statItem(context, '🔥', '${state.streak}', AppStrings.trs('et_streak_label')),
-                _statItem(context, '⚔️', '${state.bestWavesSurvived}', 'Best Wave'),
-                _statItem(context, '🏅', '${state.totalChallengesCompleted}', 'Total'),
+                _statItem(context, '⚔️', '${state.bestWavesSurvived}', AppStrings.trs('et_best_wave')),
+                _statItem(context, '🏅', '${state.totalChallengesCompleted}', AppStrings.trs('et_total_done')),
               ],
             ),
           ),

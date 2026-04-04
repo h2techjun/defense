@@ -274,7 +274,7 @@ class SkinShopScreen extends ConsumerWidget {
                       const Text('⚡ ', style: TextStyle(fontSize: 14)),
                       Flexible(
                         child: Text(
-                          skin.effectDescription!,
+                          AppStrings.trs(skin.effectDescription!),
                           style: TextStyle(color: skin.rarity.color, fontSize: 12, fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -288,7 +288,7 @@ class SkinShopScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Text(
-                    skin.lore!,
+                    AppStrings.trs(skin.lore!),
                     style: const TextStyle(color: AppColors.textFaint, fontSize: 11, fontStyle: FontStyle.italic),
                     textAlign: TextAlign.center,
                   ),

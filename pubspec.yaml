@@ -37,6 +37,7 @@ flutter:
     - assets/data/levels/
     - assets/audio/sfx/
     - assets/audio/bgm/
+    - assets/images/
     - assets/images/fx/
     - assets/images/towers/
     - assets/images/enemies/

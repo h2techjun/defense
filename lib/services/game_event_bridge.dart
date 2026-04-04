@@ -61,6 +61,43 @@ class GameEventBridge {
   }
 
   // ═══════════════════════════════════════════
+  // 3-1. 골드 소비 (즉시 처리)
+  // ═══════════════════════════════════════════
+
+  /// 골드 소비 시 호출 (유물 강화 등)
+  void onGoldSpent(int amount) {
+    if (amount <= 0) return;
+    _ref.read(dailyQuestProvider.notifier).updateProgress(QuestType.spendGold, amount);
+  }
+
+  // ═══════════════════════════════════════════
+  // 3-2. 영웅 강화 (즉시 처리)
+  // ═══════════════════════════════════════════
+
+  /// 영웅 레벨업 시 호출
+  void onHeroUpgraded() {
+    _ref.read(dailyQuestProvider.notifier).updateProgress(QuestType.upgradeHero, 1);
+  }
+
+  // ═══════════════════════════════════════════
+  // 3-3. 유물 장착 (즉시 처리)
+  // ═══════════════════════════════════════════
+
+  /// 유물 장착 시 호출
+  void onRelicEquipped() {
+    _ref.read(dailyQuestProvider.notifier).updateProgress(QuestType.equipRelic, 1);
+  }
+
+  // ═══════════════════════════════════════════
+  // 3-4. 도감 열람 (즉시 처리)
+  // ═══════════════════════════════════════════
+
+  /// 도감 항목 열람 시 호출
+  void onLoreRead() {
+    _ref.read(dailyQuestProvider.notifier).updateProgress(QuestType.readLore, 1);
+  }
+
+  // ═══════════════════════════════════════════
   // 배치 플러시 — 1초 주기로 defense_game.dart에서 호출
   // ═══════════════════════════════════════════
 
@@ -102,12 +139,15 @@ class GameEventBridge {
       }
     }
 
-    // ── 일일 미션: 적 처치 / 스킬 / 타워 ──
+    // ── 일일 미션: 적 처치 / 보스 / 스킬 / 타워 ──
     final questNotifier = _ref.read(dailyQuestProvider.notifier);
     // 보스 킬도 전체 킬에 합산
     final totalKills = _batchKills;
     if (totalKills > 0) {
       questNotifier.updateProgress(QuestType.killEnemies, totalKills);
+    }
+    if (_batchBossKills > 0) {
+      questNotifier.updateProgress(QuestType.killBoss, _batchBossKills);
     }
     if (_batchSkillUses > 0) {
       questNotifier.updateProgress(QuestType.useHeroSkill, _batchSkillUses);

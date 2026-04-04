@@ -299,7 +299,7 @@ class HeroDetailPanel extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'hero_lore_title',
+                    AppStrings.trs('hero_lore_title'),
                     style: TextStyle(
                       fontSize: Responsive.fontSize(context, 13),
                       fontWeight: FontWeight.bold,
@@ -334,7 +334,8 @@ class HeroDetailPanel extends ConsumerWidget {
   /// 영웅 상세 스토리 모달 팝업
   void _showLoreDialog(BuildContext context, WidgetRef ref, HeroData hero, Color color) {
     // story_data.dart 에 정의된 상세 텍스트 로드 (없으면 기본 backstory 대체)
-    final loreText = StoryData.heroLoreData[hero.id.name] ?? AppStrings.trs(hero.backstory);
+    final loreKey = StoryData.heroLoreData[hero.id.name];
+    final loreText = loreKey != null ? AppStrings.trs(loreKey) : AppStrings.trs(hero.backstory);
 
     showDialog(
       context: context,

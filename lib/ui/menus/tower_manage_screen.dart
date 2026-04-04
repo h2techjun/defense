@@ -268,7 +268,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
   }
 
   /// 드롭다운 선택지 빌드
-  List<DropdownMenuItem<int>> _buildDropdownItems(TowerData data) {
+  List<DropdownMenuItem<int>> _buildDropdownItems(TowerData data, GameLanguage lang) {
     final items = <DropdownMenuItem<int>>[];
     for (int i = 0; i < data.upgrades.length; i++) {
       items.add(DropdownMenuItem(
@@ -284,7 +284,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
       items.add(DropdownMenuItem(
         value: data.upgrades.length,
         child: Text(
-          bd?.name ?? 'branch_a_fallback',
+          bd != null ? AppStrings.get(lang, bd.name) : 'branch_a_fallback',
           style: const TextStyle(color: AppColors.sinmyeongGold, fontSize: 10),
           overflow: TextOverflow.ellipsis,
         ),
@@ -295,7 +295,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
       items.add(DropdownMenuItem(
         value: data.upgrades.length + 1,
         child: Text(
-          bd?.name ?? 'branch_b_fallback',
+          bd != null ? AppStrings.get(lang, bd.name) : 'branch_b_fallback',
           style: const TextStyle(color: AppColors.mintGreen, fontSize: 10),
           overflow: TextOverflow.ellipsis,
         ),
@@ -444,7 +444,7 @@ class _TowerManageScreenState extends ConsumerState<TowerManageScreen> {
                 ),
                 child: DropdownButton<int>(
                   value: previewIdx,
-                  items: _buildDropdownItems(data),
+                  items: _buildDropdownItems(data, lang),
                   onChanged: (val) {
                     if (val != null) setState(() => _selectedPreviewLevel[type] = val);
                   },

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/relic_data.dart';
 import '../common/enums.dart';
 import '../services/save_manager.dart';
+import '../services/game_event_bridge.dart';
 import 'user_state.dart';
 import '../../common/debug_log.dart';
 
@@ -82,6 +83,9 @@ class RelicNotifier extends StateNotifier<RelicState> {
 
     state = state.copyWith(equippedRelics: newEquipped);
     _persist();
+
+    // 일일 미션: 유물 장착
+    _ref.read(gameEventBridgeProvider).onRelicEquipped();
   }
 
   /// 영웅의 유물 해제
@@ -132,6 +136,9 @@ class RelicNotifier extends StateNotifier<RelicState> {
     if (!userNotifier.spendGold(cost)) {
       return UpgradeResult.notEnoughGold;
     }
+
+    // 일일 미션: 골드 소비 (성공/실패 무관 — 골드는 항상 차감됨)
+    _ref.read(gameEventBridgeProvider).onGoldSpent(cost);
 
     // 5. 성공률 판정
     final successRate = relic.upgradeSuccessRate(currentLevel);

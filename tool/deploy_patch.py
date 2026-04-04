@@ -89,14 +89,18 @@ def patch_index_html():
         '', html, flags=re.DOTALL
     )
 
-    # 새 인라인 스크립트 삽입 (<body> 바로 뒤)
-    inline_script = build_inline_script()
-    marked = f'<!-- MANIFEST_INLINE_START -->\n{inline_script}\n<!-- MANIFEST_INLINE_END -->'
-    html = html.replace('<body>', f'<body>\n{marked}', 1)
+    # 새 인라인 스크립트 삽입 (<body> 바로 뒤) - manifest 파일 있을 때만
+    if os.path.exists(ASSET_MANIFEST_JSON) and os.path.exists(ASSET_MANIFEST_BIN):
+        inline_script = build_inline_script()
+        sep = chr(10)
+        marked = "<!-- MANIFEST_INLINE_START -->" + sep + inline_script + sep + "<!-- MANIFEST_INLINE_END -->"
+        html = html.replace("<body>", "<body>" + sep + marked, 1)
+        print("  [OK] AssetManifest / FontManifest inline embedded")
+    else:
+        print("  [SKIP] AssetManifest.bin.json not found (bundled in main.dart.js)")
 
     with open(INDEX_HTML, "w", encoding="utf-8") as f:
         f.write(html)
-    print("  [OK] AssetManifest / FontManifest inline embedded")
 
 
 def remove_canvaskit_local():

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/responsive.dart';
 import '../../data/models/lore_collection_data.dart';
 import '../../l10n/app_strings.dart';
+import '../../services/game_event_bridge.dart';
 import '../../state/lore_collection_provider.dart';
 import '../theme/app_colors.dart';
 import '../../common/asset_paths.dart';
@@ -262,6 +263,13 @@ class _LoreCollectionScreenState extends ConsumerState<LoreCollectionScreen>
         childrenPadding: EdgeInsets.fromLTRB(14 * s, 0, 14 * s, 14 * s),
         iconColor: AppColors.textFaint,
         collapsedIconColor: AppColors.textGhost,
+        onExpansionChanged: isLocked
+            ? null
+            : (expanded) {
+                if (expanded) {
+                  ref.read(gameEventBridgeProvider).onLoreRead();
+                }
+              },
         title: Row(
           children: [
             // 아이콘

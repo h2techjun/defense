@@ -12,6 +12,7 @@ import '../../../common/enums.dart';
 import '../../../data/models/hero_data.dart';
 import '../../../data/models/relic_data.dart';
 import '../../../data/models/skin_data.dart';
+import '../../../services/game_event_bridge.dart';
 import '../../../state/relic_provider.dart';
 import '../../../state/skin_provider.dart';
 import '../../defense_game.dart';
@@ -148,6 +149,13 @@ class BaseHero extends PositionComponent
     while (level < maxLevel && _xp >= _xpForLevel(level)) {
       _xp -= _xpForLevel(level);
       level++;
+
+      // 일일 미션: 영웅 강화
+      try {
+        game.ref.read(gameEventBridgeProvider).onHeroUpgraded();
+      } on Exception catch (e) {
+        dlog('[BaseHero] onHeroUpgraded failed: $e');
+      }
 
       // 스탯 재계산: HP 비율 유지하며 maxHp 증가
       final hpRatio = _maxHp > 0 ? _hp / _maxHp : 1.0;
