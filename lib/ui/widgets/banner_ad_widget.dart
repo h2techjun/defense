@@ -1,67 +1,65 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../common/responsive.dart';
-import '../theme/app_colors.dart';
 
-/// 배너 광고 플레이스홀더 위젯
-/// 
-/// 웹/데스크톱 등 테스트 환경용 시뮬레이터이며,
-/// 추후 모바일 연동 시 AdManager/AdMob으로 대체될 영역입니다.
-class BannerAdWidget extends StatelessWidget {
-  final double width;
-  final double height;
-  final EdgeInsetsGeometry padding;
+/// AdMob 배너 광고 위젯 — 가로 모드 상단 전용
+/// 웹/iOS는 빈 위젯 반환
+class BannerAdWidget extends StatefulWidget {
+  const BannerAdWidget({super.key});
 
-  const BannerAdWidget({
-    super.key,
-    this.width = 320,
-    this.height = 50,
-    this.padding = const EdgeInsets.symmetric(vertical: 8.0),
-  });
+  @override
+  State<BannerAdWidget> createState() => _BannerAdWidgetState();
+}
+
+class _BannerAdWidgetState extends State<BannerAdWidget> {
+  BannerAd? _bannerAd;
+  bool _isLoaded = false;
+
+  // 배너 광고 단위 ID
+  static const String _adUnitId = kDebugMode
+      ? 'ca-app-pub-3940256099942544/6300978111'   // 테스트 ID
+      : 'ca-app-pub-8134930906845147/5647657542';   // 실제 ID
+
+  @override
+  void initState() {
+    super.initState();
+    if (!kIsWeb) _loadAd();
+  }
+
+  void _loadAd() {
+    _bannerAd = BannerAd(
+      adUnitId: _adUnitId,
+      size: AdSize.banner, // 320×50
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) => setState(() => _isLoaded = true),
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          _bannerAd = null;
+        },
+      ),
+    )..load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final s = Responsive.scale(context);
-    final isLand = Responsive.isLandscape(context);
-    
-    // 가로 모드일 때는 배너가 UI를 가리지 않도록 보수적으로 설정
-    if (isLand) {
-      return SizedBox(
-        width: 1, 
-        height: 1,
-      );
+    // 웹 / iOS / 광고 미로드 시 빈 위젯
+    if (kIsWeb || _bannerAd == null || !_isLoaded) {
+      return const SizedBox.shrink();
     }
-    
-    return Padding(
-      padding: padding,
-      child: SafeArea(
-        top: false,
-        child: Container(
-          width: width * s,
-          height: height * s,
-          decoration: BoxDecoration(
-            color: Colors.black.withAlpha(150),
-            border: Border.all(color: AppColors.cherryBlossom.withAlpha(100)),
-            borderRadius: BorderRadius.circular(4 * s),
-          ),
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.ad_units, color: AppColors.textMid, size: 16 * s),
-              SizedBox(width: 8 * s),
-              Text(
-                'Test Banner Ad ($width x $height)',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: Responsive.fontSize(context, 12),
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1 * s,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+
+    final s = Responsive.uiScale(context);
+    return SizedBox(
+      width: _bannerAd!.size.width.toDouble() * s,
+      height: _bannerAd!.size.height.toDouble() * s,
+      child: AdWidget(ad: _bannerAd!),
     );
   }
 }

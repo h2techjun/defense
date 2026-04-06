@@ -1,19 +1,12 @@
 // 해원의 문 - 광고 매니저
-// 보상형 광고 + 전면(Interstitial) + 배너 관리
-// 웹 환경에서는 시뮬레이션 모드, 모바일에서는 AdMob 연동 예정
+// 보상형 광고 + 배너 관리 (Android: AdMob 실제 연동 / Web: CrazyGames SDK)
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'save_manager.dart';
 import '../l10n/app_strings.dart';
 import '../common/debug_log.dart';
-
-/// 광고 유형
-enum AdType {
-  rewarded,      // 보상형 (보석/부활/2배 등)
-  interstitial,  // 전면 (스테이지 사이)
-  banner,        // 배너 (하단)
-}
 
 /// 보상형 광고 목적
 enum RewardedAdPurpose {
@@ -45,6 +38,12 @@ class AdManager {
 
   bool _initialized = false;
   bool _isAdPlaying = false;
+  RewardedAd? _rewardedAd;
+
+  // 광고 단위 ID
+  static const String _rewardedAdUnitId = kDebugMode
+      ? 'ca-app-pub-3940256099942544/5224354917'   // 테스트 ID
+      : 'ca-app-pub-8134930906845147/5511926170';   // 실제 ID
 
   // 보상형 광고 쿨다운 (과도한 광고 시청 방지)
   DateTime? _lastRewardedAdTime;
@@ -55,19 +54,14 @@ class AdManager {
   static const _maxDailyRewarded = 15;
   DateTime _dailyResetDate = DateTime.now();
 
-  // 전면 광고 — 3판마다 1회
-  int _stagesSinceLastInterstitial = 0;
-  static const _interstitialInterval = 3;
-
   // 무료 보석 — 점진적 쿨다운 (총 12시간에 걸쳐 5회)
-  // 1회차: 즉시, 2회차: 30분, 3회차: 90분, 4회차: 3시간, 5회차: 7시간
   DateTime? _lastFreeGemsTime;
   static const List<Duration> _freeGemsCooldowns = [
-    Duration.zero,              // 1회차: 즉시
-    Duration(minutes: 30),      // 2회차: 30분 후
-    Duration(minutes: 90),      // 3회차: 1시간 30분 후
-    Duration(hours: 3),         // 4회차: 3시간 후
-    Duration(hours: 7),         // 5회차: 7시간 후
+    Duration.zero,
+    Duration(minutes: 30),
+    Duration(minutes: 90),
+    Duration(hours: 3),
+    Duration(hours: 7),
   ];
   static const _maxDailyFreeGems = 5;
   int _dailyFreeGemsCount = 0;
@@ -86,7 +80,6 @@ class AdManager {
     return true;
   }
 
-  /// 현재 회차의 쿨다운
   Duration get _currentFreeGemsCooldown {
     if (_dailyFreeGemsCount >= _freeGemsCooldowns.length) {
       return _freeGemsCooldowns.last;
@@ -94,7 +87,6 @@ class AdManager {
     return _freeGemsCooldowns[_dailyFreeGemsCount];
   }
 
-  /// 무료 보석 광고 시청 가능 여부
   bool get canShowFreeGemsAd {
     _checkDailyReset();
     if (_dailyFreeGemsCount >= _maxDailyFreeGems) return false;
@@ -105,7 +97,6 @@ class AdManager {
     return canShowRewardedAd;
   }
 
-  /// 다음 무료 보석까지 남은 시간 (초)
   int get freeGemsCooldownSeconds {
     if (_lastFreeGemsTime == null) return 0;
     final elapsed = DateTime.now().difference(_lastFreeGemsTime!);
@@ -113,22 +104,17 @@ class AdManager {
     return remaining.isNegative ? 0 : remaining.inSeconds;
   }
 
-  /// 남은 시간 포맷 ("2시간 30분" / "45분" / "즉시 가능")
   String get freeGemsCooldownFormatted {
     final secs = freeGemsCooldownSeconds;
     if (secs <= 0) return AppStrings.trs('ad_cooldown_ready');
     final hours = secs ~/ 3600;
     final mins = (secs % 3600) ~/ 60;
-    if (hours > 0) {
-      return mins > 0 ? '${hours}h ${mins}m' : '${hours}h';
-    }
+    if (hours > 0) return mins > 0 ? '${hours}h ${mins}m' : '${hours}h';
     return '${mins}m';
   }
 
-  /// 오늘 수집한 무료 보석 횟수 (0~5)
   int get currentFreeGemsRound => _dailyFreeGemsCount;
 
-  /// 다음 보상형 광고까지 남은 시간 (초)
   int get rewardedAdCooldownSeconds {
     if (_lastRewardedAdTime == null) return 0;
     final elapsed = DateTime.now().difference(_lastRewardedAdTime!);
@@ -136,27 +122,20 @@ class AdManager {
     return remaining.isNegative ? 0 : remaining.inSeconds;
   }
 
-  /// 일일 남은 보상형 광고 횟수
   int get remainingDailyRewarded {
     _checkDailyReset();
     return _maxDailyRewarded - _dailyRewardedCount;
   }
 
-  /// 일일 남은 무료 보석 횟수
   int get remainingDailyFreeGems {
     _checkDailyReset();
     return _maxDailyFreeGems - _dailyFreeGemsCount;
   }
 
-  /// 전면 광고 표시 필요 여부 (3판마다)
-  bool get shouldShowInterstitial {
-    return _stagesSinceLastInterstitial >= _interstitialInterval;
-  }
-
   /// 초기화
   Future<void> init() async {
     if (_initialized) return;
-    
+
     // 세이브 데이터 로드
     final adData = await SaveManager.instance.loadAdData();
     if (adData != null) {
@@ -164,26 +143,43 @@ class AdManager {
         _lastRewardedAdTime = DateTime.tryParse(adData['lastRewardedAdTime']);
       }
       _dailyRewardedCount = adData['dailyRewardedCount'] ?? 0;
-      
       if (adData['lastFreeGemsTime'] != null) {
         _lastFreeGemsTime = DateTime.tryParse(adData['lastFreeGemsTime']);
       }
       _dailyFreeGemsCount = adData['dailyFreeGemsCount'] ?? 0;
-      
       if (adData['dailyResetDate'] != null) {
         _dailyResetDate = DateTime.tryParse(adData['dailyResetDate']) ?? DateTime.now();
       }
-      if (kDebugMode) dlog('[AD] 광고 시청 데이터 로드 완료');
     }
 
-    if (kIsWeb) {
-      if (kDebugMode) dlog('📺 AdManager 초기화 (웹 시뮬레이션)');
+    if (!kIsWeb) {
+      await MobileAds.instance.initialize();
+      _loadRewardedAd();
+      if (kDebugMode) dlog('[AD] AdMob SDK 초기화 완료');
     } else {
-      if (kDebugMode) dlog('📺 AdManager 초기화 (모바일)');
-      // NOTE: 프로덕션 배포 시 실제 AdMob 앱 ID 등록 후 주석 해제 필요
-      // MobileAds.instance.initialize();
+      if (kDebugMode) dlog('[AD] 웹 환경 — AdMob 스킵 (CrazyGames SDK 사용)');
     }
+
     _initialized = true;
+  }
+
+  /// 보상형 광고 미리 로드
+  void _loadRewardedAd() {
+    if (kIsWeb) return;
+    RewardedAd.load(
+      adUnitId: _rewardedAdUnitId,
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          _rewardedAd = ad;
+          if (kDebugMode) dlog('[AD] 보상형 광고 로드 완료');
+        },
+        onAdFailedToLoad: (error) {
+          _rewardedAd = null;
+          if (kDebugMode) dlog('[AD] 보상형 광고 로드 실패: $error');
+        },
+      ),
+    );
   }
 
   /// 보상형 광고 시청 (목적별)
@@ -196,91 +192,86 @@ class AdManager {
     _isAdPlaying = true;
 
     try {
-      // 시뮬레이션: 3초 대기
-      await Future.delayed(const Duration(seconds: 3));
+      if (kIsWeb) {
+        // 웹: 3초 시뮬레이션
+        await Future.delayed(const Duration(seconds: 3));
+        return _buildReward(purpose);
+      }
+
+      // Android: 실제 AdMob 보상형 광고
+      if (_rewardedAd == null) {
+        // 광고 미로드 시 재시도 후 시뮬레이션 fallback
+        _loadRewardedAd();
+        await Future.delayed(const Duration(seconds: 3));
+        return _buildReward(purpose);
+      }
+
+      final completer = Completer<AdReward?>();
+
+      _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _rewardedAd = null;
+          _loadRewardedAd(); // 다음 광고 미리 로드
+          if (!completer.isCompleted) completer.complete(null);
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _rewardedAd = null;
+          _loadRewardedAd();
+          if (!completer.isCompleted) completer.complete(null);
+        },
+      );
+
+      await _rewardedAd!.show(
+        onUserEarnedReward: (_, __) {
+          final reward = _buildReward(purpose);
+          if (!completer.isCompleted) completer.complete(reward);
+        },
+      );
+
+      final reward = await completer.future;
+      if (reward == null) return null;
 
       _lastRewardedAdTime = DateTime.now();
       _dailyRewardedCount++;
-
-      // 목적별 보상 설정
-      final reward = switch (purpose) {
-        RewardedAdPurpose.freeGems => const AdReward(
-          gems: 30,
-          description: '💎 30 Gems!',
-          purpose: RewardedAdPurpose.freeGems,
-        ),
-        RewardedAdPurpose.revive => const AdReward(
-          gems: 0,
-          description: '💚 Gateway HP +50%!',
-          purpose: RewardedAdPurpose.revive,
-        ),
-        RewardedAdPurpose.doubleReward => const AdReward(
-          gems: 0,
-          description: '✨ Double Reward!',
-          purpose: RewardedAdPurpose.doubleReward,
-        ),
-        RewardedAdPurpose.freeSummon => const AdReward(
-          gems: 0,
-          description: '🎫 Free Summon x1!',
-          purpose: RewardedAdPurpose.freeSummon,
-        ),
-        RewardedAdPurpose.bonusMission => const AdReward(
-          gems: 15,
-          description: '🎁 Bonus Reward!',
-          purpose: RewardedAdPurpose.bonusMission,
-        ),
-        RewardedAdPurpose.seasonPremium => const AdReward(
-          gems: 0,
-          description: '✨ Premium Pass!',
-          purpose: RewardedAdPurpose.seasonPremium,
-        ),
-      };
-
-      // 무료 보석인 경우 카운트 업데이트
       if (purpose == RewardedAdPurpose.freeGems) {
         _lastFreeGemsTime = DateTime.now();
         _dailyFreeGemsCount++;
       }
-
       await _saveData();
 
-      if (kDebugMode) {
-        dlog('📺 보상형 광고 완료: ${reward.description} (오늘 $_dailyRewardedCount/$_maxDailyRewarded)');
-      }
-
+      if (kDebugMode) dlog('[AD] 보상형 완료: ${reward.description}');
       return reward;
+
     } on Exception catch (e) {
-      if (kDebugMode) dlog('⚠️ 광고 오류: $e');
+      if (kDebugMode) dlog('[AD] 보상형 광고 오류: $e');
       return null;
     } finally {
       _isAdPlaying = false;
     }
   }
 
-  /// 전면 광고 표시 (스테이지 끝)
-  Future<void> showInterstitialAd() async {
-    if (_isAdPlaying) return;
-    _isAdPlaying = true;
-
-    try {
-      // 시뮬레이션: 3초 대기
-      await Future.delayed(const Duration(seconds: 3));
-      _stagesSinceLastInterstitial = 0;
-
-      if (kDebugMode) dlog('📺 전면 광고 표시 완료');
-    } on Exception catch (e) {
-      if (kDebugMode) dlog('⚠️ 전면 광고 오류: $e');
-    } finally {
-      _isAdPlaying = false;
+  /// 목적별 보상 객체 생성 + 카운트 업데이트 (웹 시뮬레이션용)
+  AdReward _buildReward(RewardedAdPurpose purpose) {
+    _lastRewardedAdTime = DateTime.now();
+    _dailyRewardedCount++;
+    if (purpose == RewardedAdPurpose.freeGems) {
+      _lastFreeGemsTime = DateTime.now();
+      _dailyFreeGemsCount++;
     }
+    _saveData();
+
+    return switch (purpose) {
+      RewardedAdPurpose.freeGems     => const AdReward(gems: 30,  description: '💎 30 Gems!',         purpose: RewardedAdPurpose.freeGems),
+      RewardedAdPurpose.revive       => const AdReward(gems: 0,   description: '💚 Gateway HP +50%!',  purpose: RewardedAdPurpose.revive),
+      RewardedAdPurpose.doubleReward => const AdReward(gems: 0,   description: '✨ Double Reward!',     purpose: RewardedAdPurpose.doubleReward),
+      RewardedAdPurpose.freeSummon   => const AdReward(gems: 0,   description: '🎫 Free Summon x1!',   purpose: RewardedAdPurpose.freeSummon),
+      RewardedAdPurpose.bonusMission => const AdReward(gems: 15,  description: '🎁 Bonus Reward!',     purpose: RewardedAdPurpose.bonusMission),
+      RewardedAdPurpose.seasonPremium=> const AdReward(gems: 0,   description: '✨ Premium Pass!',      purpose: RewardedAdPurpose.seasonPremium),
+    };
   }
 
-  /// 스테이지 완료 기록 (전면 광고 카운터)
-  void recordStageComplete() {
-    _stagesSinceLastInterstitial++;
-  }
-
-  /// 일일 리셋 확인
   void _checkDailyReset() {
     final now = DateTime.now();
     if (now.day != _dailyResetDate.day ||
@@ -289,11 +280,10 @@ class AdManager {
       _dailyRewardedCount = 0;
       _dailyFreeGemsCount = 0;
       _dailyResetDate = now;
-      _saveData(); // 초기화 시 바로 자동 저장 방시
+      _saveData();
     }
   }
 
-  /// 내부 데이터 저장 훅
   Future<void> _saveData() async {
     await SaveManager.instance.saveAdData({
       'lastRewardedAdTime': _lastRewardedAdTime?.toIso8601String(),

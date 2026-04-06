@@ -221,10 +221,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
   void _goToNextStage() async {
     if (_currentLevel == null) return;
 
-    AdManager.instance.recordStageComplete();
-    if (AdManager.instance.shouldShowInterstitial) {
-      await AdManager.instance.showInterstitialAd();
-    }
+
 
     final levels = GameDataLoader.getAllLevels();
     final currentIndex = levels.indexWhere(
