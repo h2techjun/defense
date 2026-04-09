@@ -1,5 +1,5 @@
-// ?댁썝??臾?- 蹂묒쁺 蹂묒궗 (BarracksSoldier) 而댄룷?뚰듃
-// 蹂묒쁺 ??뚯뿉???뚰솚?섎ŉ, 洹쇱쿂 ?곸쓣 釉붾줈???대룞 以묒?)?섍퀬 洹쇱젒 怨듦꺽
+// 해원의 문 - 병영 병사 (BarracksSoldier) 컴포넌트
+// 병영 타워에서 소환되는, 그리고 적을 직접 막는(블로킹) 근접 유닛
 
 import 'dart:math' as math;
 import 'dart:ui';
@@ -13,42 +13,49 @@ import '../../../audio/sound_manager.dart';
 import '../../defense_game.dart';
 import '../actors/base_enemy.dart';
 
-/// 蹂묒쁺?먯꽌 ?뚰솚?섎뒗 蹂묒궗 ?좊떅
+/// 병영에서 소환되는 병사 컴포넌트
 class BarracksSoldier extends PositionComponent
     with HasGameReference<DefenseGame> {
-  /// ??蹂묒궗???좊━ ?ъ씤??(?쒕옒洹몃줈 蹂寃?媛??
+  /// 이 병사의 랠리 포인트 (깃발로 변경 가능)
   Vector2 rallyPoint;
 
-  /// ??뚯쓽 ?쒕룞 諛섍꼍 (??踰붿쐞 諛뽰쑝濡??대룞 遺덇?)
+  /// 병사의 작전 반경 (이 범위 내에서만 적을 추격)
   final double operationRange;
 
-  /// 蹂묒궗 ?ㅽ꺈
+  /// 병사 스탯
   double hp;
   double maxHp;
   double attackDamage;
   double attackCooldown;
   double moveSpeed;
 
-  /// ?꾧묠鍮??⑤쫫??遺꾧린: ?쒖븬 紐⑤뱶 (?곕?吏 2諛? ??諛섍꺽 50% 媛먯냼)
+  /// 씨름꾼 여부: 씨름 브랜치 (적 2배 + 피해 50% 감소)
   final bool isGrappler;
 
-  /// 泥섏튂 ??異붽? ?좊챸 蹂대꼫??鍮꾩쑉
+  /// 적 처치 신명 보너스 비율
   final double goldBonusRatio;
 
-  /// ?꾩옱 釉붾줈??以묒씤 ??
+  /// 현재 블로킹 중인 적
   BaseEnemy? _blockedEnemy;
 
-  /// 怨듦꺽 ??대㉧
+  /// 공격 타이머
   double _attackTimer = 0;
 
-  /// ?щ쭩 ?щ?
+  /// 사망 여부
   bool get isDead => hp <= 0;
 
-  /// ?꾩옱 釉붾줈??以묒씤 ??
+  /// 현재 블로킹 중인 적
   BaseEnemy? get blockedEnemy => _blockedEnemy;
 
-  /// ?쇨꺽 ?뚮옒??
+  /// 피격 플래시 타이머
   double _hitFlashTimer = 0;
+
+  /// 적 탐색 쿨다운 (매 프레임 탐색 방지)
+  double _findEnemyCooldown = 0;
+  static const double _findEnemyInterval = 0.15; // 초당 7회로 제한
+
+  /// assignedPosition 캐시 (매 프레임 리스트 생성 방지)
+  Vector2? _cachedAssignedPosition;
 
   BarracksSoldier({
     required this.rallyPoint,
@@ -61,33 +68,31 @@ class BarracksSoldier extends PositionComponent
     this.goldBonusRatio = 0,
   })  : maxHp = hp,
         super(
-          size: Vector2(80, 80), // ?곴낵 ?숈씪???ш린 (2.5諛??뺣?)
+          size: Vector2(80, 80),
           anchor: Anchor.center,
           priority: 10,
         );
 
   @override
   Future<void> onLoad() async {
-    // ?꾧묠鍮??쒖븬 蹂묒궗: 遺됱? 怨꾩뿴 / ?쇰컲 蹂묒궗: ?뚮? 怨꾩뿴
+    // 씨름꾼 병사: 붉은 계열 / 일반 병사: 파란 계열
     final bodyColor = isGrappler ? const Color(0xFFCC3333) : const Color(0xFF4477CC);
     final shieldColor = isGrappler ? const Color(0xFFDD5555) : const Color(0xFF6699DD);
     final weaponColor = isGrappler ? const Color(0xFFFFAA44) : const Color(0xFFCCCCCC);
 
-    // 蹂묒궗 ?쒓컖 ?쒗쁽 (?대갚???ш컖??
+    // 병사 폴백 렌더링 (스프라이트 없을 때)
     final bodyRect = RectangleComponent(
       size: Vector2(18, 20),
       position: Vector2(2, 1),
       paint: Paint()..color = bodyColor,
     );
     add(bodyRect);
-    // 諛⑺뙣 ?쒖떆
     final shieldRect = RectangleComponent(
       size: Vector2(6, 10),
       position: Vector2(0, 6),
       paint: Paint()..color = shieldColor,
     );
     add(shieldRect);
-    // 移??쒖떆
     final weaponRect = RectangleComponent(
       size: Vector2(3, 12),
       position: Vector2(18, 3),
@@ -95,7 +100,7 @@ class BarracksSoldier extends PositionComponent
     );
     add(weaponRect);
 
-    // ?ㅽ봽?쇱씠???대?吏 濡쒕뱶 ?쒕룄
+    // 스프라이트 이미지 로드 시도
     try {
       final imagePath = isGrappler
           ? AssetPaths.image('soldiers/soldier_grappler')
@@ -103,7 +108,6 @@ class BarracksSoldier extends PositionComponent
       final image = await game.images.load(imagePath);
       final sprite = Sprite(image);
 
-      // ?ㅽ봽?쇱씠???ㅻ쾭?덉씠 異붽?
       add(SpriteComponent(
         sprite: sprite,
         size: size,
@@ -111,7 +115,7 @@ class BarracksSoldier extends PositionComponent
         priority: 1,
       ));
 
-      // ?대갚 ?ш컖???щ챸??
+      // 스프라이트가 로드되면 폴백 숨김
       bodyRect.paint.color = const Color(0x00000000);
       shieldRect.paint.color = const Color(0x00000000);
       weaponRect.paint.color = const Color(0x00000000);
@@ -119,25 +123,29 @@ class BarracksSoldier extends PositionComponent
       dlog('[BarracksSoldier] 스프라이트 로드 실패 → 기존 렌더링: $e');
     }
 
-    // ?좊━ ?ъ씤?몄뿉??怨좊Ⅴ寃?遺꾩궛 諛곗튂 (寃뱀묠 諛⑹?)
-    // 蹂묒궗 ?몃뜳??湲곕컲?쇰줈 ?먰삎 諛곗튂
+    // 랠리 포인트에 가깝게 초기 위치 배정
     position = assignedPosition.clone();
     _clampToRange();
   }
 
-  /// 겹침을 방지하기 위한 분산된 위치 반환
+  /// 겹침을 방지하기 위한 분산된 위치 반환 (캐싱)
   Vector2 get assignedPosition {
+    if (_cachedAssignedPosition != null) return _cachedAssignedPosition!;
     final siblings = parent?.children.whereType<BarracksSoldier>().toList() ?? [];
     final idx = siblings.indexOf(this);
-    if (idx < 0) return rallyPoint;
+    if (idx < 0) {
+      _cachedAssignedPosition = rallyPoint;
+      return rallyPoint;
+    }
     // 3방향 고정 배치 (120도 간격: 위, 좌하, 우하)
     const angles = [-1.5708, 2.618, 0.5236];
     final angle = angles[idx % 3];
-    const spreadRadius = 18.0; // 병사 3명이 서 있을 정도
-    return rallyPoint + Vector2(math.cos(angle) * spreadRadius, math.sin(angle) * spreadRadius);
+    const spreadRadius = 18.0;
+    _cachedAssignedPosition = rallyPoint + Vector2(math.cos(angle) * spreadRadius, math.sin(angle) * spreadRadius);
+    return _cachedAssignedPosition!;
   }
 
-  /// 蹂묒궗 ?꾩튂瑜????踰붿쐞 ?대줈 ?쒗븳
+  /// 병사 위치를 작전 범위 내로 제한
   void _clampToRange() {
     final toSoldier = position - rallyPoint;
     if (toSoldier.length > operationRange) {
@@ -152,56 +160,55 @@ class BarracksSoldier extends PositionComponent
 
     if (isDead) return;
 
-    // ?쇨꺽 ?뚮옒??
+    // 피격 플래시
     if (_hitFlashTimer > 0) {
       _hitFlashTimer -= dt;
     }
 
-    // 釉붾줈??以묒씤 ?곸씠 二쎌뿀嫄곕굹 ?쒓굅?먯쑝硫??댁젣
+    // 블로킹 중인 적이 죽었거나 언마운트되면 해제
     if (_blockedEnemy != null) {
       if (_blockedEnemy!.isDead || !_blockedEnemy!.isMounted) {
         _releaseBlockedEnemy();
       }
     }
 
-    // 釉붾줈??以묒씤 ?곸씠 踰붿쐞 諛뽰쑝濡?踰쀬뼱?ъ쑝硫??댁젣?섍퀬 蹂듦?
+    // 블로킹 중인 적이 범위를 너무 벗어나면 해제
     if (_blockedEnemy != null) {
       final enemyDistFromTower = _blockedEnemy!.position.distanceTo(rallyPoint);
       if (enemyDistFromTower > operationRange * 1.5) {
-        // ?곸씠 ???踰붿쐞瑜??ш쾶 踰쀬뼱????異붿쟻 ?ш린
         _releaseBlockedEnemy();
       }
     }
 
     if (_blockedEnemy != null) {
-      // ?곴낵??嫄곕━ 怨꾩궛
+      // 적에게 이동 + 공격
       final toEnemy = _blockedEnemy!.position - position;
       final dist = toEnemy.length;
 
       if (dist > 25) {
-        // ?꾩쭅 ?곸뿉寃??꾨떖?섏? 紐삵븿 ???곸뿉寃??щ젮媛湲?
-        // (異붽꺽 以묒뿉??踰붿쐞 ?쒗븳 ?댁젣 ???곸쓣 ?뺤떎???↔린 ?꾪빐)
         toEnemy.normalize();
         position += toEnemy * moveSpeed * 1.5 * dt;
       } else {
-        // ??洹쇱쿂 ?꾩갑 ??怨듦꺽 ?ㅽ뻾
         _attackTimer += dt;
         if (_attackTimer >= attackCooldown) {
           _attackTimer = 0;
           _attackBlockedEnemy();
         }
-        // ?곴낵 諛李??좎?
         if (dist > 15) {
           toEnemy.normalize();
           position += toEnemy * moveSpeed * dt;
         }
       }
     } else {
-      // 釉붾줈?뱁븷 ???먯깋 (???踰붿쐞 ??
-      _findEnemyToBlock();
+      // 적 탐색 (쿨다운으로 제한 — 매 프레임 O(n) 탐색 방지)
+      _findEnemyCooldown -= dt;
+      if (_findEnemyCooldown <= 0) {
+        _findEnemyCooldown = _findEnemyInterval;
+        _findEnemyToBlock();
+      }
 
       if (_blockedEnemy == null) {
-        // ?곸씠 ?놁쑝硫??좊━ ?ъ씤?몃줈 蹂듦?
+        // 적이 없으면 랠리 포인트로 복귀
         final toRally = assignedPosition - position;
         if (toRally.length > 5) {
           toRally.normalize();
@@ -211,29 +218,25 @@ class BarracksSoldier extends PositionComponent
     }
   }
 
-  /// 釉붾줈?뱁븷 ???먯깋 (???踰붿쐞 ??+ 蹂묒궗 洹쇱젒 踰붿쐞)
+  /// 블로킹할 적 탐색 (쿨다운으로 호출 빈도 제한)
   void _findEnemyToBlock() {
     final enemies = game.cachedAliveEnemies;
     double minDist = double.infinity;
     BaseEnemy? closest;
 
-    // 洹쇱젒 援먯쟾 踰붿쐞: 蹂묒궗 ?꾩튂 湲곗? 40px ?대궡 ?곷룄 援먯쟾
     const double engageRange = 40;
 
     for (final enemy in enemies) {
       if (enemy.isDead) continue;
-      if (enemy.data.isFlying) continue; // 鍮꾪뻾 ?좊떅 釉붾줈??遺덇?
-      if (enemy.isBlockedBy != null) continue; // ?대? ?ㅻⅨ 蹂묒궗媛 釉붾줈??
+      if (enemy.data.isFlying) continue; // 비행 유닛 블로킹 불가
+      if (enemy.isBlockedBy != null) continue; // 이미 다른 병사가 블로킹 중
 
-      // 議곌굔 1: ????좊━?ъ씤?? 湲곗? 踰붿쐞 泥댄겕
       final distFromTower = enemy.position.distanceTo(rallyPoint);
       final inTowerRange = distFromTower <= operationRange;
 
-      // 議곌굔 2: 蹂묒궗 ?꾩옱 ?꾩튂 湲곗? 洹쇱젒 踰붿쐞 泥댄겕 (?대룞 以?援먯쟾)
       final distFromSoldier = position.distanceTo(enemy.position);
       final inEngageRange = distFromSoldier <= engageRange;
 
-      // ??以??섎굹?쇰룄 留뚯”?섎㈃ 援먯쟾 ???
       if (!inTowerRange && !inEngageRange) continue;
 
       if (distFromSoldier < minDist) {
@@ -248,17 +251,16 @@ class BarracksSoldier extends PositionComponent
     }
   }
 
-  /// 釉붾줈??以묒씤 ??怨듦꺽
+  /// 블로킹 중인 적 공격
   void _attackBlockedEnemy() {
     if (_blockedEnemy == null || _blockedEnemy!.isDead) return;
-    // ?쒖븬 紐⑤뱶: ?곕?吏 2諛?+ ?쒖븬 ?ъ슫??
     final dmg = isGrappler ? attackDamage * 2.0 : attackDamage;
     if (isGrappler) {
       SoundManager.instance.playSfx(SfxType.branchGrapple);
     }
     _blockedEnemy!.takeDamage(dmg, DamageType.physical);
 
-    // ??泥섏튂 ??蹂대꼫???좊챸
+    // 적 처치 시 신명 보너스
     if (_blockedEnemy!.isDead && goldBonusRatio > 0) {
       final bonus = (_blockedEnemy!.data.sinmyeongReward * goldBonusRatio).round();
       if (bonus > 0) {
@@ -267,7 +269,7 @@ class BarracksSoldier extends PositionComponent
     }
   }
 
-  /// ??釉붾줈???댁젣
+  /// 적 블로킹 해제
   void _releaseBlockedEnemy() {
     _blockedEnemy?.clearBlockedBy();
     _blockedEnemy = null;
@@ -276,14 +278,15 @@ class BarracksSoldier extends PositionComponent
   /// 깃발 이동 시 호출: 교전 해제 + 즉시 새 랠리포인트로 이동 시작
   void forceFollowRally(Vector2 newRallyPoint) {
     rallyPoint = newRallyPoint.clone();
-    _releaseBlockedEnemy(); // 적 추적 해제
+    _cachedAssignedPosition = null; // 캐시 무효화
+    _releaseBlockedEnemy();
     _attackTimer = 0;
   }
 
-  /// 蹂묒궗媛 ?쇨꺽??(?곸쓽 諛섍꺽)
+  /// 병사가 피격됨 (적의 공격)
   void takeDamage(double amount) {
     if (isDead) return;
-    // ?쒖븬 紐⑤뱶: 諛섍꺽 ?곕?吏 50% 媛먯냼
+    // 씨름꾼 브랜치: 피해 50% 감소
     final effectiveAmount = isGrappler ? amount * 0.5 : amount;
     hp -= effectiveAmount;
     _hitFlashTimer = 0.1;
@@ -294,10 +297,9 @@ class BarracksSoldier extends PositionComponent
     }
   }
 
-  /// ?щ쭩 泥섎━
+  /// 사망 처리
   void _onDeath() {
     _releaseBlockedEnemy();
-    // 遺?쒖? ???BaseTower)媛 ?꾨떞?섎?濡???媛쒖껜???꾩쟾???쒓굅??
     removeFromParent();
   }
 
@@ -305,7 +307,7 @@ class BarracksSoldier extends PositionComponent
   void render(Canvas canvas) {
     super.render(canvas);
 
-    // HP 諛?
+    // HP 바
     final hpRatio = (hp / maxHp).clamp(0.0, 1.0);
     canvas.drawRect(
       Rect.fromLTWH(0, -4, size.x, 2),
@@ -319,7 +321,7 @@ class BarracksSoldier extends PositionComponent
             : const Color(0xFFFF4444),
     );
 
-    // ?쇨꺽 ?뚮옒??
+    // 피격 플래시
     if (_hitFlashTimer > 0) {
       canvas.drawRect(
         Rect.fromLTWH(0, 0, size.x, size.y),
@@ -328,5 +330,3 @@ class BarracksSoldier extends PositionComponent
     }
   }
 }
-
-

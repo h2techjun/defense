@@ -60,3 +60,22 @@ packages/
 
 autotrade-engine-key.json
 *.key.json
+
+# Claude Code
+.claude/agent-memory/
+.claude/settings.local.json
+.claude/worktrees/
+
+# QA temp artifacts
+qa_*.mjs
+qa_screenshots/
+.playwright-mcp/
+code_keys.txt
+missing_assets_utf8.txt
+
+# Backups
+assets_backup/
+
+# Node (QA scripts only)
+node_modules/
+package-lock.json

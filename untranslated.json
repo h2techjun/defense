@@ -1,0 +1,1927 @@
+[
+  {
+    "key": "branch_name_shaman_b",
+    "ko": "저승사자 출장소",
+    "en": "Reaper's Outpost",
+    "jaNeed": true,
+    "zhNeed": false
+  },
+  {
+    "key": "challenge_desc_doubleDamage",
+    "ko": "적 공격력이 2배입니다",
+    "en": "Enemy attack power is doubled",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_desc_eliteOnly",
+    "ko": "모든 적이 엘리트입니다",
+    "en": "All enemies are elite",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_desc_limitedTowers",
+    "ko": "타워 3종만 배치 가능합니다",
+    "en": "Only 3 tower types available",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_desc_nightOnly",
+    "ko": "모든 웨이브가 밤입니다",
+    "en": "All waves are night",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_desc_noHeal",
+    "ko": "해원문 HP 회복이 차단됩니다",
+    "en": "Gateway HP recovery is blocked",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_desc_noSotdae",
+    "ko": "솟대 타워를 배치할 수 없습니다",
+    "en": "Cannot place Sotdae towers",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_desc_poorStart",
+    "ko": "시작 신명이 절반입니다",
+    "en": "Starting Sinmyeong is halved",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_desc_speedUp",
+    "ko": "적 이동 속도가 50% 증가합니다",
+    "en": "Enemy move speed +50%",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_reward_title",
+    "ko": "일일 수호자",
+    "en": "Daily Guardian",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_0",
+    "ko": "굶주린 밤",
+    "en": "Hungry Night",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_1",
+    "ko": "혼령의 행진",
+    "en": "March of Spirits",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_10",
+    "ko": "영원한 망각",
+    "en": "Eternal Oblivion",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_11",
+    "ko": "여명의 전투",
+    "en": "Dawn Battle",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_12",
+    "ko": "통곡의 노래",
+    "en": "Song of Wailing",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_13",
+    "ko": "마지막 방어선",
+    "en": "Last Defense Line",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_14",
+    "ko": "혼돈의 밤",
+    "en": "Night of Chaos",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_2",
+    "ko": "불타는 숲",
+    "en": "Burning Forest",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_3",
+    "ko": "얼어붙은 전장",
+    "en": "Frozen Battlefield",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_4",
+    "ko": "피의 달",
+    "en": "Blood Moon",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_5",
+    "ko": "원혼의 물결",
+    "en": "Wave of Lost Souls",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_6",
+    "ko": "저승의 안개",
+    "en": "Afterlife Fog",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_7",
+    "ko": "도깨비불 축제",
+    "en": "Will-o-Wisp Festival",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_8",
+    "ko": "만신의 시련",
+    "en": "Trial of All Spirits",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "challenge_title_9",
+    "ko": "왕궁의 그림자",
+    "en": "Palace Shadow",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "daily_reward_earned",
+    "ko": "{emoji} {name} 획득!",
+    "en": "{emoji} {name} earned!",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "deploy_formation",
+    "ko": "⚔️ 출전 편성 (최대 5)",
+    "en": "⚔️ Battle Formation (Max 5)",
+    "jaNeed": true,
+    "zhNeed": false
+  },
+  {
+    "key": "enemy_boneGolem",
+    "ko": "해골장군",
+    "en": "Bone Golem",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "enemy_bossGatekeeper",
+    "ko": "귀문관 수문장",
+    "en": "Gatekeeper",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "enemy_bossTyrantKing",
+    "ko": "폭군왕",
+    "en": "Tyrant King",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "enemy_corruptOfficial",
+    "ko": "탐관",
+    "en": "Corrupt Official",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "enemy_courtAssassin",
+    "ko": "자객",
+    "en": "Court Assassin",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "enemy_curseScribe",
+    "ko": "저주서생",
+    "en": "Curse Scribe",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "enemy_infernoSpirit",
+    "ko": "업화귀",
+    "en": "Inferno Spirit",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "enemy_puppetDancer",
+    "ko": "꼭두각시",
+    "en": "Puppet Dancer",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "enemy_royalGuardGhost",
+    "ko": "금위영혼",
+    "en": "Royal Guard Ghost",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "enemy_soulChainGhost",
+    "ko": "쇠사슬귀",
+    "en": "Soul Chain Ghost",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "enemy_underworldMessenger",
+    "ko": "저승사자",
+    "en": "Underworld Messenger",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "enemy_wailingBanshee",
+    "ko": "이승혼",
+    "en": "Wailing Banshee",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_floor_title",
+    "ko": "{emoji} {floor}층 — {type}",
+    "en": "{emoji} Floor {floor} — {type}",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_narr_boss",
+    "ko": "\"탑의 주인이 기다리고 있다...\"",
+    "en": "\"The master of the tower awaits...\"",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_narr_elite",
+    "ko": "\"강력한 적이 길을 막고 있다.\"",
+    "en": "\"A powerful enemy blocks the way.\"",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_rest_boost_desc",
+    "ko": "다음 3층간 영웅 공격력 +15%",
+    "en": "Hero ATK +15% for next 3 floors",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_rest_boost_name",
+    "ko": "영웅 강화",
+    "en": "Hero Boost",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_rest_disc_desc",
+    "ko": "다음 3층간 타워 비용 -20%",
+    "en": "Tower cost -20% for next 3 floors",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_rest_disc_name",
+    "ko": "장인의 축복",
+    "en": "Artisan's Blessing",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_rest_gem_desc",
+    "ko": "즉시 50 보석 획득",
+    "en": "Instantly gain 50 gems",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_rest_gem_name",
+    "ko": "보물 발견",
+    "en": "Treasure Found",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_rest_heal_desc",
+    "ko": "해원문 HP 30% 회복",
+    "en": "Recover 30% Gateway HP",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_rest_heal_name",
+    "ko": "해원문 수리",
+    "en": "Gateway Repair",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_rest_sinm_desc",
+    "ko": "다음 층 시작 신명 +100",
+    "en": "Next floor starting Sinmyeong +100",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_rest_sinm_name",
+    "ko": "신명 축적",
+    "en": "Sinmyeong Storage",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_streak_label",
+    "ko": "연속 도전",
+    "en": "Streak",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "et_type_boss",
+    "ko": "보스",
+    "en": "Boss",
+    "jaNeed": false,
+    "zhNeed": true
+  },
+  {
+    "key": "login_streak_1",
+    "ko": "골드 500",
+    "en": "500 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "login_streak_2",
+    "ko": "골드 800",
+    "en": "800 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "login_streak_3",
+    "ko": "보석 3개",
+    "en": "3 Gems",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "login_streak_4",
+    "ko": "골드 1,200",
+    "en": "1,200 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "login_streak_5",
+    "ko": "소환권 1장",
+    "en": "1 Summon Ticket",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "login_streak_6",
+    "ko": "보석 5개",
+    "en": "5 Gems",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "login_streak_7",
+    "ko": "보석 10 + 소환권",
+    "en": "10 Gems + Ticket",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_bari",
+    "ko": "귀여운 꼬마 무녀 공주님! 방울 소리 하나로 주변의 나쁜 기운을 싹~ 정화하는 천재예요~ 🌸\n\n힘든 친구들을 위로하며 최고의 무녀가 되어, 생명의 꽃을 피워 모든 아군에게 무적의 보호막을 만들어주는 대단한 능력을 얻게 된답니다!",
+    "en": "A cute little shrine princess! A genius who purifies all bad energy with just a bell ring~ 🌸\n\nComforting troubled friends to become the greatest priestess, she blooms the flower of life to create an invincible shield for all allies!",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_bossMountain_basic",
+    "ko": "숲을 지배하는 초자연적 호랑이. 포효 한 번에 바위가 갈라진다.",
+    "en": "A supernatural tiger ruling the forest. A single roar splits boulders.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_bossMountain_hidden",
+    "ko": "산군 대왕의 이빨 하나에 산신령의 힘 한 조각이 깃들어 있다. 이를 모두 모으면 잠든 산신을 깨울 수 있다 하여 많은 용사가 도전했으나, 돌아온 자는 없다.",
+    "en": "Each of the King's fangs holds a fragment of the mountain spirit's power. Many heroes tried to collect them all to awaken the sleeping spirit, but none returned.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_bossMountain_name",
+    "ko": "🔥 산군 대왕",
+    "en": "🔥 Mountain Tiger King",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_bossMountain_secret",
+    "ko": "산군 대왕은 원래 산신령이 타고 다니던 성수였으나, 산신이 잠든 사이 권좌를 찬탈했다. 이제 산 자체가 그의 영역이다.",
+    "en": "The Mountain King was the mountain spirit's holy steed, but usurped the throne while the spirit slept. Now the mountain itself is his domain.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_bossOgre_basic",
+    "ko": "장터를 지배하는 거대한 도깨비. 방망이 한 번이면 산이 무너진다.",
+    "en": "A massive goblin ruling the market. One swing of his club crumbles mountains.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_bossOgre_hidden",
+    "ko": "도깨비 두목의 방망이는 사실 두 개가 한 쌍이다. 금 나오는 방망이와 금 사라지는 방망이. 탐욕에 눈이 먼 인간들은 항상 잘못된 쪽을 고른다.",
+    "en": "The Chief's club is actually one of a pair—one that creates gold and one that takes it away. Humans blinded by greed always pick the wrong one.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_bossOgre_name",
+    "ko": "🔥 도깨비 두목",
+    "en": "🔥 Goblin Chief",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_bossOgre_secret",
+    "ko": "도깨비 두목은 원래 장터를 지키던 수호신이었다. 그러나 인간의 탐욕을 너무 많이 보고 타락하여, 지키던 것을 부수기 시작했다.",
+    "en": "The Goblin Chief was originally a guardian deity of the market. But seeing too much human greed, he fell and began destroying what he once protected.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_eggGhost_basic",
+    "ko": "이목구비가 없는 흰 얼굴의 귀신. 보면 공포에 질려 타워가 잠시 기능을 멈춘다.",
+    "en": "A faceless white-faced ghost. Seeing it petrifies towers momentarily.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_eggGhost_hidden",
+    "ko": "달걀귀신에게 진심으로 이름을 지어주면, 흐릿했던 얼굴에 미소가 피어오른다 한다. 그리고 감사의 표시로 숨겨둔 보물을 알려준다.",
+    "en": "If you sincerely give an Egg Ghost a name, a smile blooms on its blurred face. It then reveals hidden treasures as thanks.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_eggGhost_name",
+    "ko": "달걀귀신",
+    "en": "Egg Ghost",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_eggGhost_secret",
+    "ko": "달걀귀신의 정체는 이름조차 기록되지 않은 익명의 원혼들. 이름이 없기에 얼굴도 없고, 저승에서도 받아주지 않아 이승을 떠돌게 되었다.",
+    "en": "Egg Ghosts are anonymous souls whose names were never recorded. Without names they have no faces, rejected even by the afterlife.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_fireDog_basic",
+    "ko": "입에서 불을 뿜는 설화 속의 짐승. 지나간 자리에 불길을 남긴다.",
+    "en": "A mythical beast that breathes fire. Leaves flames wherever it passes.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_fireDog_hidden",
+    "ko": "만약 불개가 해를 삼키는 데 성공한다면, 세상은 영원한 밤이 된다. 설화 속 현자들은 이를 막기 위해 징과 북을 치며 불개를 쫓았다 한다.",
+    "en": "If a Fire Dog succeeds in swallowing the sun, the world becomes eternal night. Ancient sages drove them away by banging gongs and drums.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_fireDog_name",
+    "ko": "불개",
+    "en": "Fire Dog",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_fireDog_secret",
+    "ko": "불개는 원래 해와 달을 쫓던 천상의 맹수였으나, 번번이 실패하여 지상으로 쫓겨났다. 그 분노가 입에서 불이 되어 터져 나온다.",
+    "en": "Fire Dogs were celestial beasts that chased the sun and moon but failed repeatedly, banished to earth. Their rage erupts as fire.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_foxWoman_basic",
+    "ko": "천 년 묵은 여우가 인간으로 변한 것. 매혹 능력으로 타워를 무력화한다.",
+    "en": "A millennium-old fox turned human. Disables towers with charm abilities.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_foxWoman_hidden",
+    "ko": "구미호의 여의주는 모든 병을 고치는 만병통치약이라 한다. 하지만 여의주를 빼앗으면 여우는 영원히 인간이 될 수 없기에, 목숨을 걸고 지킨다.",
+    "en": "The nine-tailed fox's wish-granting pearl is said to cure all ailments. But taking it means the fox can never become human, so she guards it with her life.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_foxWoman_name",
+    "ko": "여우 할멈",
+    "en": "Fox Grandmother",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_foxWoman_secret",
+    "ko": "이 여우는 실은 인간이 되려 했으나 마지막 간 하나가 모자라 변신이 불완전해졌다. 반인반수의 모습으로 영겁을 떠돈다.",
+    "en": "This fox tried to become human but lacked one final liver, making the transformation incomplete. She wanders eternally as half-human.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_gangrim",
+    "ko": "갓을 쓴 신입 저승차사! 아직은 초보지만 누구보다 책임감이 강해요~ 😎\n\n열심히 임무를 완수하면서 멋진 정식 차사가 되었고, 언젠가는 염라대왕님의 대행자로 임명되어 멋진 심판의 도구를 받게 될 거예요!",
+    "en": "A rookie grim reaper wearing a traditional hat! Still a beginner but more responsible than anyone~ 😎\n\nBy diligently completing missions, he became a full-fledged reaper, and someday he'll be appointed as the King of the Underworld's representative!",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_bari_basic",
+    "ko": "버림받은 공주가 무당이 된 존재. 치유와 부활의 힘을 가졌다.",
+    "en": "An abandoned princess who became a shaman. Possesses healing and revival powers.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_bari_hidden",
+    "ko": "바리가 저승에서 가져온 약수는 세 가지이다. 하나는 살리는 물, 하나는 잊게 하는 물, 그리고 마지막은 기억하게 하는 물. 바리는 항상 세 번째 물부터 쓴다.",
+    "en": "Bari brought three waters from the afterlife: water that revives, water that makes you forget, and water that makes you remember. Bari always uses the third one first.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_bari_name",
+    "ko": "바리",
+    "en": "Bari",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_bari_secret",
+    "ko": "바리데기 설화에 따르면, 바리는 아홉 번째로 태어난 딸이라 버려졌으나, 죽은 부모를 살리기 위해 저승까지 약수를 구하러 갔다.",
+    "en": "According to the Baridegi tale, Bari was abandoned as the ninth daughter but traveled to the afterlife for healing water to save her dead parents.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_gangrim_basic",
+    "ko": "저승차사. 죽은 자의 영혼을 안내하는 것이 본업이지만, 사정이 있어 이승에 파견되었다.",
+    "en": "A grim reaper. Guiding souls of the dead is his job, but circumstances sent him to the mortal realm.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_gangrim_hidden",
+    "ko": "강림이 차사가 된 진짜 이유는 사랑하는 사람의 혼을 되찾기 위해서였다. 하지만 차사의 규율에 의해 그 혼을 만날 수 없게 되었고, 이것이 강림의 영원한 한이다.",
+    "en": "Gangrim's real reason for becoming a reaper was to retrieve his beloved's soul. But reaper rules forbid him from ever meeting that soul—this is Gangrim's eternal grudge.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_gangrim_name",
+    "ko": "강림",
+    "en": "Gangrim",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_gangrim_secret",
+    "ko": "강림은 원래 인간이었다. 염라대왕의 시험에 합격하여 차사가 된 최초의 인간으로, 그래서 누구보다 인간의 한을 잘 이해한다.",
+    "en": "Gangrim was originally human. The first human to pass the Underworld King's test and become a reaper, he understands human grudges better than anyone.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_kkaebi_basic",
+    "ko": "장난꾸러기 도깨비. 씨름을 좋아하고 인간에게 우호적인 드문 도깨비족.",
+    "en": "A mischievous goblin. Loves wrestling and is one of few goblins friendly to humans.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_kkaebi_hidden",
+    "ko": "깨비의 진정한 힘은 우정의 감투에서 나온다. 감투를 쓰면 힘이 열 배가 되지만, 외로워지면 감투가 사라진다. 그래서 깨비는 항상 웃고 다닌다.",
+    "en": "Kkaebi's true power comes from the Hat of Friendship. Wearing it multiplies his strength tenfold, but it vanishes when he's lonely. That's why Kkaebi always smiles.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_kkaebi_name",
+    "ko": "깨비",
+    "en": "Kkaebi",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_kkaebi_secret",
+    "ko": "깨비는 원래 도깨비 두목의 의형제였다. 그러나 두목이 타락하자 인간 편에 섰고, 그 대가로 도깨비 사회에서 추방당했다.",
+    "en": "Kkaebi was originally the Goblin Chief's sworn brother. But when the Chief fell to corruption, Kkaebi chose the human side and was banished from goblin society.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_miho_basic",
+    "ko": "구미호의 후예. 여의주의 힘으로 강력한 마법 공격을 날린다.",
+    "en": "Descendant of the nine-tailed fox. Unleashes powerful magic with her wish pearl.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_miho_hidden",
+    "ko": "미호의 꼬리 아홉 개에는 각각 다른 감정이 깃들어 있다. 마지막 아홉 번째 꼬리에 깃든 감정은 \"사랑\"이다. 이 꼬리가 빛날 때 미호는 가장 강해진다.",
+    "en": "Each of Miho's nine tails holds a different emotion. The ninth tail holds \"love.\" When this tail shines, Miho is at her strongest.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_miho_name",
+    "ko": "미호",
+    "en": "Miho",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_miho_secret",
+    "ko": "미호는 어머니 여우가 인간이 되려다 실패한 한을 물려받았다. 그러나 미호는 달라 — 인간을 사냥하는 대신 인간과 함께 싸우기로 했다.",
+    "en": "Miho inherited the grudge of her mother fox who failed to become human. But Miho is different—she chose to fight alongside humans instead of hunting them.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_sua_basic",
+    "ko": "물귀신의 후예. 물의 힘으로 적을 감속하고 끌어당긴다.",
+    "en": "Descendant of water spirits. Slows and pulls enemies with water power.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_sua_hidden",
+    "ko": "수아가 정말 두려워하는 것은 물이 아니라 \"잊혀지는 것\"이다. 물귀신의 숙명은 다른 희생자를 만들어야 해원하는 것인데, 수아는 그 숙명을 거부한 유일한 존재다.",
+    "en": "What Sua truly fears isn't water but \"being forgotten.\" A water spirit's fate is to create new victims for freedom, but Sua is the only one who rejected that destiny.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_sua_name",
+    "ko": "수아",
+    "en": "Sua",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hero_sua_secret",
+    "ko": "수아의 어머니는 강에 빠져 죽은 원혼이었으나, 해원사의 도움으로 한을 풀고 성불했다. 수아는 어머니를 이어 한을 품은 물귀신들을 해원한다.",
+    "en": "Sua's mother was a spirit who drowned, but found peace with a shaman's help. Sua continues her work, appeasing water spirits with grudges.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hungryGhost_basic",
+    "ko": "굶주림 속에 죽어간 원혼. 입에서 끊임없이 차가운 기운이 흘러나온다.",
+    "en": "A lost soul that died of starvation. Cold energy endlessly flows from its mouth.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hungryGhost_hidden",
+    "ko": "전설에 의하면, 허기귀 천 마리를 해원하면 그 중 한 영혼이 감사의 뜻으로 황금 수저를 남긴다 하여, 장터의 상인들은 밤마다 공양을 올렸다고 한다.",
+    "en": "Legend says if you appease a thousand Hungry Ghosts, one spirit leaves a golden spoon in gratitude. Market merchants would make offerings every night.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hungryGhost_name",
+    "ko": "허기귀",
+    "en": "Hungry Ghost",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_hungryGhost_secret",
+    "ko": "허기귀는 실은 대기근 시기 관의 구호를 받지 못한 만백성이었다. 그들의 한은 살아있는 자의 따뜻한 밥 냄새를 맡을 때마다 되살아난다.",
+    "en": "The Hungry Ghosts were actually citizens who never received aid during the great famine. Their grudge resurfaces whenever they smell warm food from the living.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_imugi_basic",
+    "ko": "용이 되지 못한 천년 묵은 뱀. 승천의 한을 품고 모든 것을 집어삼키려 한다.",
+    "en": "A millennium-old serpent that failed to become a dragon. Devours everything with its grudge of failed ascension.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_imugi_hidden",
+    "ko": "전설에 따르면 이무기의 비늘 천 개를 모으면 용이 남긴 비린내를 쫓을 수 있다 하여, 무사들이 이무기를 사냥했다 한다.",
+    "en": "Legend says collecting a thousand Imugi scales can ward off the dragon's stench, so warriors hunted the Imugi.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_imugi_name",
+    "ko": "이무기",
+    "en": "Imugi",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_imugi_secret",
+    "ko": "이무기가 용이 되려면 여의주를 물고 폭포를 거슬러 올라야 한다. 그러나 천 년 묵은 이무기는 매번 마지막 한 칸을 남기고 떨어졌다.",
+    "en": "To become a dragon, the Imugi must swim up a waterfall with a pearl in its mouth. This ancient one always fell at the very last step.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_kkaebi",
+    "ko": "낡은 빗자루에서 태어난 장난꾸러기 도깨비! 이승의 장난감이 너무 좋아서 해원의 문을 지키는 일에 신나게 동참했어요~ 🎉\n\n누군가 버린 짚신을 신고 씨름 기술을 열심히 연습해서, 이제는 말썽꾸러기 귀신들을 번쩍 들어올릴 정도로 힘이 세졌답니다! 장차 도깨비 왕의 감투를 물려받을 운명이에요!",
+    "en": "A mischievous goblin born from an old broom! He loved the mortal world's toys so much that he enthusiastically joined in guarding the Gateway~ 🎉\n\nWearing discarded straw shoes and practicing wrestling diligently, he's now strong enough to lift troublesome ghosts with ease! Destined to inherit the crown of the Goblin King!",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_laborer_basic",
+    "ko": "HP가 높고 느리지만 꾸준히 밀고 들어오는 원혼. 지게에 한을 가득 짊어지고 있다.",
+    "en": "A high-HP, slow but steadily pushing spirit. Carries a rack full of grudges.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_laborer_hidden",
+    "ko": "등짐꾼의 지게를 내려놓게 해주면, 그 안에서 잃어버린 보물이 산더미처럼 쏟아진다는 전설이 내려온다.",
+    "en": "Legend says if you help the Laborer set down his rack, treasures pour out like a mountain.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_laborer_name",
+    "ko": "등짐꾼",
+    "en": "Burdened Laborer",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_laborer_secret",
+    "ko": "등짐꾼은 양반의 무거운 짐을 대신 져주다 허리가 꺾여 죽은 노비였다. 그 짐 속에는 사실 양반이 빼돌린 관곡이 들어있었다.",
+    "en": "The Laborer was a servant who died with a broken back carrying a nobleman's heavy load. Inside were actually government grains the nobleman had embezzled.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_maidenGhost_basic",
+    "ko": "시집을 가지 못하고 죽은 처녀의 세 영혼이 한이 되어 떠돈다. 빠르고 회피율이 높다.",
+    "en": "Three spirits of maidens who died unmarried wander as grudges. Fast with high evasion.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_maidenGhost_hidden",
+    "ko": "난간 위에서 핀 붉은 동백꽃은 처녀귀신의 눈물이 스며든 것이라 한다. 이 꽃을 꺾으면 반드시 불행이 찾아온다.",
+    "en": "Red camellias on the railing are said to be stained with the Maiden's tears. Picking them surely brings misfortune.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_maidenGhost_name",
+    "ko": "처녀귀신",
+    "en": "Maiden Ghost",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_maidenGhost_secret",
+    "ko": "이 처녀귀신은 실은 사또의 아들에게 겁탈당한 뒤 수치스러움에 투신한 규수였다. 그 아들은 벌을 받지 않았고, 처녀의 한은 영원히 풀리지 않았다.",
+    "en": "This Maiden Ghost was actually a noble lady who took her life after being violated by the magistrate's son. He was never punished, and her grudge persists forever.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_miho",
+    "ko": "꼬리가 하나뿐인 어린 여우! 인간 친구를 만들고 싶어서 해원의 문 앞에서 기도하다가 파수꾼이 되었어요~ 🦊\n\n모험을 하면 할수록 꼬리가 하나씩 늘어나서, 훗날 아홉 개의 꼬리가 반짝반짝 빛날 때마다 길 잃은 영혼들을 하늘로 안내해주는 멋진 구미호가 될 거예요!",
+    "en": "A young fox with only one tail! She prayed at the Gateway wanting to make human friends and became a guardian~ 🦊\n\nWith each adventure, she grows another tail, and one day when her nine tails shine bright, she'll become a magnificent nine-tailed fox guiding lost souls to heaven!",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_mile_100",
+    "ko": "전설의 기록관",
+    "en": "Legendary Archivist",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_mile_25",
+    "ko": "초보 도감 수집가",
+    "en": "Novice Collector",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_mile_50",
+    "ko": "열정의 것고리",
+    "en": "Ring of Passion",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_mile_75",
+    "ko": "설화의 수호자",
+    "en": "Guardian of Tales",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_shadowGolem_basic",
+    "ko": "숲의 그림자가 응집된 거인. 극도로 느리지만 한 방의 무게가 산을 부순다.",
+    "en": "A giant formed from forest shadows. Extremely slow but each hit shatters mountains.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_shadowGolem_hidden",
+    "ko": "그림자 거인의 심장에는 천 년 전 씨앗이 잠들어 있다. 이 씨앗을 심으면 하루 만에 숲이 되살아난다고 전해진다.",
+    "en": "In the Golem's heart sleeps a seed from a thousand years ago. Planting it is said to revive the forest in a single day.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_shadowGolem_name",
+    "ko": "그림자 거인",
+    "en": "Shadow Golem",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_shadowGolem_secret",
+    "ko": "그림자 거인은 천 년 묵은 고목의 원혼이다. 벌목꾼들이 숲을 밀어낸 한이 그림자가 되어 형체를 이룬 것.",
+    "en": "The Shadow Golem is the spirit of a millennium-old tree. The grudge of loggers clearing the forest took shadow form.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_strawShoe_basic",
+    "ko": "낡은 짚신을 신고 느릿느릿 다가오는 노인의 영혼. 지팡이로 타워를 두들긴다.",
+    "en": "An old man's spirit slowly approaching in worn straw shoes. He taps towers with his cane.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_strawShoe_hidden",
+    "ko": "짚신영감의 짚신 한 켤레를 찾으면 어떤 길이든 미끄러지지 않는 신비한 힘이 깃든다고 전해진다.",
+    "en": "Finding a pair of the Elder's shoes is said to grant the mystical power of never slipping on any path.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_strawShoe_name",
+    "ko": "짚신영감",
+    "en": "Straw Shoe Elder",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_strawShoe_secret",
+    "ko": "짚신영감은 생전 장터까지 백 리를 걸어 약을 구하러 나섰으나, 결국 도착하지 못하고 길 위에서 멈추었다. 그의 짚신만이 길 위에 남았다.",
+    "en": "In life, the Elder walked a hundred li to the market for medicine but never arrived, stopping forever on the road. Only his straw shoes remained.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_sua",
+    "ko": "순수한 마음을 가진 물의 정령! 다른 친구들이 물에서 위험해지지 않도록 늘 걱정하는 다정한 수호자예요~ 💧\n\n점점 강해져서 늪의 주인이 되었고, 맑은 노래로 나쁜 귀신들의 발을 묶어버린답니다! 최종적으로는 큰 바다의 정령으로 멋지게 성장할 거예요!",
+    "en": "A water spirit with a pure heart! A caring guardian who always worries about friends being in danger near water~ 💧\n\nGrowing stronger to become the master of the marsh, she binds evil spirits' feet with her clear song! Eventually she'll magnificently grow into a spirit of the great ocean!",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_tigerSlave_basic",
+    "ko": "산군(호랑이)에게 잡아먹힌 뒤 그의 종이 된 창귀. 다른 먹잇감을 유인한다.",
+    "en": "A changwi enslaved after being devoured by a tiger. Lures other prey.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_tigerSlave_hidden",
+    "ko": "실은 호랑이 종 중 한 명이 용기를 내어 산군을 배신하면 모든 창귀가 해방된다. 하지만 아무도 먼저 나서지 않는다.",
+    "en": "If just one servant finds the courage to betray the tiger, all changwi would be freed. But no one dares to go first.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_tigerSlave_name",
+    "ko": "호랑이 종",
+    "en": "Tiger's Servant",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_tigerSlave_secret",
+    "ko": "창귀가 된 자들은 생전 자신을 잡아먹은 호랑이를 위해 새로운 희생양을 찾아야만 해원할 수 있다는 거짓 약속에 속아 영원히 종 노릇을 한다.",
+    "en": "Those who become changwi are tricked by a false promise that they can be freed by finding new prey for the tiger that ate them.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_death_basic",
+    "ko": "이승과 저승의 경계. 이곳을 넘으면 살아서 돌아올 수 없다.",
+    "en": "The boundary between life and death. Cross it, and you cannot return alive.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_death_hidden",
+    "ko": "바리데기가 이 문턱을 넘었을 때, 문지기는 물었다 — \"살아 돌아가면 무엇을 하겠느냐?\" 바리는 답했다 — \"버린 자를 용서하겠다.\" 이 대답이 문턱을 열었다.",
+    "en": "When Baridegi crossed this threshold, the gatekeeper asked — \"What will you do if you return alive?\" Bari answered — \"I will forgive those who abandoned me.\" This answer opened the gate.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_death_name",
+    "ko": "저승의 문턱",
+    "en": "Threshold of the Afterlife",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_death_secret",
+    "ko": "저승의 문턱에는 세줄바리(세 관문의 파수꾼)가 지키고 있다. 첫 번째는 과거를, 두 번째는 현재를, 세 번째는 미래를 심판한다.",
+    "en": "The Threshold is guarded by three gatekeepers. The first judges the past, the second the present, and the third the future.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_faceless_basic",
+    "ko": "정체를 잃은 영혼들이 떠도는 안개의 숲. 누구의 얼굴인지 알 수 없는 그림자들이 배회한다.",
+    "en": "A misty forest where faceless spirits wander. Unidentifiable shadow figures roam.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_faceless_hidden",
+    "ko": "얼굴 없는 숲에서 자신의 진짜 얼굴을 마주하면, 그것이 가장 두려운 적이 된다 한다. 그래서 이 숲에 들어간 자는 눈을 감고 걸어야 한다.",
+    "en": "Facing your true face in this forest makes it your most feared enemy. Those who enter must walk with eyes closed.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_faceless_name",
+    "ko": "얼굴 없는 숲",
+    "en": "Faceless Forest",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_faceless_secret",
+    "ko": "이 숲은 한양의 역적 가문이 삼족을 멸하며 생긴 곳이다. 이름이 지워지고 얼굴이 지워진 자들의 한이 안개가 되어 숲을 덮었다.",
+    "en": "This forest emerged when a traitor's family was annihilated. The grudges of those whose names and faces were erased became fog.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_forest_basic",
+    "ko": "밤마다 통곡 소리가 울리는 숲. 산짐승과 요괴가 지배하는 위험 지대.",
+    "en": "A forest that echoes with wailing every night. A dangerous zone ruled by beasts and yokai.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_forest_hidden",
+    "ko": "숲의 가장 깊은 곳에는 \"첫 번째 나무\"가 있다 한다. 이 나무를 찾는 자에게 숲은 모든 비밀을 속삭여준다. 다만 그 비밀을 발설하면 나무가 되어 영원히 숲에 갇힌다.",
+    "en": "Deep in the forest is said to be the \"First Tree.\" Finding it makes the forest whisper all its secrets. But revealing those secrets turns you into a tree, trapped forever.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_forest_name",
+    "ko": "통곡하는 숲",
+    "en": "Wailing Forest",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_forest_secret",
+    "ko": "통곡하는 숲의 나무들은 사실 살아있다. 벌목으로 잘린 나무의 그루터기에서 들려오는 울음소리가 숲 전체에 메아리친다.",
+    "en": "The trees in the Wailing Forest are actually alive. Wails from stumps of felled trees echo throughout the forest.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_market_basic",
+    "ko": "대기근으로 무너진 조선 장터. 굶주린 원혼들이 마지막 온기를 찾아 떠돈다.",
+    "en": "A Joseon market ruined by famine. Starving spirits wander seeking last warmth.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_market_hidden",
+    "ko": "장터 한가운데 세워진 솟대에는 \"다시는 굶기지 마라\"는 기도가 새겨져 있다. 이 솟대가 빛나는 날, 원혼들은 잠깐이나마 따뜻한 밥 냄새를 맡을 수 있다 한다.",
+    "en": "The sotdae at the market's center bears the prayer \"Never let them starve again.\" When it glows, spirits can briefly smell warm rice.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_market_name",
+    "ko": "굶주린 자들의 장터",
+    "en": "Market of the Starving",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_market_secret",
+    "ko": "이 장터는 실은 관의 식량 창고를 불태운 탐관오리의 행적이 낳은 비극의 현장이다. 장터의 모든 원혼은 그 한 사람의 탐욕이 만든 것.",
+    "en": "This market is the tragic site of a corrupt official who burned the granary. All spirits here were created by one person's greed.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_palace_basic",
+    "ko": "권력에 물든 왕궁. 암살과 음모가 난무하는 저주받은 궁.",
+    "en": "A palace stained by power. A cursed court teeming with assassination and intrigue.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_palace_hidden",
+    "ko": "왕궁에 전해지는 금기 — \"옥좌에 앉은 자는 반드시 그림자를 바꾼다.\" 이 말의 진짜 의미를 아는 자는 왕궁에서 살아나올 수 없다.",
+    "en": "The palace taboo — \"He who sits upon the throne shall change his shadow.\" Those who learn the true meaning cannot leave the palace alive.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_palace_name",
+    "ko": "왕궁의 그림자",
+    "en": "Palace Shadow",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "lore_world_palace_secret",
+    "ko": "왕궁의 지하에는 왕이 처형한 충신들의 목이 봉인되어 있다. 매년 한식날이면 이 목들이 진실을 외친다.",
+    "en": "Beneath the palace, the heads of loyal subjects executed by the king are sealed. Every year on Hansik, these heads cry out the truth.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "menu_free_gems_cooldown",
+    "ko": "⏳ {time} 후",
+    "en": "⏳ in {time}",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_1",
+    "ko": "골드 500",
+    "en": "500 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_10",
+    "ko": "골드 1,200",
+    "en": "1,200 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_11",
+    "ko": "골드 1,300",
+    "en": "1,300 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_12",
+    "ko": "골드 1,400",
+    "en": "1,400 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_13",
+    "ko": "골드 1,500",
+    "en": "1,500 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_14",
+    "ko": "🌟 보석 50 + 패스XP 200",
+    "en": "🌟 50 Gems + 200 Pass XP",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_15",
+    "ko": "골드 1,500",
+    "en": "1,500 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_16",
+    "ko": "골드 1,600",
+    "en": "1,600 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_17",
+    "ko": "골드 1,700",
+    "en": "1,700 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_18",
+    "ko": "골드 1,800",
+    "en": "1,800 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_19",
+    "ko": "골드 1,900",
+    "en": "1,900 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_2",
+    "ko": "골드 600",
+    "en": "600 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_20",
+    "ko": "골드 2,000",
+    "en": "2,000 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_21",
+    "ko": "🌟 보석 80 + 소환권 2장",
+    "en": "🌟 80 Gems + 2 Tickets",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_22",
+    "ko": "골드 2,000",
+    "en": "2,000 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_23",
+    "ko": "골드 2,100",
+    "en": "2,100 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_24",
+    "ko": "골드 2,200",
+    "en": "2,200 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_25",
+    "ko": "골드 2,300",
+    "en": "2,300 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_26",
+    "ko": "골드 2,400",
+    "en": "2,400 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_27",
+    "ko": "골드 2,500",
+    "en": "2,500 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_28",
+    "ko": "🌟 보석 150 + 소환권 3장 + XP 500",
+    "en": "🌟 150 Gems + 3 Tickets + 500 XP",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_3",
+    "ko": "골드 700",
+    "en": "700 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_4",
+    "ko": "골드 800",
+    "en": "800 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_5",
+    "ko": "골드 900",
+    "en": "900 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_6",
+    "ko": "골드 1,000",
+    "en": "1,000 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_7",
+    "ko": "🌟 보석 30 + 소환권",
+    "en": "🌟 30 Gems + Ticket",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_8",
+    "ko": "골드 1,000",
+    "en": "1,000 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "monthly_login_9",
+    "ko": "골드 1,100",
+    "en": "1,100 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_frame_s1",
+    "ko": "시즌 1 프레임",
+    "en": "Season 1 Frame",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_gems_15",
+    "ko": "보석 15개",
+    "en": "15 Gems",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_gems_20",
+    "ko": "보석 20개",
+    "en": "20 Gems",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_gems_5",
+    "ko": "보석 5개",
+    "en": "5 Gems",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_gold_500",
+    "ko": "골드 500",
+    "en": "500 Gold",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_hero_xp_50",
+    "ko": "영웅 경험치 50",
+    "en": "50 Hero XP",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_relic_spring",
+    "ko": "봄바람 노리개",
+    "en": "Spring Breeze Norigae",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_skin_cherry_kkaebi",
+    "ko": "벚꽃 깨비 스킨",
+    "en": "Cherry Blossom Kkaebi Skin",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_skin_divine_bari",
+    "ko": "신녀 바리 스킨 (한정)",
+    "en": "Divine Bari Skin (Limited)",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_skin_moonlight_miho",
+    "ko": "달빛 미호 스킨",
+    "en": "Moonlight Miho Skin",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_ticket_1",
+    "ko": "소환권 1장",
+    "en": "1 Summon Ticket",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_ticket_2",
+    "ko": "소환권 2장",
+    "en": "2 Summon Tickets",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_ticket_3",
+    "ko": "소환권 3장",
+    "en": "3 Summon Tickets",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "pass_title_liberator",
+    "ko": "원혼 해방자 칭호",
+    "en": "Soul Liberator Title",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_buje_desc",
+    "ko": "마법 데미지가 증가합니다.",
+    "en": "Increases magic damage.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_buje_name",
+    "ko": "부적함",
+    "en": "Bujeokham",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_buje_unlock",
+    "ko": "만신전 타워 10회 건설",
+    "en": "Build Shaman Tower 10 times",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_eff_crit",
+    "ko": "크리티컬 {pct}%",
+    "en": "Critical {pct}%",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_gat_desc",
+    "ko": "원거리 타워/영웅의 사거리가 증가합니다.",
+    "en": "Increases range of ranged towers/heroes.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_gat_name",
+    "ko": "갓",
+    "en": "Gat",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_gat_unlock",
+    "ko": "챕터 2 클리어",
+    "en": "Clear Chapter 2",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_goblin_desc",
+    "ko": "공격 시 일정 확률로 2배 데미지를 줍니다.",
+    "en": "Chance to deal 2x damage on attack.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_goblin_name",
+    "ko": "도깨비 방망이",
+    "en": "Goblin Mallet",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_goblin_unlock",
+    "ko": "깨비 Lv 10 달성",
+    "en": "Reach Kkaebi Lv 10",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_hopae_desc",
+    "ko": "HP와 방어력이 증가합니다.",
+    "en": "Increases HP and defense.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_hopae_name",
+    "ko": "호패",
+    "en": "Hopae",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_hopae_unlock",
+    "ko": "챕터 1 전 스테이지 3성",
+    "en": "3-Star all stages in Chapter 1",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_norigae_desc",
+    "ko": "스킬 쿨타임이 감소합니다.",
+    "en": "Reduces skill cooldown.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_norigae_name",
+    "ko": "노리개",
+    "en": "Norigae",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_norigae_unlock",
+    "ko": "도감 수집 50%",
+    "en": "50% Bestiary Collection",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_yeob_desc",
+    "ko": "적 처치 시 신명이 추가됩니다.",
+    "en": "Gain bonus Sinmyeong on enemy kill.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_yeob_name",
+    "ko": "엽전검",
+    "en": "Yeobgeom",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "relic_yeob_unlock",
+    "ko": "챕터 3 클리어",
+    "en": "Clear Chapter 3",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "sell_refund",
+    "ko": "판매 +{amount}✨",
+    "en": "Sell +{amount}✨",
+    "jaNeed": true,
+    "zhNeed": false
+  },
+  {
+    "key": "set_epic_2_desc",
+    "ko": "공격력 +5%, XP +5%",
+    "en": "ATK +5%, XP +5%",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_epic_2_name",
+    "ko": "명작 2세트",
+    "en": "Masterwork 2-Set",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_epic_3_desc",
+    "ko": "공격력 +8%, 체력 +5%, XP +10%",
+    "en": "ATK +8%, HP +5%, XP +10%",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_epic_3_name",
+    "ko": "명작 3세트",
+    "en": "Masterwork 3-Set",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_epic_5_desc",
+    "ko": "공격력 +12%, 체력 +10%, XP +15%, 골드 +10%",
+    "en": "ATK +12%, HP +10%, XP +15%, Gold +10%",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_epic_5_name",
+    "ko": "명작 풀세트",
+    "en": "Masterwork Full Set",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_leg_2_desc",
+    "ko": "공격력 +10%, XP +10%",
+    "en": "ATK +10%, XP +10%",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_leg_2_name",
+    "ko": "전설 2세트",
+    "en": "Legendary 2-Set",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_leg_3_desc",
+    "ko": "공격력 +15%, 체력 +10%, XP +15%, 골드 +10%",
+    "en": "ATK +15%, HP +10%, XP +15%, Gold +10%",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_leg_3_name",
+    "ko": "전설 3세트",
+    "en": "Legendary 3-Set",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_leg_5_desc",
+    "ko": "공격력 +25%, 체력 +20%, XP +25%, 골드 +20%",
+    "en": "ATK +25%, HP +20%, XP +25%, Gold +20%",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_leg_5_name",
+    "ko": "전설 풀세트",
+    "en": "Legendary Full Set",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_rare_2_desc",
+    "ko": "골드 획득 +5%",
+    "en": "Gold earned +5%",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_rare_2_name",
+    "ko": "정제 2세트",
+    "en": "Refined 2-Set",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_rare_3_desc",
+    "ko": "공격력 +3%, 골드 +5%",
+    "en": "ATK +3%, Gold +5%",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_rare_3_name",
+    "ko": "정제 3세트",
+    "en": "Refined 3-Set",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_rare_5_desc",
+    "ko": "공격력 +5%, 체력 +5%, 골드 +10%",
+    "en": "ATK +5%, HP +5%, Gold +10%",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "set_rare_5_name",
+    "ko": "정제 풀세트",
+    "en": "Refined Full Set",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_bariAurora",
+    "ko": "여명 바리",
+    "en": "Aurora Bari",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_bariCherry",
+    "ko": "벚꽃 바리",
+    "en": "Cherry Blossom Bari",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_bariDefault",
+    "ko": "바리공주",
+    "en": "Princess Bari",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_bariDivine",
+    "ko": "신녀 바리",
+    "en": "Divine Bari",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_gangrimBlood",
+    "ko": "혈염 차사",
+    "en": "Blood-Stained Reaper",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_gangrimBlood_eff",
+    "ko": "적 처치 시 취약점 표시 효과",
+    "en": "Vulnerability mark on enemy kill",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_gangrimBlood_lore",
+    "ko": "저승의 혈흐른 강을 건넌 차사. 그의 낫이 닿는 곳에는 좽음만이 남는다.",
+    "en": "A reaper who crossed the blood river of the afterlife. Only death remains where his scythe reaches.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_gangrimDefault",
+    "ko": "저승차사",
+    "en": "Grim Reaper",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_gangrimReaper",
+    "ko": "대차사",
+    "en": "Grand Reaper",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_gangrimReaper_eff",
+    "ko": "황금 파티클 + 적 처치 시 보석 0.5% 드랍",
+    "en": "Golden particles + 0.5% gem drop on kill",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_gangrimReaper_lore",
+    "ko": "저승의 왕. 염라대왕의 침묵을 받은 기사단장. 그의 등장에 원령들이 묶이는다.",
+    "en": "King of the afterlife. Knight commander bearing the silence of the Underworld King.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_gangrimSilver",
+    "ko": "은월 차사",
+    "en": "Silver Moon Reaper",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_kkaebiDefault",
+    "ko": "도깨비",
+    "en": "Goblin",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_kkaebiGoldhorn",
+    "ko": "금각 도깨비",
+    "en": "Golden Horn Goblin",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_kkaebiGoldhorn_eff",
+    "ko": "황금 오라 + 흘나는 검기",
+    "en": "Golden aura + flowing blade energy",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_kkaebiGoldhorn_lore",
+    "ko": "천년을 수련한 도깨비의 왕. 그의 황금 뻔은 적의 의지를 꼬부라뜨린다.",
+    "en": "King of goblins who trained for a millennium. His golden horn bends the enemy's will.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_kkaebiInferno",
+    "ko": "화염 도깨비",
+    "en": "Inferno Goblin",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_kkaebiInferno_eff",
+    "ko": "공격 시 화염 파티클 효과",
+    "en": "Fire particle effect on attack",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_kkaebiInferno_lore",
+    "ko": "지하 세계의 화염을 다스리는 도깨비. 그의 방망이는 적을 재로 만든다.",
+    "en": "A goblin who commands the underworld's flames. His club turns enemies to ash.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_kkaebiJade",
+    "ko": "비취 도깨비",
+    "en": "Jade Goblin",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_mihoCrimson",
+    "ko": "핏빛 미호",
+    "en": "Crimson Miho",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_mihoCrimson_eff",
+    "ko": "공격 시 한기 게이지 증가량 +5%",
+    "en": "+5% chill gauge on attack",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_mihoCrimson_lore",
+    "ko": "피에 굴주린 미호. 그녀의 여우 방울은 적의 피를 먹고 강해진다.",
+    "en": "A blood-thirsty Miho. Her fox bell grows stronger feeding on enemy blood.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_mihoDefault",
+    "ko": "구미호",
+    "en": "Nine-Tailed Fox",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_mihoMoonlight",
+    "ko": "달빛 미호",
+    "en": "Moonlight Miho",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_mihoNine",
+    "ko": "구미선녀",
+    "en": "Celestial Fox",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_mihoNine_eff",
+    "ko": "스킬 범위 +10% + 달빛 오라",
+    "en": "Skill range +10% + moonlight aura",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_mihoNine_lore",
+    "ko": "아홉 꼽리가 모두 피어난 구미선녀. 한달의 정수를 담은 미호는 영혼을 다스릴 수 있다.",
+    "en": "A celestial fox with all nine tails bloomed. Miho with the essence of the moon can command souls.",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_suaCoral",
+    "ko": "산호빛 수아",
+    "en": "Coral Sua",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_suaDefault",
+    "ko": "물의 정령",
+    "en": "Water Spirit",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_suaFrost",
+    "ko": "빙결 수아",
+    "en": "Frost Sua",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "skin_suaTide",
+    "ko": "조류 수아",
+    "en": "Tidal Sua",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "sp_gems_insufficient_msg",
+    "ko": "💎 보석이 부족합니다 (필요: 10개)",
+    "en": "💎 Not enough gems (need: 10)",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "sp_xp_boost_msg",
+    "ko": "⚡ XP +50! (💎10 사용)",
+    "en": "⚡ XP +50! (💎10 used)",
+    "jaNeed": true,
+    "zhNeed": true
+  },
+  {
+    "key": "trait_boss",
+    "ko": "보스",
+    "en": "Boss",
+    "jaNeed": false,
+    "zhNeed": true
+  },
+  {
+    "key": "wave_number",
+    "ko": "웨이브 {n}",
+    "en": "Wave {n}",
+    "jaNeed": true,
+    "zhNeed": false
+  }
+]
