@@ -17,6 +17,7 @@ import 'game_screen.dart';
 import 'l10n/app_strings.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'services/crazygames.dart';
 
 Future<void> main() async {
@@ -32,6 +33,7 @@ Future<void> main() async {
   // Zone mismatch 경고는 무해 (ensureInitialized: 루트 Zone, runApp: guarded Zone)
 
   // 에러 핸들러 — 빨간 에러 화면 방지, 로그만 출력
+  // Sentry 초기화 시 SentryFlutter.init이 이 핸들러를 재등록해 자동 전송함
   FlutterError.onError = (FlutterErrorDetails details) {
     dlog('');
     dlog('🚨🚨🚨 [FLUTTER-ERROR] ${details.exception}');
@@ -114,20 +116,41 @@ Future<void> main() async {
     dlog('⚠️ [main] AppStrings 초기화 실패: $e');
   }
 
-  dlog('🎮 [main] runApp() 시작');
-  runZonedGuarded(() {
+  // Sentry DSN 읽기 (.env or --dart-define) — 비어있으면 Sentry 비활성
+  final sentryDsn = kIsWeb
+      ? const String.fromEnvironment('SENTRY_DSN')
+      : (dotenv.env['SENTRY_DSN'] ?? '');
+
+  dlog('🎮 [main] runApp() 시작 (Sentry: ${sentryDsn.isNotEmpty ? "ON" : "OFF"})');
+
+  Future<void> appRunner() async {
     runApp(
       const ProviderScope(
         child: GatewayOfRegretsApp(),
       ),
     );
-  }, (error, stack) {
-    dlog('');
-    dlog('💥💥💥 [ZONE-ERROR] $error');
-    dlog('📍 Stack: $stack');
-    dlog('💥💥💥');
-    dlog('');
-  });
+  }
+
+  if (sentryDsn.isNotEmpty) {
+    await SentryFlutter.init(
+      (options) {
+        options
+          ..dsn = sentryDsn
+          ..tracesSampleRate = 0.2
+          ..release = 'gateway_of_regrets@1.0.0+8'
+          ..environment = kIsWeb ? 'web' : 'mobile';
+      },
+      appRunner: appRunner,
+    );
+  } else {
+    runZonedGuarded(appRunner, (error, stack) {
+      dlog('');
+      dlog('💥💥💥 [ZONE-ERROR] $error');
+      dlog('📍 Stack: $stack');
+      dlog('💥💥💥');
+      dlog('');
+    });
+  }
 }
 
 /// 앱 루트

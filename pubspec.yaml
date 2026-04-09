@@ -19,6 +19,7 @@ dependencies:
   supabase_flutter: ^2.12.0
   flutter_dotenv: ^6.0.0
   google_mobile_ads: ^7.0.0
+  sentry_flutter: ^8.14.2
 
 dev_dependencies:
   flutter_test:
