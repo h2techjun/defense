@@ -13,6 +13,7 @@ import '../../l10n/app_strings.dart';
 import '../../services/fullscreen_service.dart';
 import '../../services/ad_manager.dart';
 import '../../services/cloud_save_manager.dart';
+import '../../state/accessibility_state.dart';
 import '../../state/unclaimed_rewards_provider.dart';
 import '../../state/user_state.dart';
 import '../widgets/notification_badge.dart';
@@ -602,6 +603,13 @@ class _SettingsDialogState extends State<_SettingsDialog> {
                       ),
                       textAlign: TextAlign.center,
                     ),
+
+                    SizedBox(height: 20 * s),
+
+                    // ── ♿ 접근성 ──
+                    _sectionLabel('♿', AppStrings.get(currentLang, 'settings_accessibility'), s),
+                    SizedBox(height: 8 * s),
+                    _buildAccessibilitySection(currentLang, s),
                   ],
                 ),
               ),
@@ -733,6 +741,155 @@ class _SettingsDialogState extends State<_SettingsDialog> {
         ),
       ),
     );
+  }
+
+  Widget _buildAccessibilitySection(GameLanguage lang, double s) {
+    final prefs = widget.ref.read(accessibilityProvider);
+    final notifier = widget.ref.read(accessibilityProvider.notifier);
+
+    return Column(
+      children: [
+        // 폰트 크기 슬라이더
+        Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Text(
+                AppStrings.get(lang, 'settings_font_size'),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: Responsive.fontSize(context, 12)),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: SliderTheme(
+                data: SliderThemeData(
+                  activeTrackColor: AppColors.cherryBlossom,
+                  inactiveTrackColor: AppColors.borderDefault.withAlpha(20),
+                  thumbColor: AppColors.cherryBlossom,
+                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 7 * s),
+                  trackHeight: 4 * s,
+                ),
+                child: Slider(
+                  value: prefs.fontSizeMultiplier,
+                  min: 0.8,
+                  max: 1.5,
+                  divisions: 7,
+                  onChanged: (v) {
+                    notifier.setFontSizeMultiplier(v);
+                    setState(() {});
+                  },
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 40 * s,
+              child: Text(
+                '${(prefs.fontSizeMultiplier * 100).round()}%',
+                style: TextStyle(color: AppColors.textSecondary, fontSize: Responsive.fontSize(context, 11), fontWeight: FontWeight.bold),
+                textAlign: TextAlign.right,
+              ),
+            ),
+          ],
+        ),
+
+        SizedBox(height: 8 * s),
+
+        // 색맹 모드 드롭다운
+        Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Text(
+                AppStrings.get(lang, 'settings_colorblind'),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: Responsive.fontSize(context, 12)),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8 * s),
+                decoration: BoxDecoration(
+                  color: AppColors.borderDefault.withAlpha(20),
+                  borderRadius: BorderRadius.circular(AppDesign.panelRadius),
+                  border: Border.all(color: AppColors.borderDefault),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<ColorBlindMode>(
+                    value: prefs.colorBlindMode,
+                    dropdownColor: AppColors.bgWarmDark,
+                    isExpanded: true,
+                    style: TextStyle(color: Colors.white, fontSize: Responsive.fontSize(context, 12)),
+                    items: ColorBlindMode.values.map((mode) {
+                      return DropdownMenuItem(
+                        value: mode,
+                        child: Text(_colorBlindLabel(lang, mode)),
+                      );
+                    }).toList(),
+                    onChanged: (v) {
+                      if (v != null) {
+                        notifier.setColorBlindMode(v);
+                        setState(() {});
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        SizedBox(height: 8 * s),
+
+        // 고대비 모드 토글
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                AppStrings.get(lang, 'settings_high_contrast'),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: Responsive.fontSize(context, 12)),
+              ),
+            ),
+            Switch(
+              value: prefs.highContrast,
+              activeColor: AppColors.cherryBlossom,
+              onChanged: (v) {
+                notifier.setHighContrast(v);
+                setState(() {});
+              },
+            ),
+          ],
+        ),
+
+        // 모션 줄이기 토글
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                AppStrings.get(lang, 'settings_reduce_motion'),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: Responsive.fontSize(context, 12)),
+              ),
+            ),
+            Switch(
+              value: prefs.reduceMotion,
+              activeColor: AppColors.cherryBlossom,
+              onChanged: (v) {
+                notifier.setReduceMotion(v);
+                setState(() {});
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  String _colorBlindLabel(GameLanguage lang, ColorBlindMode mode) {
+    switch (mode) {
+      case ColorBlindMode.off: return AppStrings.get(lang, 'settings_colorblind_off');
+      case ColorBlindMode.protanopia: return AppStrings.get(lang, 'settings_colorblind_protanopia');
+      case ColorBlindMode.deuteranopia: return AppStrings.get(lang, 'settings_colorblind_deuteranopia');
+      case ColorBlindMode.tritanopia: return AppStrings.get(lang, 'settings_colorblind_tritanopia');
+    }
   }
 
   Future<void> _doCloudSync(GameLanguage lang) async {

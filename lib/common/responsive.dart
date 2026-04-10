@@ -22,6 +22,9 @@ class Responsive {
   static const double _minMobileFontSize = 14.0;
   static const double _minMobileIconSize = 20.0;
 
+  /// 접근성 폰트 배율 (AccessibilityProvider가 변경)
+  static double accessibilityFontMultiplier = 1.0;
+
   /// 현재 디바이스 유형 판별 (shortestSide 기준 — 가로/세로 모드 공통)
   static DeviceType deviceType(BuildContext context) {
     final shortSide = MediaQuery.of(context).size.shortestSide;
@@ -59,9 +62,9 @@ class Responsive {
   /// UI 위젯 전용 스케일 (scale과 동일 — 호환성 유지)
   static double uiScale(BuildContext context) => scale(context);
 
-  /// 반응형 폰트 크기 (phone에서 _minMobileFontSize 보장)
+  /// 반응형 폰트 크기 (phone에서 _minMobileFontSize 보장 + 접근성 배율)
   static double fontSize(BuildContext context, double baseFontSize) {
-    final size = baseFontSize * scale(context);
+    final size = baseFontSize * scale(context) * accessibilityFontMultiplier;
     return deviceType(context) == DeviceType.phone
         ? size.clamp(_minMobileFontSize, double.infinity)
         : size;

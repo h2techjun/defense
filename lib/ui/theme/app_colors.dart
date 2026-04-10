@@ -3,6 +3,7 @@
 // 레퍼런스: 쿠키런 킹덤, 케이팝 데몬 헌터스
 
 import 'package:flutter/material.dart';
+import '../../state/accessibility_state.dart';
 
 /// 앱 전역 컬러 팔레트 — "팝 코리안 고스트" 스타일
 /// 어두운 세계관 속 밝고 따뜻한 팝 색상
@@ -209,6 +210,31 @@ abstract class AppColors {
   static const LinearGradient rewardGradient = LinearGradient(
     colors: [sinmyeongGold, peachCoral],
   );
+
+  // ── 색맹 대응 팔레트 ──
+
+  /// 색맹 모드에 따라 적절한 성공/경고/에러/정보 색상 반환
+  static Color adaptiveSuccess(ColorBlindMode mode) => switch (mode) {
+    ColorBlindMode.protanopia || ColorBlindMode.deuteranopia => skyBlue,
+    _ => success,
+  };
+
+  static Color adaptiveError(ColorBlindMode mode) => switch (mode) {
+    ColorBlindMode.protanopia => const Color(0xFFFF9900), // 주황
+    ColorBlindMode.deuteranopia => const Color(0xFFFF9900),
+    ColorBlindMode.tritanopia => const Color(0xFFFF4466), // 핫핑크
+    _ => error,
+  };
+
+  static Color adaptiveWarning(ColorBlindMode mode) => switch (mode) {
+    ColorBlindMode.tritanopia => const Color(0xFFFFAA77), // 연주황
+    _ => warning,
+  };
+
+  static Color adaptiveInfo(ColorBlindMode mode) => switch (mode) {
+    ColorBlindMode.tritanopia => const Color(0xFF88CCEE), // 연하늘
+    _ => info,
+  };
 }
 
 /// UI 디자인 토큰 — GDD §I-B.4 기준
