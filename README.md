@@ -90,6 +90,14 @@ lib/
 
 ---
 
+## 👤 만든 사람
+
+에이치투테크(h2tech) — [메이커 프로필](https://h2techjun.github.io/)
+
+같은 사람이 만든 다른 것:
+- [Workmate](https://workmate.tools) — 한국 법령·KS 표준 기준 무료 실무 계산기 (전기·노무·세무·부동산)
+- [K-Poker](https://junhuimine.github.io/k-poker/) — Flutter 화투 로그라이크
+
 ## 📝 라이선스
 
 비공개 프로젝트
